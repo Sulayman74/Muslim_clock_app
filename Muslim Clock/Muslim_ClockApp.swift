@@ -9,9 +9,13 @@ import SwiftUI
 
 @main
 struct Muslim_ClockApp: App {
+    
+    init() {
+            NotificationManager.shared.requestPermission()
+        }
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            MainView()
         }
     }
 }
