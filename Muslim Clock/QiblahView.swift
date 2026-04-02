@@ -204,6 +204,10 @@ struct QiblaView: View {
             }
             .font(.system(size: 12, weight: .medium, design: .monospaced))
             .foregroundStyle(.white.opacity(0.4))
+            Text("\(Int(manager.distanceToMecca)) km")
+                .font(.system(size: 16, weight: .semibold, design: .monospaced))
+                .monospacedDigit()
+                .foregroundStyle(.white.opacity(0.65))
         }
     }
     
@@ -240,6 +244,7 @@ struct QiblaView: View {
                 .animation(.snappy, value: Int(value))
         }
     }
+    
 }
 
 // MARK: - ═══════════════════════════════════════════════════

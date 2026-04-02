@@ -9,7 +9,6 @@
 import Foundation
 import CoreLocation
 import Combine
-import MapKit
 import SwiftUI
 
 class CompassManager: NSObject, ObservableObject, CLLocationManagerDelegate {
@@ -20,6 +19,7 @@ class CompassManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     @Published var heading: Double = 0.0
     @Published var qiblaAngle: Double = 0.0
     @Published var isCorrectDirection = false
+    private var cancellables = Set<AnyCancellable>()
     
     /// Écart angulaire absolu avec la Qiblah (0° = parfaitement aligné)
     @Published var angularOffset: Double = 180.0
@@ -42,10 +42,30 @@ class CompassManager: NSObject, ObservableObject, CLLocationManagerDelegate {
         super.init()
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
-        locationManager.requestWhenInUseAuthorization()
-        locationManager.requestLocation()
+        
+        // Utilise le shared manager pour la location
+        SharedLocationManager.shared.requestPermissionAndStart()
+        // Observe via Combine
+        SharedLocationManager.shared.$currentLocation
+            .compactMap { $0 }
+            .sink { [weak self] location in
+                Task { @MainActor in
+                    let angle = self?.calculateQiblaAngle(for: location) ?? 0
+                    self?.userLocation = location
+                    self?.qiblaAngle = angle
+                    if self?.cityName == "Recherche..." {
+                        self?.cityName = await location.fetchCityName()
+                    }
+                }
+            }
+            .store(in: &cancellables)
     }
     
+    var distanceToMecca: Double {
+        guard let loc = userLocation else { return 0 }
+        let mecca = CLLocation(latitude: 21.4225, longitude: 39.8262)
+        return loc.distance(from: mecca) / 1000 // en km
+    }
     // MARK: - Start / Stop
     func startCompass() {
         locationManager.startUpdatingHeading()
@@ -83,15 +103,16 @@ class CompassManager: NSObject, ObservableObject, CLLocationManagerDelegate {
         case 3:
             let g = UIImpactFeedbackGenerator(style: .heavy)
             g.impactOccurred()
-        case 4:
-            // Double haptic pour marquer le lock
-            let g = UIImpactFeedbackGenerator(style: .rigid)
-            g.impactOccurred(intensity: 1.0)
-            // Petit délai puis notification "success"
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.08) {
+            case 4:
+                let g = UIImpactFeedbackGenerator(style: .rigid)
+                g.prepare()
+                g.impactOccurred(intensity: 1.0)
                 let n = UINotificationFeedbackGenerator()
-                n.notificationOccurred(.success)
-            }
+                n.prepare()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.08) { [weak self] in
+                    guard self != nil else { return }
+                    n.notificationOccurred(.success)
+                }
         default:
             break
         }
@@ -159,7 +180,6 @@ class CompassManager: NSObject, ObservableObject, CLLocationManagerDelegate {
         default:       newLevel = 0  // Loin
         }
         
-        let _wasAligned = isCorrectDirection
         let nowAligned = newLevel == 4
         
         self.proximityLevel = newLevel
@@ -192,3 +212,4 @@ extension CLLocation {
         }
     }
 }
+

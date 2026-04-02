@@ -2,16 +2,14 @@
 //  NotificationManager.swift
 //  Muslim Clock
 //
-//  Created by Mohamed Kanoute on 30/03/2026.
-//
 
 import Foundation
 import UserNotifications
 
 class NotificationManager {
-    static let shared = NotificationManager() // Un Singleton pour y accéder partout
+    static let shared = NotificationManager()
     
-    // 1. Demander la permission à l'utilisateur (La petite popup d'Apple)
+    // 1. Demande de permission (Inchangé)
     func requestPermission() {
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { granted, error in
             if granted {
@@ -22,37 +20,50 @@ class NotificationManager {
         }
     }
     
-    // 2. Programmer les notifications pour les 5 prières
+    // 2. Programmer une liste de prières
     func schedulePrayerNotifications(prayers: [DailyPrayer], prayerDates: [Date]) {
-        // On annule les anciennes notifications pour ne pas faire de doublons
-        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+        
+        // On ne supprime PLUS les requêtes en attente !
+        // À la place, on nettoie juste celles qui ont DÉJÀ sonné pour faire de la place sur le téléphone.
+        UNUserNotificationCenter.current().removeAllDeliveredNotifications()
         
         for (index, prayer) in prayers.enumerated() {
             let prayerDate = prayerDates[index]
             
-            // Si l'heure de la prière est déjà passée aujourd'hui, on ne la programme pas !
+            // Si l'heure est passée, on ignore
             if prayerDate < Date() { continue }
-            
             let content = UNMutableNotificationContent()
-            content.title = "C'est l'heure de la prière"
+            content.title = "C'est l'heure de la prière (\(prayer.time)) "
             content.body = "Il est l'heure de la prière de \(prayer.name)."
-            // Pour l'instant on met le son par défaut d'Apple (On pourra mettre un vrai Adhan plus tard !)
             content.sound = UNNotificationSound.default
             
-            // On extrait l'heure et les minutes exactes de la prière
             let components = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: prayerDate)
-            
-            // On crée le "déclencheur" basé sur l'heure
             let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: false)
             
-            // On crée la requête et on l'envoie à iOS
-            let request = UNNotificationRequest(identifier: "prayer_\(prayer.name)", content: content, trigger: trigger)
+            // 💡 L'ASTUCE EST ICI : On crée un ID unique pour CHAQUE jour et CHAQUE prière
+            // Exemple généré : "prayer_Fajr_31_3_2026"
+            let day = components.day ?? 0
+            let month = components.month ?? 0
+            let year = components.year ?? 0
+            let uniqueID = "prayer_\(prayer.name)_\(day)_\(month)_\(year)"
             
+            let request = UNNotificationRequest(identifier: uniqueID, content: content, trigger: trigger)
+            
+            // iOS va l'ajouter, ou la mettre à jour si elle existe déjà avec cet ID exact
             UNUserNotificationCenter.current().add(request) { error in
                 if let error = error {
                     print("❌ [Notifs] Erreur pour \(prayer.name) : \(error.localizedDescription)")
-                } 
+                } else {
+                    print("🔔 [Notifs] Programmée : \(prayer.name) à \(prayerDate.formatted(date: .omitted, time: .shortened))")
+                }
             }
         }
+    }
+    
+    // 3. NOUVELLE MÉTHODE : Pour programmer facilement juste le Fajr de demain
+    func scheduleSinglePrayer(name: String, date: Date) {
+        // On réutilise la logique principale en lui passant un tableau d'un seul élément
+        let dummyPrayer = DailyPrayer(name: name, time: "", isNext: true)
+        schedulePrayerNotifications(prayers: [dummyPrayer], prayerDates: [date])
     }
 }

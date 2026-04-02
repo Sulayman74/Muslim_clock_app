@@ -1,11 +1,12 @@
 {
   "images" : [
     {
-      "filename" : "Splashscreen-2.png",
+      "filename" : "iPhone App Icon iOS 5,6.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
+      "filename" : "iPhone App Icon iOS 5,6@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },

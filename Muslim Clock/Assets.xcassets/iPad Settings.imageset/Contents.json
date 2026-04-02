@@ -1,11 +1,12 @@
 {
   "images" : [
     {
-      "filename" : "Splashscreen-2.png",
+      "filename" : "iPad Settings.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
+      "filename" : "iPad Settings@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
