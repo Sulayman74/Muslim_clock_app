@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2311F18C2F7BFD7900BF077A /* Adhan in Frameworks */ = {isa = PBXBuildFile; productRef = 2311F18B2F7BFD7900BF077A /* Adhan */; };
+		2384F4BC2F7BEE910045A1C4 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2384F4BB2F7BEE910045A1C4 /* WidgetKit.framework */; };
+		2384F4BE2F7BEE910045A1C4 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2384F4BD2F7BEE910045A1C4 /* SwiftUI.framework */; };
+		2384F4CF2F7BEE930045A1C4 /* SalatWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 2384F4B92F7BEE910045A1C4 /* SalatWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		23DE21D32F76C36600AF62D8 /* Adhan in Frameworks */ = {isa = PBXBuildFile; productRef = 23DE21D22F76C36600AF62D8 /* Adhan */; };
 /* End PBXBuildFile section */
 
@@ -25,13 +29,56 @@
 			remoteGlobalIDString = 2364938D2F76918E00788B1B;
 			remoteInfo = "Muslim Clock";
 		};
+		2384F4CD2F7BEE930045A1C4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 236493862F76918E00788B1B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2384F4B82F7BEE910045A1C4;
+			remoteInfo = SalatWidgetExtension;
+		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		2384F4D42F7BEE930045A1C4 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				2384F4CF2F7BEE930045A1C4 /* SalatWidgetExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		2364938E2F76918E00788B1B /* Muslim Clock.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Muslim Clock.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2364939B2F76918F00788B1B /* Muslim ClockTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Muslim ClockTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		236493A52F76918F00788B1B /* Muslim ClockUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Muslim ClockUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		2384F4B92F7BEE910045A1C4 /* SalatWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = SalatWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		2384F4BB2F7BEE910045A1C4 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		2384F4BD2F7BEE910045A1C4 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		2384F4D52F7BF3DD0045A1C4 /* SalatWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SalatWidgetExtension.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		2384F4D02F7BEE930045A1C4 /* Exceptions for "SalatWidget" folder in "SalatWidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 2384F4B82F7BEE910045A1C4 /* SalatWidgetExtension */;
+		};
+		2384F4D72F7BF45F0045A1C4 /* Exceptions for "SalatWidget" folder in "Muslim Clock" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				AppIntent.swift,
+				SalatWidget.swift,
+			);
+			target = 2364938D2F76918E00788B1B /* Muslim Clock */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		236493902F76918E00788B1B /* Muslim Clock */ = {
@@ -47,6 +94,15 @@
 		236493A82F76918F00788B1B /* Muslim ClockUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = "Muslim ClockUITests";
+			sourceTree = "<group>";
+		};
+		2384F4BF2F7BEE910045A1C4 /* SalatWidget */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				2384F4D72F7BF45F0045A1C4 /* Exceptions for "SalatWidget" folder in "Muslim Clock" target */,
+				2384F4D02F7BEE930045A1C4 /* Exceptions for "SalatWidget" folder in "SalatWidgetExtension" target */,
+			);
+			path = SalatWidget;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -74,15 +130,28 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		2384F4B62F7BEE910045A1C4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2311F18C2F7BFD7900BF077A /* Adhan in Frameworks */,
+				2384F4BE2F7BEE910045A1C4 /* SwiftUI.framework in Frameworks */,
+				2384F4BC2F7BEE910045A1C4 /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		236493852F76918E00788B1B = {
 			isa = PBXGroup;
 			children = (
+				2384F4D52F7BF3DD0045A1C4 /* SalatWidgetExtension.entitlements */,
 				236493902F76918E00788B1B /* Muslim Clock */,
 				2364939E2F76918F00788B1B /* Muslim ClockTests */,
 				236493A82F76918F00788B1B /* Muslim ClockUITests */,
+				2384F4BF2F7BEE910045A1C4 /* SalatWidget */,
+				2384F4BA2F7BEE910045A1C4 /* Frameworks */,
 				2364938F2F76918E00788B1B /* Products */,
 			);
 			sourceTree = "<group>";
@@ -93,8 +162,18 @@
 				2364938E2F76918E00788B1B /* Muslim Clock.app */,
 				2364939B2F76918F00788B1B /* Muslim ClockTests.xctest */,
 				236493A52F76918F00788B1B /* Muslim ClockUITests.xctest */,
+				2384F4B92F7BEE910045A1C4 /* SalatWidgetExtension.appex */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		2384F4BA2F7BEE910045A1C4 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				2384F4BB2F7BEE910045A1C4 /* WidgetKit.framework */,
+				2384F4BD2F7BEE910045A1C4 /* SwiftUI.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -107,10 +186,12 @@
 				2364938A2F76918E00788B1B /* Sources */,
 				2364938B2F76918E00788B1B /* Frameworks */,
 				2364938C2F76918E00788B1B /* Resources */,
+				2384F4D42F7BEE930045A1C4 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				2384F4CE2F7BEE930045A1C4 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				236493902F76918E00788B1B /* Muslim Clock */,
@@ -169,6 +250,29 @@
 			productReference = 236493A52F76918F00788B1B /* Muslim ClockUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		2384F4B82F7BEE910045A1C4 /* SalatWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2384F4D12F7BEE930045A1C4 /* Build configuration list for PBXNativeTarget "SalatWidgetExtension" */;
+			buildPhases = (
+				2384F4B52F7BEE910045A1C4 /* Sources */,
+				2384F4B62F7BEE910045A1C4 /* Frameworks */,
+				2384F4B72F7BEE910045A1C4 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				2384F4BF2F7BEE910045A1C4 /* SalatWidget */,
+			);
+			name = SalatWidgetExtension;
+			packageProductDependencies = (
+				2311F18B2F7BFD7900BF077A /* Adhan */,
+			);
+			productName = SalatWidgetExtension;
+			productReference = 2384F4B92F7BEE910045A1C4 /* SalatWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -189,6 +293,9 @@
 					236493A42F76918F00788B1B = {
 						CreatedOnToolsVersion = 26.3;
 						TestTargetID = 2364938D2F76918E00788B1B;
+					};
+					2384F4B82F7BEE910045A1C4 = {
+						CreatedOnToolsVersion = 26.3;
 					};
 				};
 			};
@@ -212,6 +319,7 @@
 				2364938D2F76918E00788B1B /* Muslim Clock */,
 				2364939A2F76918F00788B1B /* Muslim ClockTests */,
 				236493A42F76918F00788B1B /* Muslim ClockUITests */,
+				2384F4B82F7BEE910045A1C4 /* SalatWidgetExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -232,6 +340,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		236493A32F76918F00788B1B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2384F4B72F7BEE910045A1C4 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -262,6 +377,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		2384F4B52F7BEE910045A1C4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -274,6 +396,11 @@
 			isa = PBXTargetDependency;
 			target = 2364938D2F76918E00788B1B /* Muslim Clock */;
 			targetProxy = 236493A62F76918F00788B1B /* PBXContainerItemProxy */;
+		};
+		2384F4CE2F7BEE930045A1C4 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2384F4B82F7BEE910045A1C4 /* SalatWidgetExtension */;
+			targetProxy = 2384F4CD2F7BEE930045A1C4 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -427,6 +554,7 @@
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
+				INFOPLIST_KEY_UIStatusBarHidden = YES;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
@@ -486,6 +614,7 @@
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
+				INFOPLIST_KEY_UIStatusBarHidden = YES;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
@@ -614,6 +743,73 @@
 			};
 			name = Release;
 		};
+		2384F4D22F7BEE930045A1C4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = SalatWidgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 7X8L4VHPLH;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = SalatWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = SalatWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "kappsi.Muslim-Clock.SalatWidget";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		2384F4D32F7BEE930045A1C4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = SalatWidgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 7X8L4VHPLH;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = SalatWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = SalatWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "kappsi.Muslim-Clock.SalatWidget";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -653,6 +849,15 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		2384F4D12F7BEE930045A1C4 /* Build configuration list for PBXNativeTarget "SalatWidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2384F4D22F7BEE930045A1C4 /* Debug */,
+				2384F4D32F7BEE930045A1C4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
@@ -667,6 +872,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		2311F18B2F7BFD7900BF077A /* Adhan */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 23DE21D12F76C36600AF62D8 /* XCRemoteSwiftPackageReference "adhan-swift" */;
+			productName = Adhan;
+		};
 		23DE21D22F76C36600AF62D8 /* Adhan */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 23DE21D12F76C36600AF62D8 /* XCRemoteSwiftPackageReference "adhan-swift" */;

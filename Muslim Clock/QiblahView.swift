@@ -58,17 +58,6 @@ struct QiblaView: View {
     @ViewBuilder
     private var backgroundLayer: some View {
         ZStack {
-            // Base sombre
-            LinearGradient(
-                colors: [
-                    Color(red: 0.04, green: 0.04, blue: 0.09),
-                    Color(red: 0.08, green: 0.08, blue: 0.14),
-                    Color(red: 0.04, green: 0.04, blue: 0.09)
-                ],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-            
             // Couche verte qui apparaît progressivement avec la proximité
             vertSapin
                 .opacity(glowIntensity * 0.8)
@@ -101,6 +90,9 @@ struct QiblaView: View {
                     .font(.system(size: 15, weight: .medium, design: .rounded))
             }
             .foregroundStyle(.secondary)
+            
+            // ✅ Date hégirien compact sous le nom de ville
+            WidgetDateHeader(date: .now, compact: true)
         }
         .foregroundStyle(.white)
     }
@@ -204,10 +196,6 @@ struct QiblaView: View {
             }
             .font(.system(size: 12, weight: .medium, design: .monospaced))
             .foregroundStyle(.white.opacity(0.4))
-            Text("\(Int(manager.distanceToMecca)) km")
-                .font(.system(size: 16, weight: .semibold, design: .monospaced))
-                .monospacedDigit()
-                .foregroundStyle(.white.opacity(0.65))
         }
     }
     
@@ -244,7 +232,6 @@ struct QiblaView: View {
                 .animation(.snappy, value: Int(value))
         }
     }
-    
 }
 
 // MARK: - ═══════════════════════════════════════════════════

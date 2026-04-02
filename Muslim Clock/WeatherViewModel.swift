@@ -17,6 +17,7 @@ class WeatherViewModel: ObservableObject {
         // Textes "bidons" de la bonne longueur pour que le Skeleton ait une belle forme
         @Published var temperature: String = "22°C"
         @Published var conditionIcon: String = "cloud.sun.fill"
+        @Published var moonSymbol: String = "moonphase.new.moon"
         // NOUVEAU : Gestion des états pour l'UX
         @Published var isLoading: Bool = true
         @Published var hasError: Bool = false
@@ -33,13 +34,22 @@ class WeatherViewModel: ObservableObject {
                 let tempValue = weather.currentWeather.temperature.converted(to: .celsius).value
                 self.temperature = String(format: "%.0f°C", tempValue)
                 self.conditionIcon = weather.currentWeather.symbolName
+                // On regarde le premier jour du tableau des prévisions (aujourd'hui)
+                if let todayForecast = weather.dailyForecast.first {
+                self.moonSymbol = todayForecast.moon.phase.symbolName
+                }
                 self.isLoading = false
+                self.hasError = false
             } catch {
                 self.temperature = "N/A"
                 self.conditionIcon = "exclamationmark.triangle"
+                self.moonSymbol = "moon.fill"
                 self.hasError = true
                 self.isLoading = false
                 self.hasFetched = false
             }
         }
+    
     }
+
+

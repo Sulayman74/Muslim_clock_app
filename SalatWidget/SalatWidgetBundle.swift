@@ -11,8 +11,8 @@ import SwiftUI
 @main
 struct SalatWidgetBundle: WidgetBundle {
     var body: some Widget {
-        SalatWidget()
-        SalatWidgetControl()
-        SalatWidgetLiveActivity()
+        SalatHomeWidget()         // Medium — ton widget original avec les sphères
+        SalatSmallWidget()        // Small — carré compact prochaine prière
+        SalatLockScreenWidget()   // Lock Screen — circular, rectangular, inline
     }
 }
