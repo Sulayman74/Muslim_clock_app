@@ -178,27 +178,39 @@ class PodcastManager: NSObject, ObservableObject, XMLParserDelegate {
         }
     }
     
-    // MARK: - JSON Local
-    private func loadLocalAudioJSON() {
-        guard let url = Bundle.main.url(forResource: "audios", withExtension: "json"),
-              let data = try? Data(contentsOf: url),
-              let decoded = try? JSONDecoder().decode([CuratedAudioSeries].self, from: data) else {
-            self.curatedSeriesList = [CuratedAudioSeries(id: "1410186668", name: "Secours", author: "")]
-            return
+    // MARK: - Chargement du Podcast (OTA & Smart Setup)
+        func loadSmartPodcast() async {
+            
+            // 1. On tente de récupérer la liste via le CDN GitHub (ou Cache/Bundle si pas d'internet)
+            if curatedSeriesList.isEmpty {
+                // 🔗 REMPLACE CECI PAR TON URL EXACTE GITHUB PAGES :
+                let githubURL = "https://sulayman74.github.io/Muslim_clock_app/audios.json"
+                
+                if let remoteSeries = await RemoteJSONLoader.load(
+                    filename: "audios.json",
+                    remoteURL: githubURL,
+                    type: [CuratedAudioSeries].self
+                ) {
+                    self.curatedSeriesList = remoteSeries
+                } else {
+                    // Secours ultime si même le fichier dans l'application est introuvable
+                    self.curatedSeriesList = [CuratedAudioSeries(id: "1410186668", name: "Série par défaut", author: "")]
+                }
+            }
+            
+            // 2. Sécurité : si on a raccourci le JSON et que l'index actuel n'existe plus
+            if currentSeriesIndex >= curatedSeriesList.count {
+                currentSeriesIndex = 0
+            }
+            
+            // 3. Lancement de la série cible
+            let targetSeries = curatedSeriesList[currentSeriesIndex]
+            await fetchPodcast(appleID: targetSeries.id)
+            calculateProgress()
+            
+            // ✅ REPRISE AUTOMATIQUE : si on a un bookmark pour cette série, on propose
+            restoreBookmarkIfNeeded()
         }
-        self.curatedSeriesList = decoded
-    }
-    
-    func loadSmartPodcast() async {
-        if curatedSeriesList.isEmpty { loadLocalAudioJSON() }
-        if currentSeriesIndex >= curatedSeriesList.count { currentSeriesIndex = 0 }
-        let targetSeries = curatedSeriesList[currentSeriesIndex]
-        await fetchPodcast(appleID: targetSeries.id)
-        calculateProgress()
-        
-        // ✅ REPRISE AUTOMATIQUE : si on a un bookmark pour cette série, on propose
-        restoreBookmarkIfNeeded()
-    }
     // MARK: - Changement Manuel de Série
         func changeSeries(to index: Int) {
             guard index >= 0, index < curatedSeriesList.count, index != currentSeriesIndex else { return }

@@ -70,7 +70,7 @@ class DailyContentService: ObservableObject {
             self.isLoading = true
             
             // 1. HADITH local filtré par saison (Reste fixe toute la journée)
-            loadSeasonalHadith()
+           await loadSeasonalHadith()
             
             // 2. CORAN : On lance le premier chargement aléatoire
             await fetchRandomQuranVerse()
@@ -174,13 +174,16 @@ class DailyContentService: ObservableObject {
     }
     
     // MARK: - Chargement du Hadith saisonnier
-    private func loadSeasonalHadith() {
-        guard let url = Bundle.main.url(forResource: "hadiths", withExtension: "json"),
-              let data = try? Data(contentsOf: url),
-              let allHadiths = try? JSONDecoder().decode([CuratedHadith].self, from: data) else {
-            setFallbackHadith()
-            return
-        }
+    private func loadSeasonalHadith() async {
+        let githubURL = "https://sulayman74.github.io/Muslim_clock_app/hadiths.json"
+        guard let allHadiths = await RemoteJSONLoader.load(
+                    filename: "hadiths.json",
+                    remoteURL: githubURL,
+                    type: [CuratedHadith].self
+                ) else {
+                    setFallbackHadith()
+                    return
+                }
         
         let activeSeasonsRaw = currentSeasons().map(\.rawValue)
         
