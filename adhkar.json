@@ -151,5 +151,68 @@
     "repeat": 7,
     "timing": "both",
     "benefit": "Allah suffira celui qui le dit 7 fois matin et soir contre ce qui le préoccupe."
-  }
-]
+  },
+    {
+      "id": 18,
+      "text": "« Ô Allah, par Toi nous entrons dans le matin et par Toi nous entrons dans le soir, par Toi nous vivons et par Toi nous mourons, et vers Toi sera la résurrection. »",
+      "arabic": "اللَّهُمَّ بِكَ أَصْبَحْنَا وَبِكَ أَمْسَيْنَا وَبِكَ نَحْيَا وَبِكَ نَمُوتُ وَإِلَيْكَ النُّشُورُ",
+      "source": "Tirmidhi 3391",
+      "repeat": 1,
+      "timing": "both",
+      "benefit": "Fait partie des invocations constantes du Prophète ﷺ matin et soir."
+    },
+    {
+      "id": 19,
+      "text": "« Nous voilà au matin suivant la nature saine de l'Islam, la parole de sincérité, la religion de notre Prophète Muhammad ﷺ, et la voie de notre père Ibrahim, monothéiste pur, et il n'était pas parmi les associateurs. »",
+      "arabic": "أَصْبَحْنَا عَلَى فِطْرَةِ الْإِسْلَامِ وَعَلَى كَلِمَةِ الْإِخْلَاصِ وَعَلَى دِينِ نَبِيِّنَا مُحَمَّدٍ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ وَعَلَى مِلَّةِ أَبِينَا إِبْرَاهِيمَ حَنِيفًا مُسْلِمًا وَمَا كَانَ مِنَ الْمُشْرِكِينَ",
+      "source": "Musnad Ahmad 15360",
+      "repeat": 1,
+      "timing": "morning",
+      "benefit": "Affirme le tawhid et la conformité à la voie des prophètes."
+    },
+    {
+      "id": 20,
+      "text": "« Ô Allah, je Te prends à témoin, ainsi que les porteurs de Ton Trône, Tes anges et toute Ta création, que Tu es Allah, il n'y a de divinité que Toi, Unique sans associé, et que Muhammad est Ton serviteur et messager. »",
+      "arabic": "اللَّهُمَّ إِنِّي أَشْهِدُكَ وَأُشْهِدُ حَمَلَةَ عَرْشِكَ وَمَلَائِكَتَكَ وَجَمِيعَ خَلْقِكَ أَنَّكَ أَنْتَ اللَّهُ لَا إِلَهَ إِلَّا أَنْتَ وَحْدَكَ لَا شَرِيكَ لَكَ وَأَنَّ مُحَمَّدًا عَبْدُكَ وَرَسُولُكَ",
+      "source": "Abu Dawud 5069",
+      "repeat": 4,
+      "timing": "both",
+      "benefit": "Celui qui le dit 4 fois, Allah l'affranchit du Feu."
+    },
+    {
+      "id": 21,
+      "text": "« Ô Allah, toute faveur dont je bénéficie ou dont bénéficie l'une de Tes créatures provient de Toi seul, sans associé. À Toi la louange et à Toi la reconnaissance. »",
+      "arabic": "اللَّهُمَّ مَا أَصْبَحَ بِي مِنْ نِعْمَةٍ أَوْ بِأَحَدٍ مِنْ خَلْقِكَ فَمِنْكَ وَحْدَكَ لَا شَرِيكَ لَكَ فَلَكَ الْحَمْدُ وَلَكَ الشُّكْرُ",
+      "source": "Abu Dawud 5073",
+      "repeat": 1,
+      "timing": "morning",
+      "benefit": "Celui qui le dit aura accompli le remerciement de sa journée."
+    },
+    {
+      "id": 22,
+      "text": "« Ô Allah, accorde-moi un corps en bonne santé, Ô Allah, accorde-moi une bonne ouïe, Ô Allah, accorde-moi une bonne vue. Il n'y a de divinité que Toi. »",
+      "arabic": "اللَّهُمَّ عَافِنِي فِي بَدَنِي اللَّهُمَّ عَافِنِي فِي سَمْعِي اللَّهُمَّ عَافِنِي فِي بَصَرِي لَا إِلَهَ إِلَّا أَنْتَ",
+      "source": "Abu Dawud 5090",
+      "repeat": 3,
+      "timing": "both",
+      "benefit": "Invocation de protection complète pour le corps et les sens."
+    },
+    {
+      "id": 23,
+      "text": "« Ô Allah, je cherche refuge auprès de Toi contre la mécréance et la pauvreté, et je cherche refuge auprès de Toi contre le châtiment de la tombe. Il n'y a de divinité que Toi. »",
+      "arabic": "اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الْكُفْرِ وَالْفَقْرِ وَأَعُوذُ بِكَ مِنْ عَذَابِ الْقَبْرِ لَا إِلَهَ إِلَّا أَنْتَ",
+      "source": "Abu Dawud 5090",
+      "repeat": 3,
+      "timing": "both",
+      "benefit": "Protection contre les plus grands maux religieux et mondains."
+    },
+    {
+      "id": 24,
+      "text": "« Ô Allah, je Te demande une science utile, une bonne subsistance et des œuvres acceptées. »",
+      "arabic": "اللَّهُمَّ إِنِّي أَسْأَلُكَ عِلْمًا نَافِعًا وَرِزْقًا طَيِّبًا وَعَمَلًا مُتَقَبَّلًا",
+      "source": "Ibn Majah 925",
+      "repeat": 1,
+      "timing": "morning",
+      "benefit": "Regroupe les fondements du succès : العلم، الرزق، العمل."
+    }
+  ]
