@@ -26,5 +26,12 @@
     "id": "605798891",
     "name": "Coran complet",
     "author": "الشيخ ماهر المعيقلي"
+  },
+   {
+    "id": "custom_sourates",
+    "name": "Recitation du Coran",
+    "author": "Recitateur",
+    "type": "custom",
+    "playlistURL": "https://firebasestorage.googleapis.com/v0/b/locationbibi.firebasestorage.app/o/sourate_9.aac?alt=media&token=f8e1e41a-4f3b-47b2-a9dd-581cb9fc11ea"
   }
 ]
