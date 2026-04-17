@@ -10,72 +10,54 @@ import Foundation
 import CoreLocation
 import Combine
 import SwiftUI
+import MapKit
 
 class CompassManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     
     // MARK: - Propriétés Publiques (@Published)
     @Published var userLocation: CLLocation?
-    @Published var cityName: String = "Recherche..."
-    @Published var heading: Double = 0.0
-    @Published var qiblaAngle: Double = 0.0
-    @Published var isCorrectDirection = false
-    private var cancellables = Set<AnyCancellable>()
-    
-    /// Écart angulaire absolu avec la Qiblah (0° = parfaitement aligné)
-    @Published var angularOffset: Double = 180.0
-    
-    /// Niveau de proximité 0→4 (4 = aligné, 0 = loin)
-    /// Utilisé par la View pour piloter l'animation de la Kaaba et le glow
-    @Published var proximityLevel: Int = 0
+        @Published var cityName: String = String(localized: "Recherche...")
+        @Published var heading: Double = 0.0
+        @Published var qiblaAngle: Double = 0.0
+        @Published var isCorrectDirection = false
+        @Published var angularOffset: Double = 180.0
+        @Published var proximityLevel: Int = 0
 
-    // MARK: - Propriétés Privées
-    private let locationManager = CLLocationManager()
-    
+        private let locationManager = CLLocationManager()
     private let meccaLatitude  = 21.4225 * .pi / 180
     private let meccaLongitude = 39.8262 * .pi / 180
     
     /// Palier précédent pour ne pas re-trigger le même haptic en boucle
-    private var lastHapticLevel: Int = 0
+        private var lastHapticLevel: Int = 0
+        private var cancellables = Set<AnyCancellable>()
 
     // MARK: - Initialisation
     override init() {
-        super.init()
-        locationManager.delegate = self
-        locationManager.desiredAccuracy = kCLLocationAccuracyBest
-        
-        // Utilise le shared manager pour la location
-        SharedLocationManager.shared.requestPermissionAndStart()
-        // Observe via Combine
-        SharedLocationManager.shared.$currentLocation
-            .compactMap { $0 }
-            .sink { [weak self] location in
-                Task { @MainActor in
-                    let angle = self?.calculateQiblaAngle(for: location) ?? 0
-                    self?.userLocation = location
-                    self?.qiblaAngle = angle
-                    if self?.cityName == "Recherche..." {
-                        self?.cityName = await location.fetchCityName()
+            super.init()
+            locationManager.delegate = self
+            // On ne gère que le Heading ici
+            
+            SharedLocationManager.shared.$currentLocation
+                .compactMap { $0 }
+                .sink { [weak self] location in
+                    Task { @MainActor in
+                        self?.userLocation = location
+                        self?.qiblaAngle = self?.calculateQiblaAngle(for: location) ?? 0
+                        if self?.cityName == String(localized: "Recherche...") {
+                            self?.cityName = await location.fetchCityName()
+                        }
                     }
                 }
-            }
-            .store(in: &cancellables)
-    }
-    
-    var distanceToMecca: Double {
-        guard let loc = userLocation else { return 0 }
-        let mecca = CLLocation(latitude: 21.4225, longitude: 39.8262)
-        return loc.distance(from: mecca) / 1000 // en km
-    }
-    // MARK: - Start / Stop
-    func startCompass() {
-        locationManager.startUpdatingHeading()
-        locationManager.startUpdatingLocation()
-    }
-    
-    func stopCompass() {
-        locationManager.stopUpdatingHeading()
-        locationManager.stopUpdatingLocation()
-    }
+                .store(in: &cancellables)
+        }
+
+        func startCompass() {
+            locationManager.startUpdatingHeading()
+        }
+        
+        func stopCompass() {
+            locationManager.stopUpdatingHeading()
+        }
     
     // MARK: - Haptic Progressif
     
@@ -129,26 +111,6 @@ class CompassManager: NSObject, ObservableObject, CLLocationManagerDelegate {
         }
     }
 
-    // MARK: - Délégué : Location
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        guard let location = locations.last else { return }
-        
-        let calculatedAngle = calculateQiblaAngle(for: location)
-        
-        Task { @MainActor in
-            self.userLocation = location
-            self.qiblaAngle = calculatedAngle
-            
-            if self.cityName == "Recherche..." {
-                self.cityName = await location.fetchCityName()
-            }
-        }
-    }
-    
-    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        print("⚠️ [CompassManager] Erreur GPS : \(error.localizedDescription)")
-    }
-
     // MARK: - Calcul Qiblah
     private func calculateQiblaAngle(for location: CLLocation) -> Double {
         let latA = location.coordinate.latitude * .pi / 180
@@ -198,10 +160,12 @@ class CompassManager: NSObject, ObservableObject, CLLocationManagerDelegate {
 // MARK: - Reverse Geocoding
 extension CLLocation {
     func fetchCityName() async -> String {
-        let geocoder = CLGeocoder()
+        guard let request = MKReverseGeocodingRequest(location: self) else {
+            return "Local"
+        }
         do {
-            let placemarks = try await geocoder.reverseGeocodeLocation(self)
-            if let city = placemarks.first?.locality {
+            let mapItems = try await request.mapItems
+            if let city = mapItems.first?.addressRepresentations?.cityName {
                 return city
             } else {
                 return "Local"

@@ -7,27 +7,26 @@
 import SwiftUI
 
 struct RawatibCardView: View {
-    // On passe le nom de la prochaine prière (ou la prière actuelle)
-    var nextPrayer: String
-    
-    // 🧠 La logique qui associe le texte à la prière
-    private var rawatibInfo: (title: String, text: String, icon: String) {
-        switch nextPrayer.lowercased() {
-        case "fajr":
-            return ("Sunnah du Fajr", "2 Rak'at très méritoires avant l'obligatoire.", "sun.and.horizon.fill")
-        case "dhuhr":
-            return ("Rawatib du Dhuhr", "4 Rak'at avant, et 2 Rak'at après.", "sun.max.fill")
-        case "asr":
-            // Comme tu l'as précisé, pas de Rawatib stricte, on met un beau rappel
-            return ("Autour de l'Asr", "Pas de Rawatib, mais l'invocation entre l'Adhan et l'Iqama est exaucée.", "sun.dust.fill")
-        case "maghrib":
-            return ("Rawatib du Maghrib", "2 Rak'at après l'obligatoire.", "sunset.fill")
-        case "isha":
-            return ("Clôture de la journée", "2 Rak'at après l'Isha, puis clôturez par le Witr.", "moon.stars.fill")
-        default:
-            return ("La Prière", "Accomplissez la prière à son heure.", "sparkles")
+    var prayerContext: String // Ancien nextPrayer
+        
+        private var rawatibInfo: (title: String, text: String, icon: String) {
+            switch prayerContext.lowercased() {
+            case "fajr":
+                return (String(localized: "Sunnah du Fajr"), String(localized: "2 Rak'at très méritoires avant l'obligatoire."), "sun.and.horizon.fill")
+            case "dhuhr":
+                return (String(localized: "Rawatib du Dhuhr"), String(localized: "4 Rak'at avant, et 2 Rak'at après."), "sun.max.fill")
+            case "jumu'ah":
+                return (String(localized: "Jumu'ah"), String(localized: "Priere du Vendredi. Sourate Al-Kahf recommandee."), "building.columns.fill")
+            case "asr":
+                return (String(localized: "Autour de l'Asr"), String(localized: "Pas de Rawatib, mais l'invocation entre l'Adhan et l'Iqama est exaucée."), "sun.dust.fill")
+            case "maghrib":
+                return (String(localized: "Rawatib du Maghrib"), String(localized: "2 Rak'at après l'obligatoire."), "sunset.fill")
+            case "isha":
+                return (String(localized: "Clôture de la nuit"), String(localized: "2 Rak'at après l'Isha, puis clôturez par le Witr."), "moon.stars.fill")
+            default:
+                return (String(localized: "La Prière"), String(localized: "Accomplissez la prière à son heure."), "sparkles")
+            }
         }
-    }
     
     var body: some View {
         HStack(spacing: 16) {
@@ -64,6 +63,6 @@ struct RawatibCardView: View {
                 .stroke(Color.orange.opacity(0.3), lineWidth: 1)
         )
         // Petite animation quand le texte change
-        .animation(.easeInOut, value: nextPrayer)
+        .animation(.easeInOut, value: prayerContext)
     }
 }

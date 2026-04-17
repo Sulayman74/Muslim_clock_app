@@ -7,12 +7,55 @@
 		<key>Muslim Clock.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
+			<integer>3</integer>
+		</dict>
+		<key>PrayerComplicationExtension.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
 			<integer>0</integer>
 		</dict>
 		<key>SalatWidgetExtension.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>1</integer>
+		</dict>
+		<key>WatchExtension Watch App.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>2</integer>
+		</dict>
+	</dict>
+	<key>SuppressBuildableAutocreation</key>
+	<dict>
+		<key>2364938D2F76918E00788B1B</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>2384F4B82F7BEE910045A1C4</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>23E7B1AD2F8962DD00007F2B</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>23E7B1B92F8962DF00007F2B</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>23E7B1C32F8962DF00007F2B</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>23E7B1E72F8E9BFE00007F2B</key>
+		<dict>
+			<key>primary</key>
+			<true/>
 		</dict>
 	</dict>
 </dict>

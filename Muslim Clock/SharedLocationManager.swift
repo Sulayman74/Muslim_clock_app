@@ -20,8 +20,10 @@ class SharedLocationManager: NSObject, ObservableObject, CLLocationManagerDelega
     override private init() {
         super.init()
         manager.delegate = self
-        // Précision à 3km près (suffisant pour les prières, économise la batterie)
         manager.desiredAccuracy = kCLLocationAccuracyThreeKilometers
+        // 🔥 FIX : on ne reçoit une update QUE si on a bougé de 500m au moins
+        // → plus de faux positifs à cause du bruit GPS
+        manager.distanceFilter = 500
     }
     
     func requestPermissionAndStart() {

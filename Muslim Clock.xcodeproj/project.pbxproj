@@ -7,11 +7,19 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2311F18C2F7BFD7900BF077A /* Adhan in Frameworks */ = {isa = PBXBuildFile; productRef = 2311F18B2F7BFD7900BF077A /* Adhan */; };
 		2384F4BC2F7BEE910045A1C4 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2384F4BB2F7BEE910045A1C4 /* WidgetKit.framework */; };
 		2384F4BE2F7BEE910045A1C4 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2384F4BD2F7BEE910045A1C4 /* SwiftUI.framework */; };
 		2384F4CF2F7BEE930045A1C4 /* SalatWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 2384F4B92F7BEE910045A1C4 /* SalatWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		23DE21D32F76C36600AF62D8 /* Adhan in Frameworks */ = {isa = PBXBuildFile; productRef = 23DE21D22F76C36600AF62D8 /* Adhan */; };
+		23E7B1CE2F8962DF00007F2B /* WatchExtension Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 23E7B1AE2F8962DD00007F2B /* WatchExtension Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		23E7B1E92F8E9BFE00007F2B /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2384F4BB2F7BEE910045A1C4 /* WidgetKit.framework */; };
+		23E7B1EA2F8E9BFE00007F2B /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2384F4BD2F7BEE910045A1C4 /* SwiftUI.framework */; };
+		23E7B1F72F8E9C0000007F2B /* PrayerComplicationExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 23E7B1E82F8E9BFE00007F2B /* PrayerComplicationExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		23E7B2012F8E9E9E00007F2B /* WatchConnectivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 23E7B2002F8E9E9E00007F2B /* WatchConnectivity.framework */; };
+		23E7B2032F8E9EB000007F2B /* WatchConnectivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 23E7B2022F8E9EB000007F2B /* WatchConnectivity.framework */; };
+		23ED2F3B2F8F72F6003C6005 /* Adhan in Frameworks */ = {isa = PBXBuildFile; productRef = 23ED2F3A2F8F72F6003C6005 /* Adhan */; };
+		23ED2F3D2F8F7305003C6005 /* Adhan in Frameworks */ = {isa = PBXBuildFile; productRef = 23ED2F3C2F8F7305003C6005 /* Adhan */; };
+		23ED2F3F2F8F730C003C6005 /* Adhan in Frameworks */ = {isa = PBXBuildFile; productRef = 23ED2F3E2F8F730C003C6005 /* Adhan */; };
+		23ED2F412F8F7314003C6005 /* Adhan in Frameworks */ = {isa = PBXBuildFile; productRef = 23ED2F402F8F7314003C6005 /* Adhan */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -36,6 +44,41 @@
 			remoteGlobalIDString = 2384F4B82F7BEE910045A1C4;
 			remoteInfo = SalatWidgetExtension;
 		};
+		23E7B1BB2F8962DF00007F2B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 236493862F76918E00788B1B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 23E7B1AD2F8962DD00007F2B;
+			remoteInfo = "WatchExtension Watch App";
+		};
+		23E7B1C52F8962DF00007F2B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 236493862F76918E00788B1B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 23E7B1AD2F8962DD00007F2B;
+			remoteInfo = "WatchExtension Watch App";
+		};
+		23E7B1CC2F8962DF00007F2B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 236493862F76918E00788B1B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 23E7B1AD2F8962DD00007F2B;
+			remoteInfo = "WatchExtension Watch App";
+		};
+		23E7B1DE2F8963A600007F2B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 236493862F76918E00788B1B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2384F4B82F7BEE910045A1C4;
+			remoteInfo = SalatWidgetExtension;
+		};
+		23E7B1F52F8E9C0000007F2B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 236493862F76918E00788B1B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 23E7B1E72F8E9BFE00007F2B;
+			remoteInfo = PrayerComplicationExtension;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -50,6 +93,28 @@
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		23E7B1CF2F8962DF00007F2B /* Embed Watch Content */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
+			dstSubfolderSpec = 16;
+			files = (
+				23E7B1CE2F8962DF00007F2B /* WatchExtension Watch App.app in Embed Watch Content */,
+			);
+			name = "Embed Watch Content";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		23E7B1FC2F8E9C0000007F2B /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				23E7B1F72F8E9C0000007F2B /* PrayerComplicationExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
@@ -60,6 +125,13 @@
 		2384F4BB2F7BEE910045A1C4 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		2384F4BD2F7BEE910045A1C4 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		2384F4D52F7BF3DD0045A1C4 /* SalatWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SalatWidgetExtension.entitlements; sourceTree = "<group>"; };
+		23E7B1AE2F8962DD00007F2B /* WatchExtension Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "WatchExtension Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		23E7B1BA2F8962DF00007F2B /* WatchExtension Watch AppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "WatchExtension Watch AppTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		23E7B1C42F8962DF00007F2B /* WatchExtension Watch AppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "WatchExtension Watch AppUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		23E7B1E82F8E9BFE00007F2B /* PrayerComplicationExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = PrayerComplicationExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		23E7B2002F8E9E9E00007F2B /* WatchConnectivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WatchConnectivity.framework; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS26.4.sdk/System/Library/Frameworks/WatchConnectivity.framework; sourceTree = DEVELOPER_DIR; };
+		23E7B2022F8E9EB000007F2B /* WatchConnectivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WatchConnectivity.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.4.sdk/System/Library/Frameworks/WatchConnectivity.framework; sourceTree = DEVELOPER_DIR; };
+		23F902452F8FDD08001645A2 /* PrayerComplicationExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PrayerComplicationExtension.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -77,6 +149,20 @@
 				SalatWidget.swift,
 			);
 			target = 2364938D2F76918E00788B1B /* Muslim Clock */;
+		};
+		23E7B1FB2F8E9C0000007F2B /* Exceptions for "PrayerComplication" folder in "PrayerComplicationExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 23E7B1E72F8E9BFE00007F2B /* PrayerComplicationExtension */;
+		};
+		23ED2F452F8F7720003C6005 /* Exceptions for "PrayerComplication" folder in "WatchExtension Watch App" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				PrayerComplication.swift,
+			);
+			target = 23E7B1AD2F8962DD00007F2B /* WatchExtension Watch App */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
@@ -105,6 +191,30 @@
 			path = SalatWidget;
 			sourceTree = "<group>";
 		};
+		23E7B1AF2F8962DD00007F2B /* WatchExtension Watch App */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "WatchExtension Watch App";
+			sourceTree = "<group>";
+		};
+		23E7B1BD2F8962DF00007F2B /* WatchExtension Watch AppTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "WatchExtension Watch AppTests";
+			sourceTree = "<group>";
+		};
+		23E7B1C72F8962DF00007F2B /* WatchExtension Watch AppUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "WatchExtension Watch AppUITests";
+			sourceTree = "<group>";
+		};
+		23E7B1EB2F8E9BFE00007F2B /* PrayerComplication */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				23ED2F452F8F7720003C6005 /* Exceptions for "PrayerComplication" folder in "WatchExtension Watch App" target */,
+				23E7B1FB2F8E9C0000007F2B /* Exceptions for "PrayerComplication" folder in "PrayerComplicationExtension" target */,
+			);
+			path = PrayerComplication;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -112,7 +222,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				23DE21D32F76C36600AF62D8 /* Adhan in Frameworks */,
+				23E7B2032F8E9EB000007F2B /* WatchConnectivity.framework in Frameworks */,
+				23ED2F3D2F8F7305003C6005 /* Adhan in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -134,9 +245,42 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2311F18C2F7BFD7900BF077A /* Adhan in Frameworks */,
+				23ED2F3B2F8F72F6003C6005 /* Adhan in Frameworks */,
 				2384F4BE2F7BEE910045A1C4 /* SwiftUI.framework in Frameworks */,
 				2384F4BC2F7BEE910045A1C4 /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		23E7B1AB2F8962DD00007F2B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				23E7B2012F8E9E9E00007F2B /* WatchConnectivity.framework in Frameworks */,
+				23ED2F412F8F7314003C6005 /* Adhan in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		23E7B1B72F8962DF00007F2B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		23E7B1C12F8962DF00007F2B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		23E7B1E52F8E9BFE00007F2B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				23ED2F3F2F8F730C003C6005 /* Adhan in Frameworks */,
+				23E7B1EA2F8E9BFE00007F2B /* SwiftUI.framework in Frameworks */,
+				23E7B1E92F8E9BFE00007F2B /* WidgetKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -146,11 +290,16 @@
 		236493852F76918E00788B1B = {
 			isa = PBXGroup;
 			children = (
+				23F902452F8FDD08001645A2 /* PrayerComplicationExtension.entitlements */,
 				2384F4D52F7BF3DD0045A1C4 /* SalatWidgetExtension.entitlements */,
 				236493902F76918E00788B1B /* Muslim Clock */,
 				2364939E2F76918F00788B1B /* Muslim ClockTests */,
 				236493A82F76918F00788B1B /* Muslim ClockUITests */,
 				2384F4BF2F7BEE910045A1C4 /* SalatWidget */,
+				23E7B1AF2F8962DD00007F2B /* WatchExtension Watch App */,
+				23E7B1BD2F8962DF00007F2B /* WatchExtension Watch AppTests */,
+				23E7B1C72F8962DF00007F2B /* WatchExtension Watch AppUITests */,
+				23E7B1EB2F8E9BFE00007F2B /* PrayerComplication */,
 				2384F4BA2F7BEE910045A1C4 /* Frameworks */,
 				2364938F2F76918E00788B1B /* Products */,
 			);
@@ -163,6 +312,10 @@
 				2364939B2F76918F00788B1B /* Muslim ClockTests.xctest */,
 				236493A52F76918F00788B1B /* Muslim ClockUITests.xctest */,
 				2384F4B92F7BEE910045A1C4 /* SalatWidgetExtension.appex */,
+				23E7B1AE2F8962DD00007F2B /* WatchExtension Watch App.app */,
+				23E7B1BA2F8962DF00007F2B /* WatchExtension Watch AppTests.xctest */,
+				23E7B1C42F8962DF00007F2B /* WatchExtension Watch AppUITests.xctest */,
+				23E7B1E82F8E9BFE00007F2B /* PrayerComplicationExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -170,6 +323,8 @@
 		2384F4BA2F7BEE910045A1C4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				23E7B2002F8E9E9E00007F2B /* WatchConnectivity.framework */,
+				23E7B2022F8E9EB000007F2B /* WatchConnectivity.framework */,
 				2384F4BB2F7BEE910045A1C4 /* WidgetKit.framework */,
 				2384F4BD2F7BEE910045A1C4 /* SwiftUI.framework */,
 			);
@@ -187,18 +342,20 @@
 				2364938B2F76918E00788B1B /* Frameworks */,
 				2364938C2F76918E00788B1B /* Resources */,
 				2384F4D42F7BEE930045A1C4 /* Embed Foundation Extensions */,
+				23E7B1CF2F8962DF00007F2B /* Embed Watch Content */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 				2384F4CE2F7BEE930045A1C4 /* PBXTargetDependency */,
+				23E7B1CD2F8962DF00007F2B /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				236493902F76918E00788B1B /* Muslim Clock */,
 			);
 			name = "Muslim Clock";
 			packageProductDependencies = (
-				23DE21D22F76C36600AF62D8 /* Adhan */,
+				23ED2F3C2F8F7305003C6005 /* Adhan */,
 			);
 			productName = "Muslim Clock";
 			productReference = 2364938E2F76918E00788B1B /* Muslim Clock.app */;
@@ -267,10 +424,105 @@
 			);
 			name = SalatWidgetExtension;
 			packageProductDependencies = (
-				2311F18B2F7BFD7900BF077A /* Adhan */,
+				23ED2F3A2F8F72F6003C6005 /* Adhan */,
 			);
 			productName = SalatWidgetExtension;
 			productReference = 2384F4B92F7BEE910045A1C4 /* SalatWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		23E7B1AD2F8962DD00007F2B /* WatchExtension Watch App */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 23E7B1D62F8962DF00007F2B /* Build configuration list for PBXNativeTarget "WatchExtension Watch App" */;
+			buildPhases = (
+				23E7B1AA2F8962DD00007F2B /* Sources */,
+				23E7B1AB2F8962DD00007F2B /* Frameworks */,
+				23E7B1AC2F8962DD00007F2B /* Resources */,
+				23E7B1FC2F8E9C0000007F2B /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				23E7B1DF2F8963A600007F2B /* PBXTargetDependency */,
+				23E7B1F62F8E9C0000007F2B /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				23E7B1AF2F8962DD00007F2B /* WatchExtension Watch App */,
+			);
+			name = "WatchExtension Watch App";
+			packageProductDependencies = (
+				23ED2F402F8F7314003C6005 /* Adhan */,
+			);
+			productName = "WatchExtension Watch App";
+			productReference = 23E7B1AE2F8962DD00007F2B /* WatchExtension Watch App.app */;
+			productType = "com.apple.product-type.application";
+		};
+		23E7B1B92F8962DF00007F2B /* WatchExtension Watch AppTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 23E7B1D72F8962DF00007F2B /* Build configuration list for PBXNativeTarget "WatchExtension Watch AppTests" */;
+			buildPhases = (
+				23E7B1B62F8962DF00007F2B /* Sources */,
+				23E7B1B72F8962DF00007F2B /* Frameworks */,
+				23E7B1B82F8962DF00007F2B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				23E7B1BC2F8962DF00007F2B /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				23E7B1BD2F8962DF00007F2B /* WatchExtension Watch AppTests */,
+			);
+			name = "WatchExtension Watch AppTests";
+			packageProductDependencies = (
+			);
+			productName = "WatchExtension Watch AppTests";
+			productReference = 23E7B1BA2F8962DF00007F2B /* WatchExtension Watch AppTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		23E7B1C32F8962DF00007F2B /* WatchExtension Watch AppUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 23E7B1D82F8962DF00007F2B /* Build configuration list for PBXNativeTarget "WatchExtension Watch AppUITests" */;
+			buildPhases = (
+				23E7B1C02F8962DF00007F2B /* Sources */,
+				23E7B1C12F8962DF00007F2B /* Frameworks */,
+				23E7B1C22F8962DF00007F2B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				23E7B1C62F8962DF00007F2B /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				23E7B1C72F8962DF00007F2B /* WatchExtension Watch AppUITests */,
+			);
+			name = "WatchExtension Watch AppUITests";
+			packageProductDependencies = (
+			);
+			productName = "WatchExtension Watch AppUITests";
+			productReference = 23E7B1C42F8962DF00007F2B /* WatchExtension Watch AppUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+		23E7B1E72F8E9BFE00007F2B /* PrayerComplicationExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 23E7B1F82F8E9C0000007F2B /* Build configuration list for PBXNativeTarget "PrayerComplicationExtension" */;
+			buildPhases = (
+				23E7B1E42F8E9BFE00007F2B /* Sources */,
+				23E7B1E52F8E9BFE00007F2B /* Frameworks */,
+				23E7B1E62F8E9BFE00007F2B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				23E7B1EB2F8E9BFE00007F2B /* PrayerComplication */,
+			);
+			name = PrayerComplicationExtension;
+			packageProductDependencies = (
+				23ED2F3E2F8F730C003C6005 /* Adhan */,
+			);
+			productName = PrayerComplicationExtension;
+			productReference = 23E7B1E82F8E9BFE00007F2B /* PrayerComplicationExtension.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
@@ -280,8 +532,8 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 2630;
-				LastUpgradeCheck = 2630;
+				LastSwiftUpdateCheck = 2640;
+				LastUpgradeCheck = 2640;
 				TargetAttributes = {
 					2364938D2F76918E00788B1B = {
 						CreatedOnToolsVersion = 26.3;
@@ -297,6 +549,20 @@
 					2384F4B82F7BEE910045A1C4 = {
 						CreatedOnToolsVersion = 26.3;
 					};
+					23E7B1AD2F8962DD00007F2B = {
+						CreatedOnToolsVersion = 26.4;
+					};
+					23E7B1B92F8962DF00007F2B = {
+						CreatedOnToolsVersion = 26.4;
+						TestTargetID = 23E7B1AD2F8962DD00007F2B;
+					};
+					23E7B1C32F8962DF00007F2B = {
+						CreatedOnToolsVersion = 26.4;
+						TestTargetID = 23E7B1AD2F8962DD00007F2B;
+					};
+					23E7B1E72F8E9BFE00007F2B = {
+						CreatedOnToolsVersion = 26.4;
+					};
 				};
 			};
 			buildConfigurationList = 236493892F76918E00788B1B /* Build configuration list for PBXProject "Muslim Clock" */;
@@ -309,7 +575,7 @@
 			mainGroup = 236493852F76918E00788B1B;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				23DE21D12F76C36600AF62D8 /* XCRemoteSwiftPackageReference "adhan-swift" */,
+				23ED2F392F8F72F6003C6005 /* XCRemoteSwiftPackageReference "adhan-swift" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 2364938F2F76918E00788B1B /* Products */;
@@ -320,6 +586,10 @@
 				2364939A2F76918F00788B1B /* Muslim ClockTests */,
 				236493A42F76918F00788B1B /* Muslim ClockUITests */,
 				2384F4B82F7BEE910045A1C4 /* SalatWidgetExtension */,
+				23E7B1AD2F8962DD00007F2B /* WatchExtension Watch App */,
+				23E7B1B92F8962DF00007F2B /* WatchExtension Watch AppTests */,
+				23E7B1C32F8962DF00007F2B /* WatchExtension Watch AppUITests */,
+				23E7B1E72F8E9BFE00007F2B /* PrayerComplicationExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -347,6 +617,34 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		2384F4B72F7BEE910045A1C4 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		23E7B1AC2F8962DD00007F2B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		23E7B1B82F8962DF00007F2B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		23E7B1C22F8962DF00007F2B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		23E7B1E62F8E9BFE00007F2B /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -384,6 +682,34 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		23E7B1AA2F8962DD00007F2B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		23E7B1B62F8962DF00007F2B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		23E7B1C02F8962DF00007F2B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		23E7B1E42F8E9BFE00007F2B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -401,6 +727,31 @@
 			isa = PBXTargetDependency;
 			target = 2384F4B82F7BEE910045A1C4 /* SalatWidgetExtension */;
 			targetProxy = 2384F4CD2F7BEE930045A1C4 /* PBXContainerItemProxy */;
+		};
+		23E7B1BC2F8962DF00007F2B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 23E7B1AD2F8962DD00007F2B /* WatchExtension Watch App */;
+			targetProxy = 23E7B1BB2F8962DF00007F2B /* PBXContainerItemProxy */;
+		};
+		23E7B1C62F8962DF00007F2B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 23E7B1AD2F8962DD00007F2B /* WatchExtension Watch App */;
+			targetProxy = 23E7B1C52F8962DF00007F2B /* PBXContainerItemProxy */;
+		};
+		23E7B1CD2F8962DF00007F2B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 23E7B1AD2F8962DD00007F2B /* WatchExtension Watch App */;
+			targetProxy = 23E7B1CC2F8962DF00007F2B /* PBXContainerItemProxy */;
+		};
+		23E7B1DF2F8963A600007F2B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2384F4B82F7BEE910045A1C4 /* SalatWidgetExtension */;
+			targetProxy = 23E7B1DE2F8963A600007F2B /* PBXContainerItemProxy */;
+		};
+		23E7B1F62F8E9C0000007F2B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 23E7B1E72F8E9BFE00007F2B /* PrayerComplicationExtension */;
+			targetProxy = 23E7B1F52F8E9C0000007F2B /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -439,6 +790,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = 7X8L4VHPLH;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -462,6 +814,7 @@
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -501,6 +854,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 7X8L4VHPLH;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -517,6 +871,7 @@
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 			};
 			name = Release;
@@ -529,6 +884,7 @@
 				CODE_SIGN_ENTITLEMENTS = "Muslim Clock/Muslim Clock.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = 7X8L4VHPLH;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -589,6 +945,7 @@
 				CODE_SIGN_ENTITLEMENTS = "Muslim Clock/Muslim Clock.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = 7X8L4VHPLH;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -647,6 +1004,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = 7X8L4VHPLH;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
@@ -673,6 +1031,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = 7X8L4VHPLH;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
@@ -698,6 +1057,7 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = 7X8L4VHPLH;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
@@ -723,6 +1083,7 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = 7X8L4VHPLH;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
@@ -810,6 +1171,236 @@
 			};
 			name = Release;
 		};
+		23E7B1D02F8962DF00007F2B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "WatchExtension Watch App/WatchExtension Watch App.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 7X8L4VHPLH;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Muslim Clock";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = "kappsi.Muslim-Clock";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "kappsi.Muslim-Clock.watchkitapp";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 26.4;
+			};
+			name = Debug;
+		};
+		23E7B1D12F8962DF00007F2B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "WatchExtension Watch App/WatchExtension Watch App.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 7X8L4VHPLH;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Muslim Clock";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = "kappsi.Muslim-Clock";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "kappsi.Muslim-Clock.watchkitapp";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				VALIDATE_PRODUCT = YES;
+				WATCHOS_DEPLOYMENT_TARGET = 26.4;
+			};
+			name = Release;
+		};
+		23E7B1D22F8962DF00007F2B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 7X8L4VHPLH;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "kappsi.WatchExtension-Watch-AppTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WatchExtension Watch App.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/WatchExtension Watch App";
+				WATCHOS_DEPLOYMENT_TARGET = 26.4;
+			};
+			name = Debug;
+		};
+		23E7B1D32F8962DF00007F2B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 7X8L4VHPLH;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "kappsi.WatchExtension-Watch-AppTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WatchExtension Watch App.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/WatchExtension Watch App";
+				VALIDATE_PRODUCT = YES;
+				WATCHOS_DEPLOYMENT_TARGET = 26.4;
+			};
+			name = Release;
+		};
+		23E7B1D42F8962DF00007F2B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 7X8L4VHPLH;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "kappsi.WatchExtension-Watch-AppUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				TEST_TARGET_NAME = "WatchExtension Watch App";
+				WATCHOS_DEPLOYMENT_TARGET = 26.4;
+			};
+			name = Debug;
+		};
+		23E7B1D52F8962DF00007F2B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 7X8L4VHPLH;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "kappsi.WatchExtension-Watch-AppUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				TEST_TARGET_NAME = "WatchExtension Watch App";
+				VALIDATE_PRODUCT = YES;
+				WATCHOS_DEPLOYMENT_TARGET = 26.4;
+			};
+			name = Release;
+		};
+		23E7B1F92F8E9C0000007F2B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = PrayerComplicationExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 7X8L4VHPLH;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = PrayerComplication/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = PrayerComplication;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "kappsi.Muslim-Clock.watchkitapp.PrayerComplication";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 26.4;
+			};
+			name = Debug;
+		};
+		23E7B1FA2F8E9C0000007F2B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = PrayerComplicationExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 7X8L4VHPLH;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = PrayerComplication/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = PrayerComplication;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "kappsi.Muslim-Clock.watchkitapp.PrayerComplication";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				VALIDATE_PRODUCT = YES;
+				WATCHOS_DEPLOYMENT_TARGET = 26.4;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -858,10 +1449,46 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		23E7B1D62F8962DF00007F2B /* Build configuration list for PBXNativeTarget "WatchExtension Watch App" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				23E7B1D02F8962DF00007F2B /* Debug */,
+				23E7B1D12F8962DF00007F2B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		23E7B1D72F8962DF00007F2B /* Build configuration list for PBXNativeTarget "WatchExtension Watch AppTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				23E7B1D22F8962DF00007F2B /* Debug */,
+				23E7B1D32F8962DF00007F2B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		23E7B1D82F8962DF00007F2B /* Build configuration list for PBXNativeTarget "WatchExtension Watch AppUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				23E7B1D42F8962DF00007F2B /* Debug */,
+				23E7B1D52F8962DF00007F2B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		23E7B1F82F8E9C0000007F2B /* Build configuration list for PBXNativeTarget "PrayerComplicationExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				23E7B1F92F8E9C0000007F2B /* Debug */,
+				23E7B1FA2F8E9C0000007F2B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		23DE21D12F76C36600AF62D8 /* XCRemoteSwiftPackageReference "adhan-swift" */ = {
+		23ED2F392F8F72F6003C6005 /* XCRemoteSwiftPackageReference "adhan-swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/batoulapps/adhan-swift";
 			requirement = {
@@ -872,14 +1499,24 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		2311F18B2F7BFD7900BF077A /* Adhan */ = {
+		23ED2F3A2F8F72F6003C6005 /* Adhan */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 23DE21D12F76C36600AF62D8 /* XCRemoteSwiftPackageReference "adhan-swift" */;
+			package = 23ED2F392F8F72F6003C6005 /* XCRemoteSwiftPackageReference "adhan-swift" */;
 			productName = Adhan;
 		};
-		23DE21D22F76C36600AF62D8 /* Adhan */ = {
+		23ED2F3C2F8F7305003C6005 /* Adhan */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 23DE21D12F76C36600AF62D8 /* XCRemoteSwiftPackageReference "adhan-swift" */;
+			package = 23ED2F392F8F72F6003C6005 /* XCRemoteSwiftPackageReference "adhan-swift" */;
+			productName = Adhan;
+		};
+		23ED2F3E2F8F730C003C6005 /* Adhan */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 23ED2F392F8F72F6003C6005 /* XCRemoteSwiftPackageReference "adhan-swift" */;
+			productName = Adhan;
+		};
+		23ED2F402F8F7314003C6005 /* Adhan */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 23ED2F392F8F72F6003C6005 /* XCRemoteSwiftPackageReference "adhan-swift" */;
 			productName = Adhan;
 		};
 /* End XCSwiftPackageProductDependency section */

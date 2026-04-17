@@ -21,6 +21,21 @@ struct CuratedAudioSeries: Codable {
     let id: String
     let name: String
     let author: String
+    let type: String?        // "apple" (defaut) ou "custom"
+    let playlistURL: String? // URL du JSON playlist (pour type == "custom")
+}
+
+// Modele pour les playlists custom (S3 / Firebase / CDN)
+struct CustomPlaylist: Codable {
+    let title: String
+    let author: String
+    let artworkURL: String?
+    let episodes: [CustomEpisode]
+}
+
+struct CustomEpisode: Codable {
+    let title: String
+    let audioURL: String
 }
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -37,6 +52,7 @@ class PodcastManager: NSObject, ObservableObject, XMLParserDelegate {
     
     // MARK: - Épisodes & Métadonnées
     @Published var episodes: [PodcastEpisode] = []
+    @Published var failedToLoad: Bool = false
     @Published var podcastTitle: String = "Chargement..."
     @Published var podcastAuthor: String = ""
     @Published var podcastArtworkURL: URL? = nil
@@ -56,6 +72,10 @@ class PodcastManager: NSObject, ObservableObject, XMLParserDelegate {
     @Published var playbackRate: Float = 1.0
     @Published var isSeeking: Bool = false
     var activeSeriesIndex: Int { currentSeriesIndex }
+    
+    // ✨ NOUVEAU : Gestion de la pop-up de review
+    @Published var showReviewPopup: Bool = false
+    @Published var completedSeriesName: String = ""
     
     // MARK: - Privé
     private var player: AVPlayer?
@@ -105,6 +125,9 @@ class PodcastManager: NSObject, ObservableObject, XMLParserDelegate {
             
             // 4. On efface le lecteur de l'écran de verrouillage d'iOS
             MPNowPlayingInfoCenter.default().nowPlayingInfo = nil
+            
+            // ✅ 5. WAKE LOCK : Réactiver la mise en veille automatique
+            disableWakeLock()
         }
     
     // MARK: - Audio Session
@@ -112,15 +135,23 @@ class PodcastManager: NSObject, ObservableObject, XMLParserDelegate {
         do {
             try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default)
             try AVAudioSession.sharedInstance().setActive(true)
+            
+            // ✅ WAKE LOCK : Empêche la mise en veille pendant la lecture
+            UIApplication.shared.isIdleTimerDisabled = true
         } catch {
             print("❌ [Audio] AVAudioSession : \(error.localizedDescription)")
         }
     }
     
+    // MARK: - Désactiver le Wake Lock
+    private func disableWakeLock() {
+        UIApplication.shared.isIdleTimerDisabled = false
+    }
+    
     // MARK: - Fetch Podcast
     func fetchPodcast(appleID: String) async {
         guard episodes.isEmpty else { return }
-        
+
         let lookupURLString = "https://itunes.apple.com/lookup?id=\(appleID)&entity=podcast"
         guard let lookupURL = URL(string: lookupURLString),
               let (data, _) = try? await URLSession.shared.data(from: lookupURL),
@@ -129,19 +160,144 @@ class PodcastManager: NSObject, ObservableObject, XMLParserDelegate {
               let firstResult = results.first,
               let feedUrlString = firstResult["feedUrl"] as? String,
               let feedUrl = URL(string: feedUrlString) else {
+            self.failedToLoad = true
             return
         }
-        
+
         self.podcastTitle = firstResult["collectionName"] as? String ?? "Série de Cours"
         self.podcastAuthor = firstResult["artistName"] as? String ?? "Cheikh"
         if let artworkString = firstResult["artworkUrl600"] as? String {
             self.podcastArtworkURL = URL(string: artworkString)
         }
-        
-        guard let (xmlData, _) = try? await URLSession.shared.data(from: feedUrl) else { return }
+
+        guard let (xmlData, _) = try? await URLSession.shared.data(from: feedUrl) else {
+            self.failedToLoad = true
+            return
+        }
+        self.failedToLoad = false
         let parser = XMLParser(data: xmlData)
         parser.delegate = self
         parser.parse()
+    }
+
+    // MARK: - Fetch Custom Playlist (S3 / Firebase / CDN)
+    //
+    // Deux modes :
+    //   1) playlistURL pointe vers un JSON de playlist -> on decode les episodes
+    //   2) playlistURL pointe directement vers un fichier audio -> on cree 1 episode
+    //
+    func fetchCustomPlaylist(urlString: String, seriesName: String, seriesAuthor: String) async {
+        print("[CustomPlaylist] Debut chargement : \(urlString)")
+        guard episodes.isEmpty else {
+            print("[CustomPlaylist] Episodes deja charges, skip.")
+            return
+        }
+
+        // Detection : est-ce un fichier audio direct ou un JSON ?
+        let lowered = urlString.lowercased()
+        let audioExtensions = [".mp3", ".m4a", ".aac", ".wav", ".caf", ".ogg"]
+        let isDirectAudio = audioExtensions.contains(where: { lowered.contains($0) })
+
+        if isDirectAudio {
+            // Mode fichier audio direct
+            print("[CustomPlaylist] Mode AUDIO DIRECT detecte (pas un JSON)")
+            guard let url = URL(string: urlString) else {
+                print("[CustomPlaylist] URL invalide : \(urlString)")
+                self.failedToLoad = true
+                return
+            }
+            self.podcastTitle = seriesName
+            self.podcastAuthor = seriesAuthor
+            self.episodes = [PodcastEpisode(title: seriesName, audioURL: url)]
+            print("[CustomPlaylist] 1 episode cree : \(seriesName) -> \(url)")
+            self.failedToLoad = false
+            return
+        }
+
+        // Mode JSON playlist
+        print("[CustomPlaylist] Mode JSON PLAYLIST")
+        let filename = "playlist_\(urlString.hashValue).json"
+        print("[CustomPlaylist] Fichier cache local : \(filename)")
+
+        // Debug : fetch brut pour voir le contenu
+        if let url = URL(string: urlString) {
+            do {
+                let (rawData, response) = try await URLSession.shared.data(from: url)
+                let httpCode = (response as? HTTPURLResponse)?.statusCode ?? -1
+                let rawString = String(data: rawData, encoding: .utf8) ?? "(non-UTF8, \(rawData.count) octets — probablement un fichier audio, pas du JSON)"
+                print("[CustomPlaylist] HTTP \(httpCode) — Taille: \(rawData.count) octets")
+                print("[CustomPlaylist] Contenu brut (500 premiers chars):")
+                print(String(rawString.prefix(500)))
+            } catch {
+                print("[CustomPlaylist] Erreur fetch brut : \(error)")
+            }
+        }
+
+        guard let playlist = await RemoteJSONLoader.load(
+            filename: filename,
+            remoteURL: urlString,
+            type: CustomPlaylist.self
+        ) else {
+            print("[CustomPlaylist] ECHEC decodage JSON.")
+            print("[CustomPlaylist] Structure attendue :")
+            print("""
+            {
+              "title": "...",
+              "author": "...",
+              "artworkURL": "https://...",
+              "episodes": [
+                { "title": "Sourate 1", "audioURL": "https://...mp3" }
+              ]
+            }
+            """)
+            self.failedToLoad = true
+            return
+        }
+
+        print("[CustomPlaylist] Decode OK !")
+        print("[CustomPlaylist] Titre: \(playlist.title), Auteur: \(playlist.author)")
+        print("[CustomPlaylist] Nombre d'episodes: \(playlist.episodes.count)")
+
+        self.podcastTitle = playlist.title
+        self.podcastAuthor = playlist.author
+        if let artworkString = playlist.artworkURL, let artworkURL = URL(string: artworkString) {
+            self.podcastArtworkURL = artworkURL
+        }
+
+        self.episodes = playlist.episodes.compactMap { ep in
+            guard let url = URL(string: ep.audioURL) else {
+                print("[CustomPlaylist] URL invalide pour '\(ep.title)': \(ep.audioURL)")
+                return nil
+            }
+            print("[CustomPlaylist] Episode: \(ep.title) -> \(url)")
+            return PodcastEpisode(title: ep.title, audioURL: url)
+        }
+
+        print("[CustomPlaylist] Episodes charges: \(episodes.count)")
+        self.failedToLoad = episodes.isEmpty
+    }
+
+    // MARK: - Reconnexion réseau
+
+    /// Appelé quand la connexion est restaurée. Recharge si le premier chargement avait échoué.
+    func retryLoadIfNeeded() async {
+        guard failedToLoad || episodes.isEmpty else { return }
+        episodes     = []
+        failedToLoad = false
+        await loadSmartPodcast()
+    }
+
+    /// Reprend le buffer audio si AVPlayer était en attente (connexion coupée pendant la lecture).
+    func resumeBufferingIfStalled() {
+        guard isPlaying,
+              let player,
+              player.timeControlStatus == .waitingToPlayAtSpecifiedRate else { return }
+        let target = CMTime(seconds: currentTime, preferredTimescale: 600)
+        player.seek(to: target, toleranceBefore: .zero, toleranceAfter: .zero) { [weak self] _ in
+            Task { @MainActor [weak self] in
+                self?.player?.play()
+            }
+        }
     }
     
     // MARK: - XML Parser
@@ -194,7 +350,7 @@ class PodcastManager: NSObject, ObservableObject, XMLParserDelegate {
                     self.curatedSeriesList = remoteSeries
                 } else {
                     // Secours ultime si même le fichier dans l'application est introuvable
-                    self.curatedSeriesList = [CuratedAudioSeries(id: "1410186668", name: "Série par défaut", author: "")]
+                    self.curatedSeriesList = [CuratedAudioSeries(id: "1410186668", name: "Série par défaut", author: "", type: nil, playlistURL: nil)]
                 }
             }
             
@@ -203,12 +359,44 @@ class PodcastManager: NSObject, ObservableObject, XMLParserDelegate {
                 currentSeriesIndex = 0
             }
             
-            // 3. Lancement de la série cible
+            // 3. Affichage immédiat du nom/auteur depuis les données locales
             let targetSeries = curatedSeriesList[currentSeriesIndex]
-            await fetchPodcast(appleID: targetSeries.id)
-            calculateProgress()
+            if podcastTitle == "Chargement..." || podcastTitle.isEmpty {
+                self.podcastTitle = targetSeries.name
+            }
+            if podcastAuthor.isEmpty {
+                self.podcastAuthor = targetSeries.author
+            }
             
-            // ✅ REPRISE AUTOMATIQUE : si on a un bookmark pour cette série, on propose
+            // 4. Lancement du fetch : Apple Podcast ou playlist custom
+            print("[LoadSmart] Serie #\(currentSeriesIndex): id=\(targetSeries.id), type=\(targetSeries.type ?? "apple"), name=\(targetSeries.name)")
+            if let playlistURL = targetSeries.playlistURL {
+                print("[LoadSmart] playlistURL = \(playlistURL)")
+            }
+
+            if targetSeries.type == "custom", let playlistURL = targetSeries.playlistURL {
+                print("[LoadSmart] -> Mode CUSTOM")
+                await fetchCustomPlaylist(
+                    urlString: playlistURL,
+                    seriesName: targetSeries.name,
+                    seriesAuthor: targetSeries.author
+                )
+            } else {
+                print("[LoadSmart] -> Mode APPLE PODCAST (id: \(targetSeries.id))")
+                await fetchPodcast(appleID: targetSeries.id)
+            }
+            calculateProgress()
+
+            // Pre-telechargement en fond des episodes non caches
+            let uncachedURLs = episodes
+                .map(\.audioURL)
+                .filter { !AudioCacheManager.shared.isCached($0) }
+            if !uncachedURLs.isEmpty {
+                print("[Prefetch] \(uncachedURLs.count) episodes a cacher en fond...")
+                AudioCacheManager.shared.prefetch(uncachedURLs)
+            }
+
+            // REPRISE AUTOMATIQUE : si on a un bookmark pour cette serie, on propose
             restoreBookmarkIfNeeded()
         }
     // MARK: - Changement Manuel de Série
@@ -221,10 +409,13 @@ class PodcastManager: NSObject, ObservableObject, XMLParserDelegate {
             // 2. Mise à jour de l'index
             currentSeriesIndex = index
             
-            // 3. Réinitialisation de l'interface
+            // 3. Réinitialisation de l'interface avec les infos locales immédiates
+            let targetSeries = curatedSeriesList[index]
             self.episodes = []
             self.seriesProgress = 0.0
-            self.podcastTitle = "Chargement..."
+            self.podcastTitle = targetSeries.name
+            self.podcastAuthor = targetSeries.author
+            self.podcastArtworkURL = nil
             
             // 4. Chargement de la nouvelle série
             Task { await loadSmartPodcast() }
@@ -245,6 +436,7 @@ class PodcastManager: NSObject, ObservableObject, XMLParserDelegate {
         if !playedURLs.contains(urlString) {
             playedURLs.append(urlString)
             UserDefaults.standard.set(playedURLs, forKey: playedKey)
+            print("✅ [Progression] Épisode marqué : \(episode.title)")
             calculateProgress()
         }
     }
@@ -253,12 +445,28 @@ class PodcastManager: NSObject, ObservableObject, XMLParserDelegate {
         guard !episodes.isEmpty else { return }
         let playedCount = episodes.filter { isEpisodePlayed(episode: $0) }.count
         self.seriesProgress = Double(playedCount) / Double(episodes.count)
-        if self.seriesProgress >= 1.0 { moveToNextSeries() }
+        print("📊 [Progression] \(playedCount)/\(episodes.count) épisodes lus (\(Int(seriesProgress * 100))%)")
+        
+        // ✅ Si série terminée à 100%, on passe à la suivante
+        if self.seriesProgress >= 1.0 {
+            print("🎉 [Progression] Série complétée ! Passage à la suivante...")
+            moveToNextSeries()
+        }
     }
     
     private func moveToNextSeries() {
         let oldPlayedKey = playedKey
         let oldResumeKey = resumeKey
+        
+        // ✅ SAUVEGARDER LE NOM DE LA SÉRIE TERMINÉE
+        self.completedSeriesName = podcastTitle
+        
+        // ✅ AFFICHER LA POP-UP DE FÉLICITATIONS
+        Task { @MainActor in
+            // Petit délai pour laisser l'animation de fin se terminer
+            try? await Task.sleep(nanoseconds: 500_000_000) // 0.5s
+            self.showReviewPopup = true
+        }
         
         if currentSeriesIndex < curatedSeriesList.count - 1 {
             currentSeriesIndex += 1
@@ -270,10 +478,6 @@ class PodcastManager: NSObject, ObservableObject, XMLParserDelegate {
         UserDefaults.standard.removeObject(forKey: oldPlayedKey)
         UserDefaults.standard.removeObject(forKey: oldResumeKey)
         print("🧹 [Storage] Purgé : \(oldPlayedKey) et \(oldResumeKey)")
-        
-        Task { @MainActor in
-                requestReviewIfNeeded()
-            }
         
         self.episodes = []
         Task { await loadSmartPodcast() }
@@ -320,19 +524,22 @@ class PodcastManager: NSObject, ObservableObject, XMLParserDelegate {
         print("📌 [Resume] Bookmark trouvé : \(bookmark.episodeTitle) à \(Int(bookmark.position))s")
     }
     
-    /// Reprend la lecture depuis le bookmark (appelé par l'UI quand l'utilisateur tape "Reprendre")
+    /// Reprend la lecture depuis le bookmark (appele par l'UI quand l'utilisateur tape "Reprendre")
     func resumeFromBookmark() {
         guard let id = currentlyPlayingID,
               let episode = episodes.first(where: { $0.id == id }) else { return }
-        
+
         let savedPosition = currentTime
+        print("[Resume] Reprise de \(episode.title) a \(Int(savedPosition))s")
+
+        // Forcer la reconstruction du player (il est probablement mort)
+        cleanupObservers()
+        player = nil
+        currentlyPlayingID = nil
         togglePlay(episode: episode)
-        
-        // Attendre que le buffer soit prêt, puis seek à la position sauvegardée
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
-            self?.seek(to: savedPosition)
-            self?.currentTime = savedPosition
-        }
+
+        // Seek une fois le buffer pret
+        seekWhenReady(to: savedPosition)
     }
     
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -342,18 +549,39 @@ class PodcastManager: NSObject, ObservableObject, XMLParserDelegate {
     func togglePlay(episode: PodcastEpisode) {
         setupAudioSession()
         
-        // Si c'est le même épisode → toggle pause/play
+        // Si c'est le meme episode → toggle pause/play
         if currentlyPlayingID == episode.id {
             if isPlaying {
                 player?.pause()
                 isPlaying = false
-                // ✅ Sauvegarde immédiate à la pause
                 savePlaybackPosition()
-            } else {
+                disableWakeLock()
+                return
+            }
+
+            // Verifier que le player est encore vivant et utilisable
+            let playerAlive = player != nil
+                && player?.currentItem != nil
+                && player?.currentItem?.status == .readyToPlay
+
+            if playerAlive {
+                // Player encore bon → simple resume
                 player?.play()
                 player?.rate = playbackRate
                 isPlaying = true
+                setupAudioSession()
+                print("[Play] Resume simple (player vivant)")
+                return
             }
+
+            // Player mort (iOS l'a kill en background) → reconstruire depuis la position sauvegardee
+            print("[Play] Player mort apres background, reconstruction a \(Int(currentTime))s...")
+            let savedPosition = currentTime
+            cleanupObservers()
+            currentlyPlayingID = nil // Force togglePlay a creer un nouveau player
+            togglePlay(episode: episode)
+            // Seek a la position sauvegardee une fois le buffer pret
+            seekWhenReady(to: savedPosition)
             return
         }
         
@@ -368,8 +596,15 @@ class PodcastManager: NSObject, ObservableObject, XMLParserDelegate {
         self.duration = 0
         self.isBuffering = true
         self.saveCounter = 0
-        
-        let playerItem = AVPlayerItem(url: episode.audioURL)
+
+        // Cache agressif : lecture locale si deja telecharge, sinon stream + download en fond
+        let isCached = AudioCacheManager.shared.isCached(episode.audioURL)
+        let playURL = AudioCacheManager.shared.playableURL(for: episode.audioURL)
+        print("[Play] Episode: \(episode.title)")
+        print("[Play] URL originale: \(episode.audioURL)")
+        print("[Play] Cache: \(isCached ? "OUI (local)" : "NON (stream)")")
+        print("[Play] URL lecture: \(playURL)")
+        let playerItem = AVPlayerItem(url: playURL)
         
         // Observer : statut du buffer
         statusObserver = playerItem.observe(\.status, options: [.new]) { [weak self] item, _ in
@@ -416,6 +651,17 @@ class PodcastManager: NSObject, ObservableObject, XMLParserDelegate {
                     if self.duration == 0 && itemDur.isFinite && itemDur > 0 {
                         self.duration = itemDur
                     }
+                    
+                    // ✅ MARQUAGE AUTOMATIQUE À 90% DE L'ÉPISODE
+                    // Si l'utilisateur arrive à 90%, on considère qu'il a terminé
+                    if itemDur > 0 && seconds / itemDur >= 0.9 {
+                        if let id = self.currentlyPlayingID,
+                           let ep = self.episodes.first(where: { $0.id == id }),
+                           !self.isEpisodePlayed(episode: ep) {
+                            print("✅ [Auto-Mark] Épisode marqué comme lu à 90%")
+                            self.markAsPlayed(episode: ep)
+                        }
+                    }
                 }
                 
                 // ✅ Sauvegarde toutes les ~10 secondes (0.5s × 20 ticks)
@@ -435,6 +681,13 @@ class PodcastManager: NSObject, ObservableObject, XMLParserDelegate {
         ) { [weak self] _ in
             Task { @MainActor [weak self] in
                 guard let self else { return }
+                
+                // ✅ MARQUER L'ÉPISODE COMME TERMINÉ
+                if let currentID = self.currentlyPlayingID,
+                   let completedEpisode = self.episodes.first(where: { $0.id == currentID }) {
+                    self.markAsPlayed(episode: completedEpisode)
+                }
+                
                 // ✅ Épisode terminé → on supprime le bookmark
                 UserDefaults.standard.removeObject(forKey: self.resumeKey)
                 self.playNextEpisode()
@@ -503,6 +756,50 @@ class PodcastManager: NSObject, ObservableObject, XMLParserDelegate {
     }
     
     // MARK: - Nettoyage
+    // Seek robuste : attend que le player soit pret avant de seek
+    private func seekWhenReady(to seconds: Double) {
+        // Polling : verifie toutes les 200ms si le player est pret
+        func attemptSeek(remaining: Int) {
+            guard remaining > 0 else {
+                print("[SeekWhenReady] Timeout, seek force a \(Int(seconds))s")
+                self.seek(to: seconds)
+                self.currentTime = seconds
+                return
+            }
+
+            if player?.currentItem?.status == .readyToPlay {
+                print("[SeekWhenReady] Player pret, seek a \(Int(seconds))s")
+                self.seek(to: seconds)
+                self.currentTime = seconds
+            } else {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in
+                    self?.seekWhenReady(to: seconds, remaining: remaining - 1)
+                }
+            }
+        }
+        attemptSeek(remaining: 25) // 25 x 200ms = 5s max
+    }
+
+    // Surcharge pour l'appel initial
+    private func seekWhenReady(to seconds: Double, remaining: Int) {
+        guard remaining > 0 else {
+            print("[SeekWhenReady] Timeout, seek force a \(Int(seconds))s")
+            self.seek(to: seconds)
+            self.currentTime = seconds
+            return
+        }
+
+        if player?.currentItem?.status == .readyToPlay {
+            print("[SeekWhenReady] Player pret, seek a \(Int(seconds))s")
+            self.seek(to: seconds)
+            self.currentTime = seconds
+        } else {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in
+                self?.seekWhenReady(to: seconds, remaining: remaining - 1)
+            }
+        }
+    }
+
     private func cleanupObservers() {
         statusObserver?.invalidate()
         statusObserver = nil
@@ -581,22 +878,6 @@ class PodcastManager: NSObject, ObservableObject, XMLParserDelegate {
         }
     }
 }
-@MainActor
-func requestReviewIfNeeded() {
-    let key = "lastReviewRequestDate"
-    let now = Date()
-    
-    if let lastDate = UserDefaults.standard.object(forKey: key) as? Date {
-        let days = Calendar.current.dateComponents([.day], from: lastDate, to: now).day ?? 0
-        if days < 30 { return }
-    }
-    
-    if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
-        if #available(iOS 18.0, *) {
-            AppStore.requestReview(in: scene)
-        } else {
-            SKStoreReviewController.requestReview(in: scene)
-        }
-        UserDefaults.standard.set(now, forKey: key)
-    }
-}
+
+
+

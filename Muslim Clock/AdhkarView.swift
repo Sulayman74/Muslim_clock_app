@@ -35,8 +35,8 @@ enum AdhkarTiming: String, CaseIterable {
     
     var labelFr: String {
         switch self {
-        case .morning: return "Adhkar du Matin"
-        case .evening: return "Adhkar du Soir"
+        case .morning: return String(localized: "Adhkar du Matin")
+        case .evening: return String(localized: "Adhkar du Soir")
         }
     }
     
@@ -62,56 +62,141 @@ enum AdhkarTiming: String, CaseIterable {
 @MainActor
 class AdhkarService: ObservableObject {
     @Published var adhkarList: [Dhikr] = []
-    @Published var completedCounts: [Int: Int] = [:]  // [dhikr.id: nombre de fois complétées]
-    
-    /// Timing auto-détecté selon l'heure
+    @Published var completedCounts: [Int: Int] = [:]
+
+    /// Timing courant, mémorisé pour sauvegarder vers la bonne clé
+    private var currentTiming: AdhkarTiming = .morning
+
+    /// Heures réelles fournies par PrayerTimesViewModel
+    private var storedFajr: Date? = nil
+    private var storedAsr:  Date? = nil
+
+    /// Met à jour les limites de période depuis PrayerTimesViewModel.
+    /// À appeler avant loadAdhkar pour que autoTiming et currentPeriodID soient précis.
+    func setPrayerBoundaries(fajr: Date?, asr: Date?) {
+        storedFajr = fajr
+        storedAsr  = asr
+    }
+
+    // MARK: - Clés UserDefaults
+
+    private func countsKey(for timing: AdhkarTiming) -> String {
+        "adhkar_counts_\(timing.rawValue)"
+    }
+
+    private func periodKey(for timing: AdhkarTiming) -> String {
+        "adhkar_period_\(timing.rawValue)"
+    }
+
+    /// Identifiant unique de la période active :
+    /// - Matin  → "morning-YYYY-MM-DD"  (Fajr est toujours avant minuit)
+    /// - Soir   → "evening-YYYY-MM-DD"  (peut déborder après minuit jusqu'à ~4h)
+    private func currentPeriodID(for timing: AdhkarTiming) -> String {
+        let cal = Calendar.current
+        let fmt = DateFormatter()
+        fmt.dateFormat = "yyyy-MM-dd"
+        switch timing {
+        case .morning:
+            return "morning-\(fmt.string(from: Date()))"
+        case .evening:
+            // On est encore dans le soir si maintenant < Fajr d'aujourd'hui
+            // Fallback : hour < 4 si storedFajr n'est pas encore disponible
+            let now = Date()
+            let isBeforeFajr: Bool
+            if let fajr = storedFajr {
+                isBeforeFajr = now < fajr
+            } else {
+                isBeforeFajr = cal.component(.hour, from: now) < 4
+            }
+            let ref = isBeforeFajr ? cal.date(byAdding: .day, value: -1, to: now)! : now
+            return "evening-\(fmt.string(from: ref))"
+        }
+    }
+
+    // MARK: - Persistence
+
+    /// Sérialise completedCounts → UserDefaults (String keys car plist l'exige)
+    private func saveCounts() {
+        let stringKeyed: [String: Int] = Dictionary(uniqueKeysWithValues:
+            completedCounts.map { ("\($0.key)", $0.value) }
+        )
+        UserDefaults.standard.set(stringKeyed, forKey: countsKey(for: currentTiming))
+    }
+
+    /// Restaure les compteurs si la période n'a pas changé, sinon remet à zéro.
+    /// Appelée après avoir initialisé adhkarList et completedCounts à 0.
+    private func applyOrResetCounts(for timing: AdhkarTiming) {
+        let savedPeriod  = UserDefaults.standard.string(forKey: periodKey(for: timing)) ?? ""
+        let activePeriod = currentPeriodID(for: timing)
+
+        if savedPeriod == activePeriod,
+           let saved = UserDefaults.standard.dictionary(forKey: countsKey(for: timing)) as? [String: Int] {
+            // Même période → fusion des valeurs sauvegardées dans les adhkar actuels
+            for (key, val) in saved {
+                if let id = Int(key), completedCounts[id] != nil {
+                    completedCounts[id] = val
+                }
+            }
+        } else {
+            // Nouvelle période (Fajr ou Asr est passé) → 0 + enregistrement de la période
+            UserDefaults.standard.set(activePeriod, forKey: periodKey(for: timing))
+            saveCounts()
+        }
+    }
+
+    // MARK: - API publique
+
+    /// Timing auto-détecté.
+    /// Utilise les heures réelles de Fajr/Asr si disponibles, sinon heuristique horaire.
     var autoTiming: AdhkarTiming {
-        let hour = Calendar.current.component(.hour, from: Date())
-        // Matin : entre Fajr (~4-5h) et le début d'après-midi
-        // Soir : après Asr (~15-16h) jusqu'à la nuit
+        let now = Date()
+        if let fajr = storedFajr, let asr = storedAsr {
+            return now >= fajr && now < asr ? .morning : .evening
+        }
+        // Fallback quand PrayerTimesViewModel n'a pas encore calculé
+        let hour = Calendar.current.component(.hour, from: now)
         return (hour >= 4 && hour < 15) ? .morning : .evening
     }
-    
+
     func loadAdhkar(for timing: AdhkarTiming) {
+        currentTiming = timing
+
         guard let url = Bundle.main.url(forResource: "adhkar", withExtension: "json"),
               let data = try? Data(contentsOf: url),
               let allAdhkar = try? JSONDecoder().decode([Dhikr].self, from: data) else {
             return
         }
-        
-        self.adhkarList = allAdhkar.filter { dhikr in
-            dhikr.timing == "both" || dhikr.timing == timing.rawValue
-        }
-        
-        // Reset les compteurs
-        self.completedCounts = [:]
-        for dhikr in adhkarList {
-            completedCounts[dhikr.id] = 0
-        }
+
+        adhkarList = allAdhkar.filter { $0.timing == "both" || $0.timing == timing.rawValue }
+
+        // Base : tous à 0, puis restauration ou reset selon la période
+        completedCounts = Dictionary(uniqueKeysWithValues: adhkarList.map { ($0.id, 0) })
+        applyOrResetCounts(for: timing)
     }
-    
+
     func increment(dhikr: Dhikr) {
         let current = completedCounts[dhikr.id] ?? 0
         if current < dhikr.repeat {
             completedCounts[dhikr.id] = current + 1
+            saveCounts()  // Sauvegarde immédiate après chaque tap
         }
     }
-    
+
     func isCompleted(dhikr: Dhikr) -> Bool {
         (completedCounts[dhikr.id] ?? 0) >= dhikr.repeat
     }
-    
+
     var totalDhikrs: Int { adhkarList.count }
-    
+
     var completedDhikrs: Int {
         adhkarList.filter { isCompleted(dhikr: $0) }.count
     }
-    
+
     var progress: Double {
         guard totalDhikrs > 0 else { return 0 }
         return Double(completedDhikrs) / Double(totalDhikrs)
     }
-    
+
     var allCompleted: Bool {
         completedDhikrs == totalDhikrs && totalDhikrs > 0
     }
@@ -123,6 +208,7 @@ class AdhkarService: ObservableObject {
 
 struct AdhkarView: View {
     @StateObject private var service = AdhkarService()
+    @EnvironmentObject var prayerVM: PrayerTimesViewModel
     @State private var selectedTiming: AdhkarTiming = .morning
     @State private var showArabic: [Int: Bool] = [:]
     @State private var showBenefit: [Int: Bool] = [:]
@@ -159,7 +245,11 @@ struct AdhkarView: View {
             }
         }
         .onAppear {
+            // 1. Injecter les heures réelles avant de déterminer le timing
+            service.setPrayerBoundaries(fajr: prayerVM.fajrDate, asr: prayerVM.asrDate)
+            // 2. Détecter matin/soir avec les vraies heures de Fajr/Asr
             selectedTiming = service.autoTiming
+            // 3. Charger (restaure ou réinitialise selon la période)
             service.loadAdhkar(for: selectedTiming)
         }
         .onChange(of: selectedTiming) { _, newTiming in
@@ -221,11 +311,11 @@ struct AdhkarView: View {
     private var progressBar: some View {
         VStack(spacing: 6) {
             HStack {
-                Text("\(service.completedDhikrs)/\(service.totalDhikrs) complétés")
+                Text(verbatim: "\(service.completedDhikrs)/\(service.totalDhikrs) \(String(localized: "complétés"))")
                     .font(.system(size: 12, weight: .medium, design: .rounded))
                     .foregroundColor(.white.opacity(0.6))
                 Spacer()
-                Text("\(Int(service.progress * 100))%")
+                Text(verbatim: "\(Int(service.progress * 100))%")
                     .font(.system(size: 12, weight: .bold, design: .rounded))
                     .foregroundColor(selectedTiming.accentColor)
             }
@@ -260,7 +350,7 @@ struct AdhkarView: View {
                 .font(.system(size: 50))
                 .foregroundColor(.green)
             
-            Text("تقبّل الله")
+            Text(verbatim: "تقبّل الله")
                 .font(.system(size: 28, weight: .bold))
                 .foregroundColor(.white)
             
@@ -299,7 +389,7 @@ struct DhikrCardView: View {
             
             // ── TEXTE ARABE ──
             if showArabic {
-                Text(dhikr.arabic)
+                Text(verbatim: dhikr.arabic)
                     .font(.system(size: 20, weight: .regular))
                     .multilineTextAlignment(.trailing)
                     .environment(\.layoutDirection, .rightToLeft)
@@ -310,7 +400,7 @@ struct DhikrCardView: View {
             
             // ── TEXTE FRANÇAIS ──
             if !showArabic {
-                Text(dhikr.text)
+                Text(verbatim: dhikr.text)
                     .font(.system(size: 14, weight: .regular, design: .serif))
                     .italic()
                     .multilineTextAlignment(.leading)
@@ -320,7 +410,7 @@ struct DhikrCardView: View {
             
             // ── BIENFAIT (EXPANDABLE) ──
             if showBenefit {
-                Text(dhikr.benefit)
+                Text(verbatim: dhikr.benefit)
                     .font(.system(size: 12, weight: .medium, design: .rounded))
                     .foregroundColor(accentColor.opacity(0.8))
                     .padding(10)
@@ -332,7 +422,7 @@ struct DhikrCardView: View {
             // ── BARRE DU BAS : Source + Boutons + Compteur ──
             HStack(spacing: 10) {
                 // Source
-                Text(dhikr.source)
+                Text(verbatim: dhikr.source)
                     .font(.system(size: 10, weight: .medium))
                     .foregroundColor(.white.opacity(0.4))
                 
@@ -340,7 +430,7 @@ struct DhikrCardView: View {
                 
                 // Toggle langue
                 Button(action: onToggleArabic) {
-                    Text(showArabic ? "FR" : "عربي")
+                    Text(verbatim: showArabic ? "FR" : "عربي")
                         .font(.system(size: 10, weight: .bold, design: .rounded))
                         .padding(.horizontal, 8)
                         .padding(.vertical, 3)
@@ -363,7 +453,7 @@ struct DhikrCardView: View {
                                 .foregroundColor(.green)
                                 .font(.system(size: 18))
                         } else {
-                            Text("\(count)/\(dhikr.repeat)")
+                            Text(verbatim: "\(count)/\(dhikr.repeat)")
                                 .font(.system(size: 14, weight: .bold, design: .monospaced))
                                 .foregroundColor(.white)
                         }
@@ -414,10 +504,15 @@ struct DhikrCardView: View {
 
 struct AdhkarQuickAccessButton: View {
     @State private var showAdhkarSheet = false
-    
-    /// Auto-détecte matin ou soir
+    @EnvironmentObject var prayerVM: PrayerTimesViewModel
+
+    /// Détecte matin/soir avec les heures réelles de Fajr/Asr si disponibles
     private var timing: AdhkarTiming {
-        let hour = Calendar.current.component(.hour, from: Date())
+        let now = Date()
+        if let fajr = prayerVM.fajrDate, let asr = prayerVM.asrDate {
+            return now >= fajr && now < asr ? .morning : .evening
+        }
+        let hour = Calendar.current.component(.hour, from: now)
         return (hour >= 4 && hour < 15) ? .morning : .evening
     }
     
@@ -466,9 +561,10 @@ struct AdhkarQuickAccessButton: View {
                     endPoint: .bottom
                 )
                 .ignoresSafeArea()
-                
+
                 AdhkarView()
             }
+            .environmentObject(prayerVM)  // Transmission des heures de prière à la sheet
             .presentationDragIndicator(.visible)
         }
     }

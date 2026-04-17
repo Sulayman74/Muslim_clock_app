@@ -1,0 +1,164 @@
+[
+  {
+    "id": 1,
+    "text": "Je demande pardon à Allah.",
+    "arabic": "أَسْتَغْفِرُ اللَّهَ",
+    "source": "Sahih Muslim 591",
+    "repeat": 3,
+    "prayer": "all",
+    "benefit": "Efface les petits péchés liés aux manquements dans la prière."
+  },
+  {
+    "id": 2,
+    "text": "Ô Allah, Tu es la Paix et de Toi vient la Paix. Béni sois-Tu, ô Détenteur de la majesté et de la munificence.",
+    "arabic": "اللَّهُمَّ أَنْتَ السَّلَامُ وَمِنْكَ السَّلَامُ، تَبَارَكْتَ يَا ذَا الْجَلَالِ وَالْإِكْرَامِ",
+    "source": "Sahih Muslim 592",
+    "repeat": 1,
+    "prayer": "all",
+    "benefit": "Invoque la paix et la bénédiction divine."
+  },
+  {
+    "id": 3,
+    "text": "Il n'y a de divinité digne d'être adorée qu'Allah, Seul, sans associé. À Lui la royauté, à Lui la louange, et Il est Omnipotent.",
+    "arabic": "لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ",
+    "source": "Sahih Al-Bukhari 844",
+    "repeat": 1,
+    "prayer": "all",
+    "benefit": "Proclamation de l'Unicité absolue d'Allah."
+  },
+  {
+    "id": 4,
+    "text": "Gloire à Allah",
+    "arabic": "سُبْحَانَ اللَّهِ",
+    "source": "Sahih Muslim 595",
+    "repeat": 33,
+    "prayer": "all",
+    "benefit": "Purifie l'âme."
+  },
+  {
+    "id": 5,
+    "text": "Louange à Allah",
+    "arabic": "الْحَمْدُ لِلَّهِ",
+    "source": "Sahih Muslim 595",
+    "repeat": 33,
+    "prayer": "all",
+    "benefit": "Exprime la gratitude."
+  },
+  {
+    "id": 6,
+    "text": "Allah est le plus Grand",
+    "arabic": "اللَّهُ أَكْبَرُ",
+    "source": "Sahih Muslim 595",
+    "repeat": 33,
+    "prayer": "all",
+    "benefit": "Reconnaissance de la grandeur absolue d'Allah."
+  },
+  {
+    "id": 7,
+    "text": "Il n'y a de divinité digne d'adoration qu'Allah, Seul, sans associé. À Lui la royauté et la louange, et Il est Capable de toute chose.",
+    "arabic": "لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ",
+    "source": "Sahih Muslim 597",
+    "repeat": 1,
+    "prayer": "all",
+    "benefit": "Clôture la centaine. Les péchés sont pardonnés, même s'ils sont comme l'écume de la mer."
+  },
+  {
+    "id": 8,
+    "text": "Allah ! Point de divinité à part Lui, le Vivant, Celui qui subsiste par Lui-même. Ni somnolence ni sommeil ne Le saisissent. À Lui appartient tout ce qui est dans les cieux et sur la terre. Qui peut intercéder auprès de Lui sans Sa permission ? Il connaît leur passé et leur futur. Et, de Sa science, ils n’embrassent que ce qu’Il veut. Son Trône déborde les cieux et la terre, dont la garde ne Lui coûte aucune peine. Et Il est le Très Haut, le Très Grand.",
+    "arabic": "اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ ۚ لَا تَأْخُذُهُ سِنَةٌ وَلَا نَوْمٌ ۚ لَهُ مَا فِي السَّمَاوَاتِ وَمَا فِي الْأَرْضِ ۗ مَنْ ذَا الَّذِي يَشْفَعُ عِنْدَهُ إِلَّا بِإِذْنِهِ ۚ يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ ۖ وَلَا يُحِيطُونَ بِشَيْءٍ مِنْ عِلْمِهِ إِلَّا بِمَا شَاءَ ۚ وَسِعَ كُرْسِيُّهُ السَّمَاوَاتِ وَالْأَرْضَ ۖ وَلَا يَئُودُهُ حِفْظُهُمَا ۚ وَهُوَ الْعَلِيُّ الْعَظِيمُ",
+    "source": "Sourate Al-Baqara 2:255",
+    "repeat": 1,
+    "prayer": "all",
+    "benefit": "Rien ne sépare celui qui le récite du Paradis, si ce n'est la mort."
+  },
+  {
+    "id": 9,
+    "text": "Ô Allah, je Te demande une science utile, une bonne subsistance et une œuvre acceptée.",
+    "arabic": "اللَّهُمَّ إِنِّي أَسْأَلُكَ عِلْمًا نَافِعًا، وَرِزْقًا طَيِّبًا، وَعَمَلًا مُتَقَبَّلًا",
+    "source": "Sunan Ibn Majah 925",
+    "repeat": 1,
+    "prayer": "fajr",
+    "benefit": "Spécifique après le Fajr pour bénir la journée."
+  },
+  {
+    "id": 10,
+    "text": "Il n'y a de divinité digne d'être adorée qu'Allah, Seul sans associé. À Lui appartient la royauté et à Lui la louange. Il donne la vie et Il donne la mort, et Il est capable de toute chose.",
+    "arabic": "لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ، يُحْيِي وَيُمِيتُ، وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ",
+    "source": "Jami' at-Tirmidhi 3474",
+    "repeat": 10,
+    "prayer": "fajr_maghrib",
+    "benefit": "Protection et récompense immenses le matin et le soir."
+  },
+  {
+    "id": 11,
+    "text": "Ô Allah, protège-moi du feu de l'Enfer.",
+    "arabic": "اللَّهُمَّ أَجِرْنِي مِنَ النَّارِ",
+    "source": "Sunan Abi Dawud 5079",
+    "repeat": 7,
+    "prayer": "fajr_maghrib",
+    "benefit": "Protection contre le feu de l'Enfer."
+  },
+  {
+    "id": 12,
+    "text": "Sourates protectrices : Al-Ikhlas, Al-Falaq et An-Nas",
+    "arabic": "قُلْ هُوَ اللَّهُ أَحَدٌ، قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ، قُلْ أَعُوذُ بِرَبِّ النَّاسِ",
+    "source": "Abu Dawud, At-Tirmidhi",
+    "repeat": 1,
+    "prayer": "all",
+    "benefit": "Protection contre tout mal (3 fois après Fajr et Maghrib)."
+  },
+  {
+    "id": 13,
+    "text": "Ô Allah, nul ne peut empêcher ce que Tu donnes, ni donner ce que Tu empêches, et la richesse du riche ne lui profite pas contre Toi.",
+    "arabic": "اللَّهُمَّ لَا مَانِعَ لِمَا أَعْطَيْتَ، وَلَا مُعْطِيَ لِمَا مَنَعْتَ، وَلَا يَنْفَعُ ذَا الْجَدِّ مِنْكَ الْجَدُّ",
+    "source": "Sahih Al-Bukhari 844",
+    "repeat": 1,
+    "prayer": "all",
+    "benefit": "Affirmation du décret d'Allah et soumission."
+  },
+  {
+    "id": 14,
+    "text": "Ô Allah, aide-moi à T’évoquer, à Te remercier et à bien T’adorer.",
+    "arabic": "اللَّهُمَّ أَعِنِّي عَلَى ذِكْرِكَ وَشُكْرِكَ وَحُسْنِ عِبَادَتِكَ",
+    "source": "Sunan Abi Dawud 1522",
+    "repeat": 1,
+    "prayer": "all",
+    "benefit": "Aide à améliorer l’adoration."
+  },
+  {
+    "id": 15,
+    "text": "Ô Allah, je cherche refuge auprès de Toi contre la mécréance et la pauvreté.",
+    "arabic": "اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الْكُفْرِ وَالْفَقْرِ",
+    "source": "Sunan Abi Dawud",
+    "repeat": 1,
+    "prayer": "all",
+    "benefit": "Protection contre les grands maux."
+  },
+  {
+    "id": 16,
+    "text": "Ô Allah ! À Toi revient la louange, Tu es la lumière des cieux et de la terre et de ceux qui s’y trouvent. À Toi la louange, Tu es le Soutien des cieux et de la terre et de ceux qui s’y trouvent. À Toi la louange, Tu es le Souverain des cieux et de la terre et de ceux qui s’y trouvent. À Toi la louange, Tu es la vérité, Ta promesse est vérité, Ta parole est vérité, Ta rencontre est vérité, le Paradis est vérité, l’Enfer est vérité, les prophètes sont vérité et Muhammad est vérité, et l’Heure est vérité. Ô Allah ! À Toi je me soumets, en Toi je crois, en Toi je place ma confiance, vers Toi je reviens, par Toi je dispute, et à Toi je demande jugement. Pardonne-moi mes péchés passés et futurs, ce que j’ai caché et ce que j’ai divulgué. Tu es Celui qui fait avancer et Celui qui retarde. Il n’y a pas de divinité digne d’adoration en dehors de Toi.",
+    "arabic": "اللَّهُمَّ لَكَ الْحَمْدُ أَنْتَ نُورُ السَّمَوَاتِ وَالْأَرْضِ وَمَنْ فِيهِنَّ، وَلَكَ الْحَمْدُ أَنْتَ قَيِّمُ السَّمَوَاتِ وَالْأَرْضِ وَمَنْ فِيهِنَّ، وَلَكَ الْحَمْدُ أَنْتَ مَلِكُ السَّمَوَاتِ وَالْأَرْضِ وَمَنْ فِيهِنَّ، وَلَكَ الْحَمْدُ أَنْتَ الْحَقُّ، وَوَعْدُكَ الْحَقُّ، وَقَوْلُكَ الْحَقُّ، وَلِقَاؤُكَ حَقٌّ، وَالْجَنَّةُ حَقٌّ، وَالنَّارُ حَقٌّ، وَالنَّبِيُّونَ حَقٌّ، وَمُحَمَّدٌ حَقٌّ، وَالسَّاعَةُ حَقٌّ، اللَّهُمَّ لَكَ أَسْلَمْتُ، وَبِكَ آمَنْتُ، وَعَلَيْكَ تَوَكَّلْتُ، وَإِلَيْكَ أَنَبْتُ، وَبِكَ خَاصَمْتُ، وَإِلَيْكَ حَاكَمْتُ، فَاغْفِرْ لِي مَا قَدَّمْتُ وَمَا أَخَّرْتُ، وَمَا أَسْرَرْتُ وَمَا أَعْلَنْتُ، أَنْتَ الْمُقَدِّمُ وَأَنْتَ الْمُؤَخِّرُ، لَا إِلَهَ إِلَّا أَنْتَ",
+    "source": "Sahih Al-Bukhari 1120",
+    "repeat": 1,
+    "prayer": "qiyam",
+    "benefit": "Invocation complète du Prophète ﷺ lorsqu'il se levait pour la prière de nuit."
+  },
+  {
+    "id": 17,
+    "text": "Seigneur, pardonne-moi et accepte mon repentir, car Tu es Celui qui accepte le repentir, le Clément.",
+    "arabic": "رَبِّ اغْفِرْ لِي وَتُبْ عَلَيَّ إِنَّكَ أَنْتَ التَّوَّابُ الرَّحِيمُ",
+    "source": "Sunan Abi Dawud (Sahih)",
+    "repeat": 100,
+    "prayer": "qiyam",
+    "benefit": "Très recommandé durant la nuit et pour le repentir."
+  },
+  {
+    "id": 18,
+    "text": "Gloire au Souverain, le Pur, le Saint.",
+    "arabic": "سُبْحَانَ الْمَلِكِ الْقُدُّوسِ",
+    "source": "An-Nasa'i (Sahih)",
+    "repeat": 3,
+    "prayer": "qiyam",
+    "benefit": "À dire après le Witr (la 3ème fois à voix haute)."
+  }
+]

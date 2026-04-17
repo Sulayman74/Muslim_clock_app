@@ -1,6 +1,6 @@
 import Foundation
-import Combine
 import SwiftUI
+import Combine
 
 // MARK: - Modèles API Coran
 struct QuranAPIResponse: Codable {
@@ -16,7 +16,7 @@ struct SurahData: Codable {
     let name: String?       // Nom arabe de la sourate (ex: الفاتحة)
 }
 
-// MARK: - Modèle JSON local
+// MARK: - Modèle JSON local Hadith
 struct CuratedHadith: Codable {
     let text: String
     let arabic: String
@@ -25,20 +25,11 @@ struct CuratedHadith: Codable {
     let season: String
 }
 
-
 // MARK: - Enum Season
 enum HadithSeason: String, CaseIterable {
-   case general
-   case ramadan
-   case hajj
-   case joumouha
-   case muharram
-   case shaban
-   case shawwal
+   case general, ramadan, hajj, joumouha, muharram, shaban, shawwal
    case lundiJeudi = "lundi_jeudi"
-   case matin
-   case soir
-    case aid
+   case matin, soir, aid
 }
 
 // MARK: - Service
@@ -49,6 +40,7 @@ class DailyContentService: ObservableObject {
     @Published var dailyAyah: String = "Chargement..."
     @Published var dailyAyahArabic: String = ""
     @Published var dailyAyahSource: String = ""
+    @Published var dailyAyahAudioURL: URL? = nil
     @Published var isFetchingQuran: Bool = false
     
     // Hadith
@@ -57,63 +49,57 @@ class DailyContentService: ObservableObject {
     @Published var dailyHadithSource: String = ""
     
     @Published var isLoading: Bool = true
+    /// `true` si le dernier chargement a échoué (réseau absent)
+    @Published var hasNetworkError: Bool = false
     
-    // MARK: - Calendrier Hégirien
+    // Calendrier Hégirien
     private let islamicCalendar: Calendar = {
         var cal = Calendar(identifier: .islamicUmmAlQura)
         cal.locale = Locale(identifier: "ar")
         return cal
     }()
     
-    // MARK: - Chargement Initial (Appel au lancement)
-        func fetchDailyContent() async {
-            self.isLoading = true
-            
-            // 1. HADITH local filtré par saison (Reste fixe toute la journée)
-           await loadSeasonalHadith()
-            
-            // 2. CORAN : On lance le premier chargement aléatoire
-            await fetchRandomQuranVerse()
-            
-            self.isLoading = false
-        }
-    // MARK: - 📖 CORAN : Totalement Aléatoire et sur demande
-        func fetchRandomQuranVerse() async {
-            // Active l'état de chargement pour l'UI (le bouton de refresh par exemple)
-            self.isFetchingQuran = true
-            
-            // 🚀 Vrai random (1 à 6236) à CHAQUE appel !
-            // (J'ai supprimé getDeterministicAyahNumber() qui bloquait le verset)
-            let randomAyahNumber = Int.random(in: 1...6236)
-            
-            async let frenchFetch = fetchAyah(number: randomAyahNumber, edition: "fr.hamidullah")
-            async let arabicFetch = fetchAyah(number: randomAyahNumber, edition: "quran-uthmani")
-            
-            let (frenchResult, arabicResult) = await (frenchFetch, arabicFetch)
-            
-            if let french = frenchResult {
-                self.dailyAyah = french.data.text
-                let surahName = french.data.surah.name ?? french.data.surah.englishName
-                self.dailyAyahSource = "Sourate \(french.data.surah.englishName) (\(surahName)), Verset \(french.data.numberInSurah)"
-            } else {
-                self.dailyAyah = "« Dieu est avec les patients. »"
-                self.dailyAyahSource = "Sourate Al-Baqara, Verset 153"
-            }
-            
-            if let arabic = arabicResult {
-                self.dailyAyahArabic = arabic.data.text
-            } else {
-                self.dailyAyahArabic = "إِنَّ اللَّهَ مَعَ الصَّابِرِينَ"
-            }
-            
-            self.isFetchingQuran = false
-        }
+    // MARK: - Chargement Initial
+    func fetchDailyContent() async {
+        self.isLoading = true
+        self.hasNetworkError = false
+        await loadSeasonalHadith()
+        await fetchRandomQuranVerse()
+        self.isLoading = false
+    }
     
-    // MARK: - Fetch générique
-    private func fetchAyah(number: Int, edition: String) async -> QuranAPIResponse? {
-        let urlString = "https://api.alquran.cloud/v1/ayah/\(number)/\(edition)"
-        guard let url = URL(string: urlString) else { return nil }
+    // MARK: - Coran aléatoire avec audio
+    func fetchRandomQuranVerse() async {
+        self.isFetchingQuran = true
+        let randomAyahNumber = Int.random(in: 1...6236)
+        self.dailyAyahAudioURL = URL(string: "https://cdn.islamic.network/quran/audio/128/ar.alafasy/\(randomAyahNumber).mp3")
         
+        async let frenchFetch = fetchAyah(number: randomAyahNumber, edition: "fr.hamidullah")
+        async let arabicFetch = fetchAyah(number: randomAyahNumber, edition: "quran-uthmani")
+        
+        let (frenchResult, arabicResult) = await (frenchFetch, arabicFetch)
+        
+        if let french = frenchResult {
+            self.dailyAyah = french.data.text
+            let surahName = french.data.surah.name ?? french.data.surah.englishName
+            self.dailyAyahSource = "Sourate \(french.data.surah.englishName) (\(surahName)), Verset \(french.data.numberInSurah)"
+        } else {
+            self.hasNetworkError = true
+            self.dailyAyah = "« Dieu est avec les patients. »"
+            self.dailyAyahSource = "Sourate Al-Baqara, Verset 153"
+        }
+        
+        if let arabic = arabicResult {
+            self.dailyAyahArabic = arabic.data.text
+        } else {
+            self.dailyAyahArabic = "إِنَّ اللَّهَ مَعَ الصَّابِرِينَ"
+        }
+        
+        self.isFetchingQuran = false
+    }
+    
+    private func fetchAyah(number: Int, edition: String) async -> QuranAPIResponse? {
+        guard let url = URL(string: "https://api.alquran.cloud/v1/ayah/\(number)/\(edition)") else { return nil }
         do {
             let (data, _) = try await URLSession.shared.data(from: url)
             return try JSONDecoder().decode(QuranAPIResponse.self, from: data)
@@ -123,113 +109,72 @@ class DailyContentService: ObservableObject {
         }
     }
     
-    // MARK: - Détection de la saison courante
-    
-    /// Retourne les seasons actives en ce moment (peut en avoir plusieurs)
+    // MARK: - Détection des saisons actives
     private func currentSeasons() -> [HadithSeason] {
         var seasons: [HadithSeason] = []
         let now = Date()
         
-        // ── Mois Hégirien ──
+        // Mois Hégirien
         let hijriMonth = islamicCalendar.component(.month, from: now)
-        
         switch hijriMonth {
-        case 1:  // Muharram
-            seasons.append(.muharram)
-        case 8:  // Sha'ban
-            seasons.append(.shaban)
-        case 9:  // Ramadan
-            seasons.append(.ramadan)
-        case 10: // Shawwal
-            seasons.append(.shawwal)
-        case 12: // Dhu al-Hijjah
-            seasons.append(.hajj)
-        default:
-            break
+        case 1: seasons.append(.muharram)
+        case 8: seasons.append(.shaban)
+        case 9: seasons.append(.ramadan)
+        case 10: seasons.append(.shawwal)
+        case 12: seasons.append(.hajj)
+        default: break
         }
         
-        // ── Jour de la semaine (grégorien) ──
-        let gregorian = Calendar(identifier: .gregorian)
-        let weekday = gregorian.component(.weekday, from: now) // 1=Dim, 2=Lun, ... 6=Ven, 7=Sam
-        
+        // Jour grégorien
+        let weekday = Calendar(identifier: .gregorian).component(.weekday, from: now)
         switch weekday {
-        case 6: // Vendredi
-            seasons.append(.joumouha)
-        case 2, 5: // Lundi, Jeudi
-            seasons.append(.lundiJeudi)
-        default:
-            break
+        case 6: seasons.append(.joumouha)
+        case 2,5: seasons.append(.lundiJeudi)
+        default: break
         }
         
-        // ── Moment de la journée ──
-        let hour = gregorian.component(.hour, from: now)
-        
-        if hour >= 4 && hour < 12 {
-            seasons.append(.matin)
-        } else if hour >= 17 || hour < 4 {
-            seasons.append(.soir)
-        }
+        // Moment de la journée
+        let hour = Calendar(identifier: .gregorian).component(.hour, from: now)
+        if hour >= 4 && hour < 12 { seasons.append(.matin) }
+        else if hour >= 17 || hour < 4 { seasons.append(.soir) }
         
         return seasons
     }
     
-    // MARK: - Chargement du Hadith saisonnier
+    // MARK: - Chargement du hadith saisonnier aléatoire
     private func loadSeasonalHadith() async {
         let githubURL = "https://sulayman74.github.io/Muslim_clock_app/hadiths.json"
         guard let allHadiths = await RemoteJSONLoader.load(
-                    filename: "hadiths.json",
-                    remoteURL: githubURL,
-                    type: [CuratedHadith].self
-                ) else {
-                    setFallbackHadith()
-                    return
-                }
-        
-        let activeSeasonsRaw = currentSeasons().map(\.rawValue)
-        
-        // 1. Filtrer les hadiths saisonniers (hors "general")
-        let seasonalHadiths = allHadiths.filter { h in
-            h.season != "general" && activeSeasonsRaw.contains(h.season)
+            filename: "hadiths.json",
+            remoteURL: githubURL,
+            type: [CuratedHadith].self
+        ) else {
+            self.hasNetworkError = true
+            setFallbackHadith()
+            return
         }
         
-        // 2. Sélection déterministe (même hadith toute la journée)
-        let chosenHadith: CuratedHadith
+        let activeSeasonsRaw = currentSeasons().map(\.rawValue)
+        let seasonalHadiths = allHadiths.filter { $0.season != "general" && activeSeasonsRaw.contains($0.season) }
+        let generalHadiths = allHadiths.filter { $0.season == "general" }
         
-        if !seasonalHadiths.isEmpty {
-            // 70% de chance de piocher un hadith saisonnier, 30% general
-            let seed = dailySeed()
-            var rng = SeededRandomNumberGenerator(seed: seed)
-            let roll = Int.random(in: 1...10, using: &rng)
-            
-            if roll <= 7 {
-                // Hadith saisonnier
-                let index = Int.random(in: 0..<seasonalHadiths.count, using: &rng)
-                chosenHadith = seasonalHadiths[index]
-            } else {
-                // Hadith general
-                let generalHadiths = allHadiths.filter { $0.season == "general" }
-                let index = Int.random(in: 0..<generalHadiths.count, using: &rng)
-                chosenHadith = generalHadiths[index]
-            }
+        let chosenHadith: CuratedHadith
+        if !seasonalHadiths.isEmpty && !generalHadiths.isEmpty {
+            // Le vendredi, on privilegie fortement les hadiths du joumouha (80%)
+            let isFriday = Calendar.current.component(.weekday, from: Date()) == 6
+            let seasonalWeight = isFriday ? 0.8 : 0.5
+            chosenHadith = Double.random(in: 0...1) < seasonalWeight
+                ? seasonalHadiths.randomElement()!
+                : generalHadiths.randomElement()!
+        } else if !seasonalHadiths.isEmpty {
+            chosenHadith = seasonalHadiths.randomElement()!
         } else {
-            // Pas de saison spéciale → general uniquement
-            let generalHadiths = allHadiths.filter { $0.season == "general" }
-            var rng = SeededRandomNumberGenerator(seed: dailySeed())
-            let index = Int.random(in: 0..<generalHadiths.count, using: &rng)
-            chosenHadith = generalHadiths[index]
+            chosenHadith = generalHadiths.randomElement()!
         }
         
         self.dailyHadith = chosenHadith.text
         self.dailyHadithArabic = chosenHadith.arabic
         self.dailyHadithSource = "\(chosenHadith.source) • \(chosenHadith.theme)"
-    }
-    
-    // MARK: - Seed déterministe par jour
-    private func dailySeed() -> UInt64 {
-        let gregorian = Calendar(identifier: .gregorian)
-        let components = gregorian.dateComponents([.year, .month, .day], from: Date())
-        let dayValue = (components.year ?? 2025) * 10000 + (components.month ?? 1) * 100 + (components.day ?? 1)
-        return UInt64(dayValue) &+ 0xCAFE  // Offset pour varier vs le Coran
     }
     
     // MARK: - Fallback
@@ -239,21 +184,3 @@ class DailyContentService: ObservableObject {
         self.dailyHadithSource = "Sahih Bukhari"
     }
 }
- 
-// MARK: - Générateur pseudo-aléatoire seedé (pour contenu stable dans la journée)
-struct SeededRandomNumberGenerator: RandomNumberGenerator {
-    private var state: UInt64
-    
-    init(seed: UInt64) {
-        self.state = seed
-    }
-    
-    mutating func next() -> UInt64 {
-        // xorshift64
-        state ^= state << 13
-        state ^= state >> 7
-        state ^= state << 17
-        return state
-    }
-}
- 

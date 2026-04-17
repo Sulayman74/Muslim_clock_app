@@ -24,6 +24,40 @@ struct SimpleEntry: TimelineEntry {
     let hijriDateAr: String
 }
 
+enum WidgetUtils {
+    
+    static let timeFormatter: DateFormatter = {
+        let f = DateFormatter()
+        f.dateFormat = "HH:mm"
+        return f
+    }()
+    
+    static func formatTime(_ date: Date?) -> String {
+        guard let d = date else { return "--:--" }
+        return timeFormatter.string(from: d)
+    }
+    
+    static func shortPrayerName(_ name: String) -> String {
+        switch name {
+        case "Fajr": return "FJR"
+        case "Dhuhr": return "DHR"
+        case "Asr": return "ASR"
+        case "Maghrib": return "MGH"
+        case "Isha": return "ISH"
+        default: return String(name.prefix(3)).uppercased()
+        }
+    }
+    
+    static func sphereColor(_ status: PrayerStatus) -> Color {
+        switch status {
+        case .passed: return .indigo
+        case .nextNormal: return .orange
+        case .nextImminent: return .red
+        case .future: return .white.opacity(0.15)
+        }
+    }
+}
+
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 // PROVIDER PARTAGÉ — LIT LES RÉGLAGES SMART SETUP
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -58,18 +92,18 @@ struct SalatProvider: TimelineProvider {
         var params: CalculationParameters
         
         switch method {
-        case "UOIF (12°)":
-            params = CalculationMethod.muslimWorldLeague.params
-            params.fajrAngle = 12
-            params.ishaAngle = 12
-        case "ISNA (15°)":
-            params = CalculationMethod.northAmerica.params
-        case "Mosquée de Paris":
-            params = CalculationMethod.muslimWorldLeague.params
-            params.fajrAngle = 18
-            params.ishaAngle = 18
-        default: // "Ligue Islamique (18°)"
-            params = CalculationMethod.muslimWorldLeague.params
+            case "UOIF (12°)":
+                params = CalculationMethod.muslimWorldLeague.params
+                params.fajrAngle = 12
+                params.ishaAngle = 12
+            case "ISNA (15°)":
+                params = CalculationMethod.northAmerica.params
+            case "Mosquée de Paris":
+                params = CalculationMethod.muslimWorldLeague.params
+                params.fajrAngle = 18
+                params.ishaAngle = 18
+            default: // "Ligue Islamique (18°)"
+                params = CalculationMethod.muslimWorldLeague.params
         }
         
         params.madhab = .shafi
@@ -174,271 +208,413 @@ struct SalatProvider: TimelineProvider {
         let params = getParams()
         let comp = Calendar.current.dateComponents([.year, .month, .day], from: now)
         
-        if let pt = PrayerTimes(coordinates: Coordinates(latitude: lat, longitude: lon), date: comp, calculationParameters: params) {
-            for time in [pt.fajr, pt.dhuhr, pt.asr, pt.maghrib, pt.isha] {
-                let imminent = time.addingTimeInterval(-15 * 60)
-                if imminent > now { entries.append(buildEntry(for: imminent)) }
-                if time > now { entries.append(buildEntry(for: time)) }
-            }
-        }
+        let checkpoints: [TimeInterval] = [
+            -30 * 60,
+            -15 * 60,
+            -5 * 60,
+            0
+        ]
         
-        entries.sort { $0.date < $1.date }
-        completion(Timeline(entries: entries, policy: .atEnd))
-    }
-}
-
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// HELPERS
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-private func formatTime(_ date: Date?) -> String {
-    guard let d = date else { return "--:--" }
-    let f = DateFormatter(); f.dateFormat = "HH:mm"
-    return f.string(from: d)
-}
-
-private func shortPrayerName(_ name: String) -> String {
-    switch name {
-    case "Fajr": return "FJR"
-    case "Dhuhr": return "DHR"
-    case "Asr": return "ASR"
-    case "Maghrib": return "MGH"
-    case "Isha": return "ISH"
-    default: return String(name.prefix(3)).uppercased()
-    }
-}
-
-private func sphereColor(_ status: PrayerStatus) -> Color {
-    switch status {
-    case .passed: return .indigo
-    case .nextNormal: return .orange
-    case .nextImminent: return .red
-    case .future: return .white.opacity(0.15)
-    }
-}
-
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// WIDGET 1 : HOME — MEDIUM (sphères, design original)
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-struct MainPrayerSphere: View {
-    var name: String
-    var status: PrayerStatus
-    var themeColor: Color {
-        switch status {
-        case .passed: return .indigo
-        case .nextNormal: return .orange
-        case .nextImminent: return .red
-        case .future: return .clear
-        }
-    }
-    var isActive: Bool { status != .future }
-    var body: some View {
-        VStack(spacing: 8) {
-            Circle()
-                .fill(isActive ? themeColor : Color.white.opacity(0.05))
-                .frame(width: 48, height: 48)
-                .background(.ultraThinMaterial, in: Circle())
-                .overlay(Circle().stroke(Color.white.opacity(isActive ? 0.6 : 0.15), lineWidth: 1))
-                .shadow(color: isActive ? themeColor.opacity(0.7) : .clear, radius: 8)
-            Text(name)
-                .font(.system(size: 12, weight: .bold, design: .rounded))
-                .foregroundColor((status == .nextNormal || status == .nextImminent) ? .white : .white.opacity(0.5))
-        }
-    }
-}
-
-struct HomeWidgetDateHeader: View {
-    var date: Date
-    var gregorianFr: String {
-        let f = DateFormatter(); f.locale = Locale(identifier: "fr_FR"); f.dateFormat = "d MMMM yyyy"
-        return f.string(from: date).capitalized
-    }
-    var hijriAr: String {
-        let f = DateFormatter(); f.calendar = Calendar(identifier: .islamicUmmAlQura); f.locale = Locale(identifier: "ar_SA"); f.dateFormat = "d MMMM yyyy"
-        return f.string(from: date)
-    }
-    var hijriFr: String {
-        let f = DateFormatter(); f.calendar = Calendar(identifier: .islamicUmmAlQura); f.locale = Locale(identifier: "fr_FR"); f.dateFormat = "d MMMM yyyy"
-        return f.string(from: date)
-    }
-    var body: some View {
-        VStack(spacing: 2) {
-            HStack(alignment: .bottom) {
-                Text(gregorianFr).font(.system(size: 13, weight: .semibold, design: .rounded)).foregroundColor(.white.opacity(0.9))
-                Spacer()
-                Text(hijriAr).font(.system(size: 14, weight: .bold)).foregroundColor(.orange.opacity(0.9)).environment(\.layoutDirection, .rightToLeft)
-            }
-            HStack { Text(hijriFr).font(.system(size: 11, weight: .medium, design: .rounded)).foregroundColor(.white.opacity(0.5)); Spacer() }
-        }
-        .padding(.horizontal, 16)
-    }
-}
-
-struct SalatHomeWidget: Widget {
-    let kind = "SalatWidget"
-    var body: some WidgetConfiguration {
-        StaticConfiguration(kind: kind, provider: SalatProvider()) { entry in
-            VStack(spacing: 16) {
-                HomeWidgetDateHeader(date: entry.date)
-                HStack(alignment: .center, spacing: 12) {
-                    MainPrayerSphere(name: "Fajr", status: entry.prayerStatuses["Fajr"] ?? .future)
-                    MainPrayerSphere(name: "Dhuhr", status: entry.prayerStatuses["Dhuhr"] ?? .future)
-                    MainPrayerSphere(name: "Asr", status: entry.prayerStatuses["Asr"] ?? .future)
-                    MainPrayerSphere(name: "Maghrib", status: entry.prayerStatuses["Maghrib"] ?? .future)
-                    MainPrayerSphere(name: "Isha", status: entry.prayerStatuses["Isha"] ?? .future)
-                }
-            }
-            .containerBackground(for: .widget) {
-                LinearGradient(colors: [Color(red: 0.05, green: 0.05, blue: 0.15), .black], startPoint: .topLeading, endPoint: .bottomTrailing)
-            }
-        }
-        .configurationDisplayName("Le Cycle de Lumière")
-        .description("Suivez vos prières d'un simple coup d'œil.")
-        .supportedFamilies([.systemMedium])
-    }
-}
-
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// WIDGET 2 : HOME — SMALL (carré compact)
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-struct SalatSmallWidget: Widget {
-    let kind = "SalatSmallWidget"
-    var body: some WidgetConfiguration {
-        StaticConfiguration(kind: kind, provider: SalatProvider()) { entry in
-            VStack(spacing: 6) {
-                Text(entry.hijriDateAr)
-                    .font(.system(size: 11, weight: .bold))
-                    .foregroundColor(.orange)
-                    .environment(\.layoutDirection, .rightToLeft)
-                
-                Text(entry.nextPrayerName)
-                    .font(.system(size: 13, weight: .bold, design: .rounded))
-                    .foregroundColor(.white.opacity(0.7))
-                
-                Text(formatTime(entry.nextPrayerDate))
-                    .font(.system(size: 28, weight: .thin, design: .rounded))
-                    .foregroundColor(.white)
-                    .monospacedDigit()
-                
-                if let target = entry.nextPrayerDate, target > entry.date {
-                    Text(target, style: .relative)
-                        .font(.system(size: 10, weight: .medium, design: .monospaced))
-                        .foregroundColor(.green.opacity(0.8))
-                        .multilineTextAlignment(.center)
-                }
-                
-                HStack(spacing: 5) {
-                    ForEach(["Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"], id: \.self) { name in
-                        Circle()
-                            .fill(sphereColor(entry.prayerStatuses[name] ?? .future))
-                            .frame(width: 8, height: 8)
+        if let pt = PrayerTimes(
+            coordinates: Coordinates(latitude: lat, longitude: lon),
+            date: comp,
+            calculationParameters: params
+        ) {
+            
+            let prayerTimes = [pt.fajr, pt.dhuhr, pt.asr, pt.maghrib, pt.isha]
+            
+            for time in prayerTimes {
+                for offset in checkpoints {
+                    let trigger = time.addingTimeInterval(offset)
+                    if trigger > now {
+                        entries.append(buildEntry(for: trigger))
                     }
                 }
             }
-            .containerBackground(for: .widget) {
-                LinearGradient(colors: [Color(red: 0.05, green: 0.05, blue: 0.15), .black], startPoint: .topLeading, endPoint: .bottomTrailing)
+        }
+        
+        // ✅ Anti doublons + tri
+        let uniqueDates = Array(Set(entries.map { $0.date })).sorted()
+        let finalEntries = uniqueDates.map { buildEntry(for: $0) }
+        
+        completion(Timeline(entries: finalEntries, policy: .atEnd))
+    }
+
+    
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    // WIDGET 1 : HOME — MEDIUM (sphères, design original)
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    
+    struct MainPrayerSphere: View {
+        var name: String
+        var status: PrayerStatus
+        var themeColor: Color {
+            switch status {
+                case .passed: return .indigo
+                case .nextNormal: return .orange
+                case .nextImminent: return .red
+                case .future: return .clear
             }
         }
-        .configurationDisplayName("Prochaine Prière")
-        .description("La prochaine prière en un coup d'œil.")
-        .supportedFamilies([.systemSmall])
-    }
-}
-
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// WIDGET 3 : LOCK SCREEN (Circular + Rectangular + Inline)
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-struct SalatLockView: View {
-    let entry: SimpleEntry
-    @Environment(\.widgetFamily) var family
-    
-    var body: some View {
-        switch family {
-        case .accessoryCircular:
-            circularView
-        case .accessoryRectangular:
-            rectangularView
-        case .accessoryInline:
-            inlineView
-        default:
-            Text("🕌")
+        var isActive: Bool { status != .future }
+        var body: some View {
+            VStack(spacing: 8) {
+                Circle()
+                    .fill(isActive ? themeColor : Color.white.opacity(0.05))
+                    .frame(width: 48, height: 48)
+                    .background(.ultraThinMaterial, in: Circle())
+                    .overlay(Circle().stroke(Color.white.opacity(isActive ? 0.6 : 0.15), lineWidth: 1))
+                    .shadow(color: isActive ? themeColor.opacity(0.7) : .clear, radius: 8)
+                Text(verbatim: name)
+                    .font(.system(size: 12, weight: .bold, design: .rounded))
+                    .foregroundColor((status == .nextNormal || status == .nextImminent) ? .white : .white.opacity(0.5))
+            }
         }
     }
     
-    // ── CIRCULAR ──
-    private var circularView: some View {
-        let progress: Double = {
-            guard let target = entry.nextPrayerDate else { return 0 }
-            let remaining = target.timeIntervalSince(entry.date)
-            return max(0, min(1, 1.0 - (remaining / (6 * 3600))))
-        }()
-        
-        return Gauge(value: progress) {
-            Text(entry.nextPrayerName)
-        } currentValueLabel: {
-            VStack(spacing: 0) {
-                Text(shortPrayerName(entry.nextPrayerName))
-                    .font(.system(size: 11, weight: .bold))
-                if let target = entry.nextPrayerDate {
-                    Text(formatTime(target))
-                        .font(.system(size: 9, weight: .medium))
+    struct HomeWidgetDateHeader: View {
+        var date: Date
+        var gregorianFr: String {
+            let f = DateFormatter(); f.locale = Locale(identifier: "fr_FR"); f.dateFormat = "d MMMM yyyy"
+            return f.string(from: date).capitalized
+        }
+        var hijriAr: String {
+            let f = DateFormatter(); f.calendar = Calendar(identifier: .islamicUmmAlQura); f.locale = Locale(identifier: "ar_SA"); f.dateFormat = "d MMMM yyyy"
+            return f.string(from: date)
+        }
+        var hijriFr: String {
+            let f = DateFormatter(); f.calendar = Calendar(identifier: .islamicUmmAlQura); f.locale = Locale(identifier: "fr_FR"); f.dateFormat = "d MMMM yyyy"
+            return f.string(from: date)
+        }
+        var body: some View {
+            VStack(spacing: 2) {
+                HStack(alignment: .bottom) {
+                    Text(verbatim: gregorianFr).font(.system(size: 13, weight: .semibold, design: .rounded)).foregroundColor(.white.opacity(0.9))
+                    Spacer()
+                    Text(verbatim: hijriAr).font(.system(size: 14, weight: .bold)).foregroundColor(.orange.opacity(0.9)).environment(\.layoutDirection, .rightToLeft)
+                }
+                HStack { Text(verbatim: hijriFr).font(.system(size: 11, weight: .medium, design: .rounded)).foregroundColor(.white.opacity(0.5)); Spacer() }
+            }
+            .padding(.horizontal, 16)
+        }
+    }
+    
+    struct SalatHomeWidget: Widget {
+        let kind = "SalatWidget"
+        var body: some WidgetConfiguration {
+            StaticConfiguration(kind: kind, provider: SalatProvider()) { entry in
+                VStack(spacing: 16) {
+                    HomeWidgetDateHeader(date: entry.date)
+                    HStack(alignment: .center, spacing: 12) {
+                        MainPrayerSphere(name: "Fajr", status: entry.prayerStatuses["Fajr"] ?? .future)
+                        MainPrayerSphere(name: "Dhuhr", status: entry.prayerStatuses["Dhuhr"] ?? .future)
+                        MainPrayerSphere(name: "Asr", status: entry.prayerStatuses["Asr"] ?? .future)
+                        MainPrayerSphere(name: "Maghrib", status: entry.prayerStatuses["Maghrib"] ?? .future)
+                        MainPrayerSphere(name: "Isha", status: entry.prayerStatuses["Isha"] ?? .future)
+                    }
+                }
+                .containerBackground(for: .widget) {
+                    LinearGradient(colors: [Color(red: 0.05, green: 0.05, blue: 0.15), .black], startPoint: .topLeading, endPoint: .bottomTrailing)
                 }
             }
+            .configurationDisplayName("Le Cycle de Lumière")
+            .description("Suivez vos prières d'un simple coup d'œil.")
+            .supportedFamilies([.systemMedium])
         }
-        .gaugeStyle(.accessoryCircularCapacity)
-        .widgetAccentable()
-        .containerBackground(for: .widget) { Color.clear }
     }
     
-    // ── RECTANGULAR ──
-    private var rectangularView: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            HStack {
-                Text(entry.nextPrayerName)
-                    .font(.headline.weight(.bold))
-                Spacer()
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    // WIDGET 2 : HOME — SMALL (carré compact)
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    
+    struct SalatSmallWidget: Widget {
+        let kind = "SalatSmallWidget"
+        var body: some WidgetConfiguration {
+            StaticConfiguration(kind: kind, provider: SalatProvider()) { entry in
+                VStack(spacing: 6) {
+                    Text(verbatim: entry.hijriDateAr)
+                        .font(.system(size: 11, weight: .bold))
+                        .foregroundColor(.orange)
+                        .environment(\.layoutDirection, .rightToLeft)
+                    
+                    Text(verbatim: entry.nextPrayerName)
+                        .font(.system(size: 13, weight: .bold, design: .rounded))
+                        .foregroundColor(.white.opacity(0.7))
+                    
+                    Text(verbatim: WidgetUtils.formatTime(entry.nextPrayerDate))
+                        .font(.system(size: 28, weight: .thin, design: .rounded))
+                        .foregroundColor(.white)
+                        .monospacedDigit()
+                    
+                    if let target = entry.nextPrayerDate, target > entry.date {
+                        Text(target, style: .relative)
+                            .font(.system(size: 10, weight: .medium, design: .monospaced))
+                            .foregroundColor(.green.opacity(0.8))
+                            .multilineTextAlignment(.center)
+                    }
+                    
+                    HStack(spacing: 5) {
+                        ForEach(["Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"], id: \.self) { name in
+                            Circle()
+                                .fill(WidgetUtils.sphereColor(entry.prayerStatuses[name] ?? .future))
+                                .frame(width: 8, height: 8)
+                        }
+                    }
+                }
+                .containerBackground(for: .widget) {
+                    LinearGradient(colors: [Color(red: 0.05, green: 0.05, blue: 0.15), .black], startPoint: .topLeading, endPoint: .bottomTrailing)
+                }
+            }
+            .configurationDisplayName("Prochaine Prière")
+            .description("La prochaine prière en un coup d'œil.")
+            .supportedFamilies([.systemSmall])
+        }
+    }
+    
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    // WIDGET 3 : LOCK SCREEN (Circular + Rectangular + Inline)
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    
+    struct SalatLockView: View {
+        let entry: SimpleEntry
+        @Environment(\.widgetFamily) var family
+        
+        var body: some View {
+            switch family {
+                case .accessoryCircular:
+                    circularView
+                case .accessoryRectangular:
+                    rectangularView
+                case .accessoryInline:
+                    inlineView
+                default:
+                    Text(verbatim: "🕌")
+            }
+        }
+        
+        private func isCurrentPrayer(_ name: String, entry: SimpleEntry) -> Bool {
+            guard let time = entry.prayerTimes[name] else { return false }
+            
+            let nextTimes = entry.prayerTimes.values
+                .filter { $0 > time }
+                .sorted()
+            
+            guard let next = nextTimes.first else { return false }
+            
+            return entry.date >= time && entry.date < next
+        }
+        
+        private func realProgress(entry: SimpleEntry) -> Double {
+            guard let next = entry.nextPrayerDate else { return 0 }
+            
+            let calendar = Calendar.current
+            
+            // 🔍 1. Cherche dernière prière aujourd’hui
+            let previousToday = entry.prayerTimes
+                .filter { $0.value < entry.date }
+                .max(by: { $0.value < $1.value })?.value
+            
+            var previous = previousToday
+            
+            // 🌙 2. Si aucune → on est après minuit AVANT Fajr
+            if previous == nil {
+                
+                // 👉 recalcul Isha d’hier
+                let yesterday = calendar.date(byAdding: .day, value: -1, to: entry.date)!
+                let comp = calendar.dateComponents([.year, .month, .day], from: yesterday)
+                
+                let (lat, lon) = SalatProvider().getCoordinates()
+                let params = SalatProvider().getParams()
+                
+                if let pt = PrayerTimes(
+                    coordinates: Coordinates(latitude: lat, longitude: lon),
+                    date: comp,
+                    calculationParameters: params
+                ) {
+                    previous = pt.isha
+                }
+            }
+            
+            guard let prev = previous else { return 0 }
+            
+            let total = next.timeIntervalSince(prev)
+            let elapsed = entry.date.timeIntervalSince(prev)
+            
+            return max(0, min(1, elapsed / total))
+        }
+        
+        // ----- Circular ------------ //
+        
+        private var circularView: some View {
+            let progress = realProgress(entry: entry)
+            
+            return Gauge(value: progress) {
+                Image(systemName: "moon.stars.fill")
+            } currentValueLabel: {
+                VStack(spacing: 1) {
+                    Text(verbatim: WidgetUtils.shortPrayerName(entry.nextPrayerName))
+                        .font(.system(size: 11, weight: .bold))
+                    
+                    if let target = entry.nextPrayerDate {
+                        Text(verbatim: WidgetUtils.formatTime(target))
+                            .font(.system(size: 9, weight: .medium))
+                            .monospacedDigit()
+                    }
+                }
+            }
+            .gaugeStyle(.accessoryCircularCapacity)
+            .tint(colorForStatus(entry))
+            .widgetAccentable()
+        }
+        
+        private func colorForStatus(_ entry: SimpleEntry) -> Color {
+            guard let next = entry.nextPrayerDate else { return .blue }
+            
+            let remaining = next.timeIntervalSince(entry.date)
+            
+            // 🔴 priorité haute
+            if remaining < 3 * 60 { return .red }
+            
+            // 🟠 priorité moyenne
+            if remaining < 15 * 60 { return .orange }
+            
+            // 🌙 sinon nuit
+            if entry.nextPrayerName == "Fajr" {
+                return .indigo
+            }
+            
+            return .blue
+        }
+        // ── RECTANGULAR ──
+        private var rectangularView: some View {
+            VStack(alignment: .leading, spacing: 6) {
+                if isCurrentPrayer(entry.nextPrayerName, entry: entry) {
+                    Text("En cours")
+                        .font(.caption2)
+                        .foregroundColor(.green)
+                }
+                // Ligne 1 : prière + heure
+                HStack {
+                    Label(entry.nextPrayerName, systemImage: "moon.stars.fill")
+                        .font(.headline.weight(.bold))
+                    
+                    Spacer()
+                    
+                    Text(verbatim: WidgetUtils.formatTime(entry.nextPrayerDate))
+                        .font(.headline.monospacedDigit())
+                }
+                
+                // Ligne 2 : countdown
                 if let target = entry.nextPrayerDate, target > entry.date {
                     Text(target, style: .relative)
-                        .font(.caption.weight(.semibold))
-                        .multilineTextAlignment(.trailing)
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundColor(.secondary)
                 }
             }
-            HStack(spacing: 6) {
-                ForEach(["Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"], id: \.self) { name in
-                    let s = entry.prayerStatuses[name] ?? .future
-                    Circle()
-                        .fill(s == .future ? Color.secondary.opacity(0.3) : Color.primary)
-                        .frame(width: 8, height: 8)
-                }
-                Spacer()
-                Text(formatTime(entry.nextPrayerDate))
-                    .font(.caption2.weight(.medium))
+            .widgetAccentable()
+        }
+        
+        // ── INLINE ──
+        private var inlineView: some View {
+            ViewThatFits {
+                Text(verbatim: "🕌 \(entry.nextPrayerName) \(WidgetUtils.formatTime(entry.nextPrayerDate))")
+                Text(verbatim: "\(entry.nextPrayerName) \(WidgetUtils.formatTime(entry.nextPrayerDate))")
+                Text(verbatim: WidgetUtils.formatTime(entry.nextPrayerDate))
             }
         }
-        .widgetAccentable()
-        .containerBackground(for: .widget) { Color.clear }
     }
     
-    // ── INLINE ──
-    private var inlineView: some View {
-        ViewThatFits {
-            Text("🕌 \(entry.nextPrayerName) à \(formatTime(entry.nextPrayerDate))")
-            Text("\(entry.nextPrayerName) \(formatTime(entry.nextPrayerDate))")
+    struct SalatLockScreenWidget: Widget {
+        let kind = "SalatLockWidget"
+        var body: some WidgetConfiguration {
+            StaticConfiguration(kind: kind, provider: SalatProvider()) { entry in
+                SalatLockView(entry: entry)
+                    .containerBackground(.clear, for: .widget)
+            }
+            .configurationDisplayName("Muslim Clock")
+            .description("Prochaine prière sur l'écran verrouillé.")
+            .supportedFamilies([.accessoryCircular, .accessoryRectangular, .accessoryInline])
         }
-        .containerBackground(for: .widget) { Color.clear }
     }
-}
 
-struct SalatLockScreenWidget: Widget {
-    let kind = "SalatLockWidget"
-    var body: some WidgetConfiguration {
-        StaticConfiguration(kind: kind, provider: SalatProvider()) { entry in
-            SalatLockView(entry: entry)
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    // WIDGET 4 : APPLE WATCH — 5 CERCLES (accessoryRectangular)
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+    struct WatchFiveCirclesView: View {
+        let entry: SimpleEntry
+
+        private let prayers = ["Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"]
+        private let shorts  = ["FJR",  "DHR",   "ASR", "MGH",     "ISH"]
+
+        var body: some View {
+            VStack(alignment: .leading, spacing: 5) {
+                // Rangée des 5 cercles
+                HStack(spacing: 0) {
+                    ForEach(Array(prayers.enumerated()), id: \.offset) { i, name in
+                        let status = entry.prayerStatuses[name] ?? .future
+                        VStack(spacing: 3) {
+                            Circle()
+                                .fill(circleFill(status))
+                                .overlay(Circle().stroke(circleStroke(status), lineWidth: 1))
+                                .frame(width: 14, height: 14)
+                                .widgetAccentable(status == .nextNormal || status == .nextImminent)
+                            Text(verbatim: shorts[i])
+                                .font(.system(size: 7, weight: .semibold, design: .rounded))
+                                .foregroundStyle(labelOpacity(status))
+                        }
+                        .frame(maxWidth: .infinity)
+                    }
+                }
+
+                // Prochaine prière + décompte
+                HStack(alignment: .firstTextBaseline, spacing: 4) {
+                    Text(verbatim: entry.nextPrayerName)
+                        .font(.system(size: 11, weight: .bold, design: .rounded))
+                        .widgetAccentable()
+                    if let target = entry.nextPrayerDate, target > entry.date {
+                        Text(target, style: .relative)
+                            .font(.system(size: 10, weight: .medium, design: .monospaced))
+                            .foregroundStyle(.secondary)
+                    }
+                }
+            }
         }
-        .configurationDisplayName("Muslim Clock")
-        .description("Prochaine prière sur l'écran verrouillé.")
-        .supportedFamilies([.accessoryCircular, .accessoryRectangular, .accessoryInline])
+
+        private func circleFill(_ status: PrayerStatus) -> Color {
+            switch status {
+            case .passed:                    return .primary.opacity(0.55)
+            case .nextNormal, .nextImminent: return .primary
+            case .future:                    return .clear
+            }
+        }
+
+        private func circleStroke(_ status: PrayerStatus) -> Color {
+            switch status {
+            case .future: return .primary.opacity(0.3)
+            default:      return .clear
+            }
+        }
+
+        private func labelOpacity(_ status: PrayerStatus) -> Color {
+            switch status {
+            case .nextNormal, .nextImminent: return .primary
+            case .passed:                    return .primary.opacity(0.6)
+            case .future:                    return .primary.opacity(0.3)
+            }
+        }
+    }
+
+    struct SalatWatchCirclesWidget: Widget {
+        let kind = "SalatWatchCircles"
+        var body: some WidgetConfiguration {
+            StaticConfiguration(kind: kind, provider: SalatProvider()) { entry in
+                WatchFiveCirclesView(entry: entry)
+                    .containerBackground(.clear, for: .widget)
+            }
+            .configurationDisplayName("Salat · 5 Cercles")
+            .description("Le cycle des 5 prières sur votre cadran.")
+            .supportedFamilies([.accessoryRectangular])
+        }
     }
 }

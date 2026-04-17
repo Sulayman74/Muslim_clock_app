@@ -25,9 +25,17 @@ struct IslamicSeasonInfo {
     
     // MARK: - Factory
     static func current(for date: Date = .now) -> IslamicSeasonInfo {
+        // En DEBUG, une date de substitution peut être injectée depuis le panneau debug
+        #if DEBUG
+        let debugTimestamp = UserDefaults.standard.double(forKey: "debugSeasonDate")
+        let effectiveDate = debugTimestamp > 0 ? Date(timeIntervalSince1970: debugTimestamp) : date
+        #else
+        let effectiveDate = date
+        #endif
+
         var cal = Calendar(identifier: .islamicUmmAlQura)
         cal.locale = Locale(identifier: "ar")
-        let month = cal.component(.month, from: date)
+        let month = cal.component(.month, from: effectiveDate)
         
         switch month {
         case 1: // Muharram
@@ -75,7 +83,7 @@ struct IslamicSeasonInfo {
                 isSacredMonth: false  // pas sacré au sens "haram" mais mois à part
             )
         case 10: // Shawwal — bandeau Aïd uniquement le 1er jour
-            let hijriDay = cal.component(.day, from: date)
+            let hijriDay = cal.component(.day, from: effectiveDate)
             if hijriDay == 1 {
                 return IslamicSeasonInfo(
                     hijriMonth: 10,
@@ -112,7 +120,7 @@ struct IslamicSeasonInfo {
                 isSacredMonth: true
             )
         case 12: // Dhu al-Hijjah
-            let hijriDay = cal.component(.day, from: date)
+            let hijriDay = cal.component(.day, from: effectiveDate)
             if hijriDay >= 10 && hijriDay <= 13 { // Aïd al-Adha + jours de Tashreeq
                 return IslamicSeasonInfo(
                     hijriMonth: 12,

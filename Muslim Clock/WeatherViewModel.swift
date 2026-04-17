@@ -1,55 +1,74 @@
-//
-//  WeatherService.swift
-//  Muslim Clock
-//
-//  Created by Mohamed Kanoute on 27/03/2026.
-//
-
 import Foundation
 import WeatherKit
 import CoreLocation
 import SwiftUI
 import Combine
 
-
-@MainActor // Sécurise les mises à jour UI pour éviter l'erreur de concurrence
+@MainActor
 class WeatherViewModel: ObservableObject {
-        // Textes "bidons" de la bonne longueur pour que le Skeleton ait une belle forme
-        @Published var temperature: String = "22°C"
-        @Published var conditionIcon: String = "cloud.sun.fill"
-        @Published var moonSymbol: String = "moonphase.new.moon"
-        // NOUVEAU : Gestion des états pour l'UX
-        @Published var isLoading: Bool = true
-        @Published var hasError: Bool = false
-        private var hasFetched: Bool = false
-        let weatherService = WeatherService()
+    @Published var temperature: String = "22°C"
+    @Published var conditionIcon: String = "cloud.sun.fill"
+    @Published var moonSymbol: String = "moon"
+    
+    @Published var isLoading: Bool = true
+    @Published var hasError: Bool = false
+    
+    // 🛡️ NOUVEAU : Mémoire pour le bouclier anti-spam
+    private var lastLocation: CLLocation?
+    private var lastFetchTime: Date?
+    
+    let weatherService = WeatherService()
 
-    
-    func fetchWeather(for location: CLLocation) async {
-            guard !hasFetched else { return }
-            hasFetched = true
-            
-            do {
-                let weather = try await weatherService.weather(for: location)
-                let tempValue = weather.currentWeather.temperature.converted(to: .celsius).value
-                self.temperature = String(format: "%.0f°C", tempValue)
-                self.conditionIcon = weather.currentWeather.symbolName
-                // On regarde le premier jour du tableau des prévisions (aujourd'hui)
-                if let todayForecast = weather.dailyForecast.first {
-                self.moonSymbol = todayForecast.moon.phase.symbolName
-                }
-                self.isLoading = false
-                self.hasError = false
-            } catch {
-                self.temperature = "N/A"
-                self.conditionIcon = "exclamationmark.triangle"
-                self.moonSymbol = "moon.fill"
-                self.hasError = true
-                self.isLoading = false
-                self.hasFetched = false
-            }
-        }
-    
+    /// Bypass l'anti-spam : utilisé sur pull-to-refresh ou retour de connexion.
+    func forceRefresh(for location: CLLocation) async {
+        lastFetchTime = nil
+        lastLocation  = nil
+        await fetchWeather(for: location)
     }
 
-
+    func fetchWeather(for location: CLLocation) async {
+        
+        // 🛑 BOUCLIER ANTI-SPAM
+        // 1. A-t-on bougé de moins de 5 kilomètres ?
+        let isSameLocation = (lastLocation?.distance(from: location) ?? .infinity) < 5000
+        // 2. La dernière requête date-t-elle de moins de 30 minutes (1800 secondes) ?
+        let isRecent = Date().timeIntervalSince(lastFetchTime ?? .distantPast) < 1800
+        
+        // Si on est au même endroit et que c'est récent (et qu'il n'y a pas d'erreur à réparer), on stoppe !
+        if isSameLocation && isRecent && !hasError {
+            return
+        }
+        
+        // Si on passe le bouclier, on mémorise cette nouvelle requête
+        self.lastLocation = location
+        self.lastFetchTime = Date()
+        self.isLoading = true
+        
+        do {
+            let (current, daily) = try await weatherService.weather(for: location, including: .current, .daily)
+            
+            let tempValue = current.temperature.converted(to: .celsius).value
+            self.temperature = String(format: "%.0f°C", tempValue)
+            self.conditionIcon = current.symbolName
+            
+            if let todayForecast = daily.first {
+                self.moonSymbol = todayForecast.moon.phase.symbolName
+                print("🌖 WeatherKit a bien renvoyé la lune : \(self.moonSymbol)")
+            }
+            
+            self.isLoading = false
+            self.hasError = false
+            
+        } catch {
+            print("❌ Erreur API WeatherKit : \(error.localizedDescription)")
+            self.temperature = "N/A"
+            self.conditionIcon = "exclamationmark.triangle"
+            self.moonSymbol = "moon.fill"
+            self.hasError = true
+            self.isLoading = false
+            
+            // En cas d'erreur, on reset le timer pour autoriser un nouvel essai rapide
+            self.lastFetchTime = nil
+        }
+    }
+}

@@ -188,11 +188,10 @@ struct QiblaView: View {
                 .contentTransition(.interpolate)
                 .animation(.easeInOut(duration: 0.3), value: manager.proximityLevel)
             
-            // Degrés
             HStack(spacing: 24) {
-                degreeLabel(title: "Bearing", value: manager.qiblaAngle)
-                degreeLabel(title: "Offset", value: manager.angularOffset)
-                degreeLabel(title: "Heading", value: manager.heading)
+                degreeLabel(title: String(localized: "Azimut"), value: manager.qiblaAngle)
+                degreeLabel(title: String(localized: "Écart"), value: manager.angularOffset)
+                degreeLabel(title: String(localized: "Cap"), value: manager.heading)
             }
             .font(.system(size: 12, weight: .medium, design: .monospaced))
             .foregroundStyle(.white.opacity(0.4))
@@ -201,11 +200,11 @@ struct QiblaView: View {
     
     private var statusText: String {
         switch manager.proximityLevel {
-        case 4: return "ALIGNÉ"
-        case 3: return "PRESQUE..."
-        case 2: return "PLUS PROCHE"
-        case 1: return "ON S'APPROCHE"
-        default: return "CHERCHER"
+        case 4: return String(localized: "ALIGNÉ")
+        case 3: return String(localized: "PRESQUE...")
+        case 2: return String(localized: "PLUS PROCHE")
+        case 1: return String(localized: "ON S'APPROCHE")
+        default: return String(localized: "CHERCHER")
         }
     }
     
@@ -224,7 +223,7 @@ struct QiblaView: View {
             Text(title.uppercased())
                 .font(.system(size: 10, weight: .regular, design: .rounded))
                 .tracking(1)
-            Text("\(Int(value))°")
+            Text(verbatim: "\(Int(value))°")
                 .font(.system(size: 16, weight: .semibold, design: .monospaced))
                 .monospacedDigit()
                 .foregroundStyle(.white.opacity(0.65))

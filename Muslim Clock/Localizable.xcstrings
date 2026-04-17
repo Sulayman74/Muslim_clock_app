@@ -1,0 +1,1833 @@
+{
+  "sourceLanguage" : "fr",
+  "strings" : {
+    "— %@" : {
+
+    },
+    "· météo et audio en cache" : {
+
+    },
+    "« %@ »" : {
+
+    },
+    "« La Salât est le pilier de la religion »" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "الصلاة عماد الدين"
+          }
+        }
+      }
+    },
+    "« Notre Seigneur descend chaque nuit vers le ciel le plus bas lorsqu'il ne reste que le dernier tiers... » (Bukhari)" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "\"ينزل ربنا تبارك وتعالى كل ليلة إلى السماء الدنيا حين يبقى ثلث الليل الآخر...\" (رواه البخاري)"
+          }
+        }
+      }
+    },
+    "%@ → %@" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ → %2$@"
+          }
+        }
+      }
+    },
+    "%lld" : {
+
+    },
+    "✨ Les Jours Blancs" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "✨ الأيام البيض"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "✨ The White Days"
+          }
+        }
+      }
+    },
+    "⭐ Donner mon avis" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "⭐ تقييم التطبيق"
+          }
+        }
+      }
+    },
+    "🎉 Série terminée !" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "!اكتملت السلسلة 🎉"
+          }
+        }
+      }
+    },
+    "1. Maintenez votre doigt enfoncé sur un espace vide de votre écran d'accueil iPhone." : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "١. اضغط مطولاً على مساحة فارغة في شاشة الآيفون الرئيسية."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1. Long press on an empty space on your iPhone home screen."
+          }
+        }
+      }
+    },
+    "1er Quartier" : {
+
+    },
+    "2 Rak'at après l'Isha, puis clôturez par le Witr." : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ركعتان بعد العشاء، ثم اختم بالوتر."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2 Rak'at after Isha, then close with Witr."
+          }
+        }
+      }
+    },
+    "2 Rak'at après l'obligatoire." : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ركعتان بعد الفريضة."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2 Rak'at after the obligatory prayer."
+          }
+        }
+      }
+    },
+    "2 Rak'at très méritoires avant l'obligatoire." : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ركعتان مستحبتان قبل الفريضة."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2 highly meritorious Rak'at before the obligatory prayer."
+          }
+        }
+      }
+    },
+    "2. Touchez le bouton '+' en haut à gauche." : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "٢. اضغط على زر '+' في أعلى اليسار."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2. Tap the '+' button in the top left."
+          }
+        }
+      }
+    },
+    "3. Cherchez 'Muslim Clock' dans la liste." : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "٣. ابحث عن 'Muslim Clock' في القائمة."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3. Search for 'Muslim Clock' in the list."
+          }
+        }
+      }
+    },
+    "4 Rak'at avant, et 2 Rak'at après." : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "٤ ركعات قبل و٢ ركعات بعد."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "4 Rak'at before and 2 Rak'at after."
+          }
+        }
+      }
+    },
+    "4. Choisissez la taille du widget (Prochaine prière, 5 sphères qui représentent les 5 prières, etc.) et appuyez sur 'Ajouter'." : {
+
+    },
+    "4. Choisissez la taille du widget (Prochaine prière, Phase de la Lune, etc.) et appuyez sur 'Ajouter'." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "٤. اختر حجم الأداة (الصلاة القادمة، طور القمر، إلخ) واضغط على 'إضافة'."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "4. Choose the widget size (Next prayer, Moon phase, etc.) and tap 'Add'."
+          }
+        }
+      }
+    },
+    "Accomplissez la prière à son heure." : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "أدِّ الصلاة في وقتها."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Perform the prayer on time."
+          }
+        }
+      }
+    },
+    "Adhkar après %@" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "أذكار بعد %@"
+          }
+        }
+      }
+    },
+    "Adhkar du Matin" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "أذكار الصباح"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Morning Adhkar"
+          }
+        }
+      }
+    },
+    "Adhkar du Soir" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "أذكار المساء"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Evening Adhkar"
+          }
+        }
+      }
+    },
+    "Adresse (optionnel)" : {
+
+    },
+    "Ajustement %@" : {
+
+    },
+    "Ajustement Asr" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "تعديل العصر"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Asr Adjustment"
+          }
+        }
+      }
+    },
+    "Ajustement Dhuhr" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "تعديل الظهر"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dhuhr Adjustment"
+          }
+        }
+      }
+    },
+    "Ajustement Fajr" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "تعديل الفجر"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fajr Adjustment"
+          }
+        }
+      }
+    },
+    "Ajustement Isha" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "تعديل العشاء"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Isha Adjustment"
+          }
+        }
+      }
+    },
+    "Ajustement Maghrib" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "تعديل المغرب"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Maghrib Adjustment"
+          }
+        }
+      }
+    },
+    "Ajustement Manuel (Temkine)" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "تعديل يدوي (تمكين)"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Manual Adjustment (Temkine)"
+          }
+        }
+      }
+    },
+    "Ajustements" : {
+
+    },
+    "Ajustements Manuels" : {
+
+    },
+    "Ajustez chaque prière individuellement si les horaires calculés ne correspondent pas à votre mosquée. Glissez vers la gauche pour remettre à zéro." : {
+
+    },
+    "ALIGNÉ" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "محاذاة"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ALIGNED"
+          }
+        }
+      }
+    },
+    "Annuler" : {
+
+    },
+    "Asr" : {
+
+    },
+    "Automatique (système)" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "تلقائي (النظام)"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Automatic (system)"
+          }
+        }
+      }
+    },
+    "Autour de l'Asr" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "حول العصر"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Around Asr"
+          }
+        }
+      }
+    },
+    "Azimut" : {
+
+    },
+    "Cache Audio (hors-ligne)" : {
+
+    },
+    "Cap" : {
+
+    },
+    "Ces informations sont uniquement affichées sur votre appareil." : {
+
+    },
+    "Changement de Saison" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "تغيير الموسم"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Season Change"
+          }
+        }
+      }
+    },
+    "CHERCHER" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "بحث"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SEARCHING"
+          }
+        }
+      }
+    },
+    "Clôture de la nuit" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ختام الليل"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Night Closing"
+          }
+        }
+      }
+    },
+    "Comment ajouter un Widget ?" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "كيف تضيف أداة؟"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "How to add a Widget?"
+          }
+        }
+      }
+    },
+    "complétés" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "مكتمل"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "completed"
+          }
+        }
+      }
+    },
+    "Configuration Magique" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "إعداد تلقائي"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Magic Setup"
+          }
+        }
+      }
+    },
+    "Croissant ↑" : {
+
+    },
+    "Croissant ↓" : {
+
+    },
+    "Délai Adhan → Iqamah" : {
+
+    },
+    "Der. Quartier" : {
+
+    },
+    "Dernier Croissant" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "هلال متناقص"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Waning Crescent"
+          }
+        }
+      }
+    },
+    "Dernier Quartier" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "تربيع أخير"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Last Quarter"
+          }
+        }
+      }
+    },
+    "Dernier tiers" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "الثلث الأخير"
+          }
+        }
+      }
+    },
+    "Dhuhr" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "الظهر"
+          }
+        }
+      }
+    },
+    "Donner mon avis sur l'app" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "تقييم التطبيق"
+          }
+        }
+      }
+    },
+    "Donner votre avis" : {
+
+    },
+    "Durée" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "المدة"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Duration"
+          }
+        }
+      }
+    },
+    "Durée entre l'adhan et l'iqamah dans votre mosquée (en minutes)." : {
+
+    },
+    "Durée entre l'adhan et l'iqamah dans votre mosquée. Utilisé pour l'analyse de votre planning de prière." : {
+
+    },
+    "Écart" : {
+
+    },
+    "En attendant la prochaine Salât" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "في انتظار الصلاة القادمة"
+          }
+        }
+      }
+    },
+    "En cours" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "جارية"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Current"
+          }
+        }
+      }
+    },
+    "English" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "الإنجليزية"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "English"
+          }
+        }
+      }
+    },
+    "Espace utilise" : {
+
+    },
+    "Fajr" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "الفجر"
+          }
+        }
+      }
+    },
+    "Félicitations ! Vous avez terminé la série « %@ » ! Continuez votre apprentissage avec la série suivante. 📚" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "تهانينا! لقد أنهيت سلسلة \"%@\". واصل تعلمك مع السلسلة التالية. 📚"
+          }
+        }
+      }
+    },
+    "Félicitations ! Vous avez terminé la série « %@ ».\n\nSi vous aimez Muslim Clock, un avis sur l'App Store nous aiderait énormément ! 🌙" : {
+
+    },
+    "Fichiers caches" : {
+
+    },
+    "Fonctionnement des Widgets" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "كيفية عمل الأدوات"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "How Widgets Work"
+          }
+        }
+      }
+    },
+    "FR" : {
+
+    },
+    "Français" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Français"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Français"
+          }
+        }
+      }
+    },
+    "Gibbeuse ↑" : {
+
+    },
+    "Gibbeuse ↓" : {
+
+    },
+    "Gibbeuse Croissante" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "أحدب متزايد"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Waxing Gibbous"
+          }
+        }
+      }
+    },
+    "Gibbeuse Décroissante" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "أحدب متناقص"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Waning Gibbous"
+          }
+        }
+      }
+    },
+    "Hadith du moment" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "حديث اليوم"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hadith of the day"
+          }
+        }
+      }
+    },
+    "Heure du Khoutba" : {
+
+    },
+    "Heure Jumu'ah" : {
+
+    },
+    "Heure Jumu'ah personnalisee" : {
+
+    },
+    "Horaires & Précision" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "المواقيت والدقة"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Times & Precision"
+          }
+        }
+      }
+    },
+    "Horaires Adhan" : {
+
+    },
+    "Horaires affichés à la Mosquée" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "أوقات المسجد المعروضة"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mosque Displayed Times"
+          }
+        }
+      }
+    },
+    "Hors ligne" : {
+
+    },
+    "Ignorer pour l'instant" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "تجاهل الآن"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ignore for now"
+          }
+        }
+      }
+    },
+    "Informations" : {
+
+    },
+    "Invocation du Hilal" : {
+
+    },
+    "Invocations après la prière" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "أذكار بعد الصلاة"
+          }
+        }
+      }
+    },
+    "Invocations de la nuit" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "أذكار الليل"
+          }
+        }
+      }
+    },
+    "Iqamah & informations" : {
+
+    },
+    "Isha" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "العشاء"
+          }
+        }
+      }
+    },
+    "Isha fixe après Maghrib" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "عشاء ثابت بعد المغرب"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fixed Isha after Maghrib"
+          }
+        }
+      }
+    },
+    "J'ai compris" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "مفهوم"
+          }
+        }
+      }
+    },
+    "J'y vais" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "هيا بنا"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Let's go"
+          }
+        }
+      }
+    },
+    "Jour du Vendredi" : {
+
+    },
+    "Jours Blancs — Jeûne recommandé (13-14-15)" : {
+
+    },
+    "Jumu'ah" : {
+
+    },
+    "La Prière" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "الصلاة"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The Prayer"
+          }
+        }
+      }
+    },
+    "La prochaine prière en un coup d'œil." : {
+
+    },
+    "Laissez l'app déduire vos réglages" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "دع التطبيق يكتشف إعداداتك"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Let the app detect your settings"
+          }
+        }
+      }
+    },
+    "Lancer l'analyse magique ✨" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "تشغيل التحليل السحري ✨"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Run magic analysis ✨"
+          }
+        }
+      }
+    },
+    "Langue" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "اللغة"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Language"
+          }
+        }
+      }
+    },
+    "Langue de l'application" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "لغة التطبيق"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App Language"
+          }
+        }
+      }
+    },
+    "Le Cycle de Lumière" : {
+
+    },
+    "Le cycle des 5 prières sur votre cadran." : {
+
+    },
+    "Le vendredi, Dhuhr sera remplace par l'heure de la Jumu'ah de votre mosquee." : {
+
+    },
+    "Le vendredi, l'horaire Dhuhr sera remplace par l'heure de la Jumu'ah de votre mosquee." : {
+
+    },
+    "Les audios ecoutes sont sauvegardes pour une lecture instantanee et hors-ligne." : {
+
+    },
+    "Les horaires de votre mosquée ont probablement changé avec la nouvelle saison (heure d'été/hiver). \nVoulez-vous relancer une analyse rapide pour rester synchronisé ?" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "من المحتمل أن أوقات الصلاة في مسجدك قد تغيرت مع الموسم الجديد (التوقيت الصيفي/الشتوي). \nهل تريد إجراء تحليل سريع للبقاء متزامنًا؟"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your mosque's prayer times have likely changed with the new season (summer/winter time). \nWould you like to run a quick analysis to stay synchronized?"
+          }
+        }
+      }
+    },
+    "Lire" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "تشغيل"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Play"
+          }
+        }
+      }
+    },
+    "Ma Mosquée" : {
+
+    },
+    "Maghrib" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "المغرب"
+          }
+        }
+      }
+    },
+    "Marquer comme lu" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "تحديد كمقروء"
+          }
+        }
+      }
+    },
+    "Méthode (Angles)" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "طريقة الحساب (الزوايا)"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Method (Angles)"
+          }
+        }
+      }
+    },
+    "Méthode de calcul" : {
+
+    },
+    "Méthode de calcul & Temkine" : {
+
+    },
+    "Méthodologie" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "المنهجية"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Methodology"
+          }
+        }
+      }
+    },
+    "Mettre à jour" : {
+
+    },
+    "Mise à jour disponible" : {
+
+    },
+    "Moitié de la nuit" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "منتصف الليل"
+          }
+        }
+      }
+    },
+    "Muslim Clock" : {
+
+    },
+    "Nom de la mosquée" : {
+
+    },
+    "Nom de la Sunnah" : {
+
+    },
+    "Nouvelle Lune" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "محاق"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New Moon"
+          }
+        }
+      }
+    },
+    "O Allah, accorde Ta priere et Ton salut a notre Prophete Muhammad" : {
+
+    },
+    "OK" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "حسناً "
+          }
+        }
+      }
+    },
+    "ON S'APPROCHE" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "نقترب"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GETTING CLOSE"
+          }
+        }
+      }
+    },
+    "Oui, donner mon avis" : {
+
+    },
+    "Pas de Rawatib, mais l'invocation entre l'Adhan et l'Iqama est exaucée." : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "لا رواتب، لكن الدعاء بين الأذان والإقامة مستجاب."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No Rawatib, but the supplication between Adhan and Iqama is answered."
+          }
+        }
+      }
+    },
+    "Pause" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "إيقاف"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pause"
+          }
+        }
+      }
+    },
+    "Phases Lunaires" : {
+
+    },
+    "Pleine Lune" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "بدر"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Full Moon"
+          }
+        }
+      }
+    },
+    "PLUS PROCHE" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "أقرب"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "CLOSER"
+          }
+        }
+      }
+    },
+    "Plus tard" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "لاحقاً"
+          }
+        }
+      }
+    },
+    "Pratique courante en Europe" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ممارسة شائعة في أوروبا"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Common practice in Europe"
+          }
+        }
+      }
+    },
+    "Premier Croissant" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "هلال متزايد"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Waxing Crescent"
+          }
+        }
+      }
+    },
+    "Premier Quartier" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "تربيع أول"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "First Quarter"
+          }
+        }
+      }
+    },
+    "PRESQUE..." : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "تقريباً..."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ALMOST..."
+          }
+        }
+      }
+    },
+    "Prière de la Nuit" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "قيام الليل"
+          }
+        }
+      }
+    },
+    "Priere du Vendredi" : {
+
+    },
+    "Priere du Vendredi. Sourate Al-Kahf recommandee." : {
+
+    },
+    "Prochaine" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "القادمة"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Next"
+          }
+        }
+      }
+    },
+    "Prochaine Prière" : {
+
+    },
+    "Prochaine prière sur l'écran verrouillé." : {
+
+    },
+    "Progression" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "التقدم"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Progress"
+          }
+        }
+      }
+    },
+    "Qiblah" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "القبلة"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Qiblah"
+          }
+        }
+      }
+    },
+    "Qu'Allah accepte tes adhkar" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "تقبّل الله أذكارك"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "May Allah accept your adhkar"
+          }
+        }
+      }
+    },
+    "Rappel" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "تذكير"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reminder"
+          }
+        }
+      }
+    },
+    "Rawatib du Dhuhr" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "رواتب الظهر"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dhuhr Rawatib"
+          }
+        }
+      }
+    },
+    "Rawatib du Maghrib" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "رواتب المغرب"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Maghrib Rawatib"
+          }
+        }
+      }
+    },
+    "Recalculer position (> 15km)" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "إعادة حساب الموقع (> 15كم)"
+          }
+        }
+      }
+    },
+    "Recherche..." : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "...جاري البحث"
+          }
+        }
+      }
+    },
+    "Reconnecté · Actualisation…" : {
+
+    },
+    "Réglages" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "الإعدادات"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Settings"
+          }
+        }
+      }
+    },
+    "Remplace Dhuhr le vendredi" : {
+
+    },
+    "Reset" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "إعادة"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reset"
+          }
+        }
+      }
+    },
+    "Résultat de l'analyse" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "نتيجة التحليل"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Analysis Result"
+          }
+        }
+      }
+    },
+    "Saisissez les horaires affichés à votre mosquée aujourd'hui. L'app va analyser leur méthode et s'y conformer." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "أدخل أوقات الصلاة المعروضة في مسجدك اليوم. سيحلل التطبيق طريقتهم ويتوافق معها."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enter the prayer times displayed at your mosque today. The app will analyze their method and match it."
+          }
+        }
+      }
+    },
+    "Saisissez les horaires de votre mosquée aujourd'hui. L'app va en déduire la méthode de calcul et les délais Iqamah." : {
+
+    },
+    "Salat" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "الصلاة"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Salat"
+          }
+        }
+      }
+    },
+    "Salat · 5 Cercles" : {
+
+    },
+    "SÉRIE AUDIO" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "سلسلة صوتية"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AUDIO SERIES"
+          }
+        }
+      }
+    },
+    "Série complétée à %@" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "اكتملت السلسلة بنسبة %@"
+          }
+        }
+      }
+    },
+    "Sources" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "المصادر"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sources"
+          }
+        }
+      }
+    },
+    "Sources Authentiques" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "مصادر موثوقة"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Authentic Sources"
+          }
+        }
+      }
+    },
+    "Suivez vos prières d'un simple coup d'œil." : {
+
+    },
+    "Sunnah du Fajr" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "سنة الفجر"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fajr Sunnah"
+          }
+        }
+      }
+    },
+    "Supprimer" : {
+
+    },
+    "Temps de la prière" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "وقت الصلاة"
+          }
+        }
+      }
+    },
+    "Temps du %@" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "وقت %@"
+          }
+        }
+      }
+    },
+    "Tous les contenus spirituels de cette application (Hadiths, Invocations) sont rigoureusement sélectionnés. Nous nous basons sur les recueils authentiques (Sahih Al-Bukhari, Sahih Muslim) et les travaux d'authentification des grands savants de la Sounnah (comme Sheikh Al-Albani, rahimahullah)." : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "جميع المحتويات الروحية في هذا التطبيق (أحاديث، أذكار) مختارة بعناية. نعتمد على المجموعات الصحيحة (صحيح البخاري، صحيح مسلم) وأعمال التحقيق للعلماء الكبار من أهل السنة (كالشيخ الألباني رحمه الله)."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All spiritual content in this app (Hadiths, Invocations) is rigorously selected. We rely on authentic collections (Sahih Al-Bukhari, Sahih Muslim) and the authentication work of great scholars of the Sunnah (such as Sheikh Al-Albani, rahimahullah)."
+          }
+        }
+      }
+    },
+    "Tous les fichiers audio caches seront supprimes. Ils seront re-telecharges a la prochaine ecoute." : {
+
+    },
+    "Transparence & à propos" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "الشفافية وحول التطبيق"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Transparency & About"
+          }
+        }
+      }
+    },
+    "Valider une Sunnah" : {
+
+    },
+    "Vendredi" : {
+
+    },
+    "Verset" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "آية"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verse"
+          }
+        }
+      }
+    },
+    "Version %@" : {
+
+    },
+    "Vider le cache ?" : {
+
+    },
+    "Vider le cache audio" : {
+
+    },
+    "Widgets" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "الأدوات"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Widgets"
+          }
+        }
+      }
+    },
+    "x %lld" : {
+
+    },
+    "أذكار بعد الصلاة" : {
+
+    },
+    "العربية" : {
+
+    },
+    "حرام" : {
+
+    },
+    "عربي" : {
+
+    },
+    "قيام الليل" : {
+
+    }
+  },
+  "version" : "1.0"
+}
