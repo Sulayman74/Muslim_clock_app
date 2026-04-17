@@ -1,0 +1,18 @@
+{
+  "title": "Playlist de recitations",
+  "author": "Plusieurs récitateurs",
+  "artworkURL": "https://firebasestorage.googleapis.com/v0/b/locationbibi.firebasestorage.app/o/moon.webp?alt=media&token=7cd174ed-7678-41ac-8bc1-2d54bd5019b9",
+  "episodes": [
+    { "title": "Sourate At-Tawba", "audioURL": "https://firebasestorage.googleapis.com/v0/b/locationbibi.firebasestorage.app/o/sourate_9.aac?alt=media&token=f8e1e41a-4f3b-47b2-a9dd-581cb9fc11ea" },
+    { "title": "Sourate Al-Anfal", "audioURL": "https://firebasestorage.googleapis.com/v0/b/locationbibi.firebasestorage.app/o/sourate_8.aac?alt=media&token=aa8d1251-71e3-4eec-86e6-4d97d98d5d6a" }
+    { "title": "Sourate Maryam", "audioURL": "https://firebasestorage.googleapis.com/v0/b/locationbibi.firebasestorage.app/o/Maryam.aac?alt=media&token=550f3f30-b886-432d-b714-2d499b3f99c7" }
+    { "title": "Sourate Taha", "audioURL": "https://firebasestorage.googleapis.com/v0/b/locationbibi.firebasestorage.app/o/sourate_20.aac?alt=media&token=5f5e7776-1ecc-4b96-bbd7-6c19f8072aaf" }
+    { "title": "Sourate AL-Hajj", "audioURL": "https://firebasestorage.googleapis.com/v0/b/locationbibi.firebasestorage.app/o/sourate_22.aac?alt=media&token=765906dd-5721-4d37-a600-d94205dfc709" }
+    { "title": "Sourate Al-Furqan", "audioURL": "https://firebasestorage.googleapis.com/v0/b/locationbibi.firebasestorage.app/o/sourate_25.aac?alt=media&token=390a0542-9a1c-4e3c-891a-b45ddb234294" }
+    { "title": "Sourate An-Naml", "audioURL": "https://firebasestorage.googleapis.com/v0/b/locationbibi.firebasestorage.app/o/sourate_27.aac?alt=media&token=10efc4d7-5fd8-4eae-a483-1b851a5e4791" }
+    { "title": "Sourate Al-Qasas", "audioURL": "https://firebasestorage.googleapis.com/v0/b/locationbibi.firebasestorage.app/o/sourate_28.aac?alt=media&token=f86b3086-348e-4a43-9199-e4c952e3db59" }
+    { "title": "Sourate Al-Ankaboot", "audioURL": "https://firebasestorage.googleapis.com/v0/b/locationbibi.firebasestorage.app/o/sourate_29.aac?alt=media&token=9f6a12b8-4c3e-44e7-a7d2-c96a12bde97b" }
+    { "title": "Sourate Mohamed", "audioURL": "https://firebasestorage.googleapis.com/v0/b/locationbibi.firebasestorage.app/o/sourate_47.aac?alt=media&token=12212246-ad2a-4dc7-a71c-e38f5ff2522b" }
+    { "title": "Sourate Al-Qiyama", "audioURL": "https://firebasestorage.googleapis.com/v0/b/locationbibi.firebasestorage.app/o/sourate_75.aac?alt=media&token=9a77aab2-1f98-4b9d-b4f9-0e3f4643b9dc" }
+  ]
+}
