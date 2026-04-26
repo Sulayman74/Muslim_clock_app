@@ -13,8 +13,8 @@
     { "title": "Sourate Al-Qasas", "audioURL": "https://firebasestorage.googleapis.com/v0/b/locationbibi.firebasestorage.app/o/sourate_28.aac?alt=media&token=f86b3086-348e-4a43-9199-e4c952e3db59"},
     { "title": "Sourate Al-Ankaboot", "audioURL": "https://firebasestorage.googleapis.com/v0/b/locationbibi.firebasestorage.app/o/sourate_29.aac?alt=media&token=9f6a12b8-4c3e-44e7-a7d2-c96a12bde97b"},
     { "title": "Sourate Mohamed", "audioURL": "https://firebasestorage.googleapis.com/v0/b/locationbibi.firebasestorage.app/o/sourate_47.aac?alt=media&token=12212246-ad2a-4dc7-a71c-e38f5ff2522b"},
-    { "title": "Sourate Al-Qiyama", "audioURL": "https://firebasestorage.googleapis.com/v0/b/locationbibi.firebasestorage.app/o/sourate_75.aac?alt=media&token=9a77aab2-1f98-4b9d-b4f9-0e3f4643b9dc" }
-    { "title": "سورة المؤمنون", "audioURL": "https://firebasestorage.googleapis.com/v0/b/locationbibi.firebasestorage.app/o/سورة%20المؤمنون%201421هـ%202000م%20الشيخ%20مشاري%20راشد%20العفاسي%20Surah%20Al-Muminun%20Mishary%20Alafasy-aac.m4a?alt=media&token=04457c67-5942-4e19-949e-2f817f49b4c9" }
+    { "title": "Sourate Al-Qiyama", "audioURL": "https://firebasestorage.googleapis.com/v0/b/locationbibi.firebasestorage.app/o/sourate_75.aac?alt=media&token=9a77aab2-1f98-4b9d-b4f9-0e3f4643b9dc" },
+    { "title": "سورة المؤمنون", "audioURL": "https://firebasestorage.googleapis.com/v0/b/locationbibi.firebasestorage.app/o/سورة%20المؤمنون%201421هـ%202000م%20الشيخ%20مشاري%20راشد%20العفاسي%20Surah%20Al-Muminun%20Mishary%20Alafasy-aac.m4a?alt=media&token=04457c67-5942-4e19-949e-2f817f49b4c9" },
     { "title": "جزء قد سمع", "audioURL": "https://firebasestorage.googleapis.com/v0/b/locationbibi.firebasestorage.app/o/جزء%20قد%20سمع%201417هـ%201997م%20مشاري%20راشد%20العفاسي-aac.m4a?alt=media&token=3b5bd4a9-fdb8-4456-b534-aca7f0426f3b" }
   ]
 }
