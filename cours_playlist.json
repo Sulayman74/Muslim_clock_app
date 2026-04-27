@@ -1,0 +1,7 @@
+{
+  "title": "Playlist de cours",
+  "author": "Plusieurs savants",
+  "artworkURL": "https://firebasestorage.googleapis.com/v0/b/locationbibi.firebasestorage.app/o/moon.webp?alt=media&token=7cd174ed-7678-41ac-8bc1-2d54bd5019b9",
+  "episodes": [
+    {"title":"Cours 1", "audioURL":"https://firebasestorage.googleapis.com/v0/b/locationbibi.firebasestorage.app/o/Cours1.aac?alt=media&token=d2a5a8c3-0395-432e-a980-85dbb516406e"}
+  ]
