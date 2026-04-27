@@ -33,12 +33,12 @@
     "author": "Recitateur",
     "type": "custom",
     "playlistURL": "https://sulayman74.github.io/Muslim_clock_app/sourates_playlist.json"
-  }
+  },
    {
     "id": "custom_dourous",
     "name": "Cours",
     "author": "Shaykh",
     "type": "custom",
-    "playlistURL": "https://firebasestorage.googleapis.com/v0/b/locationbibi.firebasestorage.app/o/Cours1.aac?alt=media&token=d2a5a8c3-0395-432e-a980-85dbb516406e"
+    "playlistURL": "https://sulayman74.github.io/Muslim_clock_app/cours_playlist.json"
   }
 ]
