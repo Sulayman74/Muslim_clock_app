@@ -97,24 +97,27 @@ struct DailyContentView: View {
                 }
                 .foregroundColor(.indigo)
                 
-                Group {
-                    if showAyahArabic {
-                        Text(service.dailyAyahArabic)
-                            .font(.system(size: 22, weight: .regular))
-                            .multilineTextAlignment(.center)
-                            .frame(maxWidth: .infinity)
-                            .lineSpacing(10)
-                            .fixedSize(horizontal: false, vertical: true)
-                    } else {
-                        Text(verbatim: service.dailyAyah)
-                            .font(.system(.body, design: .serif))
-                            .italic()
-                            .multilineTextAlignment(.leading)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .fixedSize(horizontal: false, vertical: true)
-                    }
+                // Anti-wiggle au toggle FR ↔ AR : ZStack des 2 langues superposées,
+                // animation seulement sur l'opacité. La hauteur du ZStack = max des 2
+                // textes intrinsèques → aucun saut vertical.
+                ZStack(alignment: .topLeading) {
+                    Text(service.dailyAyahArabic)
+                        .font(.system(size: 22, weight: .regular))
+                        .multilineTextAlignment(.center)
+                        .frame(maxWidth: .infinity)
+                        .lineSpacing(10)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .opacity(showAyahArabic ? 1 : 0)
+
+                    Text(verbatim: service.dailyAyah)
+                        .font(.system(.body, design: .serif))
+                        .italic()
+                        .multilineTextAlignment(.leading)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .opacity(showAyahArabic ? 0 : 1)
                 }
-                .frame(maxWidth: .infinity, minHeight: 80, alignment: .leading) // anti-wiggle au chargement
+                .frame(maxWidth: .infinity, alignment: .leading)
                 .animation(.smooth(duration: 0.3), value: showAyahArabic)
 
                 Text(verbatim: "— \(service.dailyAyahSource)")
@@ -161,24 +164,25 @@ struct DailyContentView: View {
                 }
                 .foregroundColor(.teal)
                 
-                Group {
-                    if showHadithArabic {
-                        Text(service.dailyHadithArabic)
-                            .font(.system(size: 22, weight: .regular))
-                            .multilineTextAlignment(.center)
-                            .frame(maxWidth: .infinity)
-                            .lineSpacing(10)
-                            .fixedSize(horizontal: false, vertical: true)
-                    } else {
-                        Text(verbatim: service.dailyHadith)
-                            .font(.system(.body, design: .serif))
-                            .italic()
-                            .multilineTextAlignment(.leading)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .fixedSize(horizontal: false, vertical: true)
-                    }
+                // Anti-wiggle au toggle FR ↔ AR (cf. carte Verset ci-dessus)
+                ZStack(alignment: .topLeading) {
+                    Text(service.dailyHadithArabic)
+                        .font(.system(size: 22, weight: .regular))
+                        .multilineTextAlignment(.center)
+                        .frame(maxWidth: .infinity)
+                        .lineSpacing(10)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .opacity(showHadithArabic ? 1 : 0)
+
+                    Text(verbatim: service.dailyHadith)
+                        .font(.system(.body, design: .serif))
+                        .italic()
+                        .multilineTextAlignment(.leading)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .opacity(showHadithArabic ? 0 : 1)
                 }
-                .frame(maxWidth: .infinity, minHeight: 80, alignment: .leading) // anti-wiggle au chargement
+                .frame(maxWidth: .infinity, alignment: .leading)
                 .animation(.smooth(duration: 0.3), value: showHadithArabic)
 
                 Text(verbatim: "— \(service.dailyHadithSource)")
@@ -194,7 +198,13 @@ struct DailyContentView: View {
         }
         .redacted(reason: service.isLoading ? .placeholder : [])
         .animation(.smooth(duration: 0.4), value: service.isLoading)
-        
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        // KHATMA — programme de lecture du Quran (module QuranPlan)
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        QuranKhatmaCard()
+            .padding(.top, 10)
+
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         // CARTE AUDIO / PODCAST
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━

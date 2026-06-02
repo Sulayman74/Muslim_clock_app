@@ -22,41 +22,48 @@ class NotificationManager {
     
     // 2. Programmation par lot (prières 14 jours + nouvelles lunes 6 mois)
     // Total max : 56 prières + 6 nouvelles lunes = 62 < limite iOS de 64
+    //
+    // ⚠️ Nettoyage SÉLECTIF : on ne supprime QUE les notifs des modules qu'on possède
+    // ici (prayer_* + newmoon_*). Les autres préfixes (ex: quran_reading_*) sont
+    // préservés pour cohabiter avec d'autres modules.
     func scheduleBatchNotifications(names: [String], dates: [Date]) {
         let center = UNUserNotificationCenter.current()
-        
-        // Table rase : évite tout conflit d'IDs ou dépassement de limite
-        center.removeAllPendingNotificationRequests()
-        center.removeAllDeliveredNotifications()
-        
-        // 56 slots max pour les prières (8 slots réservés aux nouvelles lunes)
-        let limit = min(names.count, 56)
-        
-        let formatter = DateFormatter()
-        formatter.timeStyle = .short
-        
-        for i in 0..<limit {
-            let prayerName = names[i]
-            let prayerDate = dates[i]
-            
-            let content = UNMutableNotificationContent()
-            content.title = "\(prayerName) (\(formatter.string(from: prayerDate)))"
-            content.body  = "C'est l'heure de la prière du \(prayerName)."
-            content.sound = .default
-            content.userInfo = [
-                "prayerName": prayerName,
-                "prayerTime": prayerDate.timeIntervalSince1970
-            ]
-            let components = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: prayerDate)
-            let trigger    = UNCalendarNotificationTrigger(dateMatching: components, repeats: false)
-            let request    = UNNotificationRequest(identifier: "prayer_\(i)", content: content, trigger: trigger)
-            center.add(request)
+
+        center.getPendingNotificationRequests { requests in
+            let idsToRemove = requests
+                .filter { $0.identifier.hasPrefix("prayer_") || $0.identifier.hasPrefix("newmoon_") }
+                .map { $0.identifier }
+            center.removePendingNotificationRequests(withIdentifiers: idsToRemove)
+
+            // 56 slots max pour les prières (8 slots réservés aux nouvelles lunes)
+            let limit = min(names.count, 56)
+
+            let formatter = DateFormatter()
+            formatter.timeStyle = .short
+
+            for i in 0..<limit {
+                let prayerName = names[i]
+                let prayerDate = dates[i]
+
+                let content = UNMutableNotificationContent()
+                content.title = "\(prayerName) (\(formatter.string(from: prayerDate)))"
+                content.body  = "C'est l'heure de la prière du \(prayerName)."
+                content.sound = .default
+                content.userInfo = [
+                    "prayerName": prayerName,
+                    "prayerTime": prayerDate.timeIntervalSince1970
+                ]
+                let components = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: prayerDate)
+                let trigger    = UNCalendarNotificationTrigger(dateMatching: components, repeats: false)
+                let request    = UNNotificationRequest(identifier: "prayer_\(i)", content: content, trigger: trigger)
+                center.add(request)
+            }
+
+            print("🔔 [Notifs] \(limit) prières programmées pour les prochains jours")
+
+            // Nouvelles lunes ajoutées en fin de batch (slots 57-62)
+            self.scheduleNewMoonNotifications()
         }
-        
-        print("🔔 [Notifs] \(limit) prières programmées pour les prochains jours")
-        
-        // Nouvelles lunes ajoutées en fin de batch (slots 57-62)
-        scheduleNewMoonNotifications()
     }
     
     // 3. Nouvelles lunes — appelé automatiquement depuis scheduleBatchNotifications

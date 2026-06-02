@@ -467,6 +467,10 @@ struct MainView: View {
                     .environmentObject(prayerVM)
                     .presentationDragIndicator(.visible)
                 }
+                // Notif Quran tapée → switch automatique vers tab Rappel (où la card vit).
+                .onReceive(NotificationCenter.default.publisher(for: .quranReadingTapped)) { _ in
+                    selectedTab = 1
+                }
                 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
                 // DÉCLENCHEUR D'ADHAN (écoute les notifications)
                 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

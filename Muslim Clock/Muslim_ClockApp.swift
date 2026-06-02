@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 import UserNotifications
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -43,8 +44,10 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
 
         let userInfo = response.notification.request.content.userInfo
 
+        // Notif prière → AdhanOverlay
         if let prayerName = userInfo["prayerName"] as? String,
-           let timestamp = userInfo["prayerTime"] as? TimeInterval {
+           let timestamp = userInfo["prayerTime"] as? TimeInterval,
+           userInfo["module"] as? String != "quran_reading" {
             let prayerTime = Date(timeIntervalSince1970: timestamp)
             NotificationCenter.default.post(
                 name: NSNotification.Name("AdhanTriggered"),
@@ -56,8 +59,24 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
             )
         }
 
+        // Notif rappel Quran → ouvre la sheet QuranTrackerView
+        if userInfo["module"] as? String == "quran_reading" {
+            // Flag persistant pour le cas où la card n'est pas encore montée
+            UserDefaults.standard.set(true, forKey: "pendingOpenQuranTracker")
+            // Notification live pour MainView (switch tab) et QuranKhatmaCard (open sheet)
+            NotificationCenter.default.post(name: .quranReadingTapped, object: nil)
+        }
+
         completionHandler()
     }
+}
+
+// MARK: - Notification names
+
+extension Notification.Name {
+    /// Émise quand l'utilisateur tape une notif de rappel Quran. MainView switche
+    /// vers la tab Rappel ; QuranKhatmaCard ouvre la sheet Tracker.
+    static let quranReadingTapped = Notification.Name("QuranReadingTapped")
 }
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -97,5 +116,7 @@ struct Muslim_ClockApp: App {
                     }
                 }
         }
+        // SwiftData : conteneur du journal de lecture du Quran.
+        .modelContainer(for: ReadingEntry.self)
     }
 }

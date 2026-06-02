@@ -632,6 +632,7 @@ private struct DebugPanelSection: View {
     @EnvironmentObject var prayerVM: PrayerTimesViewModel
     @State private var adhanScheduled = false
     @State private var newMoonScheduled = false
+    @State private var quranReminderScheduled = false
 
     // Override de saison islamique
     @AppStorage("debugSeasonDate") private var debugSeasonTimestamp: Double = 0
@@ -778,6 +779,34 @@ private struct DebugPanelSection: View {
                 keys.forEach { UserDefaults.standard.removeObject(forKey: $0) }
             } label: {
                 Label("Reset compteurs adhkar", systemImage: "trash")
+            }
+
+            // Test notif rappel Quran (dans 10s)
+            Button {
+                let center = UNUserNotificationCenter.current()
+                let content = UNMutableNotificationContent()
+                content.title = "📖 Lecture du Quran"
+                content.body = "Tes 4 pages après Asr — petit pas, grande constance."
+                content.sound = .default
+                content.userInfo = [
+                    "module": "quran_reading",
+                    "prayerName": "Asr",
+                    "pagesTarget": 4,
+                ]
+                let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 10, repeats: false)
+                center.add(UNNotificationRequest(
+                    identifier: "quran_reading_debug_\(Date().timeIntervalSince1970)",
+                    content: content,
+                    trigger: trigger
+                ))
+                quranReminderScheduled = true
+                DispatchQueue.main.asyncAfter(deadline: .now() + 3) { quranReminderScheduled = false }
+            } label: {
+                Label(
+                    quranReminderScheduled ? "Notif Quran dans 10s ✅" : "Tester notif rappel Quran (10s)",
+                    systemImage: "book.pages.fill"
+                )
+                .foregroundStyle(quranReminderScheduled ? .green : .teal)
             }
 
         } header: {

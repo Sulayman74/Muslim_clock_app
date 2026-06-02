@@ -10,6 +10,9 @@
     "« %@ »" : {
 
     },
+    "« %@ » appliqué — ajuste si besoin ci-dessous." : {
+
+    },
     "« La Salât est le pilier de la religion »" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -31,6 +34,16 @@
         }
       }
     },
+    "**%lld pages/jour** — soit **%lld pages** après chacune des %lld prière(s) sélectionnée(s)." : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "**%1$lld pages/jour** — soit **%2$lld pages** après chacune des %3$lld prière(s) sélectionnée(s)."
+          }
+        }
+      }
+    },
     "%@ → %@" : {
       "localizations" : {
         "fr" : {
@@ -42,6 +55,37 @@
       }
     },
     "%lld" : {
+
+    },
+    "%lld / %lld pages" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld / %2$lld pages"
+          }
+        }
+      }
+    },
+    "%lld j de suite" : {
+
+    },
+    "%lld jours" : {
+
+    },
+    "%lld pages" : {
+
+    },
+    "%lld%%" : {
+
+    },
+    "%lldj" : {
+
+    },
+    "+%lld pages d'avance" : {
+
+    },
+    "≈ %lld pages/jour" : {
 
     },
     "✨ Les Jours Blancs" : {
@@ -80,6 +124,12 @@
           }
         }
       }
+    },
+    "📖 Lecture du Quran" : {
+
+    },
+    "1 Juz / jour (≈ 1 mois)" : {
+
     },
     "1. Maintenez votre doigt enfoncé sur un espace vide de votre écran d'accueil iPhone." : {
       "localizations" : {
@@ -216,6 +266,12 @@
         }
       }
     },
+    "½ Juz / jour (≈ 2 mois)" : {
+
+    },
+    "¼ Juz / jour (≈ 4 mois)" : {
+
+    },
     "Accomplissez la prière à son heure." : {
       "localizations" : {
         "ar" : {
@@ -231,6 +287,9 @@
           }
         }
       }
+    },
+    "Activer les rappels" : {
+
     },
     "Adhkar après %@" : {
       "localizations" : {
@@ -494,6 +553,12 @@
         }
       }
     },
+    "Choisis un rythme et reçois un rappel doux après chaque prière." : {
+
+    },
+    "Choisis un rythme pour pré-remplir le formulaire." : {
+
+    },
     "Clôture de la nuit" : {
       "localizations" : {
         "ar" : {
@@ -509,6 +574,12 @@
           }
         }
       }
+    },
+    "Combien de pages aujourd'hui ?" : {
+
+    },
+    "Commencer" : {
+
     },
     "Comment ajouter un Widget ?" : {
       "localizations" : {
@@ -558,10 +629,25 @@
         }
       }
     },
+    "Crée ton plan de lecture" : {
+
+    },
+    "Crée ton programme de lecture" : {
+
+    },
+    "Créer le plan" : {
+
+    },
     "Croissant ↑" : {
 
     },
     "Croissant ↓" : {
+
+    },
+    "Date cible" : {
+
+    },
+    "De la page %lld" : {
 
     },
     "Délai Adhan → Iqamah" : {
@@ -707,6 +793,9 @@
         }
       }
     },
+    "Enregistrer" : {
+
+    },
     "Espace utilise" : {
 
     },
@@ -731,6 +820,9 @@
       }
     },
     "Félicitations ! Vous avez terminé la série « %@ ».\n\nSi vous aimez Muslim Clock, un avis sur l'App Store nous aiderait énormément ! 🌙" : {
+
+    },
+    "Fermer" : {
 
     },
     "Fichiers caches" : {
@@ -892,6 +984,9 @@
         }
       }
     },
+    "il reste %lld pages à rattraper" : {
+
+    },
     "Informations" : {
 
     },
@@ -958,6 +1053,9 @@
         }
       }
     },
+    "J'ai lu mes pages aujourd'hui" : {
+
+    },
     "J'y vais" : {
       "localizations" : {
         "ar" : {
@@ -974,6 +1072,9 @@
         }
       }
     },
+    "Jour" : {
+
+    },
     "Jour du Vendredi" : {
 
     },
@@ -981,6 +1082,21 @@
 
     },
     "Jumu'ah" : {
+
+    },
+    "Jusqu'à la page %lld" : {
+
+    },
+    "Khatma" : {
+
+    },
+    "Khatma — Configuration" : {
+
+    },
+    "Khatma de Ramadan (~30 jours)" : {
+
+    },
+    "Khatma du Quran" : {
 
     },
     "La Prière" : {
@@ -1000,6 +1116,9 @@
       }
     },
     "La prochaine prière en un coup d'œil." : {
+
+    },
+    "La qualité prime sur la quantité — la régularité, même petite, est plus aimée que beaucoup d'efforts ponctuels." : {
 
     },
     "La section audio propose des séries de cours islamiques soigneusement sélectionnés :\n\n• Les séries sont choisies parmi des savants et prédicateurs reconnus pour leur attachement au Coran et à la Sounnah authentique\n• La playlist est mise à jour à distance — de nouvelles séries sont ajoutées régulièrement sans mise à jour de l'app\n• Les audios sont mis en cache localement pour une écoute hors-ligne\n• La progression est sauvegardée automatiquement : reprenez là où vous vous étiez arrêté\n\nL'objectif est de faciliter l'apprentissage de la science religieuse au quotidien, pendant vos trajets ou temps libres." : {
@@ -1238,6 +1357,9 @@
     "O Allah, accorde Ta priere et Ton salut a notre Prophete Muhammad" : {
 
     },
+    "Objectif" : {
+
+    },
     "OK" : {
       "localizations" : {
         "ar" : {
@@ -1268,6 +1390,21 @@
 
     },
     "Ouvrir Muslim Clock" : {
+
+    },
+    "Pages" : {
+
+    },
+    "Pages cumulées" : {
+
+    },
+    "Par date cible" : {
+
+    },
+    "Par durée" : {
+
+    },
+    "Par pages" : {
 
     },
     "Pas de Rawatib, mais l'invocation entre l'Adhan et l'Iqama est exaucée." : {
@@ -1351,6 +1488,9 @@
         }
       }
     },
+    "Portée du Mushaf" : {
+
+    },
     "Pourquoi une notification et pas l'Adhan ?" : {
 
     },
@@ -1403,6 +1543,9 @@
           }
         }
       }
+    },
+    "Preset rapide" : {
+
     },
     "PRESQUE..." : {
       "localizations" : {
@@ -1525,6 +1668,9 @@
         }
       }
     },
+    "Rappels post-prière" : {
+
+    },
     "Rawatib du Dhuhr" : {
       "localizations" : {
         "ar" : {
@@ -1595,6 +1741,9 @@
           }
         }
       }
+    },
+    "Régularité — 5 dernières semaines" : {
+
     },
     "Remplace Dhuhr le vendredi" : {
 
@@ -1668,6 +1817,9 @@
       }
     },
     "Salat · 5 Cercles" : {
+
+    },
+    "Semaine" : {
 
     },
     "SÉRIE AUDIO" : {
@@ -1777,6 +1929,19 @@
         }
       }
     },
+    "Tes %lld pages après %@ — petit pas, grande constance." : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Tes %1$lld pages après %2$@ — petit pas, grande constance."
+          }
+        }
+      }
+    },
+    "Ton rythme" : {
+
+    },
     "Tous les contenus spirituels (Hadiths, Invocations, Adhkar) sont rigoureusement sélectionnés à partir de sources authentiques :\n\n• Sahih Al-Bukhari\n• Sahih Muslim\n• Sunan Abu Dawud, At-Tirmidhi, An-Nasa'i, Ibn Majah\n• Riyad As-Salihin (Imam An-Nawawi)\n• Hisn Al-Muslim (La Citadelle du Musulman)\n\nL'authentification repose sur les travaux des grands savants du Hadith, notamment Sheikh Al-Albani (rahimahullah).\n\nAucun hadith faible (da'if) n'est utilisé pour les invocations. En cas de doute, le degré d'authenticité est précisé." : {
 
     },
@@ -1817,6 +1982,9 @@
       }
     },
     "Transparence & Méthodologie" : {
+
+    },
+    "Type" : {
 
     },
     "Valider une Sunnah" : {
