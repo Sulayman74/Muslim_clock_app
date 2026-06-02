@@ -18,6 +18,15 @@ final class WatchSessionManager: NSObject {
     /// Utilise transferUserInfo qui met les données en file d'attente
     /// et les livre dès que la Watch est disponible.
     func sendPrayerTimes(_ payload: [String: Double]) {
+        transfer(payload)
+    }
+
+    /// Envoie les réglages utilisateur (Jumu'ah, contenu quotidien, etc.) vers la Watch.
+    func sendSettings(_ payload: [String: Any]) {
+        transfer(payload)
+    }
+
+    private func transfer(_ payload: [String: Any]) {
         guard WCSession.isSupported(),
               WCSession.default.activationState == .activated else { return }
         WCSession.default.transferUserInfo(payload)

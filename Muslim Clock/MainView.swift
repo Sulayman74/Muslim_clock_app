@@ -274,7 +274,6 @@ struct MainView: View {
                                     .padding(.top, -6)
 
                                 DailyContentView()
-                                Spacer()
                             }
                             .padding(.horizontal, 16)
                             .padding(.top, 20)
@@ -431,7 +430,8 @@ struct MainView: View {
                                 if podcastManager.currentlyPlayingID != nil && !podcastManager.isPlaying {
                                     if let id = podcastManager.currentlyPlayingID,
                                        let ep = podcastManager.episodes.first(where: { $0.id == id }) {
-                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                        Task {
+                                            try? await Task.sleep(nanoseconds: 500_000_000)
                                             podcastManager.togglePlay(episode: ep)
                                         }
                                     }

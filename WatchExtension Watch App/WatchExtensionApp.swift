@@ -3,6 +3,10 @@ import Combine
 import WatchConnectivity
 import WidgetKit
 
+/// Identifiant du App Group partagé iOS ↔ Watch.
+/// Doit rester aligné avec `WatchExtension Watch App.entitlements`.
+private let appGroupIdentifier = "group.kappsi.Muslim-Clock"
+
 @main
 struct WatchExtension_Watch_AppApp: App {
     // L'initialisation du receiver démarre la session WCSession
@@ -43,12 +47,17 @@ extension WatchSessionReceiver: WCSessionDelegate {
     }
     #endif
 
-    /// Réception des horaires envoyés par l'iPhone (transferUserInfo — livraison garantie)
+    /// Réception des horaires et réglages envoyés par l'iPhone (transferUserInfo — livraison garantie)
     func session(_ session: WCSession, didReceiveUserInfo userInfo: [String: Any]) {
-        let defaults = UserDefaults(suiteName: "group.kappsi.Muslim-Clock")
+        let defaults = UserDefaults(suiteName: appGroupIdentifier)
         for (key, value) in userInfo {
-            if let doubleValue = value as? Double {
-                defaults?.set(doubleValue, forKey: key)
+            // Supporter Double (horaires), Bool (toggles), Int (heures/minutes)
+            switch value {
+            case let d as Double:  defaults?.set(d, forKey: key)
+            case let b as Bool:    defaults?.set(b, forKey: key)
+            case let i as Int:     defaults?.set(i, forKey: key)
+            case let s as String:  defaults?.set(s, forKey: key)
+            default: break
             }
         }
         // Recharge les complications immédiatement

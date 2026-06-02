@@ -31,22 +31,23 @@ class PostPrayerAdhkarService: ObservableObject {
     
     func loadAdhkar(for prayerName: String) {
         let currentPrayerKey = prayerName.lowercased()
-        
-        guard let url = Bundle.main.url(forResource: "post_prayer_adhkar", withExtension: "json"),
-              let data = try? Data(contentsOf: url) else {
-            print("Erreur : Impossible de charger post_prayer_adhkar.json")
-            return
-        }
-        
-        do {
-            let allAdhkar = try JSONDecoder().decode([PostPrayerDhikr].self, from: data)
+
+        Task { @MainActor in
+            let githubURL = "https://sulayman74.github.io/Muslim_clock_app/post_prayer_adhkar.json"
+            guard let allAdhkar = await RemoteJSONLoader.load(
+                filename: "post_prayer_adhkar.json",
+                remoteURL: githubURL,
+                type: [PostPrayerDhikr].self
+            ) else {
+                print("Erreur : Impossible de charger post_prayer_adhkar.json")
+                return
+            }
+
             self.adhkarList = allAdhkar.filter { dhikr in
                 dhikr.prayer == "all" ||
                 dhikr.prayer == currentPrayerKey ||
                 (dhikr.prayer == "fajr_maghrib" && (currentPrayerKey == "fajr" || currentPrayerKey == "maghrib"))
             }
-        } catch {
-            print("Erreur de décodage JSON : \(error)")
         }
     }
 }
@@ -304,9 +305,8 @@ struct CurrentPrayerGaugeView: View {
                     // Verset en arabe
                     Text(reminder.arabic)
                         .font(.system(size: 19, weight: .medium))
-                        .multilineTextAlignment(.trailing)
-                        .environment(\.layoutDirection, .rightToLeft)
-                        .frame(maxWidth: .infinity, alignment: .trailing)
+                        .multilineTextAlignment(.center)
+                        .frame(maxWidth: .infinity)
                         .lineSpacing(8)
                         .foregroundColor(.white)
                     
@@ -442,9 +442,8 @@ struct PostPrayerDhikrCardView: View {
             if showArabic {
                 Text(dhikr.arabic)
                     .font(.system(size: 20, weight: .regular))
-                    .multilineTextAlignment(.trailing)
-                    .environment(\.layoutDirection, .rightToLeft)
-                    .frame(maxWidth: .infinity, alignment: .trailing)
+                    .multilineTextAlignment(.center)
+                    .frame(maxWidth: .infinity)
                     .lineSpacing(10)
                     .foregroundColor(.white.opacity(0.9))
             }

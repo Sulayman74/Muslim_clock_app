@@ -1089,6 +1089,7 @@
       }
     },
     "Lire" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -1150,6 +1151,7 @@
 
     },
     "Méthodologie" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -1255,6 +1257,7 @@
       }
     },
     "Pause" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -1655,6 +1658,7 @@
       }
     },
     "Sources" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -1669,6 +1673,9 @@
           }
         }
       }
+    },
+    "Sources & Transparence" : {
+
     },
     "Sources Authentiques" : {
       "localizations" : {
@@ -1729,6 +1736,7 @@
       }
     },
     "Tous les contenus spirituels de cette application (Hadiths, Invocations) sont rigoureusement sélectionnés. Nous nous basons sur les recueils authentiques (Sahih Al-Bukhari, Sahih Muslim) et les travaux d'authentification des grands savants de la Sounnah (comme Sheikh Al-Albani, rahimahullah)." : {
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -1762,6 +1770,9 @@
           }
         }
       }
+    },
+    "Transparence & Méthodologie" : {
+
     },
     "Valider une Sunnah" : {
 

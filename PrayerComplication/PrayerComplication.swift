@@ -7,6 +7,7 @@ struct PrayerProgressData {
     let arabicName: String  // "الفجر"
     let latinInit: String   // "F"
     let time: Date
+    let nextTime: Date      // Début de la prière suivante (fin de la fenêtre)
     let progress: Double    // 0.0 = futur, 1.0 = passé, 0.0-1.0 = en cours
     let isCurrent: Bool
     let isPast: Bool
@@ -24,13 +25,18 @@ struct PrayerEntry: TimelineEntry {
     let prayers: [PrayerProgressData]    // 5 prières
     let hijriArabic: String              // "١٧ رجب"
     let hijriFrench: String              // "17 Rajab"
-    let moonStrip: [MoonDayData]         // [hier, auj, demain]
+    let moonToday: MoonDayData           // Phase lunaire du jour courant
     let nextRefresh: Date
+    let tomorrowFajr: Date?              // Pour le countdown après Isha
 }
 
 // MARK: - Data Layer
 
 private enum PrayerData {
+
+    /// Identifiant du App Group partagé iOS ↔ Watch ↔ Complication.
+    /// Doit rester aligné avec `PrayerComplication.entitlements`.
+    static let appGroupIdentifier = "group.kappsi.Muslim-Clock"
 
     struct Def {
         let arabic: String
@@ -47,7 +53,7 @@ private enum PrayerData {
     ]
 
     static func buildEntry() -> PrayerEntry {
-        let defaults = UserDefaults(suiteName: "group.kappsi.Muslim-Clock")
+        let defaults = UserDefaults(suiteName: PrayerData.appGroupIdentifier)
         let now = Date()
 
         // Jumu'ah : le vendredi, remplacer le label Dhuhr
@@ -72,15 +78,32 @@ private enum PrayerData {
             ? Date(timeIntervalSince1970: tomorrowFajrV)
             : now.addingTimeInterval(8 * 3600)
 
+        // Sunrise : fin de la fenêtre Fajr
+        let sunriseV = defaults?.double(forKey: "prayer_sunrise") ?? 0
+        let sunrise: Date? = sunriseV > 0 ? Date(timeIntervalSince1970: sunriseV) : nil
+
+        // Moitié de la nuit : fin de la fenêtre Isha
+        // middleOfNight = maghrib + (fajr_demain - maghrib) / 2
+        let middleOfNight: Date? = {
+            guard let maghrib = times[3] else { return nil } // index 3 = Maghrib
+            let nightDuration = tomorrowFajr.timeIntervalSince(maghrib)
+            guard nightDuration > 0 else { return nil }
+            return maghrib.addingTimeInterval(nightDuration / 2)
+        }()
+
         let prayers: [PrayerProgressData] = effectiveDefs.indices.map { i in
+            let nextTime = nextWindowEnd(
+                for: i,
+                in: effectiveDefs,
+                times: times,
+                sunrise: sunrise,
+                middleOfNight: middleOfNight,
+                tomorrowFajr: tomorrowFajr
+            )
             guard let prayerTime = times[i] else {
                 return PrayerProgressData(arabicName: effectiveDefs[i].arabic, latinInit: effectiveDefs[i].init_,
-                                          time: now, progress: 0, isCurrent: false, isPast: false)
+                                          time: now, nextTime: nextTime, progress: 0, isCurrent: false, isPast: false)
             }
-            let nextTime: Date = {
-                for j in (i + 1)..<effectiveDefs.count { if let t = times[j] { return t } }
-                return tomorrowFajr
-            }()
             let isPast    = nextTime <= now
             let isCurrent = prayerTime <= now && nextTime > now
             let progress: Double = {
@@ -93,7 +116,7 @@ private enum PrayerData {
                 return 0.0
             }()
             return PrayerProgressData(arabicName: effectiveDefs[i].arabic, latinInit: effectiveDefs[i].init_,
-                                      time: prayerTime, progress: progress,
+                                      time: prayerTime, nextTime: nextTime, progress: progress,
                                       isCurrent: isCurrent, isPast: isPast)
         }
 
@@ -106,9 +129,35 @@ private enum PrayerData {
             prayers: prayers,
             hijriArabic: formatHijriArabic(now),
             hijriFrench: formatHijriFrench(now),
-            moonStrip: buildMoonStrip(for: now),
-            nextRefresh: nextRefresh
+            moonToday: moonToday(for: now),
+            nextRefresh: nextRefresh,
+            tomorrowFajr: tomorrowFajrV > 0 ? tomorrowFajr : nil
         )
+    }
+
+    /// Calcule la fin de la fenêtre d'une prière donnée (= début de la prière suivante).
+    /// - Fajr : se termine au lever du soleil (`sunrise`) si disponible.
+    /// - Isha : se termine à la moitié de la nuit (`middleOfNight`) si disponible.
+    /// - Autres : début de la prochaine prière non-nulle, sinon Fajr de demain.
+    private static func nextWindowEnd(
+        for i: Int,
+        in defs: [Def],
+        times: [Date?],
+        sunrise: Date?,
+        middleOfNight: Date?,
+        tomorrowFajr: Date
+    ) -> Date {
+        switch i {
+        case 0:
+            if let sr = sunrise { return sr }
+            return times[1] ?? tomorrowFajr
+        case 4:
+            if let mid = middleOfNight { return mid }
+            return tomorrowFajr
+        default:
+            for j in (i + 1)..<defs.count { if let t = times[j] { return t } }
+            return tomorrowFajr
+        }
     }
 
     // MARK: Hijri formatting
@@ -139,15 +188,16 @@ private enum PrayerData {
 
     // MARK: Moon phase
 
-    static func buildMoonStrip(for date: Date) -> [MoonDayData] {
+    /// Phase lunaire pour la date courante (un seul jour, plus de strip 3-jours).
+    static func moonToday(for date: Date) -> MoonDayData {
         let hijri = Calendar(identifier: .islamicUmmAlQura)
-        return [-1, 0, 1].compactMap { offset in
-            guard let d = Calendar.current.date(byAdding: .day, value: offset, to: date) else { return nil }
-            let day = hijri.component(.day, from: d)
-            return MoonDayData(hijriDay: day, symbol: moonSymbol(for: day),
-                               isWhiteDays: (13...15).contains(day),
-                               isToday: hijri.isDateInToday(d))
-        }
+        let day = hijri.component(.day, from: date)
+        return MoonDayData(
+            hijriDay: day,
+            symbol: moonSymbol(for: day),
+            isWhiteDays: (13...15).contains(day),
+            isToday: true
+        )
     }
 
     static func moonSymbol(for day: Int) -> String {
@@ -171,6 +221,7 @@ private enum PrayerData {
             PrayerProgressData(
                 arabicName: def.arabic, latinInit: def.init_,
                 time: now.addingTimeInterval(Double(i - 2) * 3600),
+                nextTime: now.addingTimeInterval(Double(i - 1) * 3600),
                 progress: i < 2 ? 1.0 : (i == 2 ? 0.55 : 0.0),
                 isCurrent: i == 2, isPast: i < 2
             )
@@ -178,12 +229,9 @@ private enum PrayerData {
         return PrayerEntry(
             date: now, prayers: prayers,
             hijriArabic: "١٧ رجب", hijriFrench: "17 Rajab",
-            moonStrip: [
-                MoonDayData(hijriDay: 13, symbol: "moonphase.waxing.gibbous", isWhiteDays: true,  isToday: false),
-                MoonDayData(hijriDay: 14, symbol: "moonphase.full.moon",      isWhiteDays: true,  isToday: true),
-                MoonDayData(hijriDay: 15, symbol: "moonphase.full.moon",      isWhiteDays: true,  isToday: false),
-            ],
-            nextRefresh: now.addingTimeInterval(300)
+            moonToday: MoonDayData(hijriDay: 14, symbol: "moonphase.full.moon", isWhiteDays: true, isToday: true),
+            nextRefresh: now.addingTimeInterval(300),
+            tomorrowFajr: now.addingTimeInterval(8 * 3600)
         )
     }
 }
@@ -283,6 +331,30 @@ struct PrayerSphereView: View {
     }
 }
 
+// MARK: - Micro Sphere (rectangulaire — ligne du bas)
+
+struct MicroSphere: View {
+    let prayer: PrayerProgressData
+
+    var body: some View {
+        Circle()
+            .fill(fillStyle)
+            .frame(width: prayer.isCurrent ? 8 : 6,
+                   height: prayer.isCurrent ? 8 : 6)
+            .overlay(
+                Circle()
+                    .stroke(.secondary, lineWidth: prayer.isCurrent || prayer.isPast ? 0 : 0.8)
+            )
+            .widgetAccentable(prayer.isCurrent)
+    }
+
+    private var fillStyle: AnyShapeStyle {
+        if prayer.isCurrent { return AnyShapeStyle(.tint) }            // tintée par la watch face
+        if prayer.isPast    { return AnyShapeStyle(.primary.opacity(0.65)) }
+        return AnyShapeStyle(Color.clear)
+    }
+}
+
 // MARK: - Complication View (toutes familles)
 
 struct PrayerComplicationView: View {
@@ -298,47 +370,94 @@ struct PrayerComplicationView: View {
         }
     }
 
-    // MARK: ── Circulaire — Anneau de prière en cours ──────────────────
+    // MARK: ── Circulaire — Countdown vers la prochaine prière ──────────
 
-    private var activePrayer: PrayerProgressData? {
+    /// La prière en cours (pour l'anneau de progression)
+    private var currentPrayer: PrayerProgressData? {
         entry.prayers.first(where: { $0.isCurrent })
-            ?? entry.prayers.first(where: { !$0.isPast })
+    }
+
+    /// La prochaine prière (celle qu'on attend)
+    private var nextUpcomingPrayer: PrayerProgressData? {
+        entry.prayers.first(where: { !$0.isPast && !$0.isCurrent })
+    }
+
+    /// Nom arabe de la prochaine prière à afficher (gère le cas Isha → Fajr demain)
+    private var heroNextName: String {
+        if currentPrayer != nil, let next = nextUpcomingPrayer { return next.arabicName }
+        if currentPrayer != nil { return "الفجر" } // Isha en cours, prochain = Fajr demain
+        if let next = nextUpcomingPrayer { return next.arabicName }
+        return "الفجر" // après Isha, avant Fajr demain
+    }
+
+    /// Heure cible vers laquelle on compte (start de la prochaine prière)
+    private var heroNextTime: Date? {
+        if currentPrayer != nil, let next = nextUpcomingPrayer { return next.time }
+        if currentPrayer != nil { return entry.tomorrowFajr }
+        if let next = nextUpcomingPrayer { return next.time }
+        return entry.tomorrowFajr
     }
 
     private var circularView: some View {
         ZStack {
-            if let p = activePrayer {
+            if let current = currentPrayer {
+                // On est entre deux prières : anneau = progression actuelle, texte = prochaine prière
+                let next = nextUpcomingPrayer
+
                 // Piste
                 Circle().stroke(Color.white.opacity(0.1), lineWidth: 3.5)
 
-                // Arc (minimum 2 % pour la visibilité au démarrage)
+                // Arc de progression de la fenêtre en cours
                 Circle()
-                    .trim(from: 0, to: CGFloat(max(0.02, p.progress)))
-                    .stroke(
-                        p.isCurrent ? Color.orange : Color.indigo.opacity(0.8),
-                        style: StrokeStyle(lineWidth: 3.5, lineCap: .round)
-                    )
+                    .trim(from: 0, to: CGFloat(max(0.02, current.progress)))
+                    .stroke(Color.orange, style: StrokeStyle(lineWidth: 3.5, lineCap: .round))
                     .rotationEffect(.degrees(-90))
 
                 VStack(spacing: 1) {
-                    Text(p.arabicName)
+                    // Nom de la PROCHAINE prière (pas l'actuelle)
+                    Text(next?.arabicName ?? current.arabicName)
                         .font(.system(size: 10, weight: .bold))
                         .minimumScaleFactor(0.6)
                         .widgetAccentable()
 
-                    if p.isCurrent {
-                        // Pourcentage de la fenêtre de prière écoulée
-                        Text("\(Int(p.progress * 100))%")
-                            .font(.system(size: 8, weight: .semibold, design: .monospaced))
-                            .foregroundStyle(.secondary)
-                    } else {
-                        Text(p.time, style: .time)
-                            .font(.system(size: 8, design: .monospaced))
-                            .foregroundStyle(.secondary)
-                    }
+                    // Countdown jusqu'à la prochaine prière
+                    Text(current.nextTime, style: .timer)
+                        .font(.system(size: 8, weight: .semibold, design: .monospaced))
+                        .multilineTextAlignment(.center)
+                        .foregroundStyle(.secondary)
+                }
+            } else if let next = nextUpcomingPrayer {
+                // Avant la première prière du jour (avant Fajr)
+                Circle().stroke(Color.white.opacity(0.1), lineWidth: 3.5)
+
+                VStack(spacing: 1) {
+                    Text(next.arabicName)
+                        .font(.system(size: 10, weight: .bold))
+                        .minimumScaleFactor(0.6)
+                        .widgetAccentable()
+
+                    Text(next.time, style: .timer)
+                        .font(.system(size: 8, weight: .semibold, design: .monospaced))
+                        .multilineTextAlignment(.center)
+                        .foregroundStyle(.secondary)
+                }
+            } else if let fajr = entry.tomorrowFajr {
+                // Après Isha — countdown vers le Fajr demain
+                Circle().stroke(Color.white.opacity(0.1), lineWidth: 3.5)
+
+                VStack(spacing: 1) {
+                    Text("الفجر")
+                        .font(.system(size: 10, weight: .bold))
+                        .minimumScaleFactor(0.6)
+                        .widgetAccentable()
+
+                    Text(fajr, style: .timer)
+                        .font(.system(size: 8, weight: .semibold, design: .monospaced))
+                        .multilineTextAlignment(.center)
+                        .foregroundStyle(.secondary)
                 }
             } else {
-                // Après ʿIchâ — en attente du Fajr
+                // Pas de données
                 VStack(spacing: 2) {
                     Image(systemName: "moon.stars.fill")
                         .font(.system(size: 18))
@@ -352,65 +471,71 @@ struct PrayerComplicationView: View {
         .padding(3)
     }
 
-    // MARK: ── Rectangulaire — 5 sphères + date hijri, fond sombre ──────
+    // MARK: ── Rectangulaire — Countdown héros ─────────────────────────
 
     private var rectangularView: some View {
-        ZStack {
-            // Fond sombre dégradé
-            LinearGradient(
-                colors: [
-                    Color(red: 0.06, green: 0.07, blue: 0.18),
-                    Color(red: 0.02, green: 0.02, blue: 0.09)
-                ],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+        VStack(alignment: .leading, spacing: 2) {
 
-            VStack(spacing: 5) {
+            // Ligne 1 : nom prochaine prière + heure
+            HStack(alignment: .firstTextBaseline, spacing: 6) {
+                Text(heroNextName)
+                    .font(.system(.headline, design: .rounded, weight: .bold))
+                    .foregroundStyle(.primary)
+                    .widgetAccentable()
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
 
-                // Date hijri : FR · AR
-                HStack(spacing: 5) {
-                    Text(entry.hijriFrench)
-                        .font(.system(size: 9, weight: .semibold, design: .rounded))
-                        .foregroundStyle(.white.opacity(0.6))
-
-                    Text("·")
-                        .font(.system(size: 8))
-                        .foregroundStyle(.white.opacity(0.25))
-
-                    Text(entry.hijriArabic)
-                        .font(.system(size: 9, weight: .semibold))
-                        .foregroundStyle(.white.opacity(0.6))
-                        .environment(\.layoutDirection, .rightToLeft)
+                if let target = heroNextTime {
+                    Text(target, style: .time)
+                        .font(.system(.subheadline, design: .rounded, weight: .semibold))
+                        .monospacedDigit()
+                        .foregroundStyle(.secondary)
                 }
-                .frame(maxWidth: .infinity, alignment: .center)
 
-                // 5 sphères de prière
-                HStack(spacing: 0) {
+                Spacer(minLength: 0)
+            }
+
+            // Ligne 2 : countdown XL (live timer)
+            if let target = heroNextTime {
+                Text(target, style: .timer)
+                    .font(.system(.title2, design: .rounded, weight: .bold))
+                    .monospacedDigit()
+                    .foregroundStyle(.tint)
+                    .widgetAccentable()
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.7)
+            }
+
+            // Ligne 3 : 5 micro-sphères + date hijri
+            HStack(spacing: 6) {
+                HStack(spacing: 4) {
                     ForEach(entry.prayers.indices, id: \.self) { i in
-                        PrayerSphereView(prayer: entry.prayers[i], size: 22)
-                            .frame(maxWidth: .infinity)
+                        MicroSphere(prayer: entry.prayers[i])
                     }
                 }
+
+                Spacer(minLength: 4)
+
+                Text(entry.hijriFrench)
+                    .font(.system(.caption2, design: .rounded, weight: .medium))
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.7)
             }
-            .padding(.horizontal, 8)
-            .padding(.vertical, 5)
         }
     }
 
-    // MARK: ── Corner — Phase lunaire (hier · auj · demain) ───────────
+    // MARK: ── Corner — Phase lunaire du jour ───────────
 
     private var cornerView: some View {
-        let todayMoon = entry.moonStrip.first(where: { $0.isToday }) ?? entry.moonStrip.first!
-        let dayText   = entry.moonStrip.map { "\($0.hijriDay)" }.joined(separator: " · ")
+        let todayMoon = entry.moonToday
 
         return Image(systemName: todayMoon.symbol)
             .symbolRenderingMode(.hierarchical)
             .widgetAccentable()
             .foregroundStyle(todayMoon.isWhiteDays ? Color.orange : Color.white)
             .widgetLabel {
-                Text(dayText)
+                Text("\(todayMoon.hijriDay)")
                     .foregroundStyle(todayMoon.isWhiteDays ? Color.orange : Color.secondary)
             }
     }
@@ -420,9 +545,12 @@ struct PrayerComplicationView: View {
     private var inlineView: some View {
         HStack(spacing: 4) {
             Text(entry.hijriFrench).foregroundStyle(.secondary)
-            if let p = activePrayer {
-                Text(p.arabicName)
-                Text(p.time, style: .time)
+            if let next = nextUpcomingPrayer {
+                Text(next.arabicName)
+                Text(next.time, style: .time)
+            } else if let current = currentPrayer {
+                Text(current.arabicName)
+                Text(current.nextTime, style: .timer)
             }
         }
     }
@@ -439,7 +567,7 @@ struct PrayerComplication: Widget {
                 .containerBackground(.fill.tertiary, for: .widget)
         }
         .configurationDisplayName("Prières · Lune")
-        .description("5 sphères de prière, date hijri (FR · AR) et phase lunaire sur 3 jours.")
+        .description("5 sphères de prière, date hijri (FR · AR) et phase lunaire du jour.")
         .supportedFamilies([
             .accessoryCircular,
             .accessoryRectangular,

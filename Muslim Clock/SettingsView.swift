@@ -798,20 +798,126 @@ struct SourcesDetailView: View {
         ZStack {
             LinearGradient(colors: [Color(red: 0.1, green: 0.15, blue: 0.2), Color(red: 0.05, green: 0.05, blue: 0.1)], startPoint: .top, endPoint: .bottom).ignoresSafeArea()
             ScrollView {
-                VStack(spacing: 20) {
-                    Image(systemName: "book.closed.fill").font(.system(size: 60)).foregroundColor(.orange).padding(.top, 40)
-                    Text("Méthodologie").font(.title2.bold()).foregroundColor(.white)
-                    Text("Tous les contenus spirituels de cette application (Hadiths, Invocations) sont rigoureusement sélectionnés. Nous nous basons sur les recueils authentiques (Sahih Al-Bukhari, Sahih Muslim) et les travaux d'authentification des grands savants de la Sounnah (comme Sheikh Al-Albani, rahimahullah).")
-                        .foregroundColor(.white.opacity(0.8))
-                        .multilineTextAlignment(.center)
-                        .padding()
-                        .background(.ultraThinMaterial)
-                        .cornerRadius(15)
+                VStack(spacing: 24) {
+
+                    // ── EN-TÊTE ──
+                    Image(systemName: "book.closed.fill")
+                        .font(.system(size: 60))
+                        .foregroundColor(.orange)
+                        .padding(.top, 40)
+                    Text("Transparence & Méthodologie")
+                        .font(.title2.bold())
+                        .foregroundColor(.white)
+
+                    // ── PRÉSENTATION DE L'APP ──
+                    sourceCard(icon: "star.fill", title: "Muslim Clock — Votre compagnon quotidien", color: .yellow, content: """
+Muslim Clock est une application complète conçue pour accompagner le musulman au quotidien :
+
+• Horaires de prière précis basés sur votre géolocalisation (calcul astronomique, méthode MWL/ISNA/Egypte au choix)
+• Notification de rappel à chaque prière — avec alerte visuelle et sonore
+• Boussole de Qibla calibrée en temps réel
+• Adhkar du matin et du soir avec compteur de répétitions
+• Invocations après la prière (post-salat) et Rawatib
+• Rappel quotidien : un verset du Coran + un Hadith authentique chaque jour
+• Série de cours audio (podcasts islamiques) avec lecture en arrière-plan
+• Widget iOS, Apple Watch et complications pour ne jamais manquer une prière
+• Calendrier hégirien avec mise en avant des mois sacrés, vendredis et jours de Aïd
+• Météo locale intégrée
+""")
+
+                    // ── SOURCES RELIGIEUSES ──
+                    sourceCard(icon: "text.book.closed.fill", title: "Sources des contenus religieux", color: .orange, content: """
+Tous les contenus spirituels (Hadiths, Invocations, Adhkar) sont rigoureusement sélectionnés à partir de sources authentiques :
+
+• Sahih Al-Bukhari
+• Sahih Muslim
+• Sunan Abu Dawud, At-Tirmidhi, An-Nasa'i, Ibn Majah
+• Riyad As-Salihin (Imam An-Nawawi)
+• Hisn Al-Muslim (La Citadelle du Musulman)
+
+L'authentification repose sur les travaux des grands savants du Hadith, notamment Sheikh Al-Albani (rahimahullah).
+
+Aucun hadith faible (da'if) n'est utilisé pour les invocations. En cas de doute, le degré d'authenticité est précisé.
+""")
+
+                    // ── POURQUOI PAS D'ADHAN ──
+                    sourceCard(icon: "speaker.slash.fill", title: "Pourquoi une notification et pas l'Adhan ?", color: .red, content: """
+Nous avons fait le choix délibéré de NE PAS diffuser l'Adhan via le téléphone. Voici pourquoi :
+
+1. Respect de l'Adhan — L'Adhan est un acte d'adoration sacré. Le diffuser sur un haut-parleur de téléphone dans des lieux inappropriés (toilettes, transports, réunions) est une forme de manque de respect envers ces paroles sacrées.
+
+2. Avis des savants — Plusieurs savants ont rappelé qu'il n'est pas convenable que l'Adhan retentisse dans des endroits impurs ou inadaptés. Le téléphone nous accompagne partout, y compris dans ces lieux.
+
+3. L'objectif est le rappel — Une notification silencieuse ou avec un son neutre remplit parfaitement le rôle de RAPPEL de la prière, sans risquer de profaner les paroles de l'Adhan.
+
+4. Votre responsabilité — L'Adhan est proclamé dans les mosquées par le Muezzin. L'application vous rappelle l'heure, à vous de répondre à l'appel.
+
+C'est un choix de conscience, pas une limitation technique.
+""")
+
+                    // ── PLAYLIST AUDIO ──
+                    sourceCard(icon: "headphones", title: "Playlist audio — Cours sélectionnés", color: .purple, content: """
+La section audio propose des séries de cours islamiques soigneusement sélectionnés :
+
+• Les séries sont choisies parmi des savants et prédicateurs reconnus pour leur attachement au Coran et à la Sounnah authentique
+• La playlist est mise à jour à distance — de nouvelles séries sont ajoutées régulièrement sans mise à jour de l'app
+• Les audios sont mis en cache localement pour une écoute hors-ligne
+• La progression est sauvegardée automatiquement : reprenez là où vous vous étiez arrêté
+
+L'objectif est de faciliter l'apprentissage de la science religieuse au quotidien, pendant vos trajets ou temps libres.
+""")
+
+                    // ── CALCUL DES HORAIRES ──
+                    sourceCard(icon: "sun.max.trianglebadge.exclamationmark", title: "Calcul des horaires de prière", color: .cyan, content: """
+Les horaires sont calculés localement sur votre appareil à partir de votre position GPS :
+
+• Algorithme astronomique standard (position du soleil)
+• Méthodes supportées : MWL, ISNA, Egypte, Umm Al-Qura, Karachi, et autres
+• Ajustements manuels possibles pour chaque prière (±minutes)
+• Prise en compte automatique du changement d'heure (été/hiver)
+• Aucun serveur distant n'est sollicité pour le calcul — tout est local et privé
+""")
+
+                    // ── VIE PRIVÉE ──
+                    sourceCard(icon: "lock.shield.fill", title: "Vie privée", color: .green, content: """
+Muslim Clock respecte votre vie privée :
+
+• Votre position GPS reste sur votre appareil — elle n'est jamais envoyée à un serveur
+• Aucun compte utilisateur requis
+• Aucune publicité
+• Aucun tracker ou analytics tiers
+• Les données (adhkar, progression, réglages) sont stockées localement sur votre iPhone
+""")
+
                 }
                 .padding()
+                .padding(.bottom, 30)
             }
         }
-        .navigationTitle("Sources").navigationBarTitleDisplayMode(.inline)
+        .navigationTitle("Sources & Transparence").navigationBarTitleDisplayMode(.inline)
+    }
+
+    /// Carte d'information utilisée dans la page "Sources & Transparence".
+    /// `title` et `content` sont typés `LocalizedStringKey` pour permettre
+    /// l'extraction automatique par Xcode vers `Localizable.xcstrings`.
+    private func sourceCard(icon: String, title: LocalizedStringKey, color: Color, content: LocalizedStringKey) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(spacing: 10) {
+                Image(systemName: icon)
+                    .font(.system(size: 20))
+                    .foregroundColor(color)
+                Text(title)
+                    .font(.system(size: 16, weight: .bold, design: .rounded))
+                    .foregroundColor(.white)
+            }
+            Text(content)
+                .font(.system(size: 14))
+                .foregroundColor(.white.opacity(0.8))
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .padding()
+        .background(.ultraThinMaterial)
+        .cornerRadius(15)
     }
 }
 

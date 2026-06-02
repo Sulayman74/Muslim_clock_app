@@ -5,6 +5,10 @@ import Adhan
 import WidgetKit
 import SwiftUI
 
+/// Identifiant du App Group partagé iOS ↔ Watch ↔ Widget ↔ Complication.
+/// Doit rester aligné avec `Muslim Clock.entitlements`.
+private let appGroupIdentifier = "group.kappsi.Muslim-Clock"
+
 enum PrayerWindow: String {
     case fajr = "Fajr", dhuhr = "Dhuhr", asr = "Asr"
     case maghrib = "Maghrib", isha = "Isha", none = "none"
@@ -220,7 +224,7 @@ class PrayerTimesViewModel: ObservableObject {
             updateNextPrayer(prayerTimesToday: prayerTimesToday, coordinates: coordinates, params: params)
             self.isLoading = false
             // Write prayer times for Watch app and complications
-            let sharedWatch = UserDefaults(suiteName: "group.kappsi.Muslim-Clock")
+            let sharedWatch = UserDefaults(suiteName: appGroupIdentifier)
             sharedWatch?.set(prayerTimesToday.fajr.timeIntervalSince1970, forKey: "prayer_fajr")
             // Si vendredi + Jumu'ah active, ecrire l'heure Jumu'ah a la place de Dhuhr
             if isFridayJumuah {
@@ -235,14 +239,38 @@ class PrayerTimesViewModel: ObservableObject {
             sharedWatch?.set(prayerTimesToday.maghrib.timeIntervalSince1970, forKey: "prayer_maghrib")
             sharedWatch?.set(prayerTimesToday.isha.timeIntervalSince1970, forKey: "prayer_isha")
             sharedWatch?.set(prayerTimesToday.sunrise.timeIntervalSince1970, forKey: "prayer_sunrise")
+
+            // Fajr de demain — toujours écrit pour que la complication Watch puisse calculer
+            // la fin de la fenêtre Isha (middleOfNight) à n'importe quelle heure du jour.
+            var tomorrowFajrTS: Double = 0
+            if let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: Date()) {
+                let tomorrowComps = Calendar.current.dateComponents([.year, .month, .day], from: tomorrow)
+                if let pTomorrow = PrayerTimes(coordinates: coordinates, date: tomorrowComps, calculationParameters: params) {
+                    tomorrowFajrTS = pTomorrow.fajr.timeIntervalSince1970
+                    sharedWatch?.set(tomorrowFajrTS, forKey: "prayer_fajr_tomorrow")
+                }
+            }
+
             // Sync vers Apple Watch via WatchConnectivity
-            WatchSessionManager.shared.sendPrayerTimes([
+            // Envoyer l'heure Jumu'ah si vendredi + activé
+            let dhuhrToSend: Double = {
+                if isFridayJumuah {
+                    var comps = Calendar.current.dateComponents([.year, .month, .day], from: Date())
+                    comps.hour = jumuahHour; comps.minute = jumuahMinute; comps.second = 0
+                    return (Calendar.current.date(from: comps) ?? prayerTimesToday.dhuhr).timeIntervalSince1970
+                }
+                return prayerTimesToday.dhuhr.timeIntervalSince1970
+            }()
+            var watchPayload: [String: Double] = [
                 "prayer_fajr":    prayerTimesToday.fajr.timeIntervalSince1970,
-                "prayer_dhuhr":   prayerTimesToday.dhuhr.timeIntervalSince1970,
+                "prayer_sunrise": prayerTimesToday.sunrise.timeIntervalSince1970,
+                "prayer_dhuhr":   dhuhrToSend,
                 "prayer_asr":     prayerTimesToday.asr.timeIntervalSince1970,
                 "prayer_maghrib": prayerTimesToday.maghrib.timeIntervalSince1970,
                 "prayer_isha":    prayerTimesToday.isha.timeIntervalSince1970,
-            ])
+            ]
+            if tomorrowFajrTS > 0 { watchPayload["prayer_fajr_tomorrow"] = tomorrowFajrTS }
+            WatchSessionManager.shared.sendPrayerTimes(watchPayload)
         }
         //  📅 NOUVEAU : PLANIFICATION SUR 14 JOURS POUR LES NOTIFICATIONS
                 schedule14DaysNotifications(coordinates: coordinates, params: params)
@@ -250,7 +278,7 @@ class PrayerTimesViewModel: ObservableObject {
         // ✅ SYNCHRONISATION VERS SHARED USERDEFAULTS
         // Le widget lit ces valeurs pour appliquer la même logique
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        let shared = UserDefaults(suiteName: "group.kappsi.Muslim-Clock")
+        let shared = UserDefaults(suiteName: appGroupIdentifier)
         shared?.set(location.coordinate.latitude, forKey: "saved_latitude")
         shared?.set(location.coordinate.longitude, forKey: "saved_longitude")
         
@@ -266,6 +294,13 @@ class PrayerTimesViewModel: ObservableObject {
         shared?.set(jumuahEnabled, forKey: "w_jumuahEnabled")
         shared?.set(jumuahHour, forKey: "w_jumuahHour")
         shared?.set(jumuahMinute, forKey: "w_jumuahMinute")
+
+        // Sync réglages vers Apple Watch via WatchConnectivity
+        WatchSessionManager.shared.sendSettings([
+            "w_jumuahEnabled": jumuahEnabled,
+            "w_jumuahHour": jumuahHour,
+            "w_jumuahMinute": jumuahMinute,
+        ])
 
         WidgetCenter.shared.reloadAllTimelines()
     }
@@ -382,7 +417,7 @@ class PrayerTimesViewModel: ObservableObject {
             self.nextPrayerDate = nextFajrDate
             self.nextPrayerName = "Fajr"
             self.nextPrayerTime = nextFajrTimeString
-            UserDefaults(suiteName: "group.kappsi.Muslim-Clock")?.set(nextFajrDate.timeIntervalSince1970, forKey: "prayer_fajr_tomorrow")
+            UserDefaults(suiteName: appGroupIdentifier)?.set(nextFajrDate.timeIntervalSince1970, forKey: "prayer_fajr_tomorrow")
             WatchSessionManager.shared.sendPrayerTimes(["prayer_fajr_tomorrow": nextFajrDate.timeIntervalSince1970])
             
             if let firstIndex = self.dailyPrayers.firstIndex(where: { $0.name == "Fajr" }) {

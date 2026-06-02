@@ -125,6 +125,9 @@ class PodcastManager: NSObject, ObservableObject, XMLParserDelegate {
             
             // 4. On efface le lecteur de l'écran de verrouillage d'iOS
             MPNowPlayingInfoCenter.default().nowPlayingInfo = nil
+
+            // 5. Libérer la protection cache du fichier en cours
+            AudioCacheManager.shared.currentlyPlayingLocalURL = nil
             
             // ✅ 5. WAKE LOCK : Réactiver la mise en veille automatique
             disableWakeLock()
@@ -135,15 +138,17 @@ class PodcastManager: NSObject, ObservableObject, XMLParserDelegate {
         do {
             try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default)
             try AVAudioSession.sharedInstance().setActive(true)
-            
-            // ✅ WAKE LOCK : Empêche la mise en veille pendant la lecture
-            UIApplication.shared.isIdleTimerDisabled = true
+            enableWakeLock()
         } catch {
             print("❌ [Audio] AVAudioSession : \(error.localizedDescription)")
         }
     }
-    
-    // MARK: - Désactiver le Wake Lock
+
+    // MARK: - Wake Lock (symétrique enable/disable)
+    private func enableWakeLock() {
+        UIApplication.shared.isIdleTimerDisabled = true
+    }
+
     private func disableWakeLock() {
         UIApplication.shared.isIdleTimerDisabled = false
     }
@@ -600,6 +605,8 @@ class PodcastManager: NSObject, ObservableObject, XMLParserDelegate {
         // Cache agressif : lecture locale si deja telecharge, sinon stream + download en fond
         let isCached = AudioCacheManager.shared.isCached(episode.audioURL)
         let playURL = AudioCacheManager.shared.playableURL(for: episode.audioURL)
+        // Proteger le fichier local contre la purge du cache pendant la lecture
+        AudioCacheManager.shared.currentlyPlayingLocalURL = AudioCacheManager.shared.localURL(for: episode.audioURL)
         print("[Play] Episode: \(episode.title)")
         print("[Play] URL originale: \(episode.audioURL)")
         print("[Play] Cache: \(isCached ? "OUI (local)" : "NON (stream)")")
@@ -607,6 +614,7 @@ class PodcastManager: NSObject, ObservableObject, XMLParserDelegate {
         let playerItem = AVPlayerItem(url: playURL)
         
         // Observer : statut du buffer
+        let originalRemoteURL = episode.audioURL
         statusObserver = playerItem.observe(\.status, options: [.new]) { [weak self] item, _ in
             let status = item.status
             let dur = item.duration.seconds
@@ -623,6 +631,17 @@ class PodcastManager: NSObject, ObservableObject, XMLParserDelegate {
                 case .failed:
                     self.isBuffering = false
                     print("❌ [Audio] Échec : \(errMsg ?? "inconnu")")
+
+                    // Cache corrompu → suppression et retry stream ; sinon skip pour éviter blocage.
+                    let localFile = AudioCacheManager.shared.localURL(for: originalRemoteURL)
+                    if FileManager.default.fileExists(atPath: localFile.path) {
+                        try? FileManager.default.removeItem(at: localFile)
+                        print("[Audio] Cache corrompu supprimé, retry streaming : \(originalRemoteURL.lastPathComponent)")
+                        self.retryFromRemote(episode: episode)
+                    } else {
+                        print("⏭️ [Audio] Pas de cache local, échec stream → passage à l'épisode suivant")
+                        self.playNextEpisode()
+                    }
                 default:
                     break
                 }
@@ -698,6 +717,46 @@ class PodcastManager: NSObject, ObservableObject, XMLParserDelegate {
         setupRemoteCommands()
     }
     
+    // MARK: - Retry (cache corrompu → stream distant → skip si échec total)
+    private func retryFromRemote(episode: PodcastEpisode) {
+        cleanupObservers()
+        player = nil
+        currentlyPlayingID = nil
+
+        // Forcer le stream distant (le fichier local a été supprimé)
+        let remoteItem = AVPlayerItem(url: episode.audioURL)
+        AudioCacheManager.shared.currentlyPlayingLocalURL = nil
+
+        statusObserver = remoteItem.observe(\.status, options: [.new]) { [weak self] item, _ in
+            let status = item.status
+            let dur = item.duration.seconds
+            Task { @MainActor [weak self] in
+                guard let self else { return }
+                if status == .readyToPlay {
+                    self.isBuffering = false
+                    if dur.isFinite && dur > 0 { self.duration = dur }
+                    self.setupNowPlaying()
+                } else if status == .failed {
+                    self.isBuffering = false
+                    print("⏭️ [Audio] Fichier illisible (\(episode.title)), passage au suivant")
+                    // Fichier impossible à lire (encodage incompatible) → skip
+                    self.playNextEpisode()
+                }
+            }
+        }
+
+        player = AVPlayer(playerItem: remoteItem)
+        player?.play()
+        player?.rate = playbackRate
+        isPlaying = true
+        isBuffering = true
+        currentlyPlayingID = episode.id
+        currentEpisodeTitle = episode.title
+
+        // Re-télécharger en fond pour corriger le cache
+        Task { await AudioCacheManager.shared.downloadIfNeeded(episode.audioURL) }
+    }
+
     // MARK: - Seek (scrubber)
     func seek(to seconds: Double) {
         let time = CMTime(seconds: seconds, preferredTimescale: 600)
@@ -756,47 +815,23 @@ class PodcastManager: NSObject, ObservableObject, XMLParserDelegate {
     }
     
     // MARK: - Nettoyage
-    // Seek robuste : attend que le player soit pret avant de seek
+    // Seek robuste : attend que le player soit pret avant de seek (async, sans DispatchQueue)
     private func seekWhenReady(to seconds: Double) {
-        // Polling : verifie toutes les 200ms si le player est pret
-        func attemptSeek(remaining: Int) {
-            guard remaining > 0 else {
-                print("[SeekWhenReady] Timeout, seek force a \(Int(seconds))s")
-                self.seek(to: seconds)
-                self.currentTime = seconds
-                return
-            }
-
-            if player?.currentItem?.status == .readyToPlay {
-                print("[SeekWhenReady] Player pret, seek a \(Int(seconds))s")
-                self.seek(to: seconds)
-                self.currentTime = seconds
-            } else {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in
-                    self?.seekWhenReady(to: seconds, remaining: remaining - 1)
+        Task { @MainActor [weak self] in
+            for _ in 0..<25 { // 25 x 200ms = 5s max
+                guard let self else { return }
+                if self.player?.currentItem?.status == .readyToPlay {
+                    print("[SeekWhenReady] Player pret, seek a \(Int(seconds))s")
+                    self.seek(to: seconds)
+                    self.currentTime = seconds
+                    return
                 }
+                try? await Task.sleep(nanoseconds: 200_000_000)
             }
-        }
-        attemptSeek(remaining: 25) // 25 x 200ms = 5s max
-    }
-
-    // Surcharge pour l'appel initial
-    private func seekWhenReady(to seconds: Double, remaining: Int) {
-        guard remaining > 0 else {
+            guard let self else { return }
             print("[SeekWhenReady] Timeout, seek force a \(Int(seconds))s")
             self.seek(to: seconds)
             self.currentTime = seconds
-            return
-        }
-
-        if player?.currentItem?.status == .readyToPlay {
-            print("[SeekWhenReady] Player pret, seek a \(Int(seconds))s")
-            self.seek(to: seconds)
-            self.currentTime = seconds
-        } else {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in
-                self?.seekWhenReady(to: seconds, remaining: remaining - 1)
-            }
         }
     }
 
@@ -811,6 +846,24 @@ class PodcastManager: NSObject, ObservableObject, XMLParserDelegate {
     }
     
     // MARK: - Now Playing (Lock Screen + Dynamic Island)
+    private lazy var appIconArtwork: MPMediaItemArtwork? = {
+        // Charger l'icone de l'app depuis le bundle (CFBundleIcons)
+        guard let icons = Bundle.main.infoDictionary?["CFBundleIcons"] as? [String: Any],
+              let primary = icons["CFBundlePrimaryIcon"] as? [String: Any],
+              let iconFiles = primary["CFBundleIconFiles"] as? [String],
+              let iconName = iconFiles.last,
+              let image = UIImage(named: iconName) else {
+            // Fallback : "moon" doit exister dans Assets.xcassets en tant qu'Image Set séparé.
+            // Warning: les fichiers d'un .appiconset NE sont PAS accessibles via UIImage(named:)
+            // sur iOS récents — si "moon" est uniquement dans AppIcon.appiconset, ce fallback retourne nil.
+            if let fallback = UIImage(named: "moon") {
+                return MPMediaItemArtwork(boundsSize: fallback.size) { _ in fallback }
+            }
+            return nil
+        }
+        return MPMediaItemArtwork(boundsSize: image.size) { _ in image }
+    }()
+
     private func setupNowPlaying() {
         var info = [String: Any]()
         info[MPMediaItemPropertyTitle] = currentEpisodeTitle
@@ -818,6 +871,9 @@ class PodcastManager: NSObject, ObservableObject, XMLParserDelegate {
         info[MPMediaItemPropertyPlaybackDuration] = duration
         info[MPNowPlayingInfoPropertyElapsedPlaybackTime] = currentTime
         info[MPNowPlayingInfoPropertyPlaybackRate] = playbackRate
+        if let artwork = appIconArtwork {
+            info[MPMediaItemPropertyArtwork] = artwork
+        }
         MPNowPlayingInfoCenter.default().nowPlayingInfo = info
     }
     
@@ -828,6 +884,7 @@ class PodcastManager: NSObject, ObservableObject, XMLParserDelegate {
     private func setupRemoteCommands() {
         let center = MPRemoteCommandCenter.shared()
         
+        center.togglePlayPauseCommand.removeTarget(nil)
         center.playCommand.removeTarget(nil)
         center.pauseCommand.removeTarget(nil)
         center.skipForwardCommand.removeTarget(nil)
@@ -835,9 +892,28 @@ class PodcastManager: NSObject, ObservableObject, XMLParserDelegate {
         center.changePlaybackPositionCommand.removeTarget(nil)
         center.nextTrackCommand.removeTarget(nil)
         center.previousTrackCommand.removeTarget(nil)
-        
+
+        // Bouton casque (filaire + Bluetooth) : togglePlayPause
+        center.togglePlayPauseCommand.addTarget { [weak self] _ in
+            Task { @MainActor [weak self] in
+                guard let self else { return }
+                if self.isPlaying {
+                    self.player?.pause()
+                    self.isPlaying = false
+                    self.savePlaybackPosition()
+                    self.disableWakeLock()
+                } else {
+                    self.setupAudioSession()
+                    self.player?.play()
+                    self.player?.rate = self.playbackRate
+                    self.isPlaying = true
+                }
+            }
+            return .success
+        }
         center.playCommand.addTarget { [weak self] _ in
             Task { @MainActor [weak self] in
+                self?.setupAudioSession()
                 self?.player?.play()
                 self?.player?.rate = self?.playbackRate ?? 1.0
                 self?.isPlaying = true
@@ -849,6 +925,7 @@ class PodcastManager: NSObject, ObservableObject, XMLParserDelegate {
                 self?.player?.pause()
                 self?.isPlaying = false
                 self?.savePlaybackPosition()
+                self?.disableWakeLock()
             }
             return .success
         }

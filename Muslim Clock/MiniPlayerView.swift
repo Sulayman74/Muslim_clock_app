@@ -93,7 +93,7 @@ struct MiniPlayerBar: View {
                 manager.showFullPlayer = true
             }
         }
-        .background(.regularMaterial) // Design raccord avec le reste de ton app
+        .glassEffect(.clear, in: .rect(cornerRadius: 20))
     }
 }
 
@@ -162,7 +162,8 @@ struct FullPlayerView: View {
                 Spacer()
                 Button {
                     dismiss()
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    Task {
+                        try? await Task.sleep(nanoseconds: 300_000_000)
                         manager.stopAndClose()
                     }
                 } label: {

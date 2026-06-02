@@ -1,7 +1,9 @@
 import SwiftUI
+import WatchKit
 
 struct ContentView: View {
     @StateObject private var vm = WatchPrayerViewModel()
+    @StateObject private var dailyVM = WatchDailyContentViewModel()
     @Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
@@ -9,16 +11,24 @@ struct ContentView: View {
             if vm.isDataAvailable {
                 TabView {
                     NextPrayerView(vm: vm)
+                    DailyContentTab(vm: dailyVM)
                     PrayerListView(vm: vm)
+                    NowPlayingView()
                 }
                 .tabViewStyle(.page)
             } else {
                 NoDataView()
             }
         }
-        .onAppear { vm.refresh() }
+        .onAppear {
+            vm.refresh()
+            dailyVM.refresh()
+        }
         .onChange(of: scenePhase) { _, phase in
-            if phase == .active { vm.refresh() }
+            if phase == .active {
+                vm.refresh()
+                dailyVM.refresh()
+            }
         }
     }
 }
@@ -27,6 +37,15 @@ struct ContentView: View {
 
 struct NextPrayerView: View {
     @ObservedObject var vm: WatchPrayerViewModel
+
+    private var seasonAccentColor: Color {
+        let s = vm.season
+        if s.isEid { return .green }
+        if s.isSacredMonth { return .purple }
+        if s.hijriMonth == 9 { return .yellow } // Ramadan
+        if s.isFriday { return .orange }
+        return .clear
+    }
 
     var body: some View {
         ZStack {
@@ -40,7 +59,23 @@ struct NextPrayerView: View {
             )
             .ignoresSafeArea()
 
-            VStack(spacing: 6) {
+            VStack(spacing: 4) {
+                // Bandeau saison islamique / vendredi / Eid (banner Friday géré via WatchIslamicSeason.current)
+                if vm.season.hasBanner {
+                    HStack(spacing: 4) {
+                        Image(systemName: vm.season.icon)
+                            .font(.system(size: 9))
+                        Text(vm.season.labelAr)
+                            .font(.system(size: 9, weight: .bold))
+                            .environment(\.layoutDirection, .rightToLeft)
+                    }
+                    .foregroundStyle(seasonAccentColor)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(seasonAccentColor.opacity(0.15))
+                    .clipShape(Capsule())
+                }
+
                 // Date islamique
                 Text(vm.islamicDateString)
                     .font(.caption2)
@@ -49,7 +84,7 @@ struct NextPrayerView: View {
                 if let next = vm.nextPrayer {
                     PrayerOrb(prayer: next)
 
-                    // Compte à rebours
+                    // Compte a rebours
                     Text(next.time, style: .timer)
                         .font(.system(.title3, design: .rounded, weight: .bold))
                         .foregroundStyle(.yellow)
@@ -86,6 +121,7 @@ private struct PrayerOrb: View {
         switch prayer.name {
         case "Fajr":    return .indigo
         case "Dhuhr":   return Color(red: 0.9, green: 0.72, blue: 0.15)
+        case "Jumu'ah": return .orange
         case "Asr":     return .orange
         case "Maghrib": return Color(red: 0.85, green: 0.35, blue: 0.15)
         case "Isha":    return .teal
@@ -164,26 +200,139 @@ struct PrayerListView: View {
 
     var body: some View {
         List(vm.prayers) { prayer in
+            let isJumuah = prayer.name == "Jumu'ah"
             HStack(spacing: 8) {
                 Circle()
-                    .fill(prayer.isNext ? Color.yellow : Color.white.opacity(0.15))
+                    .fill(prayer.isNext ? Color.yellow : (isJumuah ? Color.orange : Color.white.opacity(0.15)))
                     .frame(width: 5, height: 5)
 
                 VStack(alignment: .leading, spacing: 1) {
                     Text(prayer.arabicName)
-                        .font(.system(size: 14, weight: prayer.isNext ? .bold : .regular))
-                        .foregroundStyle(prayer.isNext ? Color.green : .primary)
+                        .font(.system(size: 14, weight: (prayer.isNext || isJumuah) ? .bold : .regular))
+                        .foregroundStyle(prayer.isNext ? Color.green : (isJumuah ? Color.orange : .primary))
                     Text(prayer.name)
                         .font(.caption2)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(isJumuah ? .orange : .secondary)
                 }
                 Spacer()
                 Text(prayer.time, style: .time)
                     .font(.caption.monospacedDigit())
-                    .foregroundStyle(prayer.isNext ? .yellow : .secondary)
+                    .foregroundStyle(prayer.isNext ? .yellow : (isJumuah ? .orange : .secondary))
             }
         }
         .listStyle(.carousel)
+    }
+}
+
+// MARK: - Daily Content Tab (Verset + Hadith du jour)
+
+struct DailyContentTab: View {
+    @ObservedObject var vm: WatchDailyContentViewModel
+
+    var body: some View {
+        ScrollView {
+            VStack(spacing: 10) {
+                if vm.hasContent {
+                    DailyCard(
+                        title: "Verset",
+                        icon: "book.fill",
+                        accent: .indigo,
+                        textFR: vm.ayahFR,
+                        textAR: vm.ayahAR,
+                        source: vm.ayahSource
+                    )
+                    DailyCard(
+                        title: "Hadith",
+                        icon: "quote.opening",
+                        accent: .teal,
+                        textFR: vm.hadithFR,
+                        textAR: vm.hadithAR,
+                        source: vm.hadithSource
+                    )
+                } else {
+                    VStack(spacing: 8) {
+                        Image(systemName: "book.closed.fill")
+                            .font(.title2)
+                            .foregroundStyle(.indigo.opacity(0.6))
+                        Text("Ouvrez l'app iPhone")
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                            .multilineTextAlignment(.center)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 30)
+                }
+            }
+            .padding(.horizontal, 4)
+            .padding(.vertical, 6)
+        }
+    }
+}
+
+private struct DailyCard: View {
+    let title: String
+    let icon: String
+    let accent: Color
+    let textFR: String
+    let textAR: String
+    let source: String
+
+    @State private var showArabic = false
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack(spacing: 4) {
+                Image(systemName: icon)
+                    .font(.system(size: 10, weight: .bold))
+                Text(title)
+                    .font(.system(size: 11, weight: .bold, design: .rounded))
+                Spacer()
+                Text(showArabic ? "FR" : "عربي")
+                    .font(.system(size: 9, weight: .bold, design: .rounded))
+                    .padding(.horizontal, 6)
+                    .padding(.vertical, 2)
+                    .background(accent.opacity(0.2))
+                    .clipShape(Capsule())
+            }
+            .foregroundStyle(accent)
+
+            Group {
+                if showArabic, !textAR.isEmpty {
+                    Text(textAR)
+                        .font(.system(size: 14))
+                        .multilineTextAlignment(.trailing)
+                        .frame(maxWidth: .infinity, alignment: .trailing)
+                        .environment(\.layoutDirection, .rightToLeft)
+                } else {
+                    Text(textFR)
+                        .font(.system(.caption, design: .serif))
+                        .italic()
+                        .multilineTextAlignment(.leading)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+            }
+            .foregroundStyle(.white.opacity(0.92))
+            .fixedSize(horizontal: false, vertical: true)
+
+            if !source.isEmpty {
+                Text("— \(source)")
+                    .font(.system(size: 9, weight: .medium))
+                    .foregroundStyle(.secondary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+        }
+        .padding(10)
+        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .stroke(accent.opacity(0.25), lineWidth: 0.5)
+        )
+        .contentShape(Rectangle())
+        .onTapGesture {
+            if !textAR.isEmpty {
+                withAnimation(.easeInOut(duration: 0.2)) { showArabic.toggle() }
+            }
+        }
     }
 }
 

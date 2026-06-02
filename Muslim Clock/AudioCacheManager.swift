@@ -19,6 +19,9 @@ final class AudioCacheManager {
     // Limite du cache : 500 Mo par defaut
     var maxCacheBytes: Int64 = 500_000_000
 
+    /// URL locale du fichier en cours de lecture — ne jamais purger celui-ci
+    var currentlyPlayingLocalURL: URL?
+
     private init() {
         let docs = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
         cacheDirectory = docs.appendingPathComponent("AudioCache", isDirectory: true)
@@ -116,11 +119,16 @@ final class AudioCacheManager {
         // Lister les fichiers tries par date d'acces (les plus anciens d'abord)
         guard let files = try? fileManager.contentsOfDirectory(at: cacheDirectory, includingPropertiesForKeys: [.contentAccessDateKey, .fileSizeKey]) else { return }
 
-        let sorted = files.sorted { a, b in
-            let dateA = (try? a.resourceValues(forKeys: [.contentAccessDateKey]).contentAccessDate) ?? .distantPast
-            let dateB = (try? b.resourceValues(forKeys: [.contentAccessDateKey]).contentAccessDate) ?? .distantPast
-            return dateA < dateB
-        }
+        // Exclure le fichier en cours de lecture pour eviter une coupure audio
+        let protectedPath = currentlyPlayingLocalURL?.path
+
+        let sorted = files
+            .filter { $0.path != protectedPath }
+            .sorted { a, b in
+                let dateA = (try? a.resourceValues(forKeys: [.contentAccessDateKey]).contentAccessDate) ?? .distantPast
+                let dateB = (try? b.resourceValues(forKeys: [.contentAccessDateKey]).contentAccessDate) ?? .distantPast
+                return dateA < dateB
+            }
 
         var freed: Int64 = 0
         let target = currentSize - maxCacheBytes + (maxCacheBytes / 10) // Liberer 10% de marge

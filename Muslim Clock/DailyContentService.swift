@@ -2,6 +2,12 @@ import Foundation
 import SwiftUI
 import Combine
 
+/// Identifiant du App Group partagé iOS ↔ Watch ↔ Widget ↔ Complication.
+/// Doit rester aligné avec les entitlements (`Muslim Clock.entitlements`,
+/// `WatchExtension Watch App.entitlements`, `PrayerComplication.entitlements`,
+/// `SalatWidgetExtension.entitlements`).
+private let appGroupIdentifier = "group.kappsi.Muslim-Clock"
+
 // MARK: - Modèles API Coran
 struct QuranAPIResponse: Codable {
     let data: AyahData
@@ -64,8 +70,27 @@ class DailyContentService: ObservableObject {
         self.isLoading = true
         self.hasNetworkError = false
         await loadSeasonalHadith()
-        await fetchRandomQuranVerse()
+        await fetchRandomQuranVerse() // appelle syncToWatch() en fin de course
         self.isLoading = false
+    }
+
+    // MARK: - Sync vers Apple Watch
+    /// Écrit le verset et le hadith du jour dans le shared App Group
+    /// et les envoie à la Watch via WatchConnectivity.
+    private func syncToWatch() {
+        let payload: [String: String] = [
+            "daily_ayah_fr":     dailyAyah,
+            "daily_ayah_ar":     dailyAyahArabic,
+            "daily_ayah_source": dailyAyahSource,
+            "daily_hadith_fr":     dailyHadith,
+            "daily_hadith_ar":     dailyHadithArabic,
+            "daily_hadith_source": dailyHadithSource,
+        ]
+
+        let shared = UserDefaults(suiteName: appGroupIdentifier)
+        for (k, v) in payload { shared?.set(v, forKey: k) }
+
+        WatchSessionManager.shared.sendSettings(payload)
     }
     
     // MARK: - Coran aléatoire avec audio
@@ -94,8 +119,9 @@ class DailyContentService: ObservableObject {
         } else {
             self.dailyAyahArabic = "إِنَّ اللَّهَ مَعَ الصَّابِرِينَ"
         }
-        
+
         self.isFetchingQuran = false
+        syncToWatch()
     }
     
     private func fetchAyah(number: Int, edition: String) async -> QuranAPIResponse? {

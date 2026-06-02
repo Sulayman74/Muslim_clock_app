@@ -71,6 +71,8 @@ struct PrayerListView: View {
     }
     
     private func iqamahTime(for prayer: DailyPrayer) -> String? {
+        // Pas d'iqamah pour Jumu'ah : l'utilisateur a déjà défini l'heure exacte
+        if prayer.name == "Jumu'ah" { return nil }
         let delay = iqamahDelay(for: prayer.name)
         guard delay > 0 else { return nil }
         let formatter = DateFormatter()

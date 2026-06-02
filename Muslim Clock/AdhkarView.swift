@@ -161,17 +161,20 @@ class AdhkarService: ObservableObject {
     func loadAdhkar(for timing: AdhkarTiming) {
         currentTiming = timing
 
-        guard let url = Bundle.main.url(forResource: "adhkar", withExtension: "json"),
-              let data = try? Data(contentsOf: url),
-              let allAdhkar = try? JSONDecoder().decode([Dhikr].self, from: data) else {
-            return
+        Task { @MainActor in
+            let githubURL = "https://sulayman74.github.io/Muslim_clock_app/adhkar.json"
+            guard let allAdhkar = await RemoteJSONLoader.load(
+                filename: "adhkar.json",
+                remoteURL: githubURL,
+                type: [Dhikr].self
+            ) else { return }
+
+            adhkarList = allAdhkar.filter { $0.timing == "both" || $0.timing == timing.rawValue }
+
+            // Base : tous à 0, puis restauration ou reset selon la période
+            completedCounts = Dictionary(uniqueKeysWithValues: adhkarList.map { ($0.id, 0) })
+            applyOrResetCounts(for: timing)
         }
-
-        adhkarList = allAdhkar.filter { $0.timing == "both" || $0.timing == timing.rawValue }
-
-        // Base : tous à 0, puis restauration ou reset selon la période
-        completedCounts = Dictionary(uniqueKeysWithValues: adhkarList.map { ($0.id, 0) })
-        applyOrResetCounts(for: timing)
     }
 
     func increment(dhikr: Dhikr) {
@@ -389,11 +392,10 @@ struct DhikrCardView: View {
             
             // ── TEXTE ARABE ──
             if showArabic {
-                Text(verbatim: dhikr.arabic)
+                Text(dhikr.arabic)
                     .font(.system(size: 20, weight: .regular))
-                    .multilineTextAlignment(.trailing)
-                    .environment(\.layoutDirection, .rightToLeft)
-                    .frame(maxWidth: .infinity, alignment: .trailing)
+                    .multilineTextAlignment(.center)
+                    .frame(maxWidth: .infinity)
                     .lineSpacing(10)
                     .foregroundColor(isCompleted ? .white.opacity(0.4) : .white.opacity(0.9))
             }

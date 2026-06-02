@@ -91,7 +91,8 @@ class CompassManager: NSObject, ObservableObject, CLLocationManagerDelegate {
                 g.impactOccurred(intensity: 1.0)
                 let n = UINotificationFeedbackGenerator()
                 n.prepare()
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.08) { [weak self] in
+                Task { @MainActor [weak self] in
+                    try? await Task.sleep(nanoseconds: 80_000_000)
                     guard self != nil else { return }
                     n.notificationOccurred(.success)
                 }

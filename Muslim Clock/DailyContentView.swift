@@ -32,36 +32,29 @@ struct DailyContentView: View {
                         .font(.system(size: 14))
                     Text("Verset")
                         .font(.caption.bold())
-                    
+
                     Spacer(minLength: 4)
-                    
+
                     // 🎧 BOUTON LECTURE AUDIO
                     if let audioURL = service.dailyAyahAudioURL {
                         Button {
                             ayahPlayer.togglePlay(url: audioURL)
                         } label: {
-                            HStack(spacing: 4) {
-                                if ayahPlayer.isLoading {
-                                    ProgressView().tint(.white)
-                                        .controlSize(.small)
-                                } else {
-                                    Image(systemName: ayahPlayer.isPlaying ? "pause.fill" : "play.fill")
-                                        .font(.system(size: 12, weight: .bold))
-                                }
-                                
-                                Text(ayahPlayer.isPlaying ? String(localized: "Pause") : String(localized: "Lire"))
-                                    .font(.system(size: 11, weight: .bold, design: .rounded))
-                                    .lineLimit(1)
+                            if ayahPlayer.isLoading {
+                                ProgressView().tint(.white)
+                                    .controlSize(.small)
+                            } else {
+                                Image(systemName: ayahPlayer.isPlaying ? "pause.fill" : "play.fill")
+                                    .font(.system(size: 12, weight: .bold))
                             }
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 5)
-                            .background(ayahPlayer.isPlaying ? Color.orange.gradient : Color.indigo.gradient)
-                            .clipShape(Capsule())
-                            .foregroundColor(.white)
                         }
+                        .frame(width: 30, height: 30)
+                        .background(ayahPlayer.isPlaying ? Color.orange.gradient : Color.indigo.gradient)
+                        .clipShape(Circle())
+                        .foregroundColor(.white)
                         .disabled(ayahPlayer.isLoading)
                     }
-                    
+
                     // 🔄 BOUTON RAFRAÎCHIR
                     Button {
                         Task {
@@ -78,7 +71,7 @@ struct DailyContentView: View {
                             )
                     }
                     .disabled(service.isFetchingQuran)
-                    
+
                     // TOGGLE LANGUE
                     Button {
                         withAnimation(.easeInOut(duration: 0.3)) {
@@ -92,7 +85,7 @@ struct DailyContentView: View {
                             .background(.ultraThinMaterial)
                             .clipShape(Capsule())
                     }
-                    
+
                     // PARTAGE
                     ShareLink(item: "\(service.dailyAyah)\n\n\(service.dailyAyahArabic)\n\n— \(service.dailyAyahSource)") {
                         Image(systemName: "square.and.arrow.up")
@@ -101,29 +94,29 @@ struct DailyContentView: View {
                 }
                 .foregroundColor(.indigo)
                 
-                if showAyahArabic {
-                    Text(verbatim: service.dailyAyahArabic)
-                        .font(.system(size: 22, weight: .regular))
-                        .multilineTextAlignment(.trailing)
-                        .environment(\.layoutDirection, .rightToLeft)
-                        .frame(maxWidth: .infinity, alignment: .trailing)
-                        .lineSpacing(10)
-                        .transition(.opacity.combined(with: .scale(scale: 0.98)))
-                } else {
-                    Text(verbatim: service.dailyAyah)
-                        .font(.system(.body, design: .serif))
-                        .italic()
-                        .multilineTextAlignment(.leading)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .contentTransition(.opacity)
-                        .transition(.opacity.combined(with: .scale(scale: 0.98)))
+                Group {
+                    if showAyahArabic {
+                        Text(service.dailyAyahArabic)
+                            .font(.system(size: 22, weight: .regular))
+                            .multilineTextAlignment(.center)
+                            .frame(maxWidth: .infinity)
+                            .lineSpacing(10)
+                            .fixedSize(horizontal: false, vertical: true)
+                    } else {
+                        Text(verbatim: service.dailyAyah)
+                            .font(.system(.body, design: .serif))
+                            .italic()
+                            .multilineTextAlignment(.leading)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
                 }
-                
+                .animation(.smooth(duration: 0.3), value: showAyahArabic)
+
                 Text(verbatim: "— \(service.dailyAyahSource)")
                     .font(.footnote)
                     .foregroundColor(.secondary)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .contentTransition(.opacity)
             }
             .padding()
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -162,29 +155,29 @@ struct DailyContentView: View {
                 }
                 .foregroundColor(.teal)
                 
-                if showHadithArabic {
-                    Text(verbatim: service.dailyHadithArabic)
-                        .font(.system(size: 22, weight: .regular))
-                        .multilineTextAlignment(.trailing)
-                        .environment(\.layoutDirection, .rightToLeft)
-                        .frame(maxWidth: .infinity, alignment: .trailing)
-                        .lineSpacing(10)
-                        .transition(.opacity.combined(with: .scale(scale: 0.98)))
-                } else {
-                    Text(verbatim: service.dailyHadith)
-                        .font(.system(.body, design: .serif))
-                        .italic()
-                        .multilineTextAlignment(.leading)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .contentTransition(.opacity)
-                        .transition(.opacity.combined(with: .scale(scale: 0.98)))
+                Group {
+                    if showHadithArabic {
+                        Text(service.dailyHadithArabic)
+                            .font(.system(size: 22, weight: .regular))
+                            .multilineTextAlignment(.center)
+                            .frame(maxWidth: .infinity)
+                            .lineSpacing(10)
+                            .fixedSize(horizontal: false, vertical: true)
+                    } else {
+                        Text(verbatim: service.dailyHadith)
+                            .font(.system(.body, design: .serif))
+                            .italic()
+                            .multilineTextAlignment(.leading)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
                 }
-                
+                .animation(.smooth(duration: 0.3), value: showHadithArabic)
+
                 Text(verbatim: "— \(service.dailyHadithSource)")
                     .font(.footnote)
                     .foregroundColor(.secondary)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .contentTransition(.opacity)
             }
             .padding()
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -193,7 +186,7 @@ struct DailyContentView: View {
             .shadow(color: .black.opacity(0.1), radius: 8, y: 4) // Ombre subtile
         }
         .redacted(reason: service.isLoading ? .placeholder : [])
-        .animation(.easeInOut(duration: 0.2), value: service.isLoading)
+        .animation(.smooth(duration: 0.4), value: service.isLoading)
         
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         // CARTE AUDIO / PODCAST
@@ -400,7 +393,17 @@ class AyahAudioPlayerManager: ObservableObject {
 
 struct PodcastCarouselView: View {
     @EnvironmentObject var podcastManager: PodcastManager
-    
+    private static let pageSize = 5
+    @State private var visibleCount: Int = PodcastCarouselView.pageSize
+
+    private var visibleEpisodes: [PodcastEpisode] {
+        Array(podcastManager.episodes.prefix(visibleCount))
+    }
+
+    private var hasMore: Bool {
+        visibleCount < podcastManager.episodes.count
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
             
@@ -537,7 +540,7 @@ struct PodcastCarouselView: View {
                     // Marge initiale pour aligner avec le reste du design
                     Spacer().frame(width: 4)
                     
-                    ForEach(podcastManager.episodes) { episode in
+                    ForEach(visibleEpisodes) { episode in
                         let isPlayed = podcastManager.isEpisodePlayed(episode: episode)
                         let isCurrent = podcastManager.currentlyPlayingID == episode.id
                         
@@ -634,6 +637,28 @@ struct PodcastCarouselView: View {
                         .animation(.spring(response: 0.4, dampingFraction: 0.8), value: isPlayed)
                     }
                     
+                    if hasMore {
+                        Button {
+                            visibleCount += Self.pageSize
+                        } label: {
+                            VStack(spacing: 8) {
+                                Image(systemName: "plus.circle.fill")
+                                    .font(.system(size: 28))
+                                    .foregroundStyle(.orange)
+                                Text(verbatim: "\(podcastManager.episodes.count - visibleCount) de plus")
+                                    .font(.system(size: 12, weight: .semibold, design: .rounded))
+                                    .foregroundStyle(.white.opacity(0.7))
+                            }
+                            .frame(width: 100, height: 170)
+                            .background(.ultraThinMaterial)
+                            .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 20, style: .continuous)
+                                    .stroke(Color.orange.opacity(0.3), lineWidth: 1)
+                            )
+                        }
+                    }
+
                     // Marge finale
                     Spacer().frame(width: 4)
                 }
@@ -641,6 +666,9 @@ struct PodcastCarouselView: View {
         }
         .task {
             await podcastManager.loadSmartPodcast()
+        }
+        .onChange(of: podcastManager.activeSeriesIndex) { _, _ in
+            visibleCount = Self.pageSize
         }
     }
 }

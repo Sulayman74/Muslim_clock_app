@@ -5,6 +5,10 @@ import AVFoundation
 import WidgetKit
 import Adhan
 
+/// Identifiant du App Group partagé iOS ↔ Widget.
+/// Doit rester aligné avec `SalatWidgetExtension.entitlements`.
+private let appGroupIdentifier = "group.kappsi.Muslim-Clock"
+
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 // MODÈLE DE DONNÉES
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -64,7 +68,7 @@ enum WidgetUtils {
 struct SalatProvider: TimelineProvider {
     
     private var shared: UserDefaults? {
-        UserDefaults(suiteName: "group.kappsi.Muslim-Clock")
+        UserDefaults(suiteName: appGroupIdentifier)
     }
     
     private func getCoordinates() -> (Double, Double) {
