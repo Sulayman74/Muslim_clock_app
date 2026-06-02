@@ -1,3 +1,6 @@
 audios.json
 adhkar.json
 hadiths.json
+
+# Xcode build artefacts
+build/
