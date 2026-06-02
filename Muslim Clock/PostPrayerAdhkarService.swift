@@ -351,6 +351,10 @@ struct CurrentPrayerGaugeView: View {
                 .transition(.scale.combined(with: .opacity))
             }
         }
+        // Force la reconstruction propre du VStack au changement de fenêtre de prière —
+        // évite les animations parasites lors du switch entre carte "en cours", "nuit"
+        // et "rappel coranique".
+        .id(prayerVM.currentPrayerWindow)
         .sheet(isPresented: $showAdhkarSheet) {
             // Logique dynamique pour charger le bon JSON
             let sheetContext = prayerVM.currentPrayerWindow != .none ? prayerVM.currentPrayerWindow.rawValue : "qiyam"

@@ -188,13 +188,14 @@ struct QiblaView: View {
                 .contentTransition(.interpolate)
                 .animation(.easeInOut(duration: 0.3), value: manager.proximityLevel)
             
-            HStack(spacing: 24) {
+            HStack(spacing: 16) {
                 degreeLabel(title: String(localized: "Azimut"), value: manager.qiblaAngle)
                 degreeLabel(title: String(localized: "Écart"), value: manager.angularOffset)
                 degreeLabel(title: String(localized: "Cap"), value: manager.heading)
             }
-            .font(.system(size: 12, weight: .medium, design: .monospaced))
+            .font(.system(size: 11, weight: .medium, design: .monospaced))
             .foregroundStyle(.white.opacity(0.4))
+            .minimumScaleFactor(0.85)
         }
     }
     

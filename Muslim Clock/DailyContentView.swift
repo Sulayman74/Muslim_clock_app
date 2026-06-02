@@ -27,11 +27,13 @@ struct DailyContentView: View {
             // CARTE CORAN
             // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
             VStack(alignment: .leading, spacing: 12) {
-                HStack(spacing: 8) {
+                HStack(spacing: 6) {
                     Image(systemName: "book.fill")
                         .font(.system(size: 14))
                     Text("Verset")
                         .font(.caption.bold())
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.7)
 
                     Spacer(minLength: 4)
 
@@ -112,6 +114,7 @@ struct DailyContentView: View {
                             .fixedSize(horizontal: false, vertical: true)
                     }
                 }
+                .frame(maxWidth: .infinity, minHeight: 80, alignment: .leading) // anti-wiggle au chargement
                 .animation(.smooth(duration: 0.3), value: showAyahArabic)
 
                 Text(verbatim: "— \(service.dailyAyahSource)")
@@ -129,11 +132,13 @@ struct DailyContentView: View {
             // CARTE HADITH
             // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
             VStack(alignment: .leading, spacing: 12) {
-                HStack {
+                HStack(spacing: 6) {
                     Image(systemName: "quote.opening")
                     Text("Hadith du moment")
                         .font(.caption.bold())
-                    
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.7)
+
                     Spacer()
                     
                     Button {
@@ -173,6 +178,7 @@ struct DailyContentView: View {
                             .fixedSize(horizontal: false, vertical: true)
                     }
                 }
+                .frame(maxWidth: .infinity, minHeight: 80, alignment: .leading) // anti-wiggle au chargement
                 .animation(.smooth(duration: 0.3), value: showHadithArabic)
 
                 Text(verbatim: "— \(service.dailyHadithSource)")

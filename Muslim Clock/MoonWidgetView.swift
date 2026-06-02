@@ -346,7 +346,7 @@ private struct MoonDayCell: View {
                 .foregroundStyle(info.isToday ? .white : .white.opacity(0.55))
         }
         .padding(.vertical, info.isToday ? 10 : 6)
-        .frame(maxWidth: .infinity)
+        .frame(maxWidth: .infinity, minHeight: 80) // hauteur stable même si Dynamic Type rétrécit le contenu
         .background {
             if info.isToday {
                 RoundedRectangle(cornerRadius: 14)
