@@ -161,11 +161,15 @@ struct MainView: View {
     
     @State private var selectedTab = 0
     @Environment(\.scenePhase) private var scenePhase
-    
+
     // ✨ NOUVEAU : État pour l'overlay Adhan
     @State private var showAdhanOverlay = false
     @State private var adhanPrayerName = ""
     @State private var adhanPrayerTime = Date()
+
+    /// Sheet Adhkar déclenchée par le Control Widget "Adhkar du moment".
+    /// Indépendant du bouton AdhkarQuickAccessButton qui a son propre state local.
+    @State private var showAdhkarFromControl = false
     
     /// Saison islamique courante (recalculée à chaque apparition)
         private var currentSeason: IslamicSeasonInfo {
@@ -374,6 +378,14 @@ struct MainView: View {
                 podcastManager.savePlaybackPositionNow()
             }
         }
+        // Routage des Control Widgets (Centre de Contrôle / Lock Screen / bouton Action).
+        // Lit la clé `controlDeepLinkTarget` dans l'App Group, route, puis efface la clé.
+        .onChange(of: scenePhase, initial: true) {
+            print("📱 [ScenePhase] phase=\(scenePhase)")
+            if scenePhase == .active {
+                handleControlDeepLink()
+            }
+        }
         .environmentObject(podcastManager)
         .environmentObject(prayerVM)
         .environmentObject(weatherVM)
@@ -441,6 +453,20 @@ struct MainView: View {
                         .zIndex(1000) // Au-dessus de tout
                     }
                 }
+                // Sheet Adhkar déclenchée par le Control Widget "Adhkar du moment".
+                .sheet(isPresented: $showAdhkarFromControl) {
+                    ZStack {
+                        LinearGradient(
+                            colors: [Color(red: 0.05, green: 0.08, blue: 0.18), Color(red: 0.08, green: 0.1, blue: 0.25)],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                        .ignoresSafeArea()
+                        AdhkarView()
+                    }
+                    .environmentObject(prayerVM)
+                    .presentationDragIndicator(.visible)
+                }
                 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
                 // DÉCLENCHEUR D'ADHAN (écoute les notifications)
                 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -465,6 +491,54 @@ struct MainView: View {
                     }
                 }
     }
+    /// Lit la clé `controlDeepLinkTarget` écrite par un Control Widget (Qibla / Adhkar)
+    /// dans l'App Group, route vers la destination, puis efface la clé.
+    ///
+    /// Retry intégré : `openAppWhenRun=true` lance l'app en parallèle de l'AppIntent.perform()
+    /// du widget. L'app peut passer à `.active` AVANT que la clé soit écrite côté widget.
+    /// On retente 3 fois à 250ms d'intervalle pour couvrir cette race condition.
+    private func handleControlDeepLink(retryCount: Int = 0) {
+        let shared = UserDefaults(suiteName: "group.kappsi.Muslim-Clock")
+        let target = shared?.string(forKey: "controlDeepLinkTarget")
+        let timestamp = shared?.double(forKey: "controlDeepLinkTimestamp") ?? 0
+        let ageSeconds = Date().timeIntervalSince1970 - timestamp
+        print("🔍 [DeepLink] try=\(retryCount) target=\(target ?? "nil") timestamp=\(timestamp) age=\(String(format: "%.2f", ageSeconds))s")
+
+        if shared == nil {
+            print("❌ [DeepLink] UserDefaults(suiteName:) returned nil — App Group inaccessible from app !")
+            return
+        }
+
+        // Ignore les anciens triggers (> 30s) pour ne pas rejouer un deep-link périmé
+        // (ex: utilisateur ouvre l'app normalement après un control widget oublié).
+        if let target, ageSeconds <= 30 {
+            switch target {
+            case "qibla":
+                print("✅ [DeepLink] Routing to Qibla tab (selectedTab = 2)")
+                selectedTab = 2
+            case "adhkar":
+                print("✅ [DeepLink] Routing to Adhkar sheet")
+                showAdhkarFromControl = true
+            default:
+                print("⚠️ [DeepLink] Unknown target: \(target)")
+            }
+            shared?.removeObject(forKey: "controlDeepLinkTarget")
+            shared?.removeObject(forKey: "controlDeepLinkTimestamp")
+            print("🧹 [DeepLink] Keys cleared")
+            return
+        }
+
+        // Pas de target trouvé : retry possible (race condition avec AppIntent.perform du widget).
+        if retryCount < 3 {
+            Task { @MainActor in
+                try? await Task.sleep(nanoseconds: 250_000_000)
+                handleControlDeepLink(retryCount: retryCount + 1)
+            }
+        } else {
+            print("🔍 [DeepLink] No target after 3 retries — likely a normal app open (not from control widget)")
+        }
+    }
+
     private func checkSeasonalChanges() {
             let now = Date()
             let currentDST = TimeZone.current.isDaylightSavingTime(for: now)

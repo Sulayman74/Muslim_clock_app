@@ -67,27 +67,35 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
 struct Muslim_ClockApp: App {
     // On connecte notre AppDelegate au cycle de vie de SwiftUI
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
-    
+
     @AppStorage("appLanguage") private var appLanguage = "system"
-    
+    @Environment(\.scenePhase) private var scenePhase
+
     init() {
         NotificationManager.shared.requestPermission()
         SharedLocationManager.shared.requestPermissionAndStart()
         _ = WatchSessionManager.shared // Démarre la session WatchConnectivity
     }
-    
+
     private var currentLocale: Locale {
         if appLanguage == "system" {
             return .current
         }
         return Locale(identifier: appLanguage)
     }
-    
+
     var body: some Scene {
         WindowGroup {
             MainView()
                 .environment(\.locale, currentLocale)
                 .preferredColorScheme(.dark)   // App 100% dark — textes blancs toujours lisibles
+                .onChange(of: scenePhase) { _, phase in
+                    if phase == .active {
+                        // Nettoie les Live Activities périmées au retour foreground.
+                        // Le démarrage est piloté par PrayerTimesViewModel après recalcul.
+                        SalatLiveActivityManager.shared.endIfExpired()
+                    }
+                }
         }
     }
 }

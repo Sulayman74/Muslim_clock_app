@@ -258,6 +258,9 @@
         }
       }
     },
+    "Adhkar du moment" : {
+
+    },
     "Adhkar du Soir" : {
       "localizations" : {
         "ar" : {
@@ -450,6 +453,9 @@
     "Cache Audio (hors-ligne)" : {
 
     },
+    "Calcul des horaires de prière" : {
+
+    },
     "Cap" : {
 
     },
@@ -607,6 +613,9 @@
           }
         }
       }
+    },
+    "Destination" : {
+
     },
     "Dhuhr" : {
       "localizations" : {
@@ -993,6 +1002,9 @@
     "La prochaine prière en un coup d'œil." : {
 
     },
+    "La section audio propose des séries de cours islamiques soigneusement sélectionnés :\n\n• Les séries sont choisies parmi des savants et prédicateurs reconnus pour leur attachement au Coran et à la Sounnah authentique\n• La playlist est mise à jour à distance — de nouvelles séries sont ajoutées régulièrement sans mise à jour de l'app\n• Les audios sont mis en cache localement pour une écoute hors-ligne\n• La progression est sauvegardée automatiquement : reprenez là où vous vous étiez arrêté\n\nL'objectif est de faciliter l'apprentissage de la science religieuse au quotidien, pendant vos trajets ou temps libres." : {
+
+    },
     "Laissez l'app déduire vos réglages" : {
       "localizations" : {
         "ar" : {
@@ -1087,6 +1099,9 @@
           }
         }
       }
+    },
+    "Les horaires sont calculés localement sur votre appareil à partir de votre position GPS :\n\n• Algorithme astronomique standard (position du soleil)\n• Méthodes supportées : MWL, ISNA, Egypte, Umm Al-Qura, Karachi, et autres\n• Ajustements manuels possibles pour chaque prière (±minutes)\n• Prise en compte automatique du changement d'heure (été/hiver)\n• Aucun serveur distant n'est sollicité pour le calcul — tout est local et privé" : {
+
     },
     "Lire" : {
       "extractionState" : "stale",
@@ -1186,10 +1201,22 @@
     "Muslim Clock" : {
 
     },
+    "Muslim Clock — Votre compagnon quotidien" : {
+
+    },
+    "Muslim Clock est une application complète conçue pour accompagner le musulman au quotidien :\n\n• Horaires de prière précis basés sur votre géolocalisation (calcul astronomique, méthode MWL/ISNA/Egypte au choix)\n• Notification de rappel à chaque prière — avec alerte visuelle et sonore\n• Boussole de Qibla calibrée en temps réel\n• Adhkar du matin et du soir avec compteur de répétitions\n• Invocations après la prière (post-salat) et Rawatib\n• Rappel quotidien : un verset du Coran + un Hadith authentique chaque jour\n• Série de cours audio (podcasts islamiques) avec lecture en arrière-plan\n• Widget iOS, Apple Watch et complications pour ne jamais manquer une prière\n• Calendrier hégirien avec mise en avant des mois sacrés, vendredis et jours de Aïd\n• Météo locale intégrée" : {
+
+    },
+    "Muslim Clock respecte votre vie privée :\n\n• Votre position GPS reste sur votre appareil — elle n'est jamais envoyée à un serveur\n• Aucun compte utilisateur requis\n• Aucune publicité\n• Aucun tracker ou analytics tiers\n• Les données (adhkar, progression, réglages) sont stockées localement sur votre iPhone" : {
+
+    },
     "Nom de la mosquée" : {
 
     },
     "Nom de la Sunnah" : {
+
+    },
+    "Nous avons fait le choix délibéré de NE PAS diffuser l'Adhan via le téléphone. Voici pourquoi :\n\n1. Respect de l'Adhan — L'Adhan est un acte d'adoration sacré. Le diffuser sur un haut-parleur de téléphone dans des lieux inappropriés (toilettes, transports, réunions) est une forme de manque de respect envers ces paroles sacrées.\n\n2. Avis des savants — Plusieurs savants ont rappelé qu'il n'est pas convenable que l'Adhan retentisse dans des endroits impurs ou inadaptés. Le téléphone nous accompagne partout, y compris dans ces lieux.\n\n3. L'objectif est le rappel — Une notification silencieuse ou avec un son neutre remplit parfaitement le rôle de RAPPEL de la prière, sans risquer de profaner les paroles de l'Adhan.\n\n4. Votre responsabilité — L'Adhan est proclamé dans les mosquées par le Muezzin. L'application vous rappelle l'heure, à vous de répondre à l'appel.\n\nC'est un choix de conscience, pas une limitation technique." : {
 
     },
     "Nouvelle Lune" : {
@@ -1240,6 +1267,9 @@
     "Oui, donner mon avis" : {
 
     },
+    "Ouvrir Muslim Clock" : {
+
+    },
     "Pas de Rawatib, mais l'invocation entre l'Adhan et l'Iqama est exaucée." : {
       "localizations" : {
         "ar" : {
@@ -1274,6 +1304,9 @@
       }
     },
     "Phases Lunaires" : {
+
+    },
+    "Playlist audio — Cours sélectionnés" : {
 
     },
     "Pleine Lune" : {
@@ -1317,6 +1350,9 @@
           }
         }
       }
+    },
+    "Pourquoi une notification et pas l'Adhan ?" : {
+
     },
     "Pratique courante en Europe" : {
       "localizations" : {
@@ -1437,6 +1473,9 @@
           }
         }
       }
+    },
+    "Qibla" : {
+
     },
     "Qiblah" : {
       "localizations" : {
@@ -1693,6 +1732,9 @@
         }
       }
     },
+    "Sources des contenus religieux" : {
+
+    },
     "Suivez vos prières d'un simple coup d'œil." : {
 
     },
@@ -1734,6 +1776,9 @@
           }
         }
       }
+    },
+    "Tous les contenus spirituels (Hadiths, Invocations, Adhkar) sont rigoureusement sélectionnés à partir de sources authentiques :\n\n• Sahih Al-Bukhari\n• Sahih Muslim\n• Sunan Abu Dawud, At-Tirmidhi, An-Nasa'i, Ibn Majah\n• Riyad As-Salihin (Imam An-Nawawi)\n• Hisn Al-Muslim (La Citadelle du Musulman)\n\nL'authentification repose sur les travaux des grands savants du Hadith, notamment Sheikh Al-Albani (rahimahullah).\n\nAucun hadith faible (da'if) n'est utilisé pour les invocations. En cas de doute, le degré d'authenticité est précisé." : {
+
     },
     "Tous les contenus spirituels de cette application (Hadiths, Invocations) sont rigoureusement sélectionnés. Nous nous basons sur les recueils authentiques (Sahih Al-Bukhari, Sahih Muslim) et les travaux d'authentification des grands savants de la Sounnah (comme Sheikh Al-Albani, rahimahullah)." : {
       "extractionState" : "stale",
@@ -1803,6 +1848,9 @@
 
     },
     "Vider le cache audio" : {
+
+    },
+    "Vie privée" : {
 
     },
     "Widgets" : {

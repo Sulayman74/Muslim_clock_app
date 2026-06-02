@@ -2,79 +2,160 @@
 //  SalatWidgetLiveActivity.swift
 //  SalatWidget
 //
-//  Created by Mohamed Kanoute on 31/03/2026.
+//  Live Activity "Prochaine Salât" — compte à rebours live (Dynamic Island + Lock Screen)
+//  démarré ~30 min avant chaque prière par SalatLiveActivityManager (app iOS).
+//
+//  `SalatLiveActivityAttributes` est défini dans le main app target — ce fichier doit
+//  être ajouté au target SalatWidgetExtension via Target Membership (cf. fichier .swift dédié).
 //
 
 import ActivityKit
 import WidgetKit
 import SwiftUI
 
-struct SalatWidgetAttributes: ActivityAttributes {
-    public struct ContentState: Codable, Hashable {
-        // Dynamic stateful properties about your activity go here!
-        var emoji: String
-    }
-
-    // Fixed non-changing properties about your activity go here!
-    var name: String
-}
+// MARK: - Widget
 
 struct SalatWidgetLiveActivity: Widget {
     var body: some WidgetConfiguration {
-        ActivityConfiguration(for: SalatWidgetAttributes.self) { context in
-            // Lock screen/banner UI goes here
-            VStack {
-                Text("Hello \(context.state.emoji)")
-            }
-            .activityBackgroundTint(Color.cyan)
-            .activitySystemActionForegroundColor(Color.black)
-
+        ActivityConfiguration(for: SalatLiveActivityAttributes.self) { context in
+            // ── Lock Screen / Banner ──
+            LockScreenView(context: context)
+                .activityBackgroundTint(Color.black.opacity(0.6))
+                .activitySystemActionForegroundColor(.white)
         } dynamicIsland: { context in
             DynamicIsland {
-                // Expanded UI goes here.  Compose the expanded UI through
-                // various regions, like leading/trailing/center/bottom
                 DynamicIslandExpandedRegion(.leading) {
-                    Text("Leading")
+                    HStack(spacing: 6) {
+                        Image(systemName: context.attributes.iconName)
+                            .font(.title3)
+                            .foregroundStyle(.orange)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(context.attributes.frenchName)
+                                .font(.headline)
+                            Text(context.attributes.arabicName)
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                                .environment(\.layoutDirection, .rightToLeft)
+                        }
+                    }
                 }
                 DynamicIslandExpandedRegion(.trailing) {
-                    Text("Trailing")
+                    VStack(alignment: .trailing, spacing: 2) {
+                        Text(context.state.targetTime, style: .time)
+                            .font(.headline)
+                            .monospacedDigit()
+                        Text("heure")
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                    }
                 }
                 DynamicIslandExpandedRegion(.bottom) {
-                    Text("Bottom \(context.state.emoji)")
-                    // more content
+                    HStack(spacing: 4) {
+                        Spacer()
+                        Image(systemName: "timer")
+                            .foregroundStyle(.orange)
+                        Text(context.state.targetTime, style: .timer)
+                            .font(.system(.title2, design: .rounded, weight: .bold))
+                            .monospacedDigit()
+                            .foregroundStyle(.orange)
+                        Spacer()
+                    }
                 }
             } compactLeading: {
-                Text("L")
+                Image(systemName: context.attributes.iconName)
+                    .foregroundStyle(.orange)
             } compactTrailing: {
-                Text("T \(context.state.emoji)")
+                Text(context.state.targetTime, style: .timer)
+                    .monospacedDigit()
+                    .foregroundStyle(.orange)
+                    .frame(maxWidth: 60)
             } minimal: {
-                Text(context.state.emoji)
+                Image(systemName: context.attributes.iconName)
+                    .foregroundStyle(.orange)
             }
-            .widgetURL(URL(string: "http://www.apple.com"))
-            .keylineTint(Color.red)
+            .keylineTint(.orange)
         }
     }
 }
 
-extension SalatWidgetAttributes {
-    fileprivate static var preview: SalatWidgetAttributes {
-        SalatWidgetAttributes(name: "World")
+// MARK: - Lock Screen View
+
+private struct LockScreenView: View {
+    let context: ActivityViewContext<SalatLiveActivityAttributes>
+
+    var body: some View {
+        HStack(spacing: 14) {
+            // Icône prière
+            ZStack {
+                Circle()
+                    .fill(LinearGradient(
+                        colors: [.orange.opacity(0.4), .orange.opacity(0.15)],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ))
+                    .frame(width: 52, height: 52)
+                Image(systemName: context.attributes.iconName)
+                    .font(.title2)
+                    .foregroundStyle(.orange)
+            }
+
+            // Nom + heure cible
+            VStack(alignment: .leading, spacing: 2) {
+                Text(context.attributes.arabicName)
+                    .font(.system(size: 18, weight: .bold))
+                    .environment(\.layoutDirection, .rightToLeft)
+                Text(context.attributes.frenchName)
+                    .font(.subheadline.weight(.medium))
+                    .foregroundStyle(.secondary)
+                Text(context.state.targetTime, style: .time)
+                    .font(.caption.monospacedDigit())
+                    .foregroundStyle(.tertiary)
+            }
+
+            Spacer()
+
+            // Countdown live
+            VStack(alignment: .trailing, spacing: 2) {
+                Text(context.state.targetTime, style: .timer)
+                    .font(.system(.title2, design: .rounded, weight: .bold))
+                    .monospacedDigit()
+                    .foregroundStyle(.orange)
+                    .frame(minWidth: 70, alignment: .trailing)
+                Text("restant")
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
     }
 }
 
-extension SalatWidgetAttributes.ContentState {
-    fileprivate static var smiley: SalatWidgetAttributes.ContentState {
-        SalatWidgetAttributes.ContentState(emoji: "😀")
-     }
-     
-     fileprivate static var starEyes: SalatWidgetAttributes.ContentState {
-         SalatWidgetAttributes.ContentState(emoji: "🤩")
-     }
+// MARK: - Preview
+
+extension SalatLiveActivityAttributes {
+    fileprivate static var preview: SalatLiveActivityAttributes {
+        SalatLiveActivityAttributes(
+            prayerKey: "maghrib",
+            frenchName: "Maghrib",
+            arabicName: "المغرب",
+            iconName: "sunset.fill"
+        )
+    }
 }
 
-#Preview("Notification", as: .content, using: SalatWidgetAttributes.preview) {
-   SalatWidgetLiveActivity()
+extension SalatLiveActivityAttributes.ContentState {
+    fileprivate static var inThirty: SalatLiveActivityAttributes.ContentState {
+        SalatLiveActivityAttributes.ContentState(targetTime: Date().addingTimeInterval(30 * 60))
+    }
+    fileprivate static var inFive: SalatLiveActivityAttributes.ContentState {
+        SalatLiveActivityAttributes.ContentState(targetTime: Date().addingTimeInterval(5 * 60))
+    }
+}
+
+#Preview("Lock Screen", as: .content, using: SalatLiveActivityAttributes.preview) {
+    SalatWidgetLiveActivity()
 } contentStates: {
-    SalatWidgetAttributes.ContentState.smiley
-    SalatWidgetAttributes.ContentState.starEyes
+    SalatLiveActivityAttributes.ContentState.inThirty
+    SalatLiveActivityAttributes.ContentState.inFive
 }

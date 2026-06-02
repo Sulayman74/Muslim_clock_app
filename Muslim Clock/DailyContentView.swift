@@ -45,13 +45,14 @@ struct DailyContentView: View {
                                     .controlSize(.small)
                             } else {
                                 Image(systemName: ayahPlayer.isPlaying ? "pause.fill" : "play.fill")
-                                    .font(.system(size: 12, weight: .bold))
+                                    .font(.system(size: 14, weight: .bold))
                             }
                         }
-                        .frame(width: 30, height: 30)
+                        .frame(width: 44, height: 44) // HIG : cible tactile ≥ 44pt
                         .background(ayahPlayer.isPlaying ? Color.orange.gradient : Color.indigo.gradient)
                         .clipShape(Circle())
                         .foregroundColor(.white)
+                        .contentShape(Rectangle())
                         .disabled(ayahPlayer.isLoading)
                     }
 
@@ -477,11 +478,13 @@ struct PodcastCarouselView: View {
                             .font(.system(size: 18, weight: .bold, design: .rounded))
                             .foregroundColor(.white)
                             .lineLimit(2) // ✅ LIMITE À 2 LIGNES
-                        
+                            .minimumScaleFactor(0.75)
+
                         Text(verbatim: podcastManager.podcastAuthor)
                             .font(.system(size: 13))
                             .foregroundStyle(.orange.gradient)
                             .lineLimit(1) // ✅ LIMITE À 1 LIGNE
+                            .truncationMode(.tail)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading) // ✅ PREND LA LARGEUR DISPO
                 }

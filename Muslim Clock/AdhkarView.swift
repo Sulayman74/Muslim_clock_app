@@ -397,9 +397,11 @@ struct DhikrCardView: View {
                     .multilineTextAlignment(.center)
                     .frame(maxWidth: .infinity)
                     .lineSpacing(10)
+                    .minimumScaleFactor(0.75)
+                    .fixedSize(horizontal: false, vertical: true)
                     .foregroundColor(isCompleted ? .white.opacity(0.4) : .white.opacity(0.9))
             }
-            
+
             // ── TEXTE FRANÇAIS ──
             if !showArabic {
                 Text(verbatim: dhikr.text)
@@ -407,6 +409,8 @@ struct DhikrCardView: View {
                     .italic()
                     .multilineTextAlignment(.leading)
                     .frame(maxWidth: .infinity, alignment: .leading)
+                    .minimumScaleFactor(0.85)
+                    .fixedSize(horizontal: false, vertical: true)
                     .foregroundColor(isCompleted ? .white.opacity(0.4) : .white.opacity(0.8))
             }
             

@@ -2,76 +2,46 @@
 //  SalatWidgetControl.swift
 //  SalatWidget
 //
-//  Created by Mohamed Kanoute on 31/03/2026.
+//  Control Center widgets (iOS 18+) — boutons d'accès rapide depuis le Centre de Contrôle,
+//  le bouton Action (iPhone 15 Pro+) et le Lock Screen.
+//
+//  Les intents `OpenInMuslimClockIntent` sont définis dans `AppIntent.swift` (membre des
+//  2 targets : Muslim Clock + SalatWidgetExtension) — c'est une exigence Apple pour que
+//  `OpenIntent` puisse ouvrir l'app depuis un Control Widget.
 //
 
 import AppIntents
 import SwiftUI
 import WidgetKit
 
-struct SalatWidgetControl: ControlWidget {
-    static let kind: String = "kappsi.Muslim-Clock.SalatWidget"
+// MARK: - Control Widgets
+
+/// Bouton "Qibla" dans le Centre de Contrôle / Lock Screen / bouton Action.
+struct QiblaControlWidget: ControlWidget {
+    static let kind: String = "kappsi.Muslim-Clock.controls.qibla"
 
     var body: some ControlWidgetConfiguration {
-        AppIntentControlConfiguration(
-            kind: Self.kind,
-            provider: Provider()
-        ) { value in
-            ControlWidgetToggle(
-                "Start Timer",
-                isOn: value.isRunning,
-                action: StartTimerIntent(value.name)
-            ) { isRunning in
-                Label(isRunning ? "On" : "Off", systemImage: "timer")
+        StaticControlConfiguration(kind: Self.kind) {
+            ControlWidgetButton(action: OpenInMuslimClockIntent(target: .qibla)) {
+                Label("Qibla", systemImage: "safari")
             }
         }
-        .displayName("Timer")
-        .description("A an example control that runs a timer.")
+        .displayName("Qibla")
+        .description("Ouvrir la boussole Qibla.")
     }
 }
 
-extension SalatWidgetControl {
-    struct Value {
-        var isRunning: Bool
-        var name: String
-    }
+/// Bouton "Adhkar" dans le Centre de Contrôle / Lock Screen / bouton Action.
+struct AdhkarControlWidget: ControlWidget {
+    static let kind: String = "kappsi.Muslim-Clock.controls.adhkar"
 
-    struct Provider: AppIntentControlValueProvider {
-        func previewValue(configuration: TimerConfiguration) -> Value {
-            SalatWidgetControl.Value(isRunning: false, name: configuration.timerName)
+    var body: some ControlWidgetConfiguration {
+        StaticControlConfiguration(kind: Self.kind) {
+            ControlWidgetButton(action: OpenInMuslimClockIntent(target: .adhkar)) {
+                Label("Adhkar", systemImage: "hands.sparkles.fill")
+            }
         }
-
-        func currentValue(configuration: TimerConfiguration) async throws -> Value {
-            let isRunning = true // Check if the timer is running
-            return SalatWidgetControl.Value(isRunning: isRunning, name: configuration.timerName)
-        }
-    }
-}
-
-struct TimerConfiguration: ControlConfigurationIntent {
-    static let title: LocalizedStringResource = "Timer Name Configuration"
-
-    @Parameter(title: "Timer Name", default: "Timer")
-    var timerName: String
-}
-
-struct StartTimerIntent: SetValueIntent {
-    static let title: LocalizedStringResource = "Start a timer"
-
-    @Parameter(title: "Timer Name")
-    var name: String
-
-    @Parameter(title: "Timer is running")
-    var value: Bool
-
-    init() {}
-
-    init(_ name: String) {
-        self.name = name
-    }
-
-    func perform() async throws -> some IntentResult {
-        // Start the timer…
-        return .result()
+        .displayName("Adhkar du moment")
+        .description("Ouvrir les Adhkar (matin ou soir selon l'heure).")
     }
 }

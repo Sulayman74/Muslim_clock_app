@@ -355,9 +355,23 @@ class PrayerTimesViewModel: ObservableObject {
             self.nextPrayerDate = targetDate
             self.nextPrayerName = targetName
             self.nextPrayerTime = formatter.string(from: targetDate)
+            refreshLiveActivity()
         } else {
             fetchTomorrowsFajr(coordinates: coordinates, params: params, formatter: formatter)
         }
+    }
+
+    /// Met à jour la Live Activity "Prochaine Salât" si on est dans la fenêtre d'annonce (≤ 30 min).
+    /// Termine aussi les éventuelles activities périmées (post-prière > 5 min).
+    private func refreshLiveActivity() {
+        guard let targetDate = nextPrayerDate else { return }
+        let manager = SalatLiveActivityManager.shared
+        manager.endIfExpired()
+        manager.refresh(
+            prayerKey: SalatLiveActivityManager.prayerKey(from: nextPrayerName),
+            frenchName: nextPrayerName,
+            targetTime: targetDate
+        )
     }
     
     // MARK: - 📅 PLANIFICATION 14 JOURS
@@ -419,7 +433,7 @@ class PrayerTimesViewModel: ObservableObject {
             self.nextPrayerTime = nextFajrTimeString
             UserDefaults(suiteName: appGroupIdentifier)?.set(nextFajrDate.timeIntervalSince1970, forKey: "prayer_fajr_tomorrow")
             WatchSessionManager.shared.sendPrayerTimes(["prayer_fajr_tomorrow": nextFajrDate.timeIntervalSince1970])
-            
+
             if let firstIndex = self.dailyPrayers.firstIndex(where: { $0.name == "Fajr" }) {
                 self.dailyPrayers[firstIndex] = DailyPrayer(
                     name: "Fajr",
@@ -429,6 +443,7 @@ class PrayerTimesViewModel: ObservableObject {
                     isCurrent: false
                 )
             }
+            refreshLiveActivity()
         }
     }
     

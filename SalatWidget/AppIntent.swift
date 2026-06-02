@@ -1,12 +1,14 @@
 import AppIntents
-import Foundation // Remplace WidgetKit par Foundation ici
+import Foundation
+import os
+
+// MARK: - ToggleSunnahIntent
 
 struct ToggleSunnahIntent: AppIntent {
     static var title: LocalizedStringResource = "Valider une Sunnah"
 
-    /// Identifiant du App Group partagé iOS ↔ Widget.
-    /// Doit rester aligné avec `SalatWidgetExtension.entitlements`.
-    /// Déclaré dans la struct pour rester nonisolated (AppIntent.perform est nonisolated).
+    /// Identifiant du App Group partagé iOS ↔ Widget. Statique dans la struct pour
+    /// rester nonisolated (AppIntent.perform est nonisolated en Swift 6).
     private static let appGroupIdentifier = "group.kappsi.Muslim-Clock"
 
     @Parameter(title: "Nom de la Sunnah")
@@ -20,9 +22,6 @@ struct ToggleSunnahIntent: AppIntent {
     }
 
     func perform() async throws -> some IntentResult {
-        // ⚠️ ATTENTION AU NOM DU GROUPE
-        // Sur iOS, les App Groups commencent (presque) toujours par "group."
-        // Vérifie bien dans tes "Capabilities" sur Xcode que c'est le bon nom !
         guard let sharedDefaults = UserDefaults(suiteName: Self.appGroupIdentifier) else {
             return .result()
         }
@@ -30,6 +29,55 @@ struct ToggleSunnahIntent: AppIntent {
         let currentState = sharedDefaults.bool(forKey: sunnahName)
         sharedDefaults.set(!currentState, forKey: sunnahName)
 
+        return .result()
+    }
+}
+
+// MARK: - OpenIntent : Qibla / Adhkar (Control Center deep-link)
+
+/// Cible de l'ouverture de l'app depuis un Control Widget.
+/// Apple exige `OpenIntent` (et pas un AppIntent classique avec `openAppWhenRun`) pour les
+/// boutons de Control Center qui ouvrent l'app. La cible est dispatched côté app via la clé
+/// `controlDeepLinkTarget` dans l'App Group partagé (lu par MainView).
+enum MuslimClockLaunchTarget: String, AppEnum {
+    case qibla
+    case adhkar
+
+    static var typeDisplayRepresentation = TypeDisplayRepresentation(name: "Destination")
+    static var caseDisplayRepresentations: [MuslimClockLaunchTarget: DisplayRepresentation] = [
+        .qibla:  DisplayRepresentation(title: "Qibla"),
+        .adhkar: DisplayRepresentation(title: "Adhkar du moment"),
+    ]
+}
+
+/// Ouvre l'app Muslim Clock vers la destination spécifiée.
+/// Conforme à `OpenIntent` — protocol Apple-recommandé pour les Control Widgets qui ouvrent l'app.
+/// Le fichier qui contient cet intent DOIT être membre des targets app ET widget (cf. exception pbxproj).
+struct OpenInMuslimClockIntent: OpenIntent {
+    static var title: LocalizedStringResource = "Ouvrir Muslim Clock"
+
+    /// Constantes statiques dans la struct pour rester nonisolated (Swift 6 + @MainActor default).
+    private static let appGroupIdentifier = "group.kappsi.Muslim-Clock"
+    private static let log = Logger(subsystem: "kappsi.Muslim-Clock", category: "WidgetIntent")
+
+    @Parameter(title: "Destination")
+    var target: MuslimClockLaunchTarget
+
+    init() {}
+
+    init(target: MuslimClockLaunchTarget) {
+        self.target = target
+    }
+
+    func perform() async throws -> some IntentResult {
+        Self.log.info("🎯 OpenInMuslimClockIntent.perform() FIRED target=\(target.rawValue, privacy: .public)")
+        let shared = UserDefaults(suiteName: Self.appGroupIdentifier)
+        if shared == nil {
+            Self.log.error("❌ UserDefaults(suiteName:) returned nil — App Group inaccessible")
+        }
+        shared?.set(target.rawValue, forKey: "controlDeepLinkTarget")
+        shared?.set(Date().timeIntervalSince1970, forKey: "controlDeepLinkTimestamp")
+        Self.log.info("🎯 Key written, readback=\(shared?.string(forKey: "controlDeepLinkTarget") ?? "nil", privacy: .public)")
         return .result()
     }
 }

@@ -146,6 +146,7 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				AppIntent.swift,
+				SalatLiveActivityAttributes.swift,
 				SalatWidget.swift,
 			);
 			target = 2364938D2F76918E00788B1B /* Muslim Clock */;
