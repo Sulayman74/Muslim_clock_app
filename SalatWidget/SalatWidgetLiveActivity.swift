@@ -52,12 +52,20 @@ struct SalatWidgetLiveActivity: Widget {
                 DynamicIslandExpandedRegion(.bottom) {
                     HStack(spacing: 4) {
                         Spacer()
-                        Image(systemName: "timer")
-                            .foregroundStyle(.orange)
-                        Text(context.state.targetTime, style: .timer)
-                            .font(.system(.title2, design: .rounded, weight: .bold))
-                            .monospacedDigit()
-                            .foregroundStyle(.orange)
+                        if context.state.isPrayerTime {
+                            Image(systemName: "bell.badge.fill")
+                                .foregroundStyle(.orange)
+                            Text("C'est l'heure de la prière")
+                                .font(.system(.title3, design: .rounded, weight: .bold))
+                                .foregroundStyle(.orange)
+                        } else {
+                            Image(systemName: "timer")
+                                .foregroundStyle(.orange)
+                            Text(context.state.targetTime, style: .timer)
+                                .font(.system(.title2, design: .rounded, weight: .bold))
+                                .monospacedDigit()
+                                .foregroundStyle(.orange)
+                        }
                         Spacer()
                     }
                 }
@@ -65,10 +73,15 @@ struct SalatWidgetLiveActivity: Widget {
                 Image(systemName: context.attributes.iconName)
                     .foregroundStyle(.orange)
             } compactTrailing: {
-                Text(context.state.targetTime, style: .timer)
-                    .monospacedDigit()
-                    .foregroundStyle(.orange)
-                    .frame(maxWidth: 60)
+                if context.state.isPrayerTime {
+                    Image(systemName: "bell.badge.fill")
+                        .foregroundStyle(.orange)
+                } else {
+                    Text(context.state.targetTime, style: .timer)
+                        .monospacedDigit()
+                        .foregroundStyle(.orange)
+                        .frame(maxWidth: 60)
+                }
             } minimal: {
                 Image(systemName: context.attributes.iconName)
                     .foregroundStyle(.orange)
@@ -114,16 +127,26 @@ private struct LockScreenView: View {
 
             Spacer()
 
-            // Countdown live
+            // Countdown live (ou label "C'est l'heure" à T=0)
             VStack(alignment: .trailing, spacing: 2) {
-                Text(context.state.targetTime, style: .timer)
-                    .font(.system(.title2, design: .rounded, weight: .bold))
-                    .monospacedDigit()
-                    .foregroundStyle(.orange)
-                    .frame(minWidth: 70, alignment: .trailing)
-                Text("restant")
-                    .font(.caption2)
-                    .foregroundStyle(.secondary)
+                if context.state.isPrayerTime {
+                    Text("C'est l'heure")
+                        .font(.system(.subheadline, design: .rounded, weight: .bold))
+                        .foregroundStyle(.orange)
+                        .frame(minWidth: 70, alignment: .trailing)
+                    Text("de la prière")
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                } else {
+                    Text(context.state.targetTime, style: .timer)
+                        .font(.system(.title2, design: .rounded, weight: .bold))
+                        .monospacedDigit()
+                        .foregroundStyle(.orange)
+                        .frame(minWidth: 70, alignment: .trailing)
+                    Text("restant")
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                }
             }
         }
         .padding(.horizontal, 16)

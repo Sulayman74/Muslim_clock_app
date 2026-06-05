@@ -9,19 +9,34 @@ import Foundation
 
 struct RemoteJSONLoader {
     
-    /// Charge un fichier JSON depuis un CDN avec un système de cache et de secours (Bundle)
-    static func load<T: Codable>(filename: String, remoteURL: String, type: T.Type) async -> T? {
-        
+    /// Charge un fichier JSON depuis un CDN avec un système de cache et de secours (Bundle).
+    ///
+    /// - Parameters:
+    ///   - filename: Nom de fichier local (utilisé pour cache + fallback bundle).
+    ///   - remoteURL: URL CDN à fetcher.
+    ///   - type: Type Codable à décoder.
+    ///   - timeout: Timeout réseau en secondes. Défaut 5s (contenu daily). Passer 15s
+    ///     pour des payloads plus gros (ex: sourate Coran complète).
+    /// - Returns: Instance décodée, ou `nil` si échec total.
+    static func load<T: Codable>(
+        filename: String,
+        remoteURL: String,
+        type: T.Type,
+        timeout: TimeInterval = 5.0
+    ) async -> T? {
+
         let fileManager = FileManager.default
-        let docsURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first!
+        guard let docsURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first else {
+            print("❌ [OTA] documentDirectory inaccessible pour \(filename)")
+            return nil
+        }
         let localCacheURL = docsURL.appendingPathComponent(filename)
-        
+
         // 1️⃣ TENTATIVE RÉSEAU (GitHub Pages)
         if let url = URL(string: remoteURL) {
             do {
-                // On met un timeout très court (5s) pour ne pas bloquer l'app si le réseau est mauvais
                 var request = URLRequest(url: url)
-                request.timeoutInterval = 5.0
+                request.timeoutInterval = timeout
                 request.cachePolicy = .reloadIgnoringLocalCacheData // Force à chercher la nouveauté
                 
                 let (data, response) = try await URLSession.shared.data(for: request)

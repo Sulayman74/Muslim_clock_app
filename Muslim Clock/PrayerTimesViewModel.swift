@@ -363,7 +363,8 @@ class PrayerTimesViewModel: ObservableObject {
 
     /// Met à jour la Live Activity "Prochaine Salât" si on est dans la fenêtre d'annonce (≤ 30 min).
     /// Termine aussi les éventuelles activities périmées (post-prière > 5 min).
-    private func refreshLiveActivity() {
+    /// `internal` pour pouvoir être appelée depuis MainView au passage `scenePhase = .active`.
+    func refreshLiveActivity() {
         guard let targetDate = nextPrayerDate else { return }
         let manager = SalatLiveActivityManager.shared
         manager.endIfExpired()

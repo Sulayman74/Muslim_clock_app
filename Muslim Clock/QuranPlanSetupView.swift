@@ -138,12 +138,9 @@ struct QuranPlanSetupView: View {
             }
             .scrollContentBackground(.hidden)
             .background(
-                LinearGradient(
-                    colors: [Color(red: 0.05, green: 0.08, blue: 0.18), Color(red: 0.08, green: 0.1, blue: 0.25)],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-                .ignoresSafeArea()
+                // Fond natif cohérent avec QuranTrackerView (MeshGradient + étoiles).
+                CosmicBackground(season: IslamicSeasonInfo.current())
+                    .ignoresSafeArea()
             )
             .navigationTitle("Khatma — Configuration")
             .navigationBarTitleDisplayMode(.inline)

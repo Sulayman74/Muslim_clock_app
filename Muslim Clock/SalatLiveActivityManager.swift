@@ -30,6 +30,10 @@ final class SalatLiveActivityManager {
     /// Délai d'affichage post-prière (la bannière reste visible 5 min après l'heure de la prière).
     private static let postPrayerLinger: TimeInterval = 5 * 60
 
+    /// Tâches d'auto-update/end programmées par prière (clé = `prayerKey`).
+    /// Permet de cancel proprement quand on remplace une activity avant terme.
+    private var scheduledTasks: [String: Task<Void, Never>] = [:]
+
     private init() {}
 
     // MARK: - API publique
@@ -72,20 +76,18 @@ final class SalatLiveActivityManager {
         start(prayerKey: prayerKey, frenchName: frenchName, targetTime: targetTime)
     }
 
-    /// Termine toutes les activities dont la prière est dépassée (avec fenêtre lingering 5 min).
-    /// À appeler au passage `.scenePhase == .active` et après tout recalcul.
+    /// Termine immédiatement toutes les activities dont la prière est passée.
+    ///
+    /// Politique : on ferme dès que `now >= targetTime`. Sans ça, `Text(.timer)`
+    /// continue à incrémenter (temps écoulé après cible) ce qui est confusant pour
+    /// l'utilisateur. La fenêtre "lingering 5 min" est conservée comme dismissalPolicy
+    /// (`.after(now + 5min)`) — la bannière reste visible 5 min mais le compteur est figé.
     func endIfExpired() {
         guard #available(iOS 16.2, *) else { return }
         let now = Date()
-        for activity in Activity<SalatLiveActivityAttributes>.activities {
-            let target = activity.content.state.targetTime
-            if now > target.addingTimeInterval(Self.postPrayerLinger) {
-                Task { await endActivity(activity, immediate: true) }
-            } else if now > target {
-                // Prière déjà commencée : laisser ActivityKit auto-dismiss via la dismissalPolicy.
-                // Pas besoin d'agir.
-                continue
-            }
+        for activity in Activity<SalatLiveActivityAttributes>.activities
+        where now >= activity.content.state.targetTime {
+            Task { await endActivity(activity, immediate: false) }
         }
     }
 
@@ -104,19 +106,21 @@ final class SalatLiveActivityManager {
             arabicName: Self.arabicName(for: prayerKey),
             iconName: Self.iconName(for: prayerKey)
         )
-        let state = SalatLiveActivityAttributes.ContentState(targetTime: targetTime)
-        // `staleDate` : 5 min après la prière → ActivityKit marque l'activity comme stale.
+        let state = SalatLiveActivityAttributes.ContentState(targetTime: targetTime, isPrayerTime: false)
+        // `staleDate` à T=0 → iOS marque l'activity comme stale dès que la prière commence,
+        // ce qui aide à déclencher un re-render naturel avec le nouveau ContentState.
         let content = ActivityContent(
             state: state,
             staleDate: targetTime.addingTimeInterval(Self.postPrayerLinger)
         )
 
         do {
-            _ = try Activity.request(
+            let activity = try Activity.request(
                 attributes: attributes,
                 content: content,
                 pushType: nil
             )
+            scheduleAutoTransitions(for: activity, targetTime: targetTime)
         } catch {
             print("⚠️ [LiveActivity] Échec du démarrage : \(error.localizedDescription)")
         }
@@ -124,16 +128,67 @@ final class SalatLiveActivityManager {
 
     @available(iOS 16.2, *)
     private func update(_ activity: Activity<SalatLiveActivityAttributes>, targetTime: Date) async {
-        let state = SalatLiveActivityAttributes.ContentState(targetTime: targetTime)
+        let state = SalatLiveActivityAttributes.ContentState(targetTime: targetTime, isPrayerTime: false)
         let content = ActivityContent(
             state: state,
             staleDate: targetTime.addingTimeInterval(Self.postPrayerLinger)
         )
         await activity.update(content)
+        scheduleAutoTransitions(for: activity, targetTime: targetTime)
+    }
+
+    /// Programme deux transitions automatiques pour une activity en cours :
+    /// 1. À `targetTime` → push une update avec `isPrayerTime = true` (UI bascule sur le label).
+    /// 2. À `targetTime + postPrayerLinger` → ferme l'activity immédiatement.
+    ///
+    /// Note : marche seulement tant que le process reste vivant. En production, la fenêtre
+    /// d'annonce (30 min) + la durée post-prière (5 min) sont courtes — l'app a de bonnes
+    /// chances de rester active. Pour un fallback robuste 100 % background, il faudrait
+    /// `BGTaskScheduler` ou des pushes ActivityKit (hors scope actuel).
+    @available(iOS 16.2, *)
+    private func scheduleAutoTransitions(
+        for activity: Activity<SalatLiveActivityAttributes>,
+        targetTime: Date
+    ) {
+        let key = activity.attributes.prayerKey
+        // Cancel l'ancienne planification éventuelle pour cette prière (cas d'un update du targetTime).
+        scheduledTasks[key]?.cancel()
+
+        scheduledTasks[key] = Task { @MainActor in
+            // Phase 1 : attendre l'heure de la prière.
+            let untilArrival = max(0, targetTime.timeIntervalSinceNow)
+            if untilArrival > 0 {
+                try? await Task.sleep(nanoseconds: UInt64(untilArrival * 1_000_000_000))
+            }
+            if Task.isCancelled { return }
+
+            // Marquer la prière comme commencée → l'UI affiche "C'est l'heure de la prière".
+            let arrivedState = SalatLiveActivityAttributes.ContentState(
+                targetTime: targetTime,
+                isPrayerTime: true
+            )
+            let arrivedContent = ActivityContent(
+                state: arrivedState,
+                staleDate: targetTime.addingTimeInterval(Self.postPrayerLinger)
+            )
+            await activity.update(arrivedContent)
+
+            // Phase 2 : attendre la fenêtre d'affichage post-prière puis fermer.
+            try? await Task.sleep(nanoseconds: UInt64(Self.postPrayerLinger * 1_000_000_000))
+            if Task.isCancelled { return }
+
+            await activity.end(arrivedContent, dismissalPolicy: .immediate)
+            scheduledTasks[key] = nil
+        }
     }
 
     @available(iOS 16.2, *)
     private func endActivity(_ activity: Activity<SalatLiveActivityAttributes>, immediate: Bool) async {
+        // Cancel l'éventuelle Task d'auto-transition pour éviter qu'elle ne déclenche un end()
+        // ou un update() sur une activity déjà fermée.
+        scheduledTasks[activity.attributes.prayerKey]?.cancel()
+        scheduledTasks[activity.attributes.prayerKey] = nil
+
         let finalContent = ActivityContent(state: activity.content.state, staleDate: nil)
         let policy: ActivityUIDismissalPolicy = immediate
             ? .immediate

@@ -13,5 +13,9 @@
 		<key>UIImageName</key>
 		<string>Splashscreen</string>
 	</dict>
+	<key>UIAppFonts</key>
+	<array>
+		<string>AmiriQuran-Regular.ttf</string>
+	</array>
 </dict>
 </plist>

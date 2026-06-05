@@ -167,9 +167,17 @@ struct MainView: View {
     @State private var adhanPrayerName = ""
     @State private var adhanPrayerTime = Date()
 
+    /// Pop-up "Quoi de neuf" — affichée une fois après chaque mise à jour de version.
+    /// Compare la version actuelle du Bundle à la dernière vue par l'utilisateur.
+    @State private var showWhatsNew = false
+    @AppStorage("lastSeenAppVersion") private var lastSeenAppVersion: String = ""
+
     /// Sheet Adhkar déclenchée par le Control Widget "Adhkar du moment".
     /// Indépendant du bouton AdhkarQuickAccessButton qui a son propre state local.
     @State private var showAdhkarFromControl = false
+
+    /// Sheet QuranLibrary déclenchée par le Control Widget "Lire le Coran".
+    @State private var showQuranFromControl = false
     
     /// Saison islamique courante (recalculée à chaque apparition)
         private var currentSeason: IslamicSeasonInfo {
@@ -380,10 +388,13 @@ struct MainView: View {
         }
         // Routage des Control Widgets (Centre de Contrôle / Lock Screen / bouton Action).
         // Lit la clé `controlDeepLinkTarget` dans l'App Group, route, puis efface la clé.
+        // Re-évalue aussi la Live Activity : si on entre dans la fenêtre 30 min avant la
+        // prochaine prière pendant que l'app passe à .active, on démarre la bannière.
         .onChange(of: scenePhase, initial: true) {
             print("📱 [ScenePhase] phase=\(scenePhase)")
             if scenePhase == .active {
                 handleControlDeepLink()
+                prayerVM.refreshLiveActivity()
             }
         }
         .environmentObject(podcastManager)
@@ -419,11 +430,17 @@ struct MainView: View {
                 }
         .onAppear {
                     checkSeasonalChanges()
+                    checkWhatsNew()
                 }
                 .sheet(isPresented: $showSeasonalUpdatePopup) {
                     SeasonalUpdatePopupView(isPresented: $showSeasonalUpdatePopup, lastSetupTimestamp: $lastSmartSetupDate)
                         .presentationDetents([.fraction(0.6)])
                         .presentationBackground(.ultraThinMaterial)
+                        .presentationCornerRadius(30)
+                }
+                .sheet(isPresented: $showWhatsNew) {
+                    WhatsNewView()
+                        .presentationDetents([.large])
                         .presentationCornerRadius(30)
                 }
                 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -466,6 +483,10 @@ struct MainView: View {
                     }
                     .environmentObject(prayerVM)
                     .presentationDragIndicator(.visible)
+                }
+                // Sheet Quran Library déclenchée par le Control Widget "Lire le Coran".
+                .sheet(isPresented: $showQuranFromControl) {
+                    QuranLibraryView()
                 }
                 // Notif Quran tapée → switch automatique vers tab Rappel (où la card vit).
                 .onReceive(NotificationCenter.default.publisher(for: .quranReadingTapped)) { _ in
@@ -523,6 +544,9 @@ struct MainView: View {
             case "adhkar":
                 print("✅ [DeepLink] Routing to Adhkar sheet")
                 showAdhkarFromControl = true
+            case "quran":
+                print("✅ [DeepLink] Routing to Quran Library sheet")
+                showQuranFromControl = true
             default:
                 print("⚠️ [DeepLink] Unknown target: \(target)")
             }
@@ -540,6 +564,25 @@ struct MainView: View {
             }
         } else {
             print("🔍 [DeepLink] No target after 3 retries — likely a normal app open (not from control widget)")
+        }
+    }
+
+    /// Affiche la sheet « Quoi de neuf » une seule fois après chaque mise à jour de version.
+    /// Si `lastSeenAppVersion` est vide (1er lancement après installation), on ne montre pas
+    /// la sheet pour ne pas saturer un nouvel utilisateur ; on enregistre juste la version.
+    private func checkWhatsNew() {
+        let currentVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? ""
+        guard !currentVersion.isEmpty else { return }
+
+        if lastSeenAppVersion.isEmpty {
+            // Première install ou première fois avec ce système → ne pas embêter, juste mémoriser.
+            lastSeenAppVersion = currentVersion
+            return
+        }
+
+        if lastSeenAppVersion != currentVersion {
+            showWhatsNew = true
+            lastSeenAppVersion = currentVersion
         }
     }
 

@@ -42,11 +42,13 @@ struct ToggleSunnahIntent: AppIntent {
 enum MuslimClockLaunchTarget: String, AppEnum {
     case qibla
     case adhkar
+    case quran
 
     static var typeDisplayRepresentation = TypeDisplayRepresentation(name: "Destination")
     static var caseDisplayRepresentations: [MuslimClockLaunchTarget: DisplayRepresentation] = [
         .qibla:  DisplayRepresentation(title: "Qibla"),
         .adhkar: DisplayRepresentation(title: "Adhkar du moment"),
+        .quran:  DisplayRepresentation(title: "Lire le Coran"),
     ]
 }
 

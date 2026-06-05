@@ -18,5 +18,6 @@ struct SalatWidgetBundle: WidgetBundle {
         SalatWidgetLiveActivity()               // Live Activity — Dynamic Island + Lock Screen countdown
         QiblaControlWidget()                    // Control Center — bouton Qibla (iOS 18+)
         AdhkarControlWidget()                   // Control Center — bouton Adhkar du moment (iOS 18+)
+        QuranControlWidget()                    // Control Center — bouton Lire le Coran (iOS 18+)
     }
 }

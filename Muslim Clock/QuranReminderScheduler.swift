@@ -25,20 +25,21 @@ enum QuranReminderScheduler {
 
     /// Programme les rappels post-prière pour les prières fournies.
     ///
-    /// - Politique : un offset de 60 secondes APRÈS chaque prière (laisse le temps de
-    ///   prier). Le scheduler nettoie d'abord toutes ses propres notifs avant de
-    ///   reprogrammer — ne touche jamais aux notifs prière/lunes.
+    /// - Politique de timing : trigger date = `adhan + (iqamahDelay[prière] + reminderOffset) × 60`
+    ///   pour laisser le temps de prier avant le rappel de lecture.
     ///
     /// - Parameters:
     ///   - prayers: Liste des prières à utiliser pour les rappels (heure + nom).
-    ///     Seules celles correspondant à `plan.prayersToUse` ET dont la date est
-    ///     dans le futur seront programmées.
-    ///   - plan: Plan courant — fournit `pagesPerPrayer` indirectement via la math.
-    ///   - pagesPerPrayer: Pages à lire à chaque prière (calculé par `QuranPlanMath`).
+    ///   - plan: Plan courant.
+    ///   - pagesPerPrayer: Pages à lire à chaque prière.
+    ///   - iqamahDelaysMinutes: Délai iqamah par prière (clé = nom FR : "Fajr", "Dhuhr"…). Manquant ⇒ 0.
+    ///   - reminderOffsetMinutes: Marge entre la fin de la prière (iqamah ou adhan) et le rappel.
     static func schedule(
         prayers: [ScheduledPrayer],
         plan: QuranPlan,
-        pagesPerPrayer: Int
+        pagesPerPrayer: Int,
+        iqamahDelaysMinutes: [String: Int] = [:],
+        reminderOffsetMinutes: Int = 10
     ) {
         let center = UNUserNotificationCenter.current()
 
@@ -54,7 +55,16 @@ enum QuranReminderScheduler {
             let now = Date()
             for prayer in prayers
             where plan.prayersToUse.contains(prayer.name) && prayer.date > now {
-                Self.schedule(prayer: prayer, pagesPerPrayer: pagesPerPrayer, center: center)
+                // Jumu'ah partage le délai iqamah de Dhuhr (même prière de midi).
+                let iqamahKey = (prayer.name == "Jumu'ah") ? "Dhuhr" : prayer.name
+                let iqamah = iqamahDelaysMinutes[iqamahKey] ?? 0
+                let offsetSeconds = TimeInterval((iqamah + reminderOffsetMinutes) * 60)
+                Self.schedule(
+                    prayer: prayer,
+                    pagesPerPrayer: pagesPerPrayer,
+                    offsetSeconds: offsetSeconds,
+                    center: center
+                )
             }
         }
     }
@@ -75,10 +85,11 @@ enum QuranReminderScheduler {
     private static func schedule(
         prayer: ScheduledPrayer,
         pagesPerPrayer: Int,
+        offsetSeconds: TimeInterval,
         center: UNUserNotificationCenter
     ) {
-        // Offset post-prière : 1 minute après l'heure de la prière.
-        let triggerDate = prayer.date.addingTimeInterval(60)
+        // Offset post-prière configurable (iqamah + délai de rappel).
+        let triggerDate = prayer.date.addingTimeInterval(offsetSeconds)
         let comps = Calendar.current.dateComponents(
             [.year, .month, .day, .hour, .minute],
             from: triggerDate

@@ -6,8 +6,10 @@ struct DailyContentView: View {
     @EnvironmentObject private var service: DailyContentService
     @StateObject private var ayahPlayer = AyahAudioPlayerManager()
     
-    @State private var showAyahArabic = false
-    @State private var showHadithArabic = false
+    // Arabe par défaut — langue d'origine du verset/hadith. L'utilisateur peut basculer
+    // sur la traduction française via le bouton « FR/عربي ».
+    @State private var showAyahArabic = true
+    @State private var showHadithArabic = true
     
     private var isFriday: Bool {
         Calendar.current.component(.weekday, from: Date()) == 6
@@ -76,17 +78,19 @@ struct DailyContentView: View {
                     .disabled(service.isFetchingQuran)
 
                     // TOGGLE LANGUE
+                    // Largeur minimale fixe pour éviter le wiggle X causé par la
+                    // différence de longueur entre "FR" (2 chars) et "عربي" (4 chars).
                     Button {
-                        withAnimation(.easeInOut(duration: 0.3)) {
-                            showAyahArabic.toggle()
-                        }
+                        showAyahArabic.toggle()
                     } label: {
                         Text(verbatim: showAyahArabic ? "FR" : "عربي")
                             .font(.system(size: 11, weight: .bold, design: .rounded))
+                            .frame(minWidth: 38)
                             .padding(.horizontal, 8)
                             .padding(.vertical, 4)
                             .background(.ultraThinMaterial)
                             .clipShape(Capsule())
+                            .contentTransition(.opacity)
                     }
 
                     // PARTAGE
@@ -144,17 +148,18 @@ struct DailyContentView: View {
 
                     Spacer()
                     
+                    // Largeur minimale fixe — cf. carte Verset (anti-wiggle X).
                     Button {
-                        withAnimation(.easeInOut(duration: 0.3)) {
-                            showHadithArabic.toggle()
-                        }
+                        showHadithArabic.toggle()
                     } label: {
                         Text(verbatim: showHadithArabic ? "FR" : "عربي")
                             .font(.system(size: 12, weight: .bold, design: .rounded))
+                            .frame(minWidth: 42)
                             .padding(.horizontal, 10)
                             .padding(.vertical, 4)
                             .background(.ultraThinMaterial)
                             .clipShape(Capsule())
+                            .contentTransition(.opacity)
                     }
                     
                     ShareLink(item: "\(service.dailyHadith)\n\n\(service.dailyHadithArabic)\n\n— \(service.dailyHadithSource)") {

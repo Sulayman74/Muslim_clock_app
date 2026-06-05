@@ -45,3 +45,18 @@ struct AdhkarControlWidget: ControlWidget {
         .description("Ouvrir les Adhkar (matin ou soir selon l'heure).")
     }
 }
+
+/// Bouton "Lire le Coran" dans le Centre de Contrôle / Lock Screen / bouton Action.
+struct QuranControlWidget: ControlWidget {
+    static let kind: String = "kappsi.Muslim-Clock.controls.quran"
+
+    var body: some ControlWidgetConfiguration {
+        StaticControlConfiguration(kind: Self.kind) {
+            ControlWidgetButton(action: OpenInMuslimClockIntent(target: .quran)) {
+                Label("Coran", systemImage: "book.pages.fill")
+            }
+        }
+        .displayName("Lire le Coran")
+        .description("Ouvrir la bibliothèque des sourates.")
+    }
+}

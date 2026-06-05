@@ -94,6 +94,9 @@ struct SettingsView: View {
                             .foregroundColor(.white.opacity(0.6))
                     }
                     
+                    // ── SECTION LECTURE DU QURAN — RAPPELS POST-PRIÈRE ──
+                    QuranReminderSettingsSection()
+
                     // ── SECTION 1 : AJUSTEMENTS MANUELS (TIROIR) ──
                     Section {
                         NavigationLink(destination: ManualAdjustmentsView()) {
@@ -626,6 +629,43 @@ struct AudioCacheSection: View {
     }
 }
 
+// MARK: - Section Réglages "Lecture du Quran" — rappels post-prière
+
+/// Permet de configurer :
+/// - Délai entre l'adhan et l'iqamah (si une mosquée annonce l'iqamah à X min après l'adhan)
+/// - Délai entre la fin de la prière et le rappel de lecture du Quran
+///
+/// Le rappel arrive donc à `adhan + (iqamah + offset) × 60 secondes`.
+struct QuranReminderSettingsSection: View {
+    @AppStorage("quranReminderOffsetMinutes") private var quranReminderOffsetMinutes: Int = 10
+
+    var body: some View {
+        Section {
+            Stepper(value: $quranReminderOffsetMinutes, in: 5...30) {
+                HStack {
+                    Image(systemName: "book.pages.fill")
+                        .foregroundStyle(.teal)
+                    VStack(alignment: .leading, spacing: 1) {
+                        Text("Rappel après la prière")
+                            .foregroundColor(.white)
+                        Text("\(quranReminderOffsetMinutes) min après la fin")
+                            .font(.caption2)
+                            .foregroundStyle(.white.opacity(0.6))
+                    }
+                }
+            }
+            .listRowBackground(Color.white.opacity(0.08))
+        } header: {
+            Text("Lecture du Quran — rappels")
+                .foregroundColor(.white.opacity(0.6))
+        } footer: {
+            Text("Le rappel arrive après l'iqamah de chaque prière (configuré dans « Ma mosquée ») + \(quranReminderOffsetMinutes) min de marge pour finir tes adhkar tranquillement.")
+                .font(.caption2)
+                .foregroundStyle(.white.opacity(0.5))
+        }
+    }
+}
+
 // MARK: - DEBUG PANEL
 #if DEBUG
 private struct DebugPanelSection: View {
@@ -633,6 +673,7 @@ private struct DebugPanelSection: View {
     @State private var adhanScheduled = false
     @State private var newMoonScheduled = false
     @State private var quranReminderScheduled = false
+    @State private var liveActivityTestScheduled = false
 
     // Override de saison islamique
     @AppStorage("debugSeasonDate") private var debugSeasonTimestamp: Double = 0
@@ -809,6 +850,24 @@ private struct DebugPanelSection: View {
                 .foregroundStyle(quranReminderScheduled ? .green : .teal)
             }
 
+            // Test Live Activity prochaine salât (cible dans 5 min)
+            Button {
+                let target = Date().addingTimeInterval(5 * 60)
+                SalatLiveActivityManager.shared.refresh(
+                    prayerKey: "asr",
+                    frenchName: "Asr (Test)",
+                    targetTime: target
+                )
+                liveActivityTestScheduled = true
+                DispatchQueue.main.asyncAfter(deadline: .now() + 3) { liveActivityTestScheduled = false }
+            } label: {
+                Label(
+                    liveActivityTestScheduled ? "Live Activity lancée (5 min) ✅" : "Tester Live Activity (5 min)",
+                    systemImage: "rectangle.inset.filled.badge.record"
+                )
+                .foregroundStyle(liveActivityTestScheduled ? .green : .purple)
+            }
+
         } header: {
             Text("🛠 DEBUG")
                 .foregroundStyle(.red.opacity(0.8))
@@ -894,6 +953,42 @@ La section audio propose des séries de cours islamiques soigneusement sélectio
 • La progression est sauvegardée automatiquement : reprenez là où vous vous étiez arrêté
 
 L'objectif est de faciliter l'apprentissage de la science religieuse au quotidien, pendant vos trajets ou temps libres.
+""")
+
+                    // ── KHATMA — PROGRAMME DE LECTURE DU QURAN ──
+                    sourceCard(icon: "book.pages.fill", title: "Khatma — Programme de lecture du Quran", color: .teal, content: """
+La section « Khatma » t'aide à organiser ta lecture du Mushaf à ton rythme :
+
+• Choisis un objectif : par durée (jours), par pages, ou par date cible
+• Presets indicatifs : 1 Juz/jour (~1 mois), ½ Juz/jour (~2 mois), ¼ Juz/jour (~4 mois), Khatma de Ramadan
+• Découpage automatique en pages après chaque prière sélectionnée
+• Journal de lecture sauvegardé localement, streak de régularité, statistiques
+
+Rappels post-prière :
+• Notifications discrètes après chaque prière du plan (« 📖 Tes N pages après {prière} »)
+• Identifiants séparés des notifs de prière — elles ne se remplacent jamais
+• Désactivables à tout moment dans la configuration du plan
+
+Approche bienveillante :
+• Pas de couleur alarmante en cas de retard, pas de culpabilisation
+• Met l'accent sur la régularité (streak) plutôt que la performance
+• Rappel constant : « la qualité prime sur la quantité »
+
+Tes données restent sur ton appareil — aucun envoi vers un serveur.
+""")
+
+                    // ── LIRE LE CORAN SUR ÉCRAN — fatwas ──
+                    sourceCard(icon: "book.pages", title: "Lire le Coran sur écran", color: .indigo, content: """
+L'appareil n'a pas le statut du Mushaf papier. Les savants (Ibn Bâz, al-Fawzân, Commission Permanente — al-Lajna al-Dâ'ima) précisent :
+
+• Pas besoin de woudoû pour lire sur l'écran.
+• Exception : l'impureté majeure (janâba) — pas de lecture jusqu'au ghusl, sur tout support.
+• Le Mushaf papier reste préférable, mais la lecture sur écran faite avec attention reçoit la même récompense, in shâ Allah.
+• Aux toilettes : fermer l'affichage du Coran avant d'entrer.
+
+Sources : Fatwas d'Ibn Bâz, al-Fawzân et de la Commission Permanente (al-Lajna al-Dâ'ima).
+
+Traduction française utilisée dans l'app : Muhammad Hamidullah (Complexe du Roi Fahd), via le dépôt open source quran-json.
 """)
 
                     // ── CALCUL DES HORAIRES ──

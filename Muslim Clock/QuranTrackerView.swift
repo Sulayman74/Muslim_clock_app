@@ -17,16 +17,22 @@ struct QuranTrackerView: View {
     @State private var showSetup = false
     @State private var pagesToLog: Int = 1
     @State private var showLogSheet = false
+    @State private var showLibrary = false
+
+    /// Sourate+ayah cible pour le bouton "Reprendre où j'en étais".
+    /// Quand non-nil, présente `QuranChapterDetailView` avec auto-scroll.
+    @State private var resumeTarget: ResumeRoute?
+
+    /// Marque-page libre — lecture indépendante du plan Khatma.
+    @AppStorage("quranBookmarkSura") private var bookmarkSura: Int = 0
+    @AppStorage("quranBookmarkAyah") private var bookmarkAyah: Int = 0
 
     var body: some View {
         NavigationStack {
             ZStack {
-                LinearGradient(
-                    colors: [Color(red: 0.05, green: 0.08, blue: 0.18), Color(red: 0.08, green: 0.1, blue: 0.25)],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-                .ignoresSafeArea()
+                // Fond natif cohérent avec la tab Salat (MeshGradient + étoiles).
+                CosmicBackground(season: IslamicSeasonInfo.current())
+                    .ignoresSafeArea()
 
                 if vm.plan == nil {
                     emptyState
@@ -54,6 +60,15 @@ struct QuranTrackerView: View {
             .sheet(isPresented: $showLogSheet) {
                 logSheet
                     .presentationDetents([.height(280)])
+            }
+            .sheet(isPresented: $showLibrary) {
+                QuranLibraryView()
+            }
+            .sheet(item: $resumeTarget) { route in
+                NavigationStack {
+                    QuranChapterDetailView(chapterIndex: route.chapter, scrollToAyah: route.ayah)
+                }
+                .preferredColorScheme(.dark)
             }
         }
         .preferredColorScheme(.dark)
@@ -108,6 +123,95 @@ struct QuranTrackerView: View {
                     .background(.teal.gradient)
                     .foregroundColor(.white)
                     .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                }
+
+                // Reprendre où j'en étais (utilise lastPageReached + mapper)
+                Button { resumeKhatmaReading() } label: {
+                    HStack(spacing: 10) {
+                        Image(systemName: "play.circle.fill")
+                            .foregroundStyle(.orange)
+                        VStack(alignment: .leading, spacing: 1) {
+                            Text("Reprendre où j'en étais")
+                                .bold()
+                            Text(resumeSubtitle)
+                                .font(.caption2)
+                                .foregroundStyle(.white.opacity(0.7))
+                        }
+                        Spacer()
+                        Image(systemName: "chevron.right")
+                            .font(.caption.bold())
+                            .foregroundStyle(.white.opacity(0.5))
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.vertical, 12)
+                    .padding(.horizontal, 14)
+                    .background(.ultraThinMaterial)
+                    .foregroundColor(.white)
+                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 16, style: .continuous)
+                            .stroke(Color.orange.opacity(0.3), lineWidth: 1)
+                    )
+                }
+                .disabled(!QuranPageMapper.shared.isAvailable)
+
+                // Reprendre depuis mon marque-page (libre — indépendant du plan)
+                if hasBookmark {
+                    Button { resumeFromBookmark() } label: {
+                        HStack(spacing: 10) {
+                            Image(systemName: "bookmark.fill")
+                                .foregroundStyle(.indigo)
+                            VStack(alignment: .leading, spacing: 1) {
+                                Text("Reprendre depuis mon marque-page")
+                                    .bold()
+                                Text(bookmarkSubtitle)
+                                    .font(.caption2)
+                                    .foregroundStyle(.white.opacity(0.7))
+                            }
+                            Spacer()
+                            Image(systemName: "chevron.right")
+                                .font(.caption.bold())
+                                .foregroundStyle(.white.opacity(0.5))
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.vertical, 12)
+                        .padding(.horizontal, 14)
+                        .background(.ultraThinMaterial)
+                        .foregroundColor(.white)
+                        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                                .stroke(Color.indigo.opacity(0.3), lineWidth: 1)
+                        )
+                    }
+                }
+
+                // Parcourir les sourates (online, full Coran via CDN)
+                Button { showLibrary = true } label: {
+                    HStack(spacing: 10) {
+                        Image(systemName: "list.bullet.indent")
+                        VStack(alignment: .leading, spacing: 1) {
+                            Text("Parcourir les sourates")
+                                .bold()
+                            Text("114 sourates · arabe + traduction FR")
+                                .font(.caption2)
+                                .foregroundStyle(.white.opacity(0.7))
+                        }
+                        Spacer()
+                        Image(systemName: "chevron.right")
+                            .font(.caption.bold())
+                            .foregroundStyle(.white.opacity(0.5))
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.vertical, 12)
+                    .padding(.horizontal, 14)
+                    .background(.ultraThinMaterial)
+                    .foregroundColor(.white)
+                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 16, style: .continuous)
+                            .stroke(Color.teal.opacity(0.2), lineWidth: 1)
+                    )
                 }
 
                 QuranStatsView(entries: entries, plan: plan)
@@ -212,6 +316,61 @@ struct QuranTrackerView: View {
         .padding(.top, 8)
     }
 
+    // MARK: - Resume Khatma
+
+    /// Page Madinah de reprise — `lastPageReached + 1` (page suivante à lire), borné à 604.
+    private var resumePage: Int {
+        guard let progress = vm.progress else { return vm.plan?.startPage ?? 1 }
+        // pagesReadActual = nombre total de pages lues. Prochaine page à lire = startPage + pagesReadActual.
+        let next = (vm.plan?.startPage ?? 1) + progress.pagesReadActual
+        return min(QuranConstants.totalMadinahPages, max(1, next))
+    }
+
+    private var resumeSubtitle: String {
+        guard QuranPageMapper.shared.isAvailable else {
+            return "Mapping indisponible"
+        }
+        let p = resumePage
+        if let (sura, ayah) = QuranPageMapper.shared.firstAyah(of: p) {
+            return "Page \(p) · sourate \(sura), verset \(ayah)"
+        }
+        return "Page \(p)"
+    }
+
+    private func resumeKhatmaReading() {
+        let p = resumePage
+        guard let (sura, ayah) = QuranPageMapper.shared.firstAyah(of: p) else { return }
+
+        Task {
+            guard let chapters = await QuranLibraryLoader.shared.loadIndex(),
+                  let target = chapters.first(where: { $0.id == sura }) else { return }
+            await MainActor.run {
+                resumeTarget = ResumeRoute(chapter: target, ayah: ayah)
+            }
+        }
+    }
+
+    // MARK: - Resume bookmark libre
+
+    private var hasBookmark: Bool {
+        bookmarkSura >= 1 && bookmarkAyah >= 1
+    }
+
+    private var bookmarkSubtitle: String {
+        "Sourate \(bookmarkSura), verset \(bookmarkAyah)"
+    }
+
+    private func resumeFromBookmark() {
+        guard hasBookmark else { return }
+        Task {
+            guard let chapters = await QuranLibraryLoader.shared.loadIndex(),
+                  let target = chapters.first(where: { $0.id == bookmarkSura }) else { return }
+            await MainActor.run {
+                resumeTarget = ResumeRoute(chapter: target, ayah: bookmarkAyah)
+            }
+        }
+    }
+
     // MARK: - Log sheet
 
     private var logSheet: some View {
@@ -262,4 +421,14 @@ struct QuranTrackerView: View {
         )
         .preferredColorScheme(.dark)
     }
+}
+
+// MARK: - Resume route helper
+
+/// Wrapper Identifiable utilisé par le `sheet(item:)` de QuranTrackerView pour
+/// présenter QuranChapterDetailView en reprise Khatma.
+private struct ResumeRoute: Identifiable {
+    let chapter: QuranChapterIndex
+    let ayah: Int
+    var id: String { "\(chapter.id):\(ayah)" }
 }

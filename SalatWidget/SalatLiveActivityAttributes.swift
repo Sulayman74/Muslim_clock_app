@@ -19,6 +19,9 @@ struct SalatLiveActivityAttributes: ActivityAttributes {
     public struct ContentState: Codable, Hashable {
         /// Heure de début de la prochaine prière (utilisée pour `Text(date, style: .timer)`).
         var targetTime: Date
+        /// `true` à partir du moment où l'heure de la prière est atteinte.
+        /// L'UI remplace alors le compte à rebours par un message statique.
+        var isPrayerTime: Bool = false
     }
 
     /// Identifiant logique de la prière ("fajr", "dhuhr", "asr", "maghrib", "isha", "jumuah").
