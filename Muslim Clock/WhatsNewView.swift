@@ -22,16 +22,34 @@ struct WhatsNewView: View {
     /// Liste des nouveautés. À mettre à jour à chaque release.
     private let items: [WhatsNewItem] = [
         WhatsNewItem(
-            icon: "book.pages.fill",
+            icon: "book.fill",
             color: .teal,
-            title: "Khatma du Quran",
-            description: "Planifie ta lecture (1 Juz/jour, ½, ¼ ou Khatma Ramadan), suis tes progrès avec des stats et reçois des rappels doux après chaque prière."
+            title: "Lecteur Coran complet",
+            description: "Les 114 sourates avec texte authentique Mushaf (police Amiri Quran), traduction française, translittération, marque-page, partage et copie de verset."
+        ),
+        WhatsNewItem(
+            icon: "book.pages.fill",
+            color: .indigo,
+            title: "Khatma & rappels après l'iqamah",
+            description: "Planifie ta lecture (1 Juz/jour, ½, ¼ ou Khatma Ramadan). Les rappels arrivent après l'iqamah de chaque prière + une marge personnalisable."
+        ),
+        WhatsNewItem(
+            icon: "play.circle.fill",
+            color: .teal,
+            title: "Lecteur automatique posé",
+            description: "Auto-scroll verset par verset, vitesse de 0,5 à 15 s par ayah, sablier visuel sous la card, et reprise depuis ton marque-page."
+        ),
+        WhatsNewItem(
+            icon: "mic.circle.fill",
+            color: .red,
+            title: "Enregistre ta récitation",
+            description: "Récite la sourate, réécoute-toi, et partage à ton imam par WhatsApp ou Mail pour relecture. Jusqu'à 10 min."
         ),
         WhatsNewItem(
             icon: "bell.badge.circle.fill",
             color: .orange,
             title: "Live Activity « Prochaine Salât »",
-            description: "Bannière live 30 min avant chaque prière sur l'écran verrouillé et la Dynamic Island. Compte à rebours en temps réel."
+            description: "Bannière live 30 min avant chaque prière sur l'écran verrouillé et la Dynamic Island. Bascule sur « C'est l'heure de la prière » à l'adhan."
         ),
         WhatsNewItem(
             icon: "switch.2",

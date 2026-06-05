@@ -17,5 +17,7 @@
 	<array>
 		<string>AmiriQuran-Regular.ttf</string>
 	</array>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Pour enregistrer ta récitation du Coran et la partager (par exemple à ton imam pour relecture).</string>
 </dict>
 </plist>

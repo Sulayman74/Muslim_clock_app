@@ -20,6 +20,8 @@ struct QuranChapterDetailView: View {
     @State private var chapter: QuranChapter?
     @State private var loadError: String?
     @State private var highlightedAyah: Int?
+    /// Présentation de la sheet d'enregistrement de récitation.
+    @State private var showRecorder: Bool = false
 
     @AppStorage("quranShowTransliteration") private var showTransliteration: Bool = false
     @AppStorage("quranShowTranslation") private var showTranslation: Bool = true
@@ -64,6 +66,24 @@ struct QuranChapterDetailView: View {
                         .foregroundStyle(.teal)
                 }
             }
+            ToolbarItem(placement: .primaryAction) {
+                Button {
+                    showRecorder = true
+                } label: {
+                    Image(systemName: "mic.circle.fill")
+                        .foregroundStyle(.teal)
+                }
+                .accessibilityLabel(Text("Enregistrer ma récitation"))
+            }
+        }
+        .sheet(isPresented: $showRecorder) {
+            QuranRecorderView(
+                suraDisplayName: chapter?.transliteration ?? chapterIndex.transliteration,
+                suraSlug: (chapter?.transliteration ?? chapterIndex.transliteration)
+                    .replacingOccurrences(of: " ", with: "")
+                    .components(separatedBy: CharacterSet.alphanumerics.inverted)
+                    .joined()
+            )
         }
         .preferredColorScheme(.dark)
         .task { await load() }

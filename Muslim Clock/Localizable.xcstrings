@@ -310,6 +310,9 @@
     "¼ Juz / jour (≈ 4 mois)" : {
 
     },
+    "Accès au micro refusé" : {
+
+    },
     "Accomplissez la prière à son heure." : {
       "localizations" : {
         "ar" : {
@@ -325,6 +328,9 @@
           }
         }
       }
+    },
+    "Active le micro pour cette app dans Réglages iOS puis reviens ici." : {
+
     },
     "Activer les rappels" : {
 
@@ -509,6 +515,9 @@
     "Annuler" : {
 
     },
+    "Arrêter" : {
+
+    },
     "Asr" : {
 
     },
@@ -620,6 +629,9 @@
 
     },
     "Commencer" : {
+
+    },
+    "Commencer l'enregistrement" : {
 
     },
     "Comment ajouter un Widget ?" : {
@@ -792,10 +804,16 @@
         }
       }
     },
+    "Durée : %@" : {
+
+    },
     "Durée entre l'adhan et l'iqamah dans votre mosquée (en minutes)." : {
 
     },
     "Durée entre l'adhan et l'iqamah dans votre mosquée. Utilisé pour l'analyse de votre planning de prière." : {
+
+    },
+    "Durée maximale : 10 min · format M4A léger." : {
 
     },
     "Écart" : {
@@ -843,7 +861,19 @@
         }
       }
     },
+    "Enregistrement" : {
+
+    },
+    "Enregistrement en cours…" : {
+
+    },
+    "Enregistrement terminé" : {
+
+    },
     "Enregistrer" : {
+
+    },
+    "Enregistrer ma récitation" : {
 
     },
     "Espace utilise" : {
@@ -1271,6 +1301,9 @@
     "Lecture du Quran — rappels" : {
 
     },
+    "Lecture en cours…" : {
+
+    },
     "Les audios ecoutes sont sauvegardes pour une lecture instantanee et hors-ligne." : {
 
     },
@@ -1481,6 +1514,9 @@
     "Ouvrir Muslim Clock" : {
 
     },
+    "Ouvrir Réglages" : {
+
+    },
     "Pages" : {
 
     },
@@ -1519,7 +1555,6 @@
       }
     },
     "Pause" : {
-      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -1657,6 +1692,9 @@
           }
         }
       }
+    },
+    "Prêt à enregistrer" : {
+
     },
     "Prière de la Nuit" : {
       "localizations" : {
@@ -1827,7 +1865,19 @@
     "Rechercher une sourate…" : {
 
     },
+    "Récitation — %@" : {
+
+    },
+    "Récitation de %@" : {
+
+    },
+    "Récitation enregistrée (%@). Qu'Allah accepte de nous, آمين." : {
+
+    },
     "Reconnecté · Actualisation…" : {
+
+    },
+    "Réécouter" : {
 
     },
     "Réessayer" : {
@@ -2025,6 +2075,9 @@
     "Supprimer" : {
 
     },
+    "sur %@" : {
+
+    },
     "Temps de la prière" : {
       "localizations" : {
         "ar" : {
@@ -2107,6 +2160,9 @@
 
     },
     "Type" : {
+
+    },
+    "Une erreur est survenue" : {
 
     },
     "Valider une Sunnah" : {

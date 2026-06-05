@@ -40,6 +40,7 @@ struct SettingsView: View {
     // ✨ État pour l'alerte de review
     @State private var showReviewAlert = false
     @State private var reviewAlertMessage = ""
+    @State private var showWhatsNew = false
     
     let calculationMethods = ["UOIF (12°)", "Ligue Islamique (18°)", "ISNA (15°)", "Mosquée de Paris"]
 
@@ -221,6 +222,14 @@ struct SettingsView: View {
                             Label("Fonctionnement des Widgets", systemImage: "square.grid.2x2.fill")
                                 .foregroundColor(.blue)
                         }
+
+                        // ✨ Bouton « Quoi de neuf » — ouvre la popup des nouveautés à la demande
+                        Button {
+                            showWhatsNew = true
+                        } label: {
+                            Label("Quoi de neuf", systemImage: "sparkles")
+                                .foregroundColor(.pink)
+                        }
                         
                         // ✨ NOUVEAU : BOUTON REVIEW
                         Button {
@@ -295,6 +304,11 @@ struct SettingsView: View {
                 }
             } message: {
                 Text(reviewAlertMessage)
+            }
+            .sheet(isPresented: $showWhatsNew) {
+                WhatsNewView()
+                    .presentationDetents([.large])
+                    .presentationCornerRadius(30)
             }
         }
     }
