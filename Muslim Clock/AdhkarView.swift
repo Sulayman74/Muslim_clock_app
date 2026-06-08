@@ -210,12 +210,17 @@ class AdhkarService: ObservableObject {
 // ═══════════════════════════════════════════════════════════
 
 struct AdhkarView: View {
+    /// Si fourni, force le timing affiché (utilisé par les deep-links notif :
+    /// `adhkar_morning` et `adhkar_evening`). Si `nil`, auto-détection via
+    /// `service.autoTiming` selon l'heure courante et Fajr/Asr.
+    var initialTiming: AdhkarTiming? = nil
+
     @StateObject private var service = AdhkarService()
     @EnvironmentObject var prayerVM: PrayerTimesViewModel
     @State private var selectedTiming: AdhkarTiming = .morning
     @State private var showArabic: [Int: Bool] = [:]
     @State private var showBenefit: [Int: Bool] = [:]
-    
+
     var body: some View {
         VStack(spacing: 0) {
             
@@ -250,8 +255,8 @@ struct AdhkarView: View {
         .onAppear {
             // 1. Injecter les heures réelles avant de déterminer le timing
             service.setPrayerBoundaries(fajr: prayerVM.fajrDate, asr: prayerVM.asrDate)
-            // 2. Détecter matin/soir avec les vraies heures de Fajr/Asr
-            selectedTiming = service.autoTiming
+            // 2. Timing forcé (deep-link notif) ou auto-détection avec Fajr/Asr
+            selectedTiming = initialTiming ?? service.autoTiming
             // 3. Charger (restaure ou réinitialise selon la période)
             service.loadAdhkar(for: selectedTiming)
         }

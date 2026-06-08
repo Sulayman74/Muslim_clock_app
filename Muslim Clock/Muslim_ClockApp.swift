@@ -67,6 +67,16 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
             NotificationCenter.default.post(name: .quranReadingTapped, object: nil)
         }
 
+        // Notif rappel Adhkar (matin/soir) → ouvre la sheet AdhkarView au bon timing
+        if userInfo["module"] as? String == "adhkar_reminder",
+           let timing = userInfo["timing"] as? String {
+            NotificationCenter.default.post(
+                name: .adhkarReminderTapped,
+                object: nil,
+                userInfo: ["timing": timing]
+            )
+        }
+
         completionHandler()
     }
 }
@@ -77,6 +87,11 @@ extension Notification.Name {
     /// Émise quand l'utilisateur tape une notif de rappel Quran. MainView switche
     /// vers la tab Rappel ; QuranKhatmaCard ouvre la sheet Tracker.
     static let quranReadingTapped = Notification.Name("QuranReadingTapped")
+
+    /// Émise quand l'utilisateur tape une notif de rappel Adhkar (matin ou soir).
+    /// `userInfo["timing"]` contient "morning" ou "evening". MainView ouvre la sheet
+    /// `AdhkarView` avec ce timing forcé (au lieu de l'auto-détection).
+    static let adhkarReminderTapped = Notification.Name("AdhkarReminderTapped")
 }
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

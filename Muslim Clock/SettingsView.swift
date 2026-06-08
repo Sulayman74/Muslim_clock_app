@@ -98,6 +98,9 @@ struct SettingsView: View {
                     // ── SECTION LECTURE DU QURAN — RAPPELS POST-PRIÈRE ──
                     QuranReminderSettingsSection()
 
+                    // ── SECTION ADHKAR — RAPPELS POST-FAJR / POST-ASR ──
+                    AdhkarReminderSettingsSection()
+
                     // ── SECTION 1 : AJUSTEMENTS MANUELS (TIROIR) ──
                     Section {
                         NavigationLink(destination: ManualAdjustmentsView()) {
@@ -674,6 +677,79 @@ struct QuranReminderSettingsSection: View {
                 .foregroundColor(.white.opacity(0.6))
         } footer: {
             Text("Le rappel arrive après l'iqamah de chaque prière (configuré dans « Ma mosquée ») + \(quranReminderOffsetMinutes) min de marge pour finir tes adhkar tranquillement.")
+                .font(.caption2)
+                .foregroundStyle(.white.opacity(0.5))
+        }
+    }
+}
+
+// MARK: - ADHKAR REMINDER SETTINGS SECTION
+
+/// Section des rappels Adhkar : 2 toggles indépendants (matin / soir) + offset.
+///
+/// - Matin : notif après Fajr (iqamah + offset) pour les invocations du matin.
+/// - Soir : notif après Asr (iqamah + offset) pour les invocations du soir.
+///
+/// Default offset = 5 min — laisse 5 min d'espacement naturel avec le rappel Quran
+/// (qui démarre par défaut à 10 min), évitant le double-tap utilisateur.
+private struct AdhkarReminderSettingsSection: View {
+    @AppStorage("adhkarReminderMorningEnabled") private var morningEnabled = false
+    @AppStorage("adhkarReminderEveningEnabled") private var eveningEnabled = false
+    @AppStorage("adhkarReminderOffsetMinutes") private var offsetMinutes: Int = 5
+
+    var body: some View {
+        Section {
+            Toggle(isOn: $morningEnabled) {
+                HStack {
+                    Image(systemName: "sunrise.fill")
+                        .foregroundStyle(Color(red: 1.0, green: 0.75, blue: 0.2))
+                    VStack(alignment: .leading, spacing: 1) {
+                        Text("Adhkar du matin (après Fajr)")
+                            .foregroundColor(.white)
+                        Text("Notif après Fajr + iqamah + \(offsetMinutes) min")
+                            .font(.caption2)
+                            .foregroundStyle(.white.opacity(0.6))
+                    }
+                }
+            }
+            .listRowBackground(Color.white.opacity(0.08))
+
+            Toggle(isOn: $eveningEnabled) {
+                HStack {
+                    Image(systemName: "sunset.fill")
+                        .foregroundStyle(Color(red: 0.4, green: 0.5, blue: 0.85))
+                    VStack(alignment: .leading, spacing: 1) {
+                        Text("Adhkar du soir (après Asr)")
+                            .foregroundColor(.white)
+                        Text("Notif après Asr + iqamah + \(offsetMinutes) min")
+                            .font(.caption2)
+                            .foregroundStyle(.white.opacity(0.6))
+                    }
+                }
+            }
+            .listRowBackground(Color.white.opacity(0.08))
+
+            if morningEnabled || eveningEnabled {
+                Stepper(value: $offsetMinutes, in: 0...30) {
+                    HStack {
+                        Image(systemName: "clock.fill")
+                            .foregroundStyle(.orange)
+                        VStack(alignment: .leading, spacing: 1) {
+                            Text("Délai après la prière")
+                                .foregroundColor(.white)
+                            Text("\(offsetMinutes) min après iqamah")
+                                .font(.caption2)
+                                .foregroundStyle(.white.opacity(0.6))
+                        }
+                    }
+                }
+                .listRowBackground(Color.white.opacity(0.08))
+            }
+        } header: {
+            Text("Adhkar — rappels")
+                .foregroundColor(.white.opacity(0.6))
+        } footer: {
+            Text("Conseillé : laisser un écart d'au moins 5 min avec le rappel Coran (défaut 10 min) pour éviter deux notifs simultanées.")
                 .font(.caption2)
                 .foregroundStyle(.white.opacity(0.5))
         }

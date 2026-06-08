@@ -176,8 +176,21 @@ struct MainView: View {
     /// Indépendant du bouton AdhkarQuickAccessButton qui a son propre state local.
     @State private var showAdhkarFromControl = false
 
+    /// Si fourni, force le timing de la sheet Adhkar (deep-link notif).
+    /// `nil` ⇒ auto-détection (cas Control Widget générique "adhkar").
+    @State private var adhkarSheetForcedTiming: AdhkarTiming? = nil
+
     /// Sheet QuranLibrary déclenchée par le Control Widget "Lire le Coran".
     @State private var showQuranFromControl = false
+
+    // Rappels Adhkar — toggles + offset (mêmes clés que SettingsView).
+    @AppStorage("adhkarReminderMorningEnabled") private var adhkarMorningEnabled = false
+    @AppStorage("adhkarReminderEveningEnabled") private var adhkarEveningEnabled = false
+    @AppStorage("adhkarReminderOffsetMinutes") private var adhkarReminderOffsetMinutes = 5
+
+    // Iqamah delays — lus depuis Settings pour calculer le trigger des rappels.
+    @AppStorage("iqamahFajrDelay") private var iqamahFajrDelay = 20
+    @AppStorage("iqamahAsrDelay") private var iqamahAsrDelay = 15
     
     /// Saison islamique courante (recalculée à chaque apparition)
         private var currentSeason: IslamicSeasonInfo {
@@ -407,7 +420,16 @@ struct MainView: View {
             }
             await updateChecker.checkForUpdate()
             await dailyContentService.fetchDailyContent()
+            scheduleAdhkarReminders()
         }
+        // Re-schedule des rappels Adhkar quand les horaires changent (nouvelle journée,
+        // changement de localisation, recalcul) ou quand les réglages utilisateur changent.
+        .onChange(of: prayerVM.dailyPrayers.first?.date) { _, _ in scheduleAdhkarReminders() }
+        .onChange(of: adhkarMorningEnabled) { _, _ in scheduleAdhkarReminders() }
+        .onChange(of: adhkarEveningEnabled) { _, _ in scheduleAdhkarReminders() }
+        .onChange(of: adhkarReminderOffsetMinutes) { _, _ in scheduleAdhkarReminders() }
+        .onChange(of: iqamahFajrDelay) { _, _ in scheduleAdhkarReminders() }
+        .onChange(of: iqamahAsrDelay) { _, _ in scheduleAdhkarReminders() }
         // ── Auto-retry sur retour de connexion ──────────────────────────
         .onReceive(networkMonitor.onReconnect) {
             Task {
@@ -470,16 +492,20 @@ struct MainView: View {
                         .zIndex(1000) // Au-dessus de tout
                     }
                 }
-                // Sheet Adhkar déclenchée par le Control Widget "Adhkar du moment".
-                .sheet(isPresented: $showAdhkarFromControl) {
+                // Sheet Adhkar déclenchée par :
+                //  - le Control Widget "Adhkar du moment" (timing auto-détecté ⇒ nil)
+                //  - une notif Adhkar matin/soir (timing forcé)
+                .sheet(isPresented: $showAdhkarFromControl, onDismiss: { adhkarSheetForcedTiming = nil }) {
                     ZStack {
                         LinearGradient(
-                            colors: [Color(red: 0.05, green: 0.08, blue: 0.18), Color(red: 0.08, green: 0.1, blue: 0.25)],
+                            colors: adhkarSheetForcedTiming == .morning
+                                ? [Color(red: 0.15, green: 0.1, blue: 0.05), Color(red: 0.25, green: 0.18, blue: 0.08)]
+                                : [Color(red: 0.05, green: 0.08, blue: 0.18), Color(red: 0.08, green: 0.1, blue: 0.25)],
                             startPoint: .top,
                             endPoint: .bottom
                         )
                         .ignoresSafeArea()
-                        AdhkarView()
+                        AdhkarView(initialTiming: adhkarSheetForcedTiming)
                     }
                     .environmentObject(prayerVM)
                     .presentationDragIndicator(.visible)
@@ -491,6 +517,14 @@ struct MainView: View {
                 // Notif Quran tapée → switch automatique vers tab Rappel (où la card vit).
                 .onReceive(NotificationCenter.default.publisher(for: .quranReadingTapped)) { _ in
                     selectedTab = 1
+                }
+                // Notif Adhkar tapée → ouvre la sheet Adhkar avec le timing forcé.
+                .onReceive(NotificationCenter.default.publisher(for: .adhkarReminderTapped)) { notif in
+                    if let raw = notif.userInfo?["timing"] as? String,
+                       let timing = AdhkarTiming(rawValue: raw) {
+                        adhkarSheetForcedTiming = timing
+                        showAdhkarFromControl = true
+                    }
                 }
                 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
                 // DÉCLENCHEUR D'ADHAN (écoute les notifications)
@@ -516,6 +550,26 @@ struct MainView: View {
                     }
                 }
     }
+    /// Programme les rappels Adhkar (matin/soir) post-prière selon les toggles utilisateur.
+    /// No-op si les deux toggles sont OFF — le scheduler nettoie ses propres notifs.
+    /// Hookée sur changement de prières + changement des réglages.
+    private func scheduleAdhkarReminders() {
+        let prayers = prayerVM.dailyPrayers.map {
+            ScheduledPrayer(name: $0.name, date: $0.date)
+        }
+        let iqamahDelays: [String: Int] = [
+            "Fajr": iqamahFajrDelay,
+            "Asr": iqamahAsrDelay,
+        ]
+        AdhkarReminderScheduler.schedule(
+            prayers: prayers,
+            morningEnabled: adhkarMorningEnabled,
+            eveningEnabled: adhkarEveningEnabled,
+            iqamahDelaysMinutes: iqamahDelays,
+            reminderOffsetMinutes: adhkarReminderOffsetMinutes
+        )
+    }
+
     /// Lit la clé `controlDeepLinkTarget` écrite par un Control Widget (Qibla / Adhkar)
     /// dans l'App Group, route vers la destination, puis efface la clé.
     ///
@@ -542,7 +596,8 @@ struct MainView: View {
                 print("✅ [DeepLink] Routing to Qibla tab (selectedTab = 2)")
                 selectedTab = 2
             case "adhkar":
-                print("✅ [DeepLink] Routing to Adhkar sheet")
+                print("✅ [DeepLink] Routing to Adhkar sheet (auto timing)")
+                adhkarSheetForcedTiming = nil
                 showAdhkarFromControl = true
             case "quran":
                 print("✅ [DeepLink] Routing to Quran Library sheet")
