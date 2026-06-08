@@ -11,6 +11,7 @@ import StoreKit
 struct SettingsView: View {
     // 💾 Sauvegarde persistante avec @AppStorage
     @EnvironmentObject var prayerVM: PrayerTimesViewModel
+    @EnvironmentObject var updateChecker: AppUpdateChecker
     @AppStorage("appLanguage") private var appLanguage = "system"
     @AppStorage("userCalculationMethod") private var selectedCalculationMethod = "UOIF (12°)"
     @AppStorage("userMaghribOffset") private var maghribOffset = 0
@@ -100,6 +101,38 @@ struct SettingsView: View {
 
                     // ── SECTION ADHKAR — RAPPELS POST-FAJR / POST-ASR ──
                     AdhkarReminderSettingsSection()
+
+                    // ── SECTION APERÇU : bannière mise à jour (DEBUG uniquement) ──
+                    #if DEBUG
+                    Section {
+                        Button {
+                            updateChecker.simulatePreview()
+                        } label: {
+                            HStack(spacing: 15) {
+                                Image(systemName: "eye.fill")
+                                    .font(.title2)
+                                    .foregroundColor(.white)
+                                    .padding(10)
+                                    .background(Color.purple.gradient)
+                                    .clipShape(RoundedRectangle(cornerRadius: 12))
+
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("Aperçu de la bannière de màj")
+                                        .font(.headline)
+                                        .foregroundColor(.white)
+                                    Text("Affiche la bannière (croix pour fermer)")
+                                        .font(.caption)
+                                        .foregroundColor(.white.opacity(0.6))
+                                }
+                            }
+                            .padding(.vertical, 4)
+                        }
+                    } header: {
+                        Text("Debug")
+                            .foregroundColor(.white.opacity(0.6))
+                    }
+                    .listRowBackground(Color.white.opacity(0.1))
+                    #endif
 
                     // ── SECTION 1 : AJUSTEMENTS MANUELS (TIROIR) ──
                     Section {

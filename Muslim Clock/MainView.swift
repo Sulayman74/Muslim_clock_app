@@ -414,6 +414,7 @@ struct MainView: View {
         .environmentObject(prayerVM)
         .environmentObject(weatherVM)
         .environmentObject(dailyContentService)
+        .environmentObject(updateChecker)
         .task {
             if let loc = manager.userLocation {
                 await weatherVM.fetchWeather(for: loc)

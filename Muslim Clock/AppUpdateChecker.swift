@@ -83,6 +83,17 @@ final class AppUpdateChecker: ObservableObject {
             updateAvailable = false
         }
     }
+
+    /// Force l'affichage de la bannière avec une version factice pour preview/QA.
+    /// N'écrit rien dans UserDefaults — le `dismiss()` suivant n'aura aucun effet
+    /// sur la vraie détection (la version "aperçu" n'a aucune chance d'être réelle).
+    func simulatePreview() {
+        self.latestVersion = "aperçu"
+        self.storeURL = nil
+        withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+            self.updateAvailable = true
+        }
+    }
 }
 
 // MARK: - Bannière
