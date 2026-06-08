@@ -41,38 +41,59 @@ enum QuranReminderScheduler {
         iqamahDelaysMinutes: [String: Int] = [:],
         reminderOffsetMinutes: Int = 10
     ) {
+        // Wrap async dans un Task — la signature reste fire-and-forget pour les callers existants.
+        Task {
+            await Self.scheduleAsync(
+                prayers: prayers,
+                plan: plan,
+                pagesPerPrayer: pagesPerPrayer,
+                iqamahDelaysMinutes: iqamahDelaysMinutes,
+                reminderOffsetMinutes: reminderOffsetMinutes
+            )
+        }
+    }
+
+    /// Variante async : séquence remove → add garantie linéaire (évite la race entre
+    /// `getPendingNotificationRequests` callback et `add(request:)` callback).
+    private static func scheduleAsync(
+        prayers: [ScheduledPrayer],
+        plan: QuranPlan,
+        pagesPerPrayer: Int,
+        iqamahDelaysMinutes: [String: Int],
+        reminderOffsetMinutes: Int
+    ) async {
         let center = UNUserNotificationCenter.current()
 
         // 1. Nettoyage sélectif — uniquement les notifs Quran existantes.
-        center.getPendingNotificationRequests { requests in
-            let idsToRemove = requests
-                .filter { $0.identifier.hasPrefix(Self.identifierPrefix) }
-                .map { $0.identifier }
-            center.removePendingNotificationRequests(withIdentifiers: idsToRemove)
+        let requests = await center.pendingNotificationRequests()
+        let idsToRemove = requests
+            .filter { $0.identifier.hasPrefix(Self.identifierPrefix) }
+            .map { $0.identifier }
+        center.removePendingNotificationRequests(withIdentifiers: idsToRemove)
 
-            // 2. Programmation des nouveaux rappels (uniquement futurs + dans le plan).
-            guard plan.notificationsEnabled else { return }
-            let now = Date()
-            for prayer in prayers
-            where plan.prayersToUse.contains(prayer.name) && prayer.date > now {
-                // Jumu'ah partage le délai iqamah de Dhuhr (même prière de midi).
-                let iqamahKey = (prayer.name == "Jumu'ah") ? "Dhuhr" : prayer.name
-                let iqamah = iqamahDelaysMinutes[iqamahKey] ?? 0
-                let offsetSeconds = TimeInterval((iqamah + reminderOffsetMinutes) * 60)
-                Self.schedule(
-                    prayer: prayer,
-                    pagesPerPrayer: pagesPerPrayer,
-                    offsetSeconds: offsetSeconds,
-                    center: center
-                )
-            }
+        // 2. Programmation des nouveaux rappels (uniquement futurs + dans le plan).
+        guard plan.notificationsEnabled else { return }
+        let now = Date()
+        for prayer in prayers
+        where plan.prayersToUse.contains(prayer.name) && prayer.date > now {
+            // Jumu'ah partage le délai iqamah de Dhuhr (même prière de midi).
+            let iqamahKey = (prayer.name == "Jumu'ah") ? "Dhuhr" : prayer.name
+            let iqamah = iqamahDelaysMinutes[iqamahKey] ?? 0
+            let offsetSeconds = TimeInterval((iqamah + reminderOffsetMinutes) * 60)
+            await Self.schedule(
+                prayer: prayer,
+                pagesPerPrayer: pagesPerPrayer,
+                offsetSeconds: offsetSeconds,
+                center: center
+            )
         }
     }
 
     /// Annule toutes les notifs de lecture (sans toucher aux autres modules).
     static func cancelAll() {
-        let center = UNUserNotificationCenter.current()
-        center.getPendingNotificationRequests { requests in
+        Task {
+            let center = UNUserNotificationCenter.current()
+            let requests = await center.pendingNotificationRequests()
             let ids = requests
                 .filter { $0.identifier.hasPrefix(Self.identifierPrefix) }
                 .map { $0.identifier }
@@ -87,7 +108,7 @@ enum QuranReminderScheduler {
         pagesPerPrayer: Int,
         offsetSeconds: TimeInterval,
         center: UNUserNotificationCenter
-    ) {
+    ) async {
         // Offset post-prière configurable (iqamah + délai de rappel).
         let triggerDate = prayer.date.addingTimeInterval(offsetSeconds)
         let comps = Calendar.current.dateComponents(
@@ -116,16 +137,21 @@ enum QuranReminderScheduler {
             content: content,
             trigger: trigger
         )
-        center.add(request) { error in
-            if let error {
-                print("⚠️ [QuranScheduler] \(prayer.name): \(error.localizedDescription)")
-            }
+        do {
+            try await center.add(request)
+        } catch {
+            print("⚠️ [QuranScheduler] \(prayer.name): \(error.localizedDescription)")
         }
     }
 
+    /// DateFormatter réutilisable pour les clés de notification (évite la recréation à chaque appel).
+    private static let dayKeyFormatter: DateFormatter = {
+        let f = DateFormatter()
+        f.dateFormat = "yyyy-MM-dd"
+        return f
+    }()
+
     private static func dayKey(_ date: Date) -> String {
-        let fmt = DateFormatter()
-        fmt.dateFormat = "yyyy-MM-dd"
-        return fmt.string(from: date)
+        Self.dayKeyFormatter.string(from: date)
     }
 }

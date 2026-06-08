@@ -10,13 +10,20 @@ import SwiftUI
 import AVFoundation
 
 struct QuranRecorderView: View {
+    /// Recorder partagé avec le parent (chapter view) — permet la synchro karaoké.
+    @Bindable var recorder: QuranRecorder
     /// Nom affiché de la sourate (ex: "Al-Fatiha").
     let suraDisplayName: String
     /// Slug ASCII utilisé pour le nom de fichier (ex: "AlFatiha").
     let suraSlug: String
+    /// Toggle du mode karaoké (binding parent → persistance @AppStorage).
+    @Binding var karaokeEnabled: Bool
+    /// Callback appelée juste avant `recorder.start()` — pour init le karaoké côté parent.
+    let onStartRecording: () -> Void
+    /// Callback appelée au tap "Verset suivant" (mode karaoké) — incrémentation côté parent.
+    let onMarkNextVerse: () -> Void
 
     @Environment(\.dismiss) private var dismiss
-    @State private var recorder = QuranRecorder()
     /// Animation pulse du bouton record.
     @State private var pulse: Bool = false
     /// Hauteur courante de la sheet — `.medium` pendant recording/playback pour laisser
@@ -60,7 +67,7 @@ struct QuranRecorderView: View {
             if case .recording = recorder.state {
                 recorder.discard()
             } else if case .playingBack = recorder.state {
-                recorder.pausePlayback()
+                recorder.stopPlayback()
             }
         }
     }
@@ -102,7 +109,7 @@ struct QuranRecorderView: View {
     }
 
     private var idleContent: some View {
-        VStack(spacing: 18) {
+        VStack(spacing: 16) {
             ZStack {
                 Circle()
                     .fill(LinearGradient(
@@ -110,13 +117,13 @@ struct QuranRecorderView: View {
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
                     ))
-                    .frame(width: 120, height: 120)
+                    .frame(width: 110, height: 110)
                 Image(systemName: "mic.fill")
-                    .font(.system(size: 50))
+                    .font(.system(size: 46))
                     .foregroundStyle(.teal)
             }
 
-            VStack(spacing: 6) {
+            VStack(spacing: 4) {
                 Text("Prêt à enregistrer")
                     .font(.title3.bold())
                     .foregroundColor(.white)
@@ -124,6 +131,26 @@ struct QuranRecorderView: View {
                     .font(.subheadline)
                     .foregroundStyle(.white.opacity(0.7))
             }
+
+            // Toggle suivi verset par verset
+            Toggle(isOn: $karaokeEnabled) {
+                HStack(spacing: 8) {
+                    Image(systemName: "list.number")
+                        .foregroundStyle(.teal)
+                    VStack(alignment: .leading, spacing: 1) {
+                        Text("Suivi verset par verset")
+                            .font(.subheadline.bold())
+                            .foregroundColor(.white)
+                        Text("Tape sur « Verset suivant » à chaque transition pour synchroniser la lecture.")
+                            .font(.caption2)
+                            .foregroundStyle(.white.opacity(0.55))
+                    }
+                }
+            }
+            .toggleStyle(SwitchToggleStyle(tint: .teal))
+            .padding(12)
+            .background(.ultraThinMaterial)
+            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
 
             Text("Durée maximale : 10 min · format M4A léger.")
                 .font(.caption2)
@@ -185,9 +212,15 @@ struct QuranRecorderView: View {
                     .foregroundColor(.white)
                 ProgressView(value: elapsed, total: QuranRecorder.maxRecordingDuration)
                     .tint(.red)
-                Text("Enregistrement en cours…")
-                    .font(.caption2)
-                    .foregroundStyle(.white.opacity(0.55))
+                if karaokeEnabled, let ayah = recorder.recordingAyahId {
+                    Text("Verset \(ayah)")
+                        .font(.caption2.bold())
+                        .foregroundStyle(.teal)
+                } else {
+                    Text("Enregistrement en cours…")
+                        .font(.caption2)
+                        .foregroundStyle(.white.opacity(0.55))
+                }
             }
         }
         .padding(.horizontal, 4)
@@ -275,7 +308,11 @@ struct QuranRecorderView: View {
             Button {
                 Task {
                     let granted = await recorder.requestPermission()
-                    if granted { recorder.start(suraSlug: suraSlug) }
+                    if granted {
+                        recorder.start(suraSlug: suraSlug)
+                        // Initialise le karaoké côté parent (1er passage + scroll initial).
+                        onStartRecording()
+                    }
                 }
             } label: {
                 Label("Commencer l'enregistrement", systemImage: "record.circle.fill")
@@ -291,17 +328,45 @@ struct QuranRecorderView: View {
             EmptyView()
 
         case .recording:
-            Button {
-                recorder.stop()
-                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-            } label: {
-                Label("Arrêter", systemImage: "stop.fill")
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 14)
-                    .background(.red.gradient)
-                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-                    .foregroundColor(.white)
-                    .font(.headline)
+            if karaokeEnabled {
+                // Mode karaoké : 2 boutons côte à côte — "Verset suivant" (large) + "Stop".
+                HStack(spacing: 10) {
+                    Button {
+                        onMarkNextVerse()
+                    } label: {
+                        Label("Verset suivant", systemImage: "forward.fill")
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 14)
+                            .background(.teal.gradient)
+                            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                            .foregroundColor(.white)
+                            .font(.headline)
+                    }
+                    Button {
+                        recorder.stop()
+                        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                    } label: {
+                        Image(systemName: "stop.fill")
+                            .font(.title3)
+                            .frame(width: 60, height: 52)
+                            .background(.red.gradient)
+                            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                            .foregroundColor(.white)
+                    }
+                }
+            } else {
+                Button {
+                    recorder.stop()
+                    UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                } label: {
+                    Label("Arrêter", systemImage: "stop.fill")
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 14)
+                        .background(.red.gradient)
+                        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                        .foregroundColor(.white)
+                        .font(.headline)
+                }
             }
 
         case .recorded(let url, let duration):
@@ -345,9 +410,9 @@ struct QuranRecorderView: View {
 
         case .playingBack:
             Button {
-                recorder.pausePlayback()
+                recorder.stopPlayback()
             } label: {
-                Label("Pause", systemImage: "pause.fill")
+                Label("Arrêter la lecture", systemImage: "stop.fill")
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 14)
                     .background(.teal.gradient)

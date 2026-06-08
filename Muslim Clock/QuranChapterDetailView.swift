@@ -22,6 +22,13 @@ struct QuranChapterDetailView: View {
     @State private var highlightedAyah: Int?
     /// Présentation de la sheet d'enregistrement de récitation.
     @State private var showRecorder: Bool = false
+    /// Recorder partagé chapter ↔ sheet pour permettre la synchro karaoké
+    /// (highlight + scroll du verset courant sous la sheet).
+    @State private var recorder = QuranRecorder()
+    /// Mode karaoké activé (toggle persistant dans la sheet).
+    @AppStorage("quranKaraokeEnabled") private var karaokeEnabled: Bool = false
+    /// Index du verset courant en karaoké (1-indexé). Incrémenté par le bouton "Verset suivant".
+    @State private var karaokeIndex: Int = 1
 
     @AppStorage("quranShowTransliteration") private var showTransliteration: Bool = false
     @AppStorage("quranShowTranslation") private var showTranslation: Bool = true
@@ -77,12 +84,14 @@ struct QuranChapterDetailView: View {
             }
         }
         .sheet(isPresented: $showRecorder) {
+            let displayName = chapter?.transliteration ?? chapterIndex.transliteration
             QuranRecorderView(
-                suraDisplayName: chapter?.transliteration ?? chapterIndex.transliteration,
-                suraSlug: (chapter?.transliteration ?? chapterIndex.transliteration)
-                    .replacingOccurrences(of: " ", with: "")
-                    .components(separatedBy: CharacterSet.alphanumerics.inverted)
-                    .joined()
+                recorder: recorder,
+                suraDisplayName: displayName,
+                suraSlug: QuranRecorder.suraSlug(from: displayName),
+                karaokeEnabled: $karaokeEnabled,
+                onStartRecording: { startKaraokeIfNeeded() },
+                onMarkNextVerse: { markNextVerse() }
             )
         }
         .preferredColorScheme(.dark)
@@ -168,20 +177,34 @@ struct QuranChapterDetailView: View {
                 // HUD auto-scroll en bas
                 autoScrollHUD(chapter: chapter, proxy: proxy)
             }
-            .onAppear {
+            .task(id: scrollToAyah) {
                 // Auto-scroll vers le verset cible si fourni (ex: reprise Khatma / bookmark).
-                if let target = scrollToAyah {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                        withAnimation(.easeInOut(duration: 0.4)) {
-                            proxy.scrollTo(target, anchor: .top)
-                            highlightedAyah = target
-                        }
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                            withAnimation(.easeOut(duration: 0.8)) {
-                                highlightedAyah = nil
-                            }
-                        }
-                    }
+                // `.task` auto-cancel à la sortie de la View — pas de fuite.
+                guard let target = scrollToAyah else { return }
+                try? await Task.sleep(nanoseconds: 200_000_000)
+                withAnimation(.easeInOut(duration: 0.4)) {
+                    proxy.scrollTo(target, anchor: .top)
+                    highlightedAyah = target
+                }
+                try? await Task.sleep(nanoseconds: 3_000_000_000)
+                withAnimation(.easeOut(duration: 0.8)) {
+                    highlightedAyah = nil
+                }
+            }
+            // Karaoké : pendant l'enregistrement, suit le dernier verset marqué.
+            .onChange(of: recorder.versePassages.last?.ayahId) { _, newAyah in
+                guard karaokeEnabled, let newAyah else { return }
+                withAnimation(.easeInOut(duration: 0.35)) {
+                    proxy.scrollTo(newAyah, anchor: .center)
+                    highlightedAyah = newAyah
+                }
+            }
+            // Karaoké : pendant la lecture, suit l'ayah courant calculé par le recorder.
+            .onChange(of: recorder.playbackAyahId) { _, newAyah in
+                guard karaokeEnabled, let newAyah else { return }
+                withAnimation(.easeInOut(duration: 0.35)) {
+                    proxy.scrollTo(newAyah, anchor: .center)
+                    highlightedAyah = newAyah
                 }
             }
             .onDisappear { stopAutoScroll() }
@@ -250,6 +273,11 @@ struct QuranChapterDetailView: View {
         autoScrollTask?.cancel()
         autoScrollTask = Task { @MainActor in
             while isAutoScrolling && autoScrollIndex < chapter.verses.count {
+                // Capture la durée en début d'itération : si l'utilisateur déplace le slider
+                // pendant la lecture, l'animation du sablier ET le sleep utilisent la même valeur
+                // (sinon : désync visuelle entre la progression de la capsule et le passage au
+                // verset suivant).
+                let iterationDuration = autoScrollSeconds
                 let ayah = chapter.verses[autoScrollIndex]
                 // Reset instantané du sablier puis animation linéaire 0→1 sur la durée.
                 var resetTransaction = Transaction()
@@ -259,10 +287,10 @@ struct QuranChapterDetailView: View {
                     proxy.scrollTo(ayah.id, anchor: .center)
                     highlightedAyah = ayah.id
                 }
-                withAnimation(.linear(duration: autoScrollSeconds)) {
+                withAnimation(.linear(duration: iterationDuration)) {
                     ayahProgress = 1.0
                 }
-                try? await Task.sleep(nanoseconds: UInt64(autoScrollSeconds * 1_000_000_000))
+                try? await Task.sleep(nanoseconds: UInt64(iterationDuration * 1_000_000_000))
                 if Task.isCancelled { break }
                 autoScrollIndex += 1
             }
@@ -281,6 +309,38 @@ struct QuranChapterDetailView: View {
         var t = Transaction()
         t.disablesAnimations = true
         withTransaction(t) { ayahProgress = 0 }
+    }
+
+    // MARK: - Karaoké
+
+    /// Au start d'un enregistrement karaoké : reset l'index au verset de départ
+    /// (bookmark de la sourate courante > verset highlighted > verset 1), et marque
+    /// le premier passage.
+    private func startKaraokeIfNeeded() {
+        guard karaokeEnabled else { return }
+        // L'auto-scroll standard et le karaoké sont mutuellement exclusifs.
+        if isAutoScrolling { stopAutoScroll() }
+
+        let startAyah: Int
+        if let highlighted = highlightedAyah {
+            startAyah = highlighted
+        } else if bookmarkSura == chapterIndex.id && bookmarkAyah > 0 {
+            startAyah = bookmarkAyah
+        } else {
+            startAyah = 1
+        }
+        karaokeIndex = startAyah
+        recorder.markVerse(ayahId: startAyah)
+        highlightedAyah = startAyah
+    }
+
+    /// Tap "Verset suivant" en mode karaoké : incrémente l'index, marque le passage,
+    /// et highlight + scroll vers le nouveau verset.
+    private func markNextVerse() {
+        guard let total = chapter?.verses.count, karaokeIndex < total else { return }
+        karaokeIndex += 1
+        recorder.markVerse(ayahId: karaokeIndex)
+        UIImpactFeedbackGenerator(style: .light).impactOccurred()
     }
 
     // MARK: - Sub-views

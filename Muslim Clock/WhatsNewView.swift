@@ -43,7 +43,7 @@ struct WhatsNewView: View {
             icon: "mic.circle.fill",
             color: .red,
             title: "Enregistre ta récitation",
-            description: "Récite la sourate, réécoute-toi, et partage à ton imam par WhatsApp ou Mail pour relecture. Jusqu'à 10 min."
+            description: "Récite la sourate, réécoute-toi, et partage à ton imam par WhatsApp ou Mail pour relecture (jusqu'à 10 min). Mode optionnel « Suivi verset par verset » : à la relecture, le texte défile au rythme de ta récitation."
         ),
         WhatsNewItem(
             icon: "bell.badge.circle.fill",

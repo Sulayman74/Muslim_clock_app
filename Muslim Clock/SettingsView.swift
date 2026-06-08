@@ -991,6 +991,26 @@ Approche bienveillante :
 Tes données restent sur ton appareil — aucun envoi vers un serveur.
 """)
 
+                    // ── ENREGISTREMENT DE RÉCITATION ──
+                    sourceCard(icon: "mic.circle.fill", title: "Enregistrement de récitation", color: .red, content: """
+Pour t'aider à progresser dans ta récitation, l'app propose un enregistrement audio simple :
+
+• Bouton micro dans le lecteur de chaque sourate
+• Format M4A léger (~240 Ko/min), durée maximale 10 min
+• Réécoute avant de partager
+• Partage via WhatsApp, Mail, Messages ou AirDrop — par exemple à un imam pour relecture
+
+Mode optionnel « Suivi verset par verset » :
+• À chaque transition, tape sur « Verset suivant » pendant l'enregistrement
+• À la relecture, le texte défile et le verset courant est mis en valeur, synchronisé avec l'audio
+• Utile pour repérer une erreur précise et y revenir
+
+Confidentialité :
+• L'enregistrement est stocké dans le répertoire temporaire de l'app et écrasé au prochain
+• Rien n'est envoyé vers un serveur — toi seul décides à qui l'envoyer via le partage iOS
+• L'autorisation micro est demandée uniquement au moment du premier enregistrement
+""")
+
                     // ── LIRE LE CORAN SUR ÉCRAN — fatwas ──
                     sourceCard(icon: "book.pages", title: "Lire le Coran sur écran", color: .indigo, content: """
 L'appareil n'a pas le statut du Mushaf papier. Les savants (Ibn Bâz, al-Fawzân, Commission Permanente — al-Lajna al-Dâ'ima) précisent :

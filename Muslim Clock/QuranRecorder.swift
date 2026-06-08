@@ -42,6 +42,40 @@ final class QuranRecorder: NSObject {
 
     private(set) var state: State = .idle
 
+    // MARK: - Karaoké
+
+    /// Un passage de verset enregistré : ayahId + timestamp (secondes depuis le start du record).
+    struct VersePassage: Codable, Equatable {
+        let ayahId: Int
+        let timestamp: TimeInterval
+    }
+
+    /// Liste des passages marqués (par `markVerse`) durant l'enregistrement courant.
+    /// Vidée à chaque `start()` ou `discard()`.
+    private(set) var versePassages: [VersePassage] = []
+
+    /// Verset courant calculé pendant la playback (mis à jour par le tick interne).
+    /// `nil` hors playback ou avant tout passage. À observer côté SwiftUI pour scroll/highlight.
+    private(set) var playbackAyahId: Int?
+
+    /// Verset courant pendant l'enregistrement (= dernier ayahId marqué).
+    var recordingAyahId: Int? { versePassages.last?.ayahId }
+
+    /// Marque le passage à un verset (ajoute un VersePassage au tableau).
+    /// No-op si on n'est pas en train d'enregistrer.
+    func markVerse(ayahId: Int) {
+        guard case .recording = state, let started = recordingStartedAt else { return }
+        let timestamp = Date().timeIntervalSince(started)
+        // Dédoublonnage : si on tape 2× le même ayahId rapidement, on ignore.
+        if versePassages.last?.ayahId == ayahId { return }
+        versePassages.append(VersePassage(ayahId: ayahId, timestamp: timestamp))
+    }
+
+    /// Retourne l'ayahId actif à `time` secondes depuis le start (le dernier passage <= time).
+    func currentAyah(at time: TimeInterval) -> Int? {
+        versePassages.last(where: { $0.timestamp <= time })?.ayahId
+    }
+
     // MARK: - Privé
 
     private var recorder: AVAudioRecorder?
@@ -73,6 +107,8 @@ final class QuranRecorder: NSObject {
     func start(suraSlug: String) {
         // Reset état précédent + cleanup fichier précédent.
         cleanupLastRecording()
+        versePassages = []
+        playbackAyahId = nil
         currentSuraSlug = suraSlug.isEmpty ? "Recitation" : suraSlug
 
         do {
@@ -106,8 +142,10 @@ final class QuranRecorder: NSObject {
     }
 
     /// Arrête l'enregistrement en cours. Bascule sur `.recorded` si succès.
+    /// Idempotent : si l'enregistrement n'est plus actif (déjà stoppé par le delegate
+    /// ou la limite de durée), on ne fait rien — évite la double transition d'état.
     func stop() {
-        guard let recorder, recorder.isRecording else { return }
+        guard case .recording = state, let recorder, recorder.isRecording else { return }
         recorder.stop()
         stopTick()
         let duration = recorder.currentTime > 0 ? recorder.currentTime : (recordingStartedAt.map { Date().timeIntervalSince($0) } ?? 0)
@@ -143,8 +181,11 @@ final class QuranRecorder: NSObject {
         }
     }
 
-    /// Met en pause la lecture (retour à `.recorded` figé sur la position courante).
-    func pausePlayback() {
+    /// Arrête la lecture (retour à `.recorded`).
+    /// Le nom historique « pause » prêtait à confusion : le player est nil-out (impossible
+    /// de reprendre où on s'était arrêté). Si une vraie pause/reprise est requise un jour,
+    /// conserver `player` et appeler `player.pause()` sans nil-out.
+    func stopPlayback() {
         guard case .playingBack = state, let player else { return }
         player.pause()
         stopTick()
@@ -163,6 +204,8 @@ final class QuranRecorder: NSObject {
         player?.stop()
         player = nil
         cleanupLastRecording()
+        versePassages = []
+        playbackAyahId = nil
         deactivateSession()
         state = .idle
     }
@@ -194,6 +237,8 @@ final class QuranRecorder: NSObject {
                 guard let player, player.isPlaying else { break }
                 let progress = player.duration > 0 ? player.currentTime / player.duration : 0
                 state = .playingBack(progress: progress, duration: player.duration)
+                // Sync karaoké : retrouve le verset actif au temps courant.
+                playbackAyahId = currentAyah(at: player.currentTime)
             }
         }
     }
@@ -219,15 +264,27 @@ final class QuranRecorder: NSObject {
     /// Construit l'URL du fichier d'enregistrement dans le répertoire temporaire.
     /// Format : `Recitation-{slug}-{yyyyMMdd-HHmm}.m4a` — ASCII-safe pour partage cross-plateforme.
     private func makeFileURL(suraSlug: String) -> URL {
-        let fmt = DateFormatter()
-        fmt.dateFormat = "yyyyMMdd-HHmm"
-        let stamp = fmt.string(from: Date())
-        let safeSlug = suraSlug.replacingOccurrences(of: " ", with: "")
-            .components(separatedBy: CharacterSet.alphanumerics.inverted)
-            .joined()
+        let stamp = Self.fileTimestamp.string(from: Date())
+        let safeSlug = Self.suraSlug(from: suraSlug)
         let filename = "Recitation-\(safeSlug.isEmpty ? "Coran" : safeSlug)-\(stamp).m4a"
         return URL.temporaryDirectory.appendingPathComponent(filename)
     }
+
+    /// Normalise un nom de sourate en slug ASCII-safe pour un nom de fichier ou un identifiant.
+    /// Ex: `"Al-Fâtiha"` → `"AlFatiha"`. Utilisable depuis n'importe quelle View pour produire
+    /// un slug identique à celui que le recorder met dans le fichier.
+    static func suraSlug(from name: String) -> String {
+        name.replacingOccurrences(of: " ", with: "")
+            .components(separatedBy: CharacterSet.alphanumerics.inverted)
+            .joined()
+    }
+
+    /// DateFormatter réutilisable pour les timestamps de noms de fichiers.
+    private static let fileTimestamp: DateFormatter = {
+        let f = DateFormatter()
+        f.dateFormat = "yyyyMMdd-HHmm"
+        return f
+    }()
 }
 
 // MARK: - AVAudioRecorderDelegate
@@ -235,10 +292,12 @@ final class QuranRecorder: NSObject {
 extension QuranRecorder: AVAudioRecorderDelegate {
     nonisolated func audioRecorderDidFinishRecording(_ recorder: AVAudioRecorder, successfully flag: Bool) {
         Task { @MainActor in
-            // Cas où l'enregistrement se termine sur la limite hard (10 min) ou interruption système.
-            if flag, case .recording = state {
+            // Garde anti-callback orphelin : on n'agit que si on est encore en `.recording`.
+            // Sans ça, après un `discard()` manuel l'`.error` viendrait écraser `.idle`.
+            guard case .recording = state else { return }
+            if flag {
                 stop()
-            } else if !flag {
+            } else {
                 state = .error(message: "Enregistrement interrompu.")
             }
         }
@@ -250,6 +309,9 @@ extension QuranRecorder: AVAudioRecorderDelegate {
 extension QuranRecorder: AVAudioPlayerDelegate {
     nonisolated func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
         Task { @MainActor in
+            // Garde anti-callback orphelin : on n'agit que si on est encore en `.playingBack`.
+            // Sans ça, après un `stopPlayback()` ou `discard()`, on écraserait l'état courant.
+            guard case .playingBack = state else { return }
             stopTick()
             self.player = nil
             if let url = lastRecordedURL {

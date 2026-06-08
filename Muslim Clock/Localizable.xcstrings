@@ -518,6 +518,9 @@
     "Arrêter" : {
 
     },
+    "Arrêter la lecture" : {
+
+    },
     "Asr" : {
 
     },
@@ -862,6 +865,9 @@
       }
     },
     "Enregistrement" : {
+
+    },
+    "Enregistrement de récitation" : {
 
     },
     "Enregistrement en cours…" : {
@@ -1555,6 +1561,7 @@
       }
     },
     "Pause" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -1619,6 +1626,9 @@
       }
     },
     "Portée du Mushaf" : {
+
+    },
+    "Pour t'aider à progresser dans ta récitation, l'app propose un enregistrement audio simple :\n\n• Bouton micro dans le lecteur de chaque sourate\n• Format M4A léger (~240 Ko/min), durée maximale 10 min\n• Réécoute avant de partager\n• Partage via WhatsApp, Mail, Messages ou AirDrop — par exemple à un imam pour relecture\n\nMode optionnel « Suivi verset par verset » :\n• À chaque transition, tape sur « Verset suivant » pendant l'enregistrement\n• À la relecture, le texte défile et le verset courant est mis en valeur, synchronisé avec l'audio\n• Utile pour repérer une erreur précise et y revenir\n\nConfidentialité :\n• L'enregistrement est stocké dans le répertoire temporaire de l'app et écrasé au prochain\n• Rien n'est envoyé vers un serveur — toi seul décides à qui l'envoyer via le partage iOS\n• L'autorisation micro est demandée uniquement au moment du premier enregistrement" : {
 
     },
     "Pourquoi une notification et pas l'Adhan ?" : {
@@ -2056,6 +2066,9 @@
     "Suivez vos prières d'un simple coup d'œil." : {
 
     },
+    "Suivi verset par verset" : {
+
+    },
     "Sunnah du Fajr" : {
       "localizations" : {
         "ar" : {
@@ -2076,6 +2089,9 @@
 
     },
     "sur %@" : {
+
+    },
+    "Tape sur « Verset suivant » à chaque transition pour synchroniser la lecture." : {
 
     },
     "Temps de la prière" : {
@@ -2187,7 +2203,13 @@
         }
       }
     },
+    "Verset %lld" : {
+
+    },
     "Verset du Coran" : {
+
+    },
+    "Verset suivant" : {
 
     },
     "Version %@" : {
