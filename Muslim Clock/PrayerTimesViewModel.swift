@@ -5,10 +5,6 @@ import Adhan
 import WidgetKit
 import SwiftUI
 
-/// Identifiant du App Group partagé iOS ↔ Watch ↔ Widget ↔ Complication.
-/// Doit rester aligné avec `Muslim Clock.entitlements`.
-private let appGroupIdentifier = "group.kappsi.Muslim-Clock"
-
 enum PrayerWindow: String {
     case fajr = "Fajr", dhuhr = "Dhuhr", asr = "Asr"
     case maghrib = "Maghrib", isha = "Isha", none = "none"
@@ -224,7 +220,7 @@ class PrayerTimesViewModel: ObservableObject {
             updateNextPrayer(prayerTimesToday: prayerTimesToday, coordinates: coordinates, params: params)
             self.isLoading = false
             // Write prayer times for Watch app and complications
-            let sharedWatch = UserDefaults(suiteName: appGroupIdentifier)
+            let sharedWatch = UserDefaults(suiteName: AppGroup.identifier)
             sharedWatch?.set(prayerTimesToday.fajr.timeIntervalSince1970, forKey: "prayer_fajr")
             // Si vendredi + Jumu'ah active, ecrire l'heure Jumu'ah a la place de Dhuhr
             if isFridayJumuah {
@@ -278,7 +274,7 @@ class PrayerTimesViewModel: ObservableObject {
         // ✅ SYNCHRONISATION VERS SHARED USERDEFAULTS
         // Le widget lit ces valeurs pour appliquer la même logique
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        let shared = UserDefaults(suiteName: appGroupIdentifier)
+        let shared = UserDefaults(suiteName: AppGroup.identifier)
         shared?.set(location.coordinate.latitude, forKey: "saved_latitude")
         shared?.set(location.coordinate.longitude, forKey: "saved_longitude")
         
@@ -432,7 +428,7 @@ class PrayerTimesViewModel: ObservableObject {
             self.nextPrayerDate = nextFajrDate
             self.nextPrayerName = "Fajr"
             self.nextPrayerTime = nextFajrTimeString
-            UserDefaults(suiteName: appGroupIdentifier)?.set(nextFajrDate.timeIntervalSince1970, forKey: "prayer_fajr_tomorrow")
+            UserDefaults(suiteName: AppGroup.identifier)?.set(nextFajrDate.timeIntervalSince1970, forKey: "prayer_fajr_tomorrow")
             WatchSessionManager.shared.sendPrayerTimes(["prayer_fajr_tomorrow": nextFajrDate.timeIntervalSince1970])
 
             if let firstIndex = self.dailyPrayers.firstIndex(where: { $0.name == "Fajr" }) {

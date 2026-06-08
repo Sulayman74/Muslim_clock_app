@@ -1,2263 +1,1499 @@
 {
-  "sourceLanguage" : "fr",
-  "strings" : {
-    "— %@" : {
-
-    },
-    "— Fin de la sourate %@ —" : {
-
-    },
-    "· météo et audio en cache" : {
-
-    },
-    "« %@ »" : {
-
-    },
-    "« %@ » appliqué — ajuste si besoin ci-dessous." : {
-
-    },
-    "« La Salât est le pilier de la religion »" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "الصلاة عماد الدين"
-          }
-        }
-      }
-    },
-    "« Notre Seigneur descend chaque nuit vers le ciel le plus bas lorsqu'il ne reste que le dernier tiers... » (Bukhari)" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "\"ينزل ربنا تبارك وتعالى كل ليلة إلى السماء الدنيا حين يبقى ثلث الليل الآخر...\" (رواه البخاري)"
-          }
-        }
-      }
-    },
-    "**%lld pages/jour** — soit **%lld pages** après chacune des %lld prière(s) sélectionnée(s)." : {
-      "localizations" : {
-        "fr" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "**%1$lld pages/jour** — soit **%2$lld pages** après chacune des %3$lld prière(s) sélectionnée(s)."
-          }
-        }
-      }
-    },
-    "%@ (%lld), verset %lld" : {
-      "localizations" : {
-        "fr" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ (%2$lld), verset %3$lld"
-          }
-        }
-      }
-    },
-    "%@ → %@" : {
-      "localizations" : {
-        "fr" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ → %2$@"
-          }
-        }
-      }
-    },
-    "%@ s / verset" : {
-
-    },
-    "%lld" : {
-
-    },
-    "%lld / %lld pages" : {
-      "localizations" : {
-        "fr" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$lld / %2$lld pages"
-          }
-        }
-      }
-    },
-    "%lld j de suite" : {
-
-    },
-    "%lld jours" : {
-
-    },
-    "%lld min après la fin" : {
-
-    },
-    "%lld pages" : {
-
-    },
-    "%lld versets" : {
-
-    },
-    "%lld versets · %@" : {
-      "localizations" : {
-        "fr" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$lld versets · %2$@"
-          }
-        }
-      }
-    },
-    "%lld%%" : {
-
-    },
-    "%lldj" : {
-
-    },
-    "•" : {
-
-    },
-    "+%lld pages d'avance" : {
-
-    },
-    "≈ %lld pages/jour" : {
-
-    },
-    "✨ Les Jours Blancs" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "✨ الأيام البيض"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "✨ The White Days"
-          }
-        }
-      }
-    },
-    "⭐ Donner mon avis" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "⭐ تقييم التطبيق"
+  "sourceLanguage": "fr",
+  "strings": {
+    "— %@": {},
+    "— Fin de la sourate %@ —": {},
+    "· météo et audio en cache": {},
+    "« %@ »": {},
+    "« %@ » appliqué — ajuste si besoin ci-dessous.": {},
+    "« Notre Seigneur descend chaque nuit vers le ciel le plus bas lorsqu'il ne reste que le dernier tiers... » (Bukhari)": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "\"ينزل ربنا تبارك وتعالى كل ليلة إلى السماء الدنيا حين يبقى ثلث الليل الآخر...\" (رواه البخاري)"
           }
         }
       }
     },
-    "🎉 Série terminée !" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "!اكتملت السلسلة 🎉"
+    "**%lld pages/jour** — soit **%lld pages** après chacune des %lld prière(s) sélectionnée(s).": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "new",
+            "value": "**%1$lld pages/jour** — soit **%2$lld pages** après chacune des %3$lld prière(s) sélectionnée(s)."
           }
         }
       }
     },
-    "📖 Lecture du Quran" : {
-
-    },
-    "1 Juz / jour (≈ 1 mois)" : {
-
-    },
-    "1. Maintenez votre doigt enfoncé sur un espace vide de votre écran d'accueil iPhone." : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "١. اضغط مطولاً على مساحة فارغة في شاشة الآيفون الرئيسية."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "1. Long press on an empty space on your iPhone home screen."
-          }
-        }
-      }
-    },
-    "1er Quartier" : {
-
-    },
-    "2 Rak'at après l'Isha, puis clôturez par le Witr." : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ركعتان بعد العشاء، ثم اختم بالوتر."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "2 Rak'at after Isha, then close with Witr."
+    "%@ (%lld), verset %lld": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "new",
+            "value": "%1$@ (%2$lld), verset %3$lld"
           }
         }
       }
     },
-    "2 Rak'at après l'obligatoire." : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ركعتان بعد الفريضة."
+    "%@ → %@": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "new",
+            "value": "%1$@ → %2$@"
           }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "2 Rak'at after the obligatory prayer."
-          }
         }
       }
     },
-    "2 Rak'at très méritoires avant l'obligatoire." : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ركعتان مستحبتان قبل الفريضة."
+    "%@ s / verset": {},
+    "%lld": {},
+    "%lld / %lld pages": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "new",
+            "value": "%1$lld / %2$lld pages"
           }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "2 highly meritorious Rak'at before the obligatory prayer."
-          }
         }
       }
     },
-    "2. Touchez le bouton '+' en haut à gauche." : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "٢. اضغط على زر '+' في أعلى اليسار."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "2. Tap the '+' button in the top left."
+    "%lld j de suite": {},
+    "%lld jours": {},
+    "%lld min après la fin": {},
+    "%lld pages": {},
+    "%lld versets": {},
+    "%lld versets · %@": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "new",
+            "value": "%1$lld versets · %2$@"
           }
         }
       }
     },
-    "3. Cherchez 'Muslim Clock' dans la liste." : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "٣. ابحث عن 'Muslim Clock' في القائمة."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "3. Search for 'Muslim Clock' in the list."
+    "%lld%%": {},
+    "%lldj": {},
+    "•": {},
+    "+%lld pages d'avance": {},
+    "≈ %lld pages/jour": {},
+    "⭐ Donner mon avis": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "⭐ تقييم التطبيق"
           }
         }
       }
     },
-    "4 Rak'at avant, et 2 Rak'at après." : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "٤ ركعات قبل و٢ ركعات بعد."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "4 Rak'at before and 2 Rak'at after."
+    "🎉 Série terminée !": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "!اكتملت السلسلة 🎉"
           }
         }
       }
     },
-    "4. Choisissez la taille du widget (Prochaine prière, 5 sphères qui représentent les 5 prières, etc.) et appuyez sur 'Ajouter'." : {
-
-    },
-    "4. Choisissez la taille du widget (Prochaine prière, Phase de la Lune, etc.) et appuyez sur 'Ajouter'." : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "٤. اختر حجم الأداة (الصلاة القادمة، طور القمر، إلخ) واضغط على 'إضافة'."
+    "📖 Lecture du Quran": {},
+    "1 Juz / jour (≈ 1 mois)": {},
+    "1. Maintenez votre doigt enfoncé sur un espace vide de votre écran d'accueil iPhone.": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "١. اضغط مطولاً على مساحة فارغة في شاشة الآيفون الرئيسية."
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "4. Choose the widget size (Next prayer, Moon phase, etc.) and tap 'Add'."
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1. Long press on an empty space on your iPhone home screen."
           }
         }
       }
-    },
-    "114 sourates · arabe + traduction FR" : {
-
-    },
-    "½ Juz / jour (≈ 2 mois)" : {
-
-    },
-    "¼ Juz / jour (≈ 4 mois)" : {
-
-    },
-    "Accès au micro refusé" : {
-
     },
-    "Accomplissez la prière à son heure." : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "أدِّ الصلاة في وقتها."
+    "1er Quartier": {},
+    "2 Rak'at après l'Isha, puis clôturez par le Witr.": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ركعتان بعد العشاء، ثم اختم بالوتر."
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Perform the prayer on time."
-          }
-        }
-      }
-    },
-    "Active le micro pour cette app dans Réglages iOS puis reviens ici." : {
-
-    },
-    "Activer les rappels" : {
-
-    },
-    "Adhkar après %@" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "أذكار بعد %@"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "2 Rak'at after Isha, then close with Witr."
           }
         }
       }
     },
-    "Adhkar du Matin" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "أذكار الصباح"
+    "2 Rak'at après l'obligatoire.": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ركعتان بعد الفريضة."
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Morning Adhkar"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "2 Rak'at after the obligatory prayer."
           }
         }
       }
     },
-    "Adhkar du moment" : {
-
-    },
-    "Adhkar du Soir" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "أذكار المساء"
+    "2 Rak'at très méritoires avant l'obligatoire.": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ركعتان مستحبتان قبل الفريضة."
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Evening Adhkar"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "2 highly meritorious Rak'at before the obligatory prayer."
           }
         }
       }
-    },
-    "Adresse (optionnel)" : {
-
     },
-    "Ajustement %@" : {
-
-    },
-    "Ajustement Asr" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "تعديل العصر"
+    "2. Touchez le bouton '+' en haut à gauche.": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "٢. اضغط على زر '+' في أعلى اليسار."
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Asr Adjustment"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "2. Tap the '+' button in the top left."
           }
         }
       }
     },
-    "Ajustement Dhuhr" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "تعديل الظهر"
+    "3. Cherchez 'Muslim Clock' dans la liste.": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "٣. ابحث عن 'Muslim Clock' في القائمة."
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dhuhr Adjustment"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "3. Search for 'Muslim Clock' in the list."
           }
         }
       }
     },
-    "Ajustement Fajr" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "تعديل الفجر"
+    "4 Rak'at avant, et 2 Rak'at après.": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "٤ ركعات قبل و٢ ركعات بعد."
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fajr Adjustment"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "4 Rak'at before and 2 Rak'at after."
           }
         }
       }
     },
-    "Ajustement Isha" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "تعديل العشاء"
+    "4. Choisissez la taille du widget (Prochaine prière, 5 sphères qui représentent les 5 prières, etc.) et appuyez sur 'Ajouter'.": {},
+    "5 sphères de prière, date hijri (FR · AR) et phase lunaire du jour.": {},
+    "114 sourates · arabe + traduction FR": {},
+    "½ Juz / jour (≈ 2 mois)": {},
+    "¼ Juz / jour (≈ 4 mois)": {},
+    "Accès au micro refusé": {},
+    "Accomplissez la prière à son heure.": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "أدِّ الصلاة في وقتها."
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Isha Adjustment"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Perform the prayer on time."
           }
         }
       }
     },
-    "Ajustement Maghrib" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "تعديل المغرب"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Maghrib Adjustment"
+    "Active le micro pour cette app dans Réglages iOS puis reviens ici.": {},
+    "Activer les rappels": {},
+    "Adhkar": {},
+    "Adhkar après %@": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "أذكار بعد %@"
           }
         }
       }
     },
-    "Ajustement Manuel (Temkine)" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "تعديل يدوي (تمكين)"
+    "Adhkar du Matin": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "أذكار الصباح"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Manual Adjustment (Temkine)"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Morning Adhkar"
           }
         }
       }
     },
-    "Ajustements" : {
-
-    },
-    "Ajustements Manuels" : {
-
-    },
-    "Ajustez chaque prière individuellement si les horaires calculés ne correspondent pas à votre mosquée. Glissez vers la gauche pour remettre à zéro." : {
-
-    },
-    "ALIGNÉ" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "محاذاة"
+    "Adhkar du moment": {},
+    "Adhkar du Soir": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "أذكار المساء"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ALIGNED"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Evening Adhkar"
           }
         }
       }
-    },
-    "Annuler" : {
-
-    },
-    "Arrêter" : {
-
     },
-    "Arrêter la lecture" : {
-
-    },
-    "Asr" : {
-
-    },
-    "Automatique (système)" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "تلقائي (النظام)"
+    "Adresse (optionnel)": {},
+    "Ajustement %@": {},
+    "Ajustement Manuel (Temkine)": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تعديل يدوي (تمكين)"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Automatic (system)"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Manual Adjustment (Temkine)"
           }
         }
       }
     },
-    "Autour de l'Asr" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "حول العصر"
+    "Ajustements": {},
+    "Ajustements Manuels": {},
+    "Ajustez chaque prière individuellement si les horaires calculés ne correspondent pas à votre mosquée. Glissez vers la gauche pour remettre à zéro.": {},
+    "ALIGNÉ": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "محاذاة"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Around Asr"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ALIGNED"
           }
         }
       }
-    },
-    "Azimut" : {
-
-    },
-    "Cache Audio (hors-ligne)" : {
-
-    },
-    "Calcul des horaires de prière" : {
-
     },
-    "Cap" : {
-
-    },
-    "Ces informations sont uniquement affichées sur votre appareil." : {
-
-    },
-    "Changement de Saison" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "تغيير الموسم"
+    "Annuler": {},
+    "Arrêter": {},
+    "Arrêter la lecture": {},
+    "Asr": {},
+    "Automatique (système)": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تلقائي (النظام)"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Season Change"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Automatic (system)"
           }
         }
       }
-    },
-    "Chargement de %@…" : {
-
     },
-    "CHERCHER" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "بحث"
+    "Autour de l'Asr": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "حول العصر"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "SEARCHING"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Around Asr"
           }
         }
       }
     },
-    "Choisis un rythme et reçois un rappel doux après chaque prière." : {
-
-    },
-    "Choisis un rythme pour pré-remplir le formulaire." : {
-
-    },
-    "Clôture de la nuit" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ختام الليل"
+    "Azimut": {},
+    "C'est l'heure": {},
+    "C'est l'heure de la prière": {},
+    "Cache Audio (hors-ligne)": {},
+    "Calcul des horaires de prière": {},
+    "Cap": {},
+    "Ces informations sont uniquement affichées sur votre appareil.": {},
+    "Changement de Saison": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تغيير الموسم"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Night Closing"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Season Change"
           }
         }
       }
-    },
-    "Combien de pages aujourd'hui ?" : {
-
     },
-    "Commencer" : {
-
-    },
-    "Commencer l'enregistrement" : {
-
-    },
-    "Comment ajouter un Widget ?" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "كيف تضيف أداة؟"
+    "Chargement de %@…": {},
+    "CHERCHER": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "بحث"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "How to add a Widget?"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SEARCHING"
           }
         }
       }
     },
-    "complétés" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "مكتمل"
+    "Choisis un rythme et reçois un rappel doux après chaque prière.": {},
+    "Choisis un rythme pour pré-remplir le formulaire.": {},
+    "Clôture de la nuit": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ختام الليل"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "completed"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Night Closing"
           }
         }
       }
     },
-    "Configuration Magique" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "إعداد تلقائي"
+    "Combien de pages aujourd'hui ?": {},
+    "Commencer": {},
+    "Commencer l'enregistrement": {},
+    "Comment ajouter un Widget ?": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "كيف تضيف أداة؟"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Magic Setup"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "How to add a Widget?"
           }
         }
       }
-    },
-    "Continuer" : {
-
-    },
-    "Copier" : {
-
-    },
-    "Crée ton plan de lecture" : {
-
-    },
-    "Crée ton programme de lecture" : {
-
-    },
-    "Créer le plan" : {
-
-    },
-    "Croissant ↑" : {
-
-    },
-    "Croissant ↓" : {
-
-    },
-    "Date cible" : {
-
     },
-    "De la page %lld" : {
-
-    },
-    "Découvre les nouveautés de cette mise à jour" : {
-
-    },
-    "Délai Adhan → Iqamah" : {
-
-    },
-    "Der. Quartier" : {
-
-    },
-    "Dernier Croissant" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "هلال متناقص"
+    "complétés": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "مكتمل"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Waning Crescent"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "completed"
           }
         }
       }
     },
-    "Dernier Quartier" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "تربيع أخير"
+    "Configuration Magique": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إعداد تلقائي"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Last Quarter"
-          }
-        }
-      }
-    },
-    "Dernier tiers" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "الثلث الأخير"
-          }
-        }
-      }
-    },
-    "Destination" : {
-
-    },
-    "Dhuhr" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "الظهر"
-          }
-        }
-      }
-    },
-    "Donner mon avis sur l'app" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "تقييم التطبيق"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Magic Setup"
           }
         }
       }
-    },
-    "Donner votre avis" : {
-
     },
-    "Durée" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "المدة"
+    "Continuer": {},
+    "Copier": {},
+    "Coran": {},
+    "Crée ton plan de lecture": {},
+    "Crée ton programme de lecture": {},
+    "Créer le plan": {},
+    "Croissant ↑": {},
+    "Croissant ↓": {},
+    "Date cible": {},
+    "De la page %lld": {},
+    "de la prière": {},
+    "Découvre les nouveautés de cette mise à jour": {},
+    "Délai Adhan → Iqamah": {},
+    "Der. Quartier": {},
+    "Dernier tiers": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الثلث الأخير"
           }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Duration"
-          }
         }
       }
-    },
-    "Durée : %@" : {
-
     },
-    "Durée entre l'adhan et l'iqamah dans votre mosquée (en minutes)." : {
-
-    },
-    "Durée entre l'adhan et l'iqamah dans votre mosquée. Utilisé pour l'analyse de votre planning de prière." : {
-
-    },
-    "Durée maximale : 10 min · format M4A léger." : {
-
-    },
-    "Écart" : {
-
-    },
-    "En attendant la prochaine Salât" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "في انتظار الصلاة القادمة"
+    "Destination": {},
+    "Dhuhr": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الظهر"
           }
         }
       }
     },
-    "En cours" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "جارية"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Current"
+    "Donner mon avis sur l'app": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تقييم التطبيق"
           }
         }
       }
     },
-    "English" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "الإنجليزية"
+    "Donner votre avis": {},
+    "Durée": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "المدة"
           }
         },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "English"
-          }
-        }
-      }
-    },
-    "Enregistrement" : {
-
-    },
-    "Enregistrement de récitation" : {
-
-    },
-    "Enregistrement en cours…" : {
-
-    },
-    "Enregistrement terminé" : {
-
-    },
-    "Enregistrer" : {
-
-    },
-    "Enregistrer ma récitation" : {
-
-    },
-    "Espace utilise" : {
-
-    },
-    "Fajr" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "الفجر"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Duration"
           }
         }
       }
     },
-    "Félicitations ! Vous avez terminé la série « %@ » ! Continuez votre apprentissage avec la série suivante. 📚" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "تهانينا! لقد أنهيت سلسلة \"%@\". واصل تعلمك مع السلسلة التالية. 📚"
+    "Durée : %@": {},
+    "Durée entre l'adhan et l'iqamah dans votre mosquée (en minutes).": {},
+    "Durée entre l'adhan et l'iqamah dans votre mosquée. Utilisé pour l'analyse de votre planning de prière.": {},
+    "Durée maximale : 10 min · format M4A léger.": {},
+    "Écart": {},
+    "En attendant la prochaine Salât": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "في انتظار الصلاة القادمة"
           }
         }
       }
-    },
-    "Félicitations ! Vous avez terminé la série « %@ ».\n\nSi vous aimez Muslim Clock, un avis sur l'App Store nous aiderait énormément ! 🌙" : {
-
     },
-    "Fermer" : {
-
-    },
-    "Fichiers caches" : {
-
-    },
-    "Fonctionnement des Widgets" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "كيفية عمل الأدوات"
+    "En cours": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "جارية"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "How Widgets Work"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Current"
           }
         }
       }
-    },
-    "FR" : {
-
     },
-    "Français" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Français"
+    "English": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الإنجليزية"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Français"
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "English"
           }
         }
       }
     },
-    "Gibbeuse ↑" : {
-
-    },
-    "Gibbeuse ↓" : {
-
-    },
-    "Gibbeuse Croissante" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "أحدب متزايد"
+    "Enregistrement": {},
+    "Enregistrement de récitation": {},
+    "Enregistrement en cours…": {},
+    "Enregistrement terminé": {},
+    "Enregistrer": {},
+    "Enregistrer ma récitation": {},
+    "Espace utilise": {},
+    "Fajr": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الفجر"
           }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Waxing Gibbous"
-          }
         }
       }
     },
-    "Gibbeuse Décroissante" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "أحدب متناقص"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Waning Gibbous"
+    "Félicitations ! Vous avez terminé la série « %@ » ! Continuez votre apprentissage avec la série suivante. 📚": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تهانينا! لقد أنهيت سلسلة \"%@\". واصل تعلمك مع السلسلة التالية. 📚"
           }
         }
       }
     },
-    "Hadith du moment" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "حديث اليوم"
+    "Félicitations ! Vous avez terminé la série « %@ ».\n\nSi vous aimez Muslim Clock, un avis sur l'App Store nous aiderait énormément ! 🌙": {},
+    "Fermer": {},
+    "Fichiers caches": {},
+    "Fonctionnement des Widgets": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "كيفية عمل الأدوات"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hadith of the day"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "How Widgets Work"
           }
         }
       }
-    },
-    "Heure du Khoutba" : {
-
-    },
-    "Heure Jumu'ah" : {
-
     },
-    "Heure Jumu'ah personnalisee" : {
-
-    },
-    "Horaires & Précision" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "المواقيت والدقة"
+    "FR": {},
+    "Français": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Français"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Times & Precision"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Français"
           }
         }
       }
     },
-    "Horaires Adhan" : {
-
-    },
-    "Horaires affichés à la Mosquée" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "أوقات المسجد المعروضة"
+    "Gibbeuse ↑": {},
+    "Gibbeuse ↓": {},
+    "Hadith du moment": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "حديث اليوم"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mosque Displayed Times"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hadith of the day"
           }
         }
       }
-    },
-    "Hors ligne" : {
-
     },
-    "Ignorer pour l'instant" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "تجاهل الآن"
+    "heure": {},
+    "Heure du Khoutba": {},
+    "Heure Jumu'ah": {},
+    "Heure Jumu'ah personnalisee": {},
+    "Horaires Adhan": {},
+    "Hors ligne": {},
+    "Ignorer pour l'instant": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تجاهل الآن"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ignore for now"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ignore for now"
           }
         }
       }
     },
-    "il reste %lld pages à rattraper" : {
-
-    },
-    "Impossible de charger cette sourate" : {
-
-    },
-    "Impossible de charger l'index des sourates." : {
-
-    },
-    "Informations" : {
-
-    },
-    "Invocation du Hilal" : {
-
-    },
-    "Invocations après la prière" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "أذكار بعد الصلاة"
-          }
-        }
-      }
-    },
-    "Invocations de la nuit" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "أذكار الليل"
-          }
-        }
-      }
-    },
-    "Iqamah & informations" : {
-
-    },
-    "Isha" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "العشاء"
+    "il reste %lld pages à rattraper": {},
+    "Impossible de charger cette sourate": {},
+    "Impossible de charger l'index des sourates.": {},
+    "Informations": {},
+    "Invocation du Hilal": {},
+    "Invocations après la prière": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "أذكار بعد الصلاة"
           }
         }
       }
     },
-    "Isha fixe après Maghrib" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "عشاء ثابت بعد المغرب"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fixed Isha after Maghrib"
+    "Invocations de la nuit": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "أذكار الليل"
           }
         }
       }
     },
-    "J'ai compris" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "مفهوم"
+    "Iqamah & informations": {},
+    "Isha": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "العشاء"
           }
         }
       }
     },
-    "J'ai lu mes pages aujourd'hui" : {
-
-    },
-    "J'y vais" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "هيا بنا"
+    "Isha fixe après Maghrib": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "عشاء ثابت بعد المغرب"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Let's go"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fixed Isha after Maghrib"
           }
         }
       }
-    },
-    "Jour" : {
-
-    },
-    "Jour du Vendredi" : {
-
-    },
-    "Jours Blancs — Jeûne recommandé (13-14-15)" : {
-
-    },
-    "Jumu'ah" : {
-
     },
-    "Jusqu'à la page %lld" : {
-
-    },
-    "Khatma" : {
-
-    },
-    "Khatma — Configuration" : {
-
-    },
-    "Khatma — Programme de lecture du Quran" : {
-
-    },
-    "Khatma de Ramadan (~30 jours)" : {
-
-    },
-    "Khatma du Quran" : {
-
-    },
-    "L'appareil n'a pas le statut du Mushaf papier. Les savants (Ibn Bâz, al-Fawzân, Commission Permanente — al-Lajna al-Dâ'ima) précisent :\n\n• Pas besoin de woudoû pour lire sur l'écran.\n• Exception : l'impureté majeure (janâba) — pas de lecture jusqu'au ghusl, sur tout support.\n• Le Mushaf papier reste préférable, mais la lecture sur écran faite avec attention reçoit la même récompense, in shâ Allah.\n• Aux toilettes : fermer l'affichage du Coran avant d'entrer.\n\nSources : Fatwas d'Ibn Bâz, al-Fawzân et de la Commission Permanente (al-Lajna al-Dâ'ima).\n\nTraduction française utilisée dans l'app : Muhammad Hamidullah (Complexe du Roi Fahd), via le dépôt open source quran-json." : {
-
-    },
-    "La Prière" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "الصلاة"
+    "J'ai compris": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "مفهوم"
           }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The Prayer"
-          }
         }
       }
-    },
-    "La prochaine prière en un coup d'œil." : {
-
     },
-    "La qualité prime sur la quantité — la régularité, même petite, est plus aimée que beaucoup d'efforts ponctuels." : {
-
-    },
-    "La section « Khatma » t'aide à organiser ta lecture du Mushaf à ton rythme :\n\n• Choisis un objectif : par durée (jours), par pages, ou par date cible\n• Presets indicatifs : 1 Juz/jour (~1 mois), ½ Juz/jour (~2 mois), ¼ Juz/jour (~4 mois), Khatma de Ramadan\n• Découpage automatique en pages après chaque prière sélectionnée\n• Journal de lecture sauvegardé localement, streak de régularité, statistiques\n\nRappels post-prière :\n• Notifications discrètes après chaque prière du plan (« 📖 Tes N pages après {prière} »)\n• Identifiants séparés des notifs de prière — elles ne se remplacent jamais\n• Désactivables à tout moment dans la configuration du plan\n\nApproche bienveillante :\n• Pas de couleur alarmante en cas de retard, pas de culpabilisation\n• Met l'accent sur la régularité (streak) plutôt que la performance\n• Rappel constant : « la qualité prime sur la quantité »\n\nTes données restent sur ton appareil — aucun envoi vers un serveur." : {
-
-    },
-    "La section audio propose des séries de cours islamiques soigneusement sélectionnés :\n\n• Les séries sont choisies parmi des savants et prédicateurs reconnus pour leur attachement au Coran et à la Sounnah authentique\n• La playlist est mise à jour à distance — de nouvelles séries sont ajoutées régulièrement sans mise à jour de l'app\n• Les audios sont mis en cache localement pour une écoute hors-ligne\n• La progression est sauvegardée automatiquement : reprenez là où vous vous étiez arrêté\n\nL'objectif est de faciliter l'apprentissage de la science religieuse au quotidien, pendant vos trajets ou temps libres." : {
-
-    },
-    "Laissez l'app déduire vos réglages" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "دع التطبيق يكتشف إعداداتك"
+    "J'ai lu mes pages aujourd'hui": {},
+    "J'y vais": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "هيا بنا"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Let the app detect your settings"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Let's go"
           }
         }
       }
     },
-    "Lancer l'analyse magique ✨" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "تشغيل التحليل السحري ✨"
+    "Jour": {},
+    "Jour du Vendredi": {},
+    "Jours Blancs — Jeûne recommandé (13-14-15)": {},
+    "Jumu'ah": {},
+    "Jusqu'à la page %lld": {},
+    "Khatma": {},
+    "Khatma — Configuration": {},
+    "Khatma — Programme de lecture du Quran": {},
+    "Khatma de Ramadan (~30 jours)": {},
+    "Khatma du Quran": {},
+    "L'appareil n'a pas le statut du Mushaf papier. Les savants (Ibn Bâz, al-Fawzân, Commission Permanente — al-Lajna al-Dâ'ima) précisent :\n\n• Pas besoin de woudoû pour lire sur l'écran.\n• Exception : l'impureté majeure (janâba) — pas de lecture jusqu'au ghusl, sur tout support.\n• Le Mushaf papier reste préférable, mais la lecture sur écran faite avec attention reçoit la même récompense, in shâ Allah.\n• Aux toilettes : fermer l'affichage du Coran avant d'entrer.\n\nSources : Fatwas d'Ibn Bâz, al-Fawzân et de la Commission Permanente (al-Lajna al-Dâ'ima).\n\nTraduction française utilisée dans l'app : Muhammad Hamidullah (Complexe du Roi Fahd), via le dépôt open source quran-json.": {},
+    "La Prière": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الصلاة"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Run magic analysis ✨"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The Prayer"
           }
         }
       }
     },
-    "Langue" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "اللغة"
+    "La prochaine prière en un coup d'œil.": {},
+    "La qualité prime sur la quantité — la régularité, même petite, est plus aimée que beaucoup d'efforts ponctuels.": {},
+    "La section « Khatma » t'aide à organiser ta lecture du Mushaf à ton rythme :\n\n• Choisis un objectif : par durée (jours), par pages, ou par date cible\n• Presets indicatifs : 1 Juz/jour (~1 mois), ½ Juz/jour (~2 mois), ¼ Juz/jour (~4 mois), Khatma de Ramadan\n• Découpage automatique en pages après chaque prière sélectionnée\n• Journal de lecture sauvegardé localement, streak de régularité, statistiques\n\nRappels post-prière :\n• Notifications discrètes après chaque prière du plan (« 📖 Tes N pages après {prière} »)\n• Identifiants séparés des notifs de prière — elles ne se remplacent jamais\n• Désactivables à tout moment dans la configuration du plan\n\nApproche bienveillante :\n• Pas de couleur alarmante en cas de retard, pas de culpabilisation\n• Met l'accent sur la régularité (streak) plutôt que la performance\n• Rappel constant : « la qualité prime sur la quantité »\n\nTes données restent sur ton appareil — aucun envoi vers un serveur.": {},
+    "La section audio propose des séries de cours islamiques soigneusement sélectionnés :\n\n• Les séries sont choisies parmi des savants et prédicateurs reconnus pour leur attachement au Coran et à la Sounnah authentique\n• La playlist est mise à jour à distance — de nouvelles séries sont ajoutées régulièrement sans mise à jour de l'app\n• Les audios sont mis en cache localement pour une écoute hors-ligne\n• La progression est sauvegardée automatiquement : reprenez là où vous vous étiez arrêté\n\nL'objectif est de faciliter l'apprentissage de la science religieuse au quotidien, pendant vos trajets ou temps libres.": {},
+    "Laissez l'app déduire vos réglages": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "دع التطبيق يكتشف إعداداتك"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Language"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Let the app detect your settings"
           }
         }
       }
     },
-    "Langue de l'application" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "لغة التطبيق"
+    "Lancer l'analyse magique ✨": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تشغيل التحليل السحري ✨"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "App Language"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Run magic analysis ✨"
           }
         }
       }
-    },
-    "Le Cycle de Lumière" : {
-
-    },
-    "Le cycle des 5 prières sur votre cadran." : {
-
-    },
-    "Le rappel arrive après l'iqamah de chaque prière (configuré dans « Ma mosquée ») + %lld min de marge pour finir tes adhkar tranquillement." : {
-
-    },
-    "Le vendredi, Dhuhr sera remplace par l'heure de la Jumu'ah de votre mosquee." : {
-
-    },
-    "Le vendredi, l'horaire Dhuhr sera remplace par l'heure de la Jumu'ah de votre mosquee." : {
-
-    },
-    "Lecture du Quran — rappels" : {
-
-    },
-    "Lecture en cours…" : {
-
-    },
-    "Les audios ecoutes sont sauvegardes pour une lecture instantanee et hors-ligne." : {
-
     },
-    "Les horaires de votre mosquée ont probablement changé avec la nouvelle saison (heure d'été/hiver). \nVoulez-vous relancer une analyse rapide pour rester synchronisé ?" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "من المحتمل أن أوقات الصلاة في مسجدك قد تغيرت مع الموسم الجديد (التوقيت الصيفي/الشتوي). \nهل تريد إجراء تحليل سريع للبقاء متزامنًا؟"
+    "Langue": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "اللغة"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Your mosque's prayer times have likely changed with the new season (summer/winter time). \nWould you like to run a quick analysis to stay synchronized?"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Language"
           }
         }
       }
     },
-    "Les horaires sont calculés localement sur votre appareil à partir de votre position GPS :\n\n• Algorithme astronomique standard (position du soleil)\n• Méthodes supportées : MWL, ISNA, Egypte, Umm Al-Qura, Karachi, et autres\n• Ajustements manuels possibles pour chaque prière (±minutes)\n• Prise en compte automatique du changement d'heure (été/hiver)\n• Aucun serveur distant n'est sollicité pour le calcul — tout est local et privé" : {
-
-    },
-    "Lire" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "تشغيل"
+    "Langue de l'application": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "لغة التطبيق"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Play"
-          }
-        }
-      }
-    },
-    "Lire le Coran" : {
-
-    },
-    "Lire le Coran sur écran" : {
-
-    },
-    "Ma Mosquée" : {
-
-    },
-    "Maghrib" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "المغرب"
-          }
-        }
-      }
-    },
-    "Marque-page actuel" : {
-
-    },
-    "Marquer comme lu" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "تحديد كمقروء"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "App Language"
           }
         }
       }
-    },
-    "Marquer ici" : {
-
-    },
-    "Mecque" : {
-
     },
-    "Médine" : {
-
-    },
-    "Méthode (Angles)" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "طريقة الحساب (الزوايا)"
+    "Le Cycle de Lumière": {},
+    "Le cycle des 5 prières sur votre cadran.": {},
+    "Le rappel arrive après l'iqamah de chaque prière (configuré dans « Ma mosquée ») + %lld min de marge pour finir tes adhkar tranquillement.": {},
+    "Le vendredi, Dhuhr sera remplace par l'heure de la Jumu'ah de votre mosquee.": {},
+    "Le vendredi, l'horaire Dhuhr sera remplace par l'heure de la Jumu'ah de votre mosquee.": {},
+    "Lecture du Quran — rappels": {},
+    "Lecture en cours…": {},
+    "Les audios ecoutes sont sauvegardes pour une lecture instantanee et hors-ligne.": {},
+    "Les horaires de votre mosquée ont probablement changé avec la nouvelle saison (heure d'été/hiver). \nVoulez-vous relancer une analyse rapide pour rester synchronisé ?": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "من المحتمل أن أوقات الصلاة في مسجدك قد تغيرت مع الموسم الجديد (التوقيت الصيفي/الشتوي). \nهل تريد إجراء تحليل سريع للبقاء متزامنًا؟"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Method (Angles)"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your mosque's prayer times have likely changed with the new season (summer/winter time). \nWould you like to run a quick analysis to stay synchronized?"
           }
         }
       }
-    },
-    "Méthode de calcul" : {
-
-    },
-    "Méthode de calcul & Temkine" : {
-
     },
-    "Méthodologie" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "المنهجية"
+    "Les horaires sont calculés localement sur votre appareil à partir de votre position GPS :\n\n• Algorithme astronomique standard (position du soleil)\n• Méthodes supportées : MWL, ISNA, Egypte, Umm Al-Qura, Karachi, et autres\n• Ajustements manuels possibles pour chaque prière (±minutes)\n• Prise en compte automatique du changement d'heure (été/hiver)\n• Aucun serveur distant n'est sollicité pour le calcul — tout est local et privé": {},
+    "Lire le Coran": {},
+    "Lire le Coran sur écran": {},
+    "Ma Mosquée": {},
+    "Maghrib": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "المغرب"
           }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Methodology"
-          }
         }
       }
-    },
-    "Mettre à jour" : {
-
     },
-    "Mise à jour disponible" : {
-
-    },
-    "Moitié de la nuit" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "منتصف الليل"
+    "Marque-page actuel": {},
+    "Marquer comme lu": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تحديد كمقروء"
           }
         }
       }
-    },
-    "Muslim Clock" : {
-
-    },
-    "Muslim Clock — Votre compagnon quotidien" : {
-
-    },
-    "Muslim Clock est une application complète conçue pour accompagner le musulman au quotidien :\n\n• Horaires de prière précis basés sur votre géolocalisation (calcul astronomique, méthode MWL/ISNA/Egypte au choix)\n• Notification de rappel à chaque prière — avec alerte visuelle et sonore\n• Boussole de Qibla calibrée en temps réel\n• Adhkar du matin et du soir avec compteur de répétitions\n• Invocations après la prière (post-salat) et Rawatib\n• Rappel quotidien : un verset du Coran + un Hadith authentique chaque jour\n• Série de cours audio (podcasts islamiques) avec lecture en arrière-plan\n• Widget iOS, Apple Watch et complications pour ne jamais manquer une prière\n• Calendrier hégirien avec mise en avant des mois sacrés, vendredis et jours de Aïd\n• Météo locale intégrée" : {
-
-    },
-    "Muslim Clock respecte votre vie privée :\n\n• Votre position GPS reste sur votre appareil — elle n'est jamais envoyée à un serveur\n• Aucun compte utilisateur requis\n• Aucune publicité\n• Aucun tracker ou analytics tiers\n• Les données (adhkar, progression, réglages) sont stockées localement sur votre iPhone" : {
-
     },
-    "Nom de la mosquée" : {
-
-    },
-    "Nom de la Sunnah" : {
-
-    },
-    "Nous avons fait le choix délibéré de NE PAS diffuser l'Adhan via le téléphone. Voici pourquoi :\n\n1. Respect de l'Adhan — L'Adhan est un acte d'adoration sacré. Le diffuser sur un haut-parleur de téléphone dans des lieux inappropriés (toilettes, transports, réunions) est une forme de manque de respect envers ces paroles sacrées.\n\n2. Avis des savants — Plusieurs savants ont rappelé qu'il n'est pas convenable que l'Adhan retentisse dans des endroits impurs ou inadaptés. Le téléphone nous accompagne partout, y compris dans ces lieux.\n\n3. L'objectif est le rappel — Une notification silencieuse ou avec un son neutre remplit parfaitement le rôle de RAPPEL de la prière, sans risquer de profaner les paroles de l'Adhan.\n\n4. Votre responsabilité — L'Adhan est proclamé dans les mosquées par le Muezzin. L'application vous rappelle l'heure, à vous de répondre à l'appel.\n\nC'est un choix de conscience, pas une limitation technique." : {
-
-    },
-    "Nouvelle Lune" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "محاق"
+    "Marquer ici": {},
+    "Mecque": {},
+    "Médine": {},
+    "Méthode (Angles)": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "طريقة الحساب (الزوايا)"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "New Moon"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Method (Angles)"
           }
         }
       }
-    },
-    "O Allah, accorde Ta priere et Ton salut a notre Prophete Muhammad" : {
-
-    },
-    "Objectif" : {
-
     },
-    "OK" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "حسناً "
+    "Méthode de calcul": {},
+    "Méthode de calcul & Temkine": {},
+    "Mettre à jour": {},
+    "Mise à jour disponible": {},
+    "Moitié de la nuit": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "منتصف الليل"
           }
         }
       }
     },
-    "ON S'APPROCHE" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "نقترب"
+    "Muslim Clock": {},
+    "Muslim Clock — Votre compagnon quotidien": {},
+    "Muslim Clock est une application complète conçue pour accompagner le musulman au quotidien :\n\n• Horaires de prière précis basés sur votre géolocalisation (calcul astronomique, méthode MWL/ISNA/Egypte au choix)\n• Notification de rappel à chaque prière — avec alerte visuelle et sonore\n• Boussole de Qibla calibrée en temps réel\n• Adhkar du matin et du soir avec compteur de répétitions\n• Invocations après la prière (post-salat) et Rawatib\n• Rappel quotidien : un verset du Coran + un Hadith authentique chaque jour\n• Série de cours audio (podcasts islamiques) avec lecture en arrière-plan\n• Widget iOS, Apple Watch et complications pour ne jamais manquer une prière\n• Calendrier hégirien avec mise en avant des mois sacrés, vendredis et jours de Aïd\n• Météo locale intégrée": {},
+    "Muslim Clock respecte votre vie privée :\n\n• Votre position GPS reste sur votre appareil — elle n'est jamais envoyée à un serveur\n• Aucun compte utilisateur requis\n• Aucune publicité\n• Aucun tracker ou analytics tiers\n• Les données (adhkar, progression, réglages) sont stockées localement sur votre iPhone": {},
+    "Nom de la mosquée": {},
+    "Nom de la Sunnah": {},
+    "Nous avons fait le choix délibéré de NE PAS diffuser l'Adhan via le téléphone. Voici pourquoi :\n\n1. Respect de l'Adhan — L'Adhan est un acte d'adoration sacré. Le diffuser sur un haut-parleur de téléphone dans des lieux inappropriés (toilettes, transports, réunions) est une forme de manque de respect envers ces paroles sacrées.\n\n2. Avis des savants — Plusieurs savants ont rappelé qu'il n'est pas convenable que l'Adhan retentisse dans des endroits impurs ou inadaptés. Le téléphone nous accompagne partout, y compris dans ces lieux.\n\n3. L'objectif est le rappel — Une notification silencieuse ou avec un son neutre remplit parfaitement le rôle de RAPPEL de la prière, sans risquer de profaner les paroles de l'Adhan.\n\n4. Votre responsabilité — L'Adhan est proclamé dans les mosquées par le Muezzin. L'application vous rappelle l'heure, à vous de répondre à l'appel.\n\nC'est un choix de conscience, pas une limitation technique.": {},
+    "Nouvelle Lune": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "محاق"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "GETTING CLOSE"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New Moon"
           }
         }
       }
     },
-    "Oui, donner mon avis" : {
-
-    },
-    "Ouvrir Muslim Clock" : {
-
-    },
-    "Ouvrir Réglages" : {
-
-    },
-    "Pages" : {
-
-    },
-    "Pages cumulées" : {
-
-    },
-    "Par date cible" : {
-
-    },
-    "Par durée" : {
-
-    },
-    "Par pages" : {
-
-    },
-    "Parcourir les sourates" : {
-
-    },
-    "Partager" : {
-
-    },
-    "Pas de Rawatib, mais l'invocation entre l'Adhan et l'Iqama est exaucée." : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "لا رواتب، لكن الدعاء بين الأذان والإقامة مستجاب."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No Rawatib, but the supplication between Adhan and Iqama is answered."
+    "O Allah, accorde Ta priere et Ton salut a notre Prophete Muhammad": {},
+    "Objectif": {},
+    "OK": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "حسناً "
           }
         }
       }
     },
-    "Pause" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "إيقاف"
+    "ON S'APPROCHE": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "نقترب"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pause"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "GETTING CLOSE"
           }
         }
       }
-    },
-    "Phases Lunaires" : {
-
     },
-    "Playlist audio — Cours sélectionnés" : {
-
-    },
-    "Pleine Lune" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "بدر"
+    "Oui, donner mon avis": {},
+    "Ouvrez l'app iPhone": {},
+    "Ouvrir la bibliothèque des sourates.": {},
+    "Ouvrir la boussole Qibla.": {},
+    "Ouvrir les Adhkar (matin ou soir selon l'heure).": {},
+    "Ouvrir Muslim Clock": {},
+    "Ouvrir Réglages": {},
+    "Pages": {},
+    "Pages cumulées": {},
+    "Par date cible": {},
+    "Par durée": {},
+    "Par pages": {},
+    "Parcourir les sourates": {},
+    "Partager": {},
+    "Pas de Rawatib, mais l'invocation entre l'Adhan et l'Iqama est exaucée.": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "لا رواتب، لكن الدعاء بين الأذان والإقامة مستجاب."
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Full Moon"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No Rawatib, but the supplication between Adhan and Iqama is answered."
           }
         }
       }
     },
-    "PLUS PROCHE" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "أقرب"
+    "Phases Lunaires": {},
+    "Playlist audio — Cours sélectionnés": {},
+    "Pleine Lune": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "بدر"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "CLOSER"
-          }
-        }
-      }
-    },
-    "Plus tard" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "لاحقاً"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Full Moon"
           }
         }
       }
-    },
-    "Portée du Mushaf" : {
-
-    },
-    "Pour t'aider à progresser dans ta récitation, l'app propose un enregistrement audio simple :\n\n• Bouton micro dans le lecteur de chaque sourate\n• Format M4A léger (~240 Ko/min), durée maximale 10 min\n• Réécoute avant de partager\n• Partage via WhatsApp, Mail, Messages ou AirDrop — par exemple à un imam pour relecture\n\nMode optionnel « Suivi verset par verset » :\n• À chaque transition, tape sur « Verset suivant » pendant l'enregistrement\n• À la relecture, le texte défile et le verset courant est mis en valeur, synchronisé avec l'audio\n• Utile pour repérer une erreur précise et y revenir\n\nConfidentialité :\n• L'enregistrement est stocké dans le répertoire temporaire de l'app et écrasé au prochain\n• Rien n'est envoyé vers un serveur — toi seul décides à qui l'envoyer via le partage iOS\n• L'autorisation micro est demandée uniquement au moment du premier enregistrement" : {
-
-    },
-    "Pourquoi une notification et pas l'Adhan ?" : {
-
     },
-    "Pratique courante en Europe" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ممارسة شائعة في أوروبا"
+    "PLUS PROCHE": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "أقرب"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Common practice in Europe"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CLOSER"
           }
         }
       }
     },
-    "Premier Croissant" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "هلال متزايد"
+    "Plus tard": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "لاحقاً"
           }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Waxing Crescent"
-          }
         }
       }
     },
-    "Premier Quartier" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "تربيع أول"
+    "Portée du Mushaf": {},
+    "Pour t'aider à progresser dans ta récitation, l'app propose un enregistrement audio simple :\n\n• Bouton micro dans le lecteur de chaque sourate\n• Format M4A léger (~240 Ko/min), durée maximale 10 min\n• Réécoute avant de partager\n• Partage via WhatsApp, Mail, Messages ou AirDrop — par exemple à un imam pour relecture\n\nMode optionnel « Suivi verset par verset » :\n• À chaque transition, tape sur « Verset suivant » pendant l'enregistrement\n• À la relecture, le texte défile et le verset courant est mis en valeur, synchronisé avec l'audio\n• Utile pour repérer une erreur précise et y revenir\n\nConfidentialité :\n• L'enregistrement est stocké dans le répertoire temporaire de l'app et écrasé au prochain\n• Rien n'est envoyé vers un serveur — toi seul décides à qui l'envoyer via le partage iOS\n• L'autorisation micro est demandée uniquement au moment du premier enregistrement": {},
+    "Pourquoi une notification et pas l'Adhan ?": {},
+    "Pratique courante en Europe": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ممارسة شائعة في أوروبا"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "First Quarter"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Common practice in Europe"
           }
         }
       }
     },
-    "Preset rapide" : {
-
-    },
-    "PRESQUE..." : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "تقريباً..."
+    "Preset rapide": {},
+    "PRESQUE...": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تقريباً..."
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ALMOST..."
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ALMOST..."
           }
         }
       }
     },
-    "Prêt à enregistrer" : {
-
-    },
-    "Prière de la Nuit" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "قيام الليل"
+    "Prêt à enregistrer": {},
+    "Prière de la Nuit": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "قيام الليل"
           }
         }
       }
-    },
-    "Priere du Vendredi" : {
-
     },
-    "Priere du Vendredi. Sourate Al-Kahf recommandee." : {
-
-    },
-    "Prochaine" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "القادمة"
+    "Priere du Vendredi": {},
+    "Priere du Vendredi. Sourate Al-Kahf recommandee.": {},
+    "Prières · Lune": {},
+    "Prochaine": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "القادمة"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Next"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Next"
           }
         }
       }
-    },
-    "Prochaine Prière" : {
-
-    },
-    "Prochaine prière sur l'écran verrouillé." : {
-
     },
-    "Progression" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "التقدم"
+    "Prochaine Prière": {},
+    "Prochaine prière sur l'écran verrouillé.": {},
+    "Progression": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "التقدم"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Progress"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Progress"
           }
         }
       }
     },
-    "Qibla" : {
-
-    },
-    "Qiblah" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "القبلة"
+    "Qibla": {},
+    "Qiblah": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "القبلة"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Qiblah"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Qiblah"
           }
         }
       }
     },
-    "Qu'Allah accepte tes adhkar" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "تقبّل الله أذكارك"
+    "Qu'Allah accepte tes adhkar": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تقبّل الله أذكارك"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "May Allah accept your adhkar"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "May Allah accept your adhkar"
           }
         }
       }
     },
-    "Quoi de neuf" : {
-
-    },
-    "Rappel" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "تذكير"
+    "Quoi de neuf": {},
+    "Rappel": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تذكير"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Reminder"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reminder"
           }
         }
       }
-    },
-    "Rappel après la prière" : {
-
     },
-    "Rappels post-prière" : {
-
-    },
-    "Rawatib du Dhuhr" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "رواتب الظهر"
+    "Rappel après la prière": {},
+    "Rappels post-prière": {},
+    "Rawatib du Dhuhr": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "رواتب الظهر"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dhuhr Rawatib"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dhuhr Rawatib"
           }
         }
       }
     },
-    "Rawatib du Maghrib" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "رواتب المغرب"
+    "Rawatib du Maghrib": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "رواتب المغرب"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Maghrib Rawatib"
-          }
-        }
-      }
-    },
-    "Recalculer position (> 15km)" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "إعادة حساب الموقع (> 15كم)"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Maghrib Rawatib"
           }
         }
       }
     },
-    "Recherche..." : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "...جاري البحث"
+    "Recalculer position (> 15km)": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إعادة حساب الموقع (> 15كم)"
           }
         }
       }
-    },
-    "Rechercher une sourate…" : {
-
-    },
-    "Récitation — %@" : {
-
-    },
-    "Récitation de %@" : {
-
-    },
-    "Récitation enregistrée (%@). Qu'Allah accepte de nous, آمين." : {
-
-    },
-    "Reconnecté · Actualisation…" : {
-
     },
-    "Réécouter" : {
-
-    },
-    "Réessayer" : {
-
-    },
-    "Réglages" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "الإعدادات"
+    "Recherche...": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "...جاري البحث"
           }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Settings"
-          }
         }
       }
-    },
-    "Régularité — 5 dernières semaines" : {
-
     },
-    "Remplace Dhuhr le vendredi" : {
-
-    },
-    "Reprendre depuis mon marque-page" : {
-
-    },
-    "Reprendre où j'en étais" : {
-
-    },
-    "Reset" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "إعادة"
+    "Rechercher une sourate…": {},
+    "Récitation — %@": {},
+    "Récitation de %@": {},
+    "Récitation enregistrée (%@). Qu'Allah accepte de nous, آمين.": {},
+    "Reconnecté · Actualisation…": {},
+    "Réécouter": {},
+    "Réessayer": {},
+    "Réglages": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الإعدادات"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Reset"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Settings"
           }
         }
       }
     },
-    "Résultat de l'analyse" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "نتيجة التحليل"
+    "Régularité — 5 dernières semaines": {},
+    "Remplace Dhuhr le vendredi": {},
+    "Reprendre depuis mon marque-page": {},
+    "Reprendre où j'en étais": {},
+    "Reset": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إعادة"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Analysis Result"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reset"
           }
         }
       }
     },
-    "Saisissez les horaires affichés à votre mosquée aujourd'hui. L'app va analyser leur méthode et s'y conformer." : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "أدخل أوقات الصلاة المعروضة في مسجدك اليوم. سيحلل التطبيق طريقتهم ويتوافق معها."
+    "restant": {},
+    "Résultat de l'analyse": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "نتيجة التحليل"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Enter the prayer times displayed at your mosque today. The app will analyze their method and match it."
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Analysis Result"
           }
         }
       }
     },
-    "Saisissez les horaires de votre mosquée aujourd'hui. L'app va en déduire la méthode de calcul et les délais Iqamah." : {
-
-    },
-    "Salat" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "الصلاة"
+    "Saisissez les horaires de votre mosquée aujourd'hui. L'app va en déduire la méthode de calcul et les délais Iqamah.": {},
+    "Salat": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الصلاة"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Salat"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Salat"
           }
         }
       }
-    },
-    "Salat · 5 Cercles" : {
-
-    },
-    "Semaine" : {
-
     },
-    "SÉRIE AUDIO" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "سلسلة صوتية"
+    "Salat · 5 Cercles": {},
+    "Semaine": {},
+    "SÉRIE AUDIO": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "سلسلة صوتية"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "AUDIO SERIES"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AUDIO SERIES"
           }
         }
       }
     },
-    "Série complétée à %@" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "اكتملت السلسلة بنسبة %@"
+    "Série complétée à %@": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "اكتملت السلسلة بنسبة %@"
           }
         }
       }
     },
-    "Sourates" : {
-
-    },
-    "Sources" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "المصادر"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sources"
-          }
-        }
-      }
-    },
-    "Sources & Transparence" : {
-
-    },
-    "Sources Authentiques" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "مصادر موثوقة"
+    "Sourates": {},
+    "Sources & Transparence": {},
+    "Sources Authentiques": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "مصادر موثوقة"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Authentic Sources"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Authentic Sources"
           }
         }
       }
-    },
-    "Sources des contenus religieux" : {
-
-    },
-    "Suivez vos prières d'un simple coup d'œil." : {
-
     },
-    "Suivi verset par verset" : {
-
-    },
-    "Sunnah du Fajr" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "سنة الفجر"
+    "Sources des contenus religieux": {},
+    "Suivez vos prières d'un simple coup d'œil.": {},
+    "Suivi verset par verset": {},
+    "Sunnah du Fajr": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "سنة الفجر"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fajr Sunnah"
-          }
-        }
-      }
-    },
-    "Supprimer" : {
-
-    },
-    "sur %@" : {
-
-    },
-    "Tape sur « Verset suivant » à chaque transition pour synchroniser la lecture." : {
-
-    },
-    "Temps de la prière" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "وقت الصلاة"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fajr Sunnah"
           }
         }
       }
     },
-    "Temps du %@" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "وقت %@"
+    "Supprimer": {},
+    "sur %@": {},
+    "Synchronisation": {},
+    "Tape sur « Verset suivant » à chaque transition pour synchroniser la lecture.": {},
+    "Temps de la prière": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "وقت الصلاة"
           }
         }
       }
     },
-    "Tes %lld pages après %@ — petit pas, grande constance." : {
-      "localizations" : {
-        "fr" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Tes %1$lld pages après %2$@ — petit pas, grande constance."
+    "Temps du %@": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "وقت %@"
           }
         }
       }
     },
-    "Ton rythme" : {
-
-    },
-    "Tous les contenus spirituels (Hadiths, Invocations, Adhkar) sont rigoureusement sélectionnés à partir de sources authentiques :\n\n• Sahih Al-Bukhari\n• Sahih Muslim\n• Sunan Abu Dawud, At-Tirmidhi, An-Nasa'i, Ibn Majah\n• Riyad As-Salihin (Imam An-Nawawi)\n• Hisn Al-Muslim (La Citadelle du Musulman)\n\nL'authentification repose sur les travaux des grands savants du Hadith, notamment Sheikh Al-Albani (rahimahullah).\n\nAucun hadith faible (da'if) n'est utilisé pour les invocations. En cas de doute, le degré d'authenticité est précisé." : {
-
-    },
-    "Tous les contenus spirituels de cette application (Hadiths, Invocations) sont rigoureusement sélectionnés. Nous nous basons sur les recueils authentiques (Sahih Al-Bukhari, Sahih Muslim) et les travaux d'authentification des grands savants de la Sounnah (comme Sheikh Al-Albani, rahimahullah)." : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "جميع المحتويات الروحية في هذا التطبيق (أحاديث، أذكار) مختارة بعناية. نعتمد على المجموعات الصحيحة (صحيح البخاري، صحيح مسلم) وأعمال التحقيق للعلماء الكبار من أهل السنة (كالشيخ الألباني رحمه الله)."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "All spiritual content in this app (Hadiths, Invocations) is rigorously selected. We rely on authentic collections (Sahih Al-Bukhari, Sahih Muslim) and the authentication work of great scholars of the Sunnah (such as Sheikh Al-Albani, rahimahullah)."
+    "Tes %lld pages après %@ — petit pas, grande constance.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Tes %1$lld pages après %2$@ — petit pas, grande constance."
           }
         }
       }
-    },
-    "Tous les fichiers audio caches seront supprimes. Ils seront re-telecharges a la prochaine ecoute." : {
-
     },
-    "Traduction française" : {
-
-    },
-    "Translittération" : {
-
-    },
-    "Transparence & à propos" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "الشفافية وحول التطبيق"
+    "Ton rythme": {},
+    "Tous les contenus spirituels (Hadiths, Invocations, Adhkar) sont rigoureusement sélectionnés à partir de sources authentiques :\n\n• Sahih Al-Bukhari\n• Sahih Muslim\n• Sunan Abu Dawud, At-Tirmidhi, An-Nasa'i, Ibn Majah\n• Riyad As-Salihin (Imam An-Nawawi)\n• Hisn Al-Muslim (La Citadelle du Musulman)\n\nL'authentification repose sur les travaux des grands savants du Hadith, notamment Sheikh Al-Albani (rahimahullah).\n\nAucun hadith faible (da'if) n'est utilisé pour les invocations. En cas de doute, le degré d'authenticité est précisé.": {},
+    "Tous les fichiers audio caches seront supprimes. Ils seront re-telecharges a la prochaine ecoute.": {},
+    "Traduction française": {},
+    "Translittération": {},
+    "Transparence & à propos": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الشفافية وحول التطبيق"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Transparency & About"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Transparency & About"
           }
         }
       }
-    },
-    "Transparence & Méthodologie" : {
-
     },
-    "Type" : {
-
-    },
-    "Une erreur est survenue" : {
-
-    },
-    "Valider une Sunnah" : {
-
-    },
-    "Vendredi" : {
-
-    },
-    "Verset" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "آية"
+    "Transparence & Méthodologie": {},
+    "Type": {},
+    "Une erreur est survenue": {},
+    "Valider une Sunnah": {},
+    "Vendredi": {},
+    "Verset": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "آية"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Verse"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verse"
           }
         }
       }
-    },
-    "Verset %lld" : {
-
     },
-    "Verset du Coran" : {
-
-    },
-    "Verset suivant" : {
-
-    },
-    "Version %@" : {
-
-    },
-    "Vider le cache ?" : {
-
-    },
-    "Vider le cache audio" : {
-
-    },
-    "Vie privée" : {
-
-    },
-    "Widgets" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "الأدوات"
+    "Verset %lld": {},
+    "Verset du Coran": {},
+    "Verset suivant": {},
+    "Version %@": {},
+    "Vider le cache ?": {},
+    "Vider le cache audio": {},
+    "Vie privée": {},
+    "Widgets": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الأدوات"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Widgets"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Widgets"
           }
         }
       }
-    },
-    "x %lld" : {
-
-    },
-    "أذكار بعد الصلاة" : {
-
-    },
-    "العربية" : {
-
-    },
-    "حرام" : {
-
-    },
-    "عربي" : {
-
     },
-    "قيام الليل" : {
-
-    }
+    "x %lld": {},
+    "أذكار بعد الصلاة": {},
+    "العربية": {},
+    "الفجر": {},
+    "بسم الله": {},
+    "حرام": {},
+    "عربي": {},
+    "قيام الليل": {}
   },
-  "version" : "1.0"
+  "version": "1.0"
 }

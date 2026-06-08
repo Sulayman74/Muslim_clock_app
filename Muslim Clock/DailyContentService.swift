@@ -2,12 +2,6 @@ import Foundation
 import SwiftUI
 import Combine
 
-/// Identifiant du App Group partagé iOS ↔ Watch ↔ Widget ↔ Complication.
-/// Doit rester aligné avec les entitlements (`Muslim Clock.entitlements`,
-/// `WatchExtension Watch App.entitlements`, `PrayerComplication.entitlements`,
-/// `SalatWidgetExtension.entitlements`).
-private let appGroupIdentifier = "group.kappsi.Muslim-Clock"
-
 // MARK: - Modèles API Coran
 struct QuranAPIResponse: Codable {
     let data: AyahData
@@ -87,7 +81,7 @@ class DailyContentService: ObservableObject {
             "daily_hadith_source": dailyHadithSource,
         ]
 
-        let shared = UserDefaults(suiteName: appGroupIdentifier)
+        let shared = UserDefaults(suiteName: AppGroup.identifier)
         for (k, v) in payload { shared?.set(v, forKey: k) }
 
         WatchSessionManager.shared.sendSettings(payload)

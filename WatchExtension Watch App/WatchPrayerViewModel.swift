@@ -2,10 +2,6 @@ import Foundation
 import SwiftUI
 import Combine
 
-/// Identifiant du App Group partagé iOS ↔ Watch.
-/// Doit rester aligné avec `WatchExtension Watch App.entitlements`.
-private let appGroupIdentifier = "group.kappsi.Muslim-Clock"
-
 struct WatchPrayer: Identifiable {
     let id = UUID()
     let name: String
@@ -70,7 +66,7 @@ class WatchPrayerViewModel: ObservableObject {
     @Published var isDataAvailable = false
     @Published var season = WatchIslamicSeason.current()
 
-    private let defaults = UserDefaults(suiteName: appGroupIdentifier)
+    private let defaults = UserDefaults(suiteName: AppGroup.identifier)
 
     private let prayerDefs: [(name: String, arabic: String, key: String)] = [
         ("Fajr",    "الفجر",  "prayer_fajr"),
@@ -173,7 +169,7 @@ class WatchDailyContentViewModel: ObservableObject {
     @Published var hadithAR: String = ""
     @Published var hadithSource: String = ""
 
-    private let defaults = UserDefaults(suiteName: appGroupIdentifier)
+    private let defaults = UserDefaults(suiteName: AppGroup.identifier)
 
     var hasContent: Bool {
         !ayahFR.isEmpty || !hadithFR.isEmpty

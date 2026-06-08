@@ -44,7 +44,7 @@ struct SalatWidgetLiveActivity: Widget {
                         Text(context.state.targetTime, style: .time)
                             .font(.headline)
                             .monospacedDigit()
-                        Text("heure")
+                        Text(String(localized: "heure"))
                             .font(.caption2)
                             .foregroundStyle(.secondary)
                     }
@@ -55,7 +55,7 @@ struct SalatWidgetLiveActivity: Widget {
                         if context.state.isPrayerTime {
                             Image(systemName: "bell.badge.fill")
                                 .foregroundStyle(.orange)
-                            Text("C'est l'heure de la prière")
+                            Text(String(localized: "C'est l'heure de la prière"))
                                 .font(.system(.title3, design: .rounded, weight: .bold))
                                 .foregroundStyle(.orange)
                         } else {
@@ -130,11 +130,11 @@ private struct LockScreenView: View {
             // Countdown live (ou label "C'est l'heure" à T=0)
             VStack(alignment: .trailing, spacing: 2) {
                 if context.state.isPrayerTime {
-                    Text("C'est l'heure")
+                    Text(String(localized: "C'est l'heure"))
                         .font(.system(.subheadline, design: .rounded, weight: .bold))
                         .foregroundStyle(.orange)
                         .frame(minWidth: 70, alignment: .trailing)
-                    Text("de la prière")
+                    Text(String(localized: "de la prière"))
                         .font(.caption2)
                         .foregroundStyle(.secondary)
                 } else {
@@ -143,7 +143,7 @@ private struct LockScreenView: View {
                         .monospacedDigit()
                         .foregroundStyle(.orange)
                         .frame(minWidth: 70, alignment: .trailing)
-                    Text("restant")
+                    Text(String(localized: "restant"))
                         .font(.caption2)
                         .foregroundStyle(.secondary)
                 }

@@ -34,10 +34,6 @@ struct PrayerEntry: TimelineEntry {
 
 private enum PrayerData {
 
-    /// Identifiant du App Group partagé iOS ↔ Watch ↔ Complication.
-    /// Doit rester aligné avec `PrayerComplication.entitlements`.
-    static let appGroupIdentifier = "group.kappsi.Muslim-Clock"
-
     struct Def {
         let arabic: String
         let init_: String
@@ -53,7 +49,7 @@ private enum PrayerData {
     ]
 
     static func buildEntry() -> PrayerEntry {
-        let defaults = UserDefaults(suiteName: PrayerData.appGroupIdentifier)
+        let defaults = UserDefaults(suiteName: AppGroup.identifier)
         let now = Date()
 
         // Jumu'ah : le vendredi, remplacer le label Dhuhr

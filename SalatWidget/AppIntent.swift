@@ -7,10 +7,6 @@ import os
 struct ToggleSunnahIntent: AppIntent {
     static var title: LocalizedStringResource = "Valider une Sunnah"
 
-    /// Identifiant du App Group partagé iOS ↔ Widget. Statique dans la struct pour
-    /// rester nonisolated (AppIntent.perform est nonisolated en Swift 6).
-    private static let appGroupIdentifier = "group.kappsi.Muslim-Clock"
-
     @Parameter(title: "Nom de la Sunnah")
     var sunnahName: String
 
@@ -22,7 +18,7 @@ struct ToggleSunnahIntent: AppIntent {
     }
 
     func perform() async throws -> some IntentResult {
-        guard let sharedDefaults = UserDefaults(suiteName: Self.appGroupIdentifier) else {
+        guard let sharedDefaults = UserDefaults(suiteName: AppGroup.identifier) else {
             return .result()
         }
 
@@ -58,8 +54,7 @@ enum MuslimClockLaunchTarget: String, AppEnum {
 struct OpenInMuslimClockIntent: OpenIntent {
     static var title: LocalizedStringResource = "Ouvrir Muslim Clock"
 
-    /// Constantes statiques dans la struct pour rester nonisolated (Swift 6 + @MainActor default).
-    private static let appGroupIdentifier = "group.kappsi.Muslim-Clock"
+    /// Logger statique pour rester nonisolated (Swift 6 + @MainActor default).
     private static let log = Logger(subsystem: "kappsi.Muslim-Clock", category: "WidgetIntent")
 
     @Parameter(title: "Destination")
@@ -73,7 +68,7 @@ struct OpenInMuslimClockIntent: OpenIntent {
 
     func perform() async throws -> some IntentResult {
         Self.log.info("🎯 OpenInMuslimClockIntent.perform() FIRED target=\(target.rawValue, privacy: .public)")
-        let shared = UserDefaults(suiteName: Self.appGroupIdentifier)
+        let shared = UserDefaults(suiteName: AppGroup.identifier)
         if shared == nil {
             Self.log.error("❌ UserDefaults(suiteName:) returned nil — App Group inaccessible")
         }

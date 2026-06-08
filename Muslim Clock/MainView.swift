@@ -523,7 +523,7 @@ struct MainView: View {
     /// du widget. L'app peut passer à `.active` AVANT que la clé soit écrite côté widget.
     /// On retente 3 fois à 250ms d'intervalle pour couvrir cette race condition.
     private func handleControlDeepLink(retryCount: Int = 0) {
-        let shared = UserDefaults(suiteName: "group.kappsi.Muslim-Clock")
+        let shared = UserDefaults(suiteName: AppGroup.identifier)
         let target = shared?.string(forKey: "controlDeepLinkTarget")
         let timestamp = shared?.double(forKey: "controlDeepLinkTimestamp") ?? 0
         let ageSeconds = Date().timeIntervalSince1970 - timestamp

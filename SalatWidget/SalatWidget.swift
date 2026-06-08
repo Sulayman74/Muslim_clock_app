@@ -1,13 +1,6 @@
 import AppIntents
-import UIKit
 import SwiftUI
-import AVFoundation
 import WidgetKit
-import Adhan
-
-/// Identifiant du App Group partagé iOS ↔ Widget.
-/// Doit rester aligné avec `SalatWidgetExtension.entitlements`.
-private let appGroupIdentifier = "group.kappsi.Muslim-Clock"
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 // MODÈLE DE DONNÉES
@@ -29,13 +22,44 @@ struct SimpleEntry: TimelineEntry {
 }
 
 enum WidgetUtils {
-    
+
     static let timeFormatter: DateFormatter = {
         let f = DateFormatter()
         f.dateFormat = "HH:mm"
         return f
     }()
-    
+
+    static let hijriArabicFormatter: DateFormatter = {
+        let f = DateFormatter()
+        f.calendar = Calendar(identifier: .islamicUmmAlQura)
+        f.locale = Locale(identifier: "ar_SA")
+        f.dateFormat = "d MMMM"
+        return f
+    }()
+
+    static let gregorianFrenchFullFormatter: DateFormatter = {
+        let f = DateFormatter()
+        f.locale = Locale(identifier: "fr_FR")
+        f.dateFormat = "d MMMM yyyy"
+        return f
+    }()
+
+    static let hijriArabicFullFormatter: DateFormatter = {
+        let f = DateFormatter()
+        f.calendar = Calendar(identifier: .islamicUmmAlQura)
+        f.locale = Locale(identifier: "ar_SA")
+        f.dateFormat = "d MMMM yyyy"
+        return f
+    }()
+
+    static let hijriFrenchFullFormatter: DateFormatter = {
+        let f = DateFormatter()
+        f.calendar = Calendar(identifier: .islamicUmmAlQura)
+        f.locale = Locale(identifier: "fr_FR")
+        f.dateFormat = "d MMMM yyyy"
+        return f
+    }()
+
     static func formatTime(_ date: Date?) -> String {
         guard let d = date else { return "--:--" }
         return timeFormatter.string(from: d)
@@ -63,85 +87,48 @@ enum WidgetUtils {
 }
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// PROVIDER PARTAGÉ — LIT LES RÉGLAGES SMART SETUP
+// PROVIDER PARTAGÉ — LIT LES TIMESTAMPS DE L'APP iOS
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 struct SalatProvider: TimelineProvider {
-    
+
+    /// Timestamps écrits dans l'App Group par `PrayerTimesViewModel`.
+    /// Source unique de vérité — le widget ne recalcule pas, il lit.
+    private struct PrayerTimestamps {
+        let fajr: Date?
+        let dhuhr: Date?
+        let asr: Date?
+        let maghrib: Date?
+        let isha: Date?
+        let tomorrowFajr: Date?
+    }
+
     private var shared: UserDefaults? {
-        UserDefaults(suiteName: appGroupIdentifier)
+        UserDefaults(suiteName: AppGroup.identifier)
     }
-    
-    private func getCoordinates() -> (Double, Double) {
-        let lat = shared?.double(forKey: "saved_latitude") ?? 48.8566
-        let lon = shared?.double(forKey: "saved_longitude") ?? 2.3522
-        return (lat == 0 ? 48.8566 : lat, lon == 0 ? 2.3522 : lon)
-    }
-    
-    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    // ✅ MÊME LOGIQUE QUE PrayerTimesViewModel
-    // Lit les clés "w_*" écrites par l'app
-    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    private func getParams() -> CalculationParameters {
+
+    private func readTimestamps() -> PrayerTimestamps {
         let sd = shared
-        let method = sd?.string(forKey: "w_calculationMethod") ?? "UOIF (12°)"
-        let fajrOffset = sd?.integer(forKey: "w_fajrOffset") ?? 0
-        let dhuhrOffset = sd?.integer(forKey: "w_dhuhrOffset") ?? 0
-        let asrOffset = sd?.integer(forKey: "w_asrOffset") ?? 0
-        let maghribOffset = sd?.integer(forKey: "w_maghribOffset") ?? 0
-        let isIshaFixed = sd?.bool(forKey: "w_isIshaFixed") ?? true
-        let ishaFixedDuration = sd?.integer(forKey: "w_ishaFixedDuration") ?? 90
-        let ishaOffset = sd?.integer(forKey: "w_ishaOffset") ?? 0
-        
-        // 1. Méthode / Angles
-        var params: CalculationParameters
-        
-        switch method {
-            case "UOIF (12°)":
-                params = CalculationMethod.muslimWorldLeague.params
-                params.fajrAngle = 12
-                params.ishaAngle = 12
-            case "ISNA (15°)":
-                params = CalculationMethod.northAmerica.params
-            case "Mosquée de Paris":
-                params = CalculationMethod.muslimWorldLeague.params
-                params.fajrAngle = 18
-                params.ishaAngle = 18
-            default: // "Ligue Islamique (18°)"
-                params = CalculationMethod.muslimWorldLeague.params
+        func date(_ key: String) -> Date? {
+            let v = sd?.double(forKey: key) ?? 0
+            return v > 0 ? Date(timeIntervalSince1970: v) : nil
         }
-        
-        params.madhab = .shafi
-        
-        // 2. Offsets (Temkine)
-        params.adjustments.fajr = fajrOffset
-        params.adjustments.dhuhr = dhuhrOffset
-        params.adjustments.asr = asrOffset
-        params.adjustments.maghrib = maghribOffset
-        
-        // 3. Isha fixe ou astronomique
-        if isIshaFixed {
-            params.ishaInterval = ishaFixedDuration == 0 ? 90 : ishaFixedDuration
-            params.adjustments.isha = maghribOffset
-        } else {
-            params.adjustments.isha = ishaOffset
-        }
-        
-        return params
+        return PrayerTimestamps(
+            fajr: date("prayer_fajr"),
+            dhuhr: date("prayer_dhuhr"),
+            asr: date("prayer_asr"),
+            maghrib: date("prayer_maghrib"),
+            isha: date("prayer_isha"),
+            tomorrowFajr: date("prayer_fajr_tomorrow")
+        )
     }
-    
+
     private func hijriArabic(for date: Date) -> String {
-        let f = DateFormatter()
-        f.calendar = Calendar(identifier: .islamicUmmAlQura)
-        f.locale = Locale(identifier: "ar_SA")
-        f.dateFormat = "d MMMM"
-        return f.string(from: date)
+        WidgetUtils.hijriArabicFormatter.string(from: date)
     }
-    
+
     func buildEntry(for date: Date) -> SimpleEntry {
-        let (lat, lon) = getCoordinates()
-        let params = getParams()
-        let comp = Calendar.current.dateComponents([.year, .month, .day], from: date)
-        
+        let t = readTimestamps()
+
         var statuses: [String: PrayerStatus] = [
             "Fajr": .future, "Dhuhr": .future, "Asr": .future,
             "Maghrib": .future, "Isha": .future
@@ -149,36 +136,35 @@ struct SalatProvider: TimelineProvider {
         var times: [String: Date] = [:]
         var nextName = "Fajr"
         var nextDate: Date? = nil
-        
-        if let pt = PrayerTimes(coordinates: Coordinates(latitude: lat, longitude: lon), date: comp, calculationParameters: params) {
-            let prayers: [(String, Date)] = [
-                ("Fajr", pt.fajr), ("Dhuhr", pt.dhuhr), ("Asr", pt.asr),
-                ("Maghrib", pt.maghrib), ("Isha", pt.isha)
-            ]
-            
-            var found = false
-            for (name, time) in prayers {
-                times[name] = time
-                if date >= time {
-                    statuses[name] = .passed
-                } else if !found {
-                    found = true
-                    nextName = name
-                    nextDate = time
-                    statuses[name] = time.timeIntervalSince(date) <= 15 * 60 ? .nextImminent : .nextNormal
-                }
-            }
-            
-            if !found {
-                nextName = "Fajr"
-                let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: date)!
-                let tc = Calendar.current.dateComponents([.year, .month, .day], from: tomorrow)
-                if let tp = PrayerTimes(coordinates: Coordinates(latitude: lat, longitude: lon), date: tc, calculationParameters: params) {
-                    nextDate = tp.fajr
-                }
+
+        let prayers: [(String, Date?)] = [
+            ("Fajr", t.fajr),
+            ("Dhuhr", t.dhuhr),
+            ("Asr", t.asr),
+            ("Maghrib", t.maghrib),
+            ("Isha", t.isha)
+        ]
+
+        var found = false
+        for (name, timeOpt) in prayers {
+            guard let time = timeOpt else { continue }
+            times[name] = time
+            if date >= time {
+                statuses[name] = .passed
+            } else if !found {
+                found = true
+                nextName = name
+                nextDate = time
+                statuses[name] = time.timeIntervalSince(date) <= 15 * 60 ? .nextImminent : .nextNormal
             }
         }
-        
+
+        // Après Isha → prochaine prière = Fajr de demain
+        if !found {
+            nextName = "Fajr"
+            nextDate = t.tomorrowFajr
+        }
+
         return SimpleEntry(
             date: date,
             prayerStatuses: statuses,
@@ -188,7 +174,7 @@ struct SalatProvider: TimelineProvider {
             hijriDateAr: hijriArabic(for: date)
         )
     }
-    
+
     func placeholder(in context: Context) -> SimpleEntry {
         SimpleEntry(
             date: .now,
@@ -199,48 +185,32 @@ struct SalatProvider: TimelineProvider {
             hijriDateAr: "١٢ شوال"
         )
     }
-    
+
     func getSnapshot(in context: Context, completion: @escaping (SimpleEntry) -> Void) {
         completion(buildEntry(for: .now))
     }
-    
+
     func getTimeline(in context: Context, completion: @escaping (Timeline<SimpleEntry>) -> Void) {
         let now = Date()
         var entries: [SimpleEntry] = [buildEntry(for: now)]
-        
-        let (lat, lon) = getCoordinates()
-        let params = getParams()
-        let comp = Calendar.current.dateComponents([.year, .month, .day], from: now)
-        
-        let checkpoints: [TimeInterval] = [
-            -30 * 60,
-            -15 * 60,
-            -5 * 60,
-            0
-        ]
-        
-        if let pt = PrayerTimes(
-            coordinates: Coordinates(latitude: lat, longitude: lon),
-            date: comp,
-            calculationParameters: params
-        ) {
-            
-            let prayerTimes = [pt.fajr, pt.dhuhr, pt.asr, pt.maghrib, pt.isha]
-            
-            for time in prayerTimes {
-                for offset in checkpoints {
-                    let trigger = time.addingTimeInterval(offset)
-                    if trigger > now {
-                        entries.append(buildEntry(for: trigger))
-                    }
+
+        let t = readTimestamps()
+        let allTimes = [t.fajr, t.dhuhr, t.asr, t.maghrib, t.isha].compactMap { $0 }
+        let checkpoints: [TimeInterval] = [-30 * 60, -15 * 60, -5 * 60, 0]
+
+        for time in allTimes {
+            for offset in checkpoints {
+                let trigger = time.addingTimeInterval(offset)
+                if trigger > now {
+                    entries.append(buildEntry(for: trigger))
                 }
             }
         }
-        
-        // ✅ Anti doublons + tri
+
+        // Anti doublons + tri
         let uniqueDates = Array(Set(entries.map { $0.date })).sorted()
         let finalEntries = uniqueDates.map { buildEntry(for: $0) }
-        
+
         completion(Timeline(entries: finalEntries, policy: .atEnd))
     }
 
@@ -279,16 +249,13 @@ struct SalatProvider: TimelineProvider {
     struct HomeWidgetDateHeader: View {
         var date: Date
         var gregorianFr: String {
-            let f = DateFormatter(); f.locale = Locale(identifier: "fr_FR"); f.dateFormat = "d MMMM yyyy"
-            return f.string(from: date).capitalized
+            WidgetUtils.gregorianFrenchFullFormatter.string(from: date).capitalized
         }
         var hijriAr: String {
-            let f = DateFormatter(); f.calendar = Calendar(identifier: .islamicUmmAlQura); f.locale = Locale(identifier: "ar_SA"); f.dateFormat = "d MMMM yyyy"
-            return f.string(from: date)
+            WidgetUtils.hijriArabicFullFormatter.string(from: date)
         }
         var hijriFr: String {
-            let f = DateFormatter(); f.calendar = Calendar(identifier: .islamicUmmAlQura); f.locale = Locale(identifier: "fr_FR"); f.dateFormat = "d MMMM yyyy"
-            return f.string(from: date)
+            WidgetUtils.hijriFrenchFullFormatter.string(from: date)
         }
         var body: some View {
             VStack(spacing: 2) {
@@ -410,40 +377,26 @@ struct SalatProvider: TimelineProvider {
         
         private func realProgress(entry: SimpleEntry) -> Double {
             guard let next = entry.nextPrayerDate else { return 0 }
-            
-            let calendar = Calendar.current
-            
-            // 🔍 1. Cherche dernière prière aujourd’hui
+
+            // 🔍 Dernière prière passée aujourd'hui (la plus tardive avant entry.date)
             let previousToday = entry.prayerTimes
                 .filter { $0.value < entry.date }
                 .max(by: { $0.value < $1.value })?.value
-            
+
             var previous = previousToday
-            
-            // 🌙 2. Si aucune → on est après minuit AVANT Fajr
-            if previous == nil {
-                
-                // 👉 recalcul Isha d’hier
-                let yesterday = calendar.date(byAdding: .day, value: -1, to: entry.date)!
-                let comp = calendar.dateComponents([.year, .month, .day], from: yesterday)
-                
-                let (lat, lon) = SalatProvider().getCoordinates()
-                let params = SalatProvider().getParams()
-                
-                if let pt = PrayerTimes(
-                    coordinates: Coordinates(latitude: lat, longitude: lon),
-                    date: comp,
-                    calculationParameters: params
-                ) {
-                    previous = pt.isha
-                }
+
+            // 🌙 Entre minuit et Fajr : aucune prière encore passée aujourd'hui.
+            // Approximation : Isha d'hier ≈ Isha d'aujourd'hui − 24 h (suffisant pour
+            // un anneau de progression — quelques minutes d'imprécision acceptables).
+            if previous == nil, let isha = entry.prayerTimes["Isha"] {
+                previous = isha.addingTimeInterval(-24 * 3600)
             }
-            
+
             guard let prev = previous else { return 0 }
-            
+
             let total = next.timeIntervalSince(prev)
             let elapsed = entry.date.timeIntervalSince(prev)
-            
+
             return max(0, min(1, elapsed / total))
         }
         
