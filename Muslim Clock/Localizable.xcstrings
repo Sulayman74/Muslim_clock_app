@@ -588,7 +588,7 @@
         }
       }
     },
-    "Conseillé : laisser un écart d'au moins 5 min avec le rappel Coran (défaut 10 min) pour éviter deux notifs simultanées." : {
+    "Conseillé : laisser au moins 5 min d'écart avec le rappel Coran (défaut 10 min) pour éviter deux notifs simultanées." : {
 
     },
     "Continuer" : {
@@ -1146,6 +1146,9 @@
       }
     },
     "Les horaires sont calculés localement sur votre appareil à partir de votre position GPS :\n\n• Algorithme astronomique standard (position du soleil)\n• Méthodes supportées : MWL, ISNA, Egypte, Umm Al-Qura, Karachi, et autres\n• Ajustements manuels possibles pour chaque prière (±minutes)\n• Prise en compte automatique du changement d'heure (été/hiver)\n• Aucun serveur distant n'est sollicité pour le calcul — tout est local et privé" : {
+
+    },
+    "Les notifications ne sont programmées que pour les prières **à venir** : si Fajr et Asr sont déjà passés aujourd'hui, elles arriveront demain matin." : {
 
     },
     "Lire le Coran" : {

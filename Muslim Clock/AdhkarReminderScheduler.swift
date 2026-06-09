@@ -86,6 +86,41 @@ enum AdhkarReminderScheduler {
         }
     }
 
+    /// Programme une notif Adhkar de test qui fire dans `seconds` secondes.
+    /// Utilisé par le bouton de test DEBUG dans SettingsView pour valider la pipeline
+    /// (schedule → fire → tap → deeplink → ouverture AdhkarView).
+    /// - Parameters:
+    ///   - timing: Matin ou soir (détermine titre, deepLinkTarget, gradient sheet).
+    ///   - seconds: Délai avant déclenchement (recommandé 10s pour avoir le temps de
+    ///     background l'app).
+    static func scheduleTestNotification(timing: AdhkarTiming, seconds: TimeInterval = 10) {
+        let internalTiming: Timing = (timing == .morning) ? .morning : .evening
+
+        let content = UNMutableNotificationContent()
+        content.title = "🧪 [TEST] " + internalTiming.title
+        content.body = internalTiming.body
+        content.sound = .default
+        content.userInfo = [
+            "module": "adhkar_reminder",
+            "timing": internalTiming.rawValue,
+            "deepLinkTarget": internalTiming.deepLinkTarget,
+        ]
+
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: max(1, seconds), repeats: false)
+        let request = UNNotificationRequest(
+            identifier: "\(Self.identifierPrefix)test_\(internalTiming.rawValue)_\(Int(Date().timeIntervalSince1970))",
+            content: content,
+            trigger: trigger
+        )
+        UNUserNotificationCenter.current().add(request) { error in
+            if let error {
+                print("⚠️ [AdhkarScheduler.test] \(error.localizedDescription)")
+            } else {
+                print("🧪 [AdhkarScheduler.test] Notif test \(internalTiming.rawValue) programmée dans \(Int(seconds))s")
+            }
+        }
+    }
+
     /// Annule toutes les notifs Adhkar (sans toucher aux autres modules).
     static func cancelAll() {
         Task {
@@ -100,6 +135,8 @@ enum AdhkarReminderScheduler {
 
     // MARK: - Privé
 
+    /// Type interne (private) qui correspond 1:1 à `AdhkarTiming` (public).
+    /// Évite d'exposer `AdhkarTiming` au scheduler (séparation domain).
     private enum Timing: String {
         case morning, evening
 

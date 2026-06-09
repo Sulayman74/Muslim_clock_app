@@ -778,13 +778,44 @@ private struct AdhkarReminderSettingsSection: View {
                 }
                 .listRowBackground(Color.white.opacity(0.08))
             }
+
+            #if DEBUG
+            // Boutons de test (DEBUG uniquement) — programment une notif dans 10s
+            // pour vérifier la pipeline sans attendre Fajr ou Asr.
+            Button {
+                AdhkarReminderScheduler.scheduleTestNotification(timing: .morning, seconds: 10)
+            } label: {
+                HStack {
+                    Image(systemName: "testtube.2")
+                        .foregroundStyle(.purple)
+                    Text("🧪 Tester notif matin (dans 10s)")
+                        .foregroundColor(.white)
+                }
+            }
+            .listRowBackground(Color.white.opacity(0.08))
+
+            Button {
+                AdhkarReminderScheduler.scheduleTestNotification(timing: .evening, seconds: 10)
+            } label: {
+                HStack {
+                    Image(systemName: "testtube.2")
+                        .foregroundStyle(.purple)
+                    Text("🧪 Tester notif soir (dans 10s)")
+                        .foregroundColor(.white)
+                }
+            }
+            .listRowBackground(Color.white.opacity(0.08))
+            #endif
         } header: {
             Text("Adhkar — rappels")
                 .foregroundColor(.white.opacity(0.6))
         } footer: {
-            Text("Conseillé : laisser un écart d'au moins 5 min avec le rappel Coran (défaut 10 min) pour éviter deux notifs simultanées.")
-                .font(.caption2)
-                .foregroundStyle(.white.opacity(0.5))
+            VStack(alignment: .leading, spacing: 6) {
+                Text("Les notifications ne sont programmées que pour les prières **à venir** : si Fajr et Asr sont déjà passés aujourd'hui, elles arriveront demain matin.")
+                Text("Conseillé : laisser au moins 5 min d'écart avec le rappel Coran (défaut 10 min) pour éviter deux notifs simultanées.")
+            }
+            .font(.caption2)
+            .foregroundStyle(.white.opacity(0.5))
         }
     }
 }
