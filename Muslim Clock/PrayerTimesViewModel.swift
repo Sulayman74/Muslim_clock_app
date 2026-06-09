@@ -363,7 +363,7 @@ class PrayerTimesViewModel: ObservableObject {
     func refreshLiveActivity() {
         guard let targetDate = nextPrayerDate else { return }
         let manager = SalatLiveActivityManager.shared
-        manager.endIfExpired()
+        manager.syncActiveActivitiesState()
         manager.refresh(
             prayerKey: SalatLiveActivityManager.prayerKey(from: nextPrayerName),
             frenchName: nextPrayerName,

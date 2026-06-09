@@ -125,9 +125,10 @@ struct Muslim_ClockApp: App {
                 .preferredColorScheme(.dark)   // App 100% dark — textes blancs toujours lisibles
                 .onChange(of: scenePhase) { _, phase in
                     if phase == .active {
-                        // Nettoie les Live Activities périmées au retour foreground.
-                        // Le démarrage est piloté par PrayerTimesViewModel après recalcul.
-                        SalatLiveActivityManager.shared.endIfExpired()
+                        // Rattrape les transitions Live Activity ratées pendant la suspension
+                        // (bascule isPrayerTime=true et close après linger 5 min).
+                        // Le démarrage de nouvelles activities reste piloté par PrayerTimesViewModel.
+                        SalatLiveActivityManager.shared.syncActiveActivitiesState()
                     }
                 }
         }
