@@ -470,20 +470,23 @@ struct PrayerComplicationView: View {
     // MARK: ── Rectangulaire — Countdown héros ─────────────────────────
 
     private var rectangularView: some View {
-        VStack(alignment: .leading, spacing: 2) {
+        // Layout compact : pour tenir dans le slot rectangular (~40-50pt de hauteur)
+        // sans dépasser sur petits cadrans (40/41mm). Fonts réduites d'un cran et
+        // spacing serré de 2 → 1.
+        VStack(alignment: .leading, spacing: 1) {
 
             // Ligne 1 : nom prochaine prière + heure
             HStack(alignment: .firstTextBaseline, spacing: 6) {
                 Text(heroNextName)
-                    .font(.system(.headline, design: .rounded, weight: .bold))
+                    .font(.system(.subheadline, design: .rounded, weight: .bold))
                     .foregroundStyle(.primary)
                     .widgetAccentable()
                     .lineLimit(1)
-                    .minimumScaleFactor(0.8)
+                    .minimumScaleFactor(0.7)
 
                 if let target = heroNextTime {
                     Text(target, style: .time)
-                        .font(.system(.subheadline, design: .rounded, weight: .semibold))
+                        .font(.system(.caption, design: .rounded, weight: .semibold))
                         .monospacedDigit()
                         .foregroundStyle(.secondary)
                 }
@@ -491,20 +494,20 @@ struct PrayerComplicationView: View {
                 Spacer(minLength: 0)
             }
 
-            // Ligne 2 : countdown XL (live timer)
+            // Ligne 2 : countdown live (.title3 au lieu de .title2)
             if let target = heroNextTime {
                 Text(target, style: .timer)
-                    .font(.system(.title2, design: .rounded, weight: .bold))
+                    .font(.system(.title3, design: .rounded, weight: .bold))
                     .monospacedDigit()
                     .foregroundStyle(.tint)
                     .widgetAccentable()
                     .lineLimit(1)
-                    .minimumScaleFactor(0.7)
+                    .minimumScaleFactor(0.6)
             }
 
             // Ligne 3 : 5 micro-sphères + date hijri
             HStack(spacing: 6) {
-                HStack(spacing: 4) {
+                HStack(spacing: 3) {
                     ForEach(entry.prayers.indices, id: \.self) { i in
                         MicroSphere(prayer: entry.prayers[i])
                     }
@@ -516,7 +519,7 @@ struct PrayerComplicationView: View {
                     .font(.system(.caption2, design: .rounded, weight: .medium))
                     .foregroundStyle(.secondary)
                     .lineLimit(1)
-                    .minimumScaleFactor(0.7)
+                    .minimumScaleFactor(0.6)
             }
         }
     }
