@@ -246,9 +246,15 @@ struct MainView: View {
                                 }
 
                                 VStack(spacing: 20) {
-                                    HStack {
-                                        WeatherMiniWidget(location: manager.userLocation, cityName: manager.cityName)
-                                        NextPrayerWidget()
+                                    VStack(spacing: 6) {
+                                        HStack {
+                                            WeatherMiniWidget(location: manager.userLocation, cityName: manager.cityName)
+                                            NextPrayerWidget()
+                                        }
+                                        // Attribution Apple Weather (requis par guideline App Review 5.2.5)
+                                        if let attribution = weatherVM.attribution {
+                                            WeatherAttributionView(attribution: attribution)
+                                        }
                                     }
                                     CurrentPrayerGaugeView()
                                     PrayerListView()

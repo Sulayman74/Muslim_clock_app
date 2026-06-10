@@ -9,14 +9,20 @@ class WeatherViewModel: ObservableObject {
     @Published var temperature: String = "22°C"
     @Published var conditionIcon: String = "cloud.sun.fill"
     @Published var moonSymbol: String = "moon"
-    
+
     @Published var isLoading: Bool = true
     @Published var hasError: Bool = false
-    
+
+    /// Attribution WeatherKit — REQUISE par Apple (App Review guideline 5.2.5).
+    /// Doit être affichée visuellement (logo + texte « Weather ») partout où des données
+    /// météo sont rendues, avec lien tap vers `legalPageURL` (sources des données).
+    /// Cachée après le premier fetch — pas besoin de la recharger à chaque requête.
+    @Published var attribution: WeatherAttribution?
+
     // 🛡️ NOUVEAU : Mémoire pour le bouclier anti-spam
     private var lastLocation: CLLocation?
     private var lastFetchTime: Date?
-    
+
     let weatherService = WeatherService()
 
     /// Bypass l'anti-spam : utilisé sur pull-to-refresh ou retour de connexion.
@@ -55,7 +61,12 @@ class WeatherViewModel: ObservableObject {
                 self.moonSymbol = todayForecast.moon.phase.symbolName
                 print("🌖 WeatherKit a bien renvoyé la lune : \(self.moonSymbol)")
             }
-            
+
+            // Charge l'attribution Apple une seule fois (cachée ensuite).
+            if self.attribution == nil {
+                await loadAttribution()
+            }
+
             self.isLoading = false
             self.hasError = false
             
@@ -69,6 +80,16 @@ class WeatherViewModel: ObservableObject {
             
             // En cas d'erreur, on reset le timer pour autoriser un nouvel essai rapide
             self.lastFetchTime = nil
+        }
+    }
+
+    /// Charge l'attribution WeatherKit (logo + URL de page légale).
+    /// Échec silencieux : l'UI affiche un fallback texte « Weather » si l'image ne charge pas.
+    private func loadAttribution() async {
+        do {
+            self.attribution = try await weatherService.attribution
+        } catch {
+            print("⚠️ [Weather] Attribution fetch failed: \(error.localizedDescription)")
         }
     }
 }

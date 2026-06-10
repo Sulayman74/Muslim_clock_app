@@ -1,5 +1,37 @@
 import SwiftUI
 import CoreLocation
+import WeatherKit
+
+/// Attribution Apple Weather requise par App Review (guideline 5.2.5).
+///
+/// Affiche le logo officiel « Weather » fourni par `WeatherAttribution.combinedMarkDarkURL`,
+/// avec un tap qui ouvre `legalPageURL` (sources des données : NOAA, etc.).
+///
+/// Fallback texte « Weather » si l'image ne charge pas (offline).
+/// Doit rester visible partout où des données WeatherKit sont rendues.
+struct WeatherAttributionView: View {
+    let attribution: WeatherAttribution
+
+    var body: some View {
+        Link(destination: attribution.legalPageURL) {
+            AsyncImage(url: attribution.combinedMarkDarkURL) { image in
+                image
+                    .resizable()
+                    .scaledToFit()
+                    .frame(height: 14)
+            } placeholder: {
+                HStack(spacing: 4) {
+                    Image(systemName: "applelogo")
+                        .font(.system(size: 10, weight: .medium))
+                    Text(verbatim: "Weather")
+                        .font(.system(size: 11, weight: .medium))
+                }
+                .foregroundStyle(.white.opacity(0.7))
+            }
+        }
+        .accessibilityLabel(Text("Source des données météo"))
+    }
+}
 
 struct WeatherMiniWidget: View {
     @EnvironmentObject var weatherVM: WeatherViewModel
