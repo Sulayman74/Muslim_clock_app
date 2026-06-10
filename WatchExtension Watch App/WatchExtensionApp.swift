@@ -36,12 +36,8 @@ extension WatchSessionReceiver: WCSessionDelegate {
                  activationDidCompleteWith activationState: WCSessionActivationState,
                  error: Error?) {}
 
-    #if os(iOS)
-    func sessionDidBecomeInactive(_ session: WCSession) {}
-    func sessionDidDeactivate(_ session: WCSession) {
-        WCSession.default.activate()
-    }
-    #endif
+    // Note : `sessionDidBecomeInactive`/`sessionDidDeactivate` ne sont définis que
+    // côté iOS (jamais appelés sur watchOS). On les omet ici pour rester clean.
 
     /// Réception des horaires et réglages envoyés par l'iPhone (transferUserInfo — livraison garantie)
     func session(_ session: WCSession, didReceiveUserInfo userInfo: [String: Any]) {

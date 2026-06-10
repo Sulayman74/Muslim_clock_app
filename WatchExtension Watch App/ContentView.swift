@@ -30,6 +30,10 @@ struct ContentView: View {
                 dailyVM.refresh()
             }
         }
+        // Haptic discret quand la sync iPhone → Watch aboutit (NoData → Data).
+        .sensoryFeedback(.success, trigger: vm.isDataAvailable)
+        // Haptic léger quand on bascule sur une nouvelle prochaine prière.
+        .sensoryFeedback(.impact(weight: .light), trigger: vm.nextPrayer?.time)
     }
 }
 
@@ -84,12 +88,13 @@ struct NextPrayerView: View {
                 if let next = vm.nextPrayer {
                     PrayerOrb(prayer: next)
 
-                    // Compte a rebours
+                    // Compte a rebours — task ID stable (next.time) au lieu d'UUID
+                    // régénéré à chaque refresh, évite les sleeps multiples en parallèle.
                     Text(next.time, style: .timer)
                         .font(.system(.title3, design: .rounded, weight: .bold))
                         .foregroundStyle(.yellow)
                         .monospacedDigit()
-                        .task(id: next.id) {
+                        .task(id: next.time) {
                             let delay = next.time.timeIntervalSinceNow
                             if delay > 0 {
                                 try? await Task.sleep(for: .seconds(delay + 2))
@@ -333,6 +338,7 @@ private struct DailyCard: View {
                 withAnimation(.easeInOut(duration: 0.2)) { showArabic.toggle() }
             }
         }
+        .sensoryFeedback(.selection, trigger: showArabic)
     }
 }
 
