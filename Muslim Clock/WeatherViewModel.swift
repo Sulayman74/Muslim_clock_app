@@ -3,11 +3,12 @@ import WeatherKit
 import CoreLocation
 import SwiftUI
 import Combine
+import os
 
 @MainActor
 class WeatherViewModel: ObservableObject {
-    @Published var temperature: String = "22°C"
-    @Published var conditionIcon: String = "cloud.sun.fill"
+    @Published var temperature: String = "--°C"
+    @Published var conditionIcon: String = "cloud.fill"
     @Published var moonSymbol: String = "moon"
 
     @Published var isLoading: Bool = true
@@ -19,47 +20,90 @@ class WeatherViewModel: ObservableObject {
     /// Cachée après le premier fetch — pas besoin de la recharger à chaque requête.
     @Published var attribution: WeatherAttribution?
 
-    // 🛡️ NOUVEAU : Mémoire pour le bouclier anti-spam
+    // MARK: - Constantes anti-spam
+
+    /// Distance minimale (mètres) pour considérer qu'on a "bougé" et déclencher un refetch.
+    private static let locationThresholdMeters: Double = 5_000
+
+    /// Délai minimal (secondes) entre deux fetches au même endroit.
+    private static let fetchCooldownSeconds: TimeInterval = 1_800   // 30 min
+
+    /// Cooldown minimal après une erreur — évite le spam si l'API WeatherKit est down.
+    private static let errorRetryCooldownSeconds: TimeInterval = 100
+
+    // MARK: - State interne
+
     private var lastLocation: CLLocation?
     private var lastFetchTime: Date?
 
+    /// Task en cours — annulée si un nouveau fetch arrive (évite la race condition
+    /// où une location change pendant un fetch en cours laisserait 2 updates UI
+    /// concurrents et un quota WeatherKit gaspillé).
+    private var currentFetchTask: Task<Void, Never>?
+
     let weatherService = WeatherService()
+
+    private static let logger = Logger(subsystem: "kappsi.Muslim-Clock", category: "Weather")
+
+    // MARK: - API publique
 
     /// Bypass l'anti-spam : utilisé sur pull-to-refresh ou retour de connexion.
     func forceRefresh(for location: CLLocation) async {
         lastFetchTime = nil
-        lastLocation  = nil
+        lastLocation = nil
         await fetchWeather(for: location)
     }
 
+    /// Récupère la météo si nécessaire (passe le bouclier anti-spam).
+    ///
+    /// Garanties :
+    /// - Skip silencieusement si bouclier actif (même position < 5 km et < 30 min).
+    /// - Annule tout fetch en cours avant d'en lancer un nouveau.
+    /// - L'attribution Apple Weather est chargée une seule fois (cachée ensuite).
     func fetchWeather(for location: CLLocation) async {
-        
         // 🛑 BOUCLIER ANTI-SPAM
-        // 1. A-t-on bougé de moins de 5 kilomètres ?
-        let isSameLocation = (lastLocation?.distance(from: location) ?? .infinity) < 5000
-        // 2. La dernière requête date-t-elle de moins de 30 minutes (1800 secondes) ?
-        let isRecent = Date().timeIntervalSince(lastFetchTime ?? .distantPast) < 1800
-        
-        // Si on est au même endroit et que c'est récent (et qu'il n'y a pas d'erreur à réparer), on stoppe !
-        if isSameLocation && isRecent && !hasError {
+        let movedFar = (lastLocation?.distance(from: location) ?? .infinity) >= Self.locationThresholdMeters
+        let cooledDown = Date().timeIntervalSince(lastFetchTime ?? .distantPast) >= Self.fetchCooldownSeconds
+
+        if !movedFar && !cooledDown && !hasError {
             return
         }
-        
-        // Si on passe le bouclier, on mémorise cette nouvelle requête
+
+        // 🛑 ANNULATION DU FETCH EN COURS (évite race condition)
+        currentFetchTask?.cancel()
+
+        // Mémorise immédiatement pour que les appels concurrents qui arriveraient
+        // entre-temps voient déjà la dernière localisation et passent le bouclier.
         self.lastLocation = location
         self.lastFetchTime = Date()
         self.isLoading = true
-        
+
+        let task = Task { @MainActor [weak self] in
+            await self?.performFetch(for: location)
+            return ()
+        }
+        self.currentFetchTask = task
+        await task.value
+    }
+
+    // MARK: - Privé
+
+    private func performFetch(for location: CLLocation) async {
         do {
-            let (current, daily) = try await weatherService.weather(for: location, including: .current, .daily)
-            
+            let (current, daily) = try await weatherService.weather(
+                for: location,
+                including: .current, .daily
+            )
+
+            // Si l'appel a été cancelled entre-temps, ne touche pas l'UI.
+            try Task.checkCancellation()
+
             let tempValue = current.temperature.converted(to: .celsius).value
             self.temperature = String(format: "%.0f°C", tempValue)
             self.conditionIcon = current.symbolName
-            
+
             if let todayForecast = daily.first {
                 self.moonSymbol = todayForecast.moon.phase.symbolName
-                print("🌖 WeatherKit a bien renvoyé la lune : \(self.moonSymbol)")
             }
 
             // Charge l'attribution Apple une seule fois (cachée ensuite).
@@ -69,17 +113,22 @@ class WeatherViewModel: ObservableObject {
 
             self.isLoading = false
             self.hasError = false
-            
+            Self.logger.info("Weather fetched: \(self.temperature, privacy: .public)")
+
+        } catch is CancellationError {
+            // Annulation propre par un fetch plus récent — ne touche pas l'UI.
+            Self.logger.debug("Weather fetch cancelled (superseded)")
         } catch {
-            print("❌ Erreur API WeatherKit : \(error.localizedDescription)")
-            self.temperature = "N/A"
+            Self.logger.error("WeatherKit failure: \(error.localizedDescription, privacy: .public)")
+            self.temperature = "--°C"
             self.conditionIcon = "exclamationmark.triangle"
             self.moonSymbol = "moon.fill"
             self.hasError = true
             self.isLoading = false
-            
-            // En cas d'erreur, on reset le timer pour autoriser un nouvel essai rapide
-            self.lastFetchTime = nil
+
+            // Throttle anti-spam erreur : permet un retry après 100 s (au lieu de
+            // tout de suite), évite de marteler l'API WeatherKit en cas de panne.
+            self.lastFetchTime = Date().addingTimeInterval(Self.errorRetryCooldownSeconds - Self.fetchCooldownSeconds)
         }
     }
 
@@ -89,7 +138,7 @@ class WeatherViewModel: ObservableObject {
         do {
             self.attribution = try await weatherService.attribution
         } catch {
-            print("⚠️ [Weather] Attribution fetch failed: \(error.localizedDescription)")
+            Self.logger.warning("Attribution fetch failed: \(error.localizedDescription, privacy: .public)")
         }
     }
 }
