@@ -2,61 +2,107 @@ import SwiftUI
 import CoreLocation
 import WeatherKit
 
+/// Capsule sous le `WeatherMiniWidget` : affiche la ville (source GPS) + attribution
+/// WeatherKit (Apple — requise par App Review 5.2.5).
+///
+/// Pensée pour s'adapter à des noms de ville longs : la capsule s'élargit avec le
+/// contenu, le nom de ville est en `lineLimit(1) + truncationMode(.middle)` pour
+/// rester lisible même tronqué (« Saint-…-Provence » plutôt que « Saint-Rémy-… »).
+///
+/// L'attribution affiche le logo officiel « Weather ». Si l'attribution n'a pas
+/// encore été fetchée (offline / cold start), fallback texte cliquable vers la
+/// page légale connue d'Apple.
+struct WeatherCityAttributionRow: View {
+    let cityName: String
+    let attribution: WeatherAttribution?
+
+    /// Fallback URL si `attribution` est nil — page légale Apple WeatherKit publique.
+    private static let fallbackLegalURL = URL(string: "https://weatherkit.apple.com/legal-attribution.html")!
+
+    var body: some View {
+        HStack(spacing: 6) {
+            Image(systemName: "location.fill")
+                .font(.system(size: 10, weight: .semibold))
+                .foregroundStyle(.indigo.opacity(0.8))
+
+            Text(verbatim: cityName.isEmpty ? String(localized: "Localisation…") : cityName)
+                .font(.system(size: 12, weight: .medium, design: .rounded))
+                .foregroundStyle(.white.opacity(0.85))
+                .lineLimit(1)
+                .truncationMode(.middle)
+                .layoutPriority(1)
+
+            Text(verbatim: "·")
+                .font(.system(size: 12))
+                .foregroundStyle(.white.opacity(0.4))
+
+            WeatherAttributionView(attribution: attribution, fallbackURL: Self.fallbackLegalURL)
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 6)
+        .glassEffect(.clear, in: Capsule())
+    }
+}
+
 /// Attribution Apple Weather requise par App Review (guideline 5.2.5).
 ///
 /// Affiche le logo officiel « Weather » fourni par `WeatherAttribution.combinedMarkDarkURL`,
 /// avec un tap qui ouvre `legalPageURL` (sources des données : NOAA, etc.).
 ///
-/// Fallback texte « Weather » si l'image ne charge pas (offline).
-/// Doit rester visible partout où des données WeatherKit sont rendues.
+/// Si `attribution == nil` (pas encore chargée), affiche un fallback texte cliquable
+/// vers `fallbackURL` (page légale publique d'Apple).
 struct WeatherAttributionView: View {
-    let attribution: WeatherAttribution
+    let attribution: WeatherAttribution?
+    var fallbackURL: URL? = nil
 
     var body: some View {
-        Link(destination: attribution.legalPageURL) {
-            AsyncImage(url: attribution.combinedMarkDarkURL) { image in
-                image
-                    .resizable()
-                    .scaledToFit()
-                    .frame(height: 14)
-            } placeholder: {
-                HStack(spacing: 4) {
-                    Image(systemName: "applelogo")
-                        .font(.system(size: 10, weight: .medium))
-                    Text(verbatim: "Weather")
-                        .font(.system(size: 11, weight: .medium))
+        Link(destination: attribution?.legalPageURL ?? fallbackURL ?? URL(string: "https://www.apple.com/weather/")!) {
+            if let url = attribution?.combinedMarkDarkURL {
+                AsyncImage(url: url) { image in
+                    image
+                        .resizable()
+                        .scaledToFit()
+                        .frame(height: 12)
+                } placeholder: {
+                    fallbackLabel
                 }
-                .foregroundStyle(.white.opacity(0.7))
+            } else {
+                fallbackLabel
             }
         }
         .accessibilityLabel(Text("Source des données météo"))
+    }
+
+    private var fallbackLabel: some View {
+        HStack(spacing: 3) {
+            Image(systemName: "applelogo")
+                .font(.system(size: 9, weight: .medium))
+            Text(verbatim: "Weather")
+                .font(.system(size: 11, weight: .medium))
+        }
+        .foregroundStyle(.white.opacity(0.7))
     }
 }
 
 struct WeatherMiniWidget: View {
     @EnvironmentObject var weatherVM: WeatherViewModel
     var location: CLLocation?
-    var cityName: String // On reçoit la ville du CompassManager !
-    
+
     var body: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: 6) {
             Image(systemName: weatherVM.conditionIcon)
-                .font(.system(size: 30))
+                .font(.system(size: 34))
                 .symbolVariant(.fill)
                 .symbolRenderingMode(.multicolor)
             Text(verbatim: weatherVM.temperature)
-                .font(.system(.title3, design: .rounded).bold())
+                .font(.system(.title2, design: .rounded).bold())
                 .foregroundColor(.white)
-            Text(verbatim: cityName)
-                .font(.caption2)
-                .opacity(0.8)
-                .foregroundColor(.indigo)
-                .lineLimit(1)
+                .monospacedDigit()
         }
         .frame(width: 100, height: 100)
         .padding(10)
         .glassEffect(.regular, in: .circle)
-        .redacted(reason: weatherVM.isLoading ? .placeholder : []) // SKELETON RESTAURÉ
+        .redacted(reason: weatherVM.isLoading ? .placeholder : [])
         .animation(.easeInOut(duration: 0.3), value: weatherVM.isLoading)
     }
 }
