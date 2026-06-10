@@ -13,43 +13,62 @@ import SwiftUI
 import MapKit
 
 class CompassManager: NSObject, ObservableObject, CLLocationManagerDelegate {
-    
+
     // MARK: - Propriétés Publiques (@Published)
     @Published var userLocation: CLLocation?
-        @Published var cityName: String = String(localized: "Recherche...")
-        @Published var heading: Double = 0.0
-        @Published var qiblaAngle: Double = 0.0
-        @Published var isCorrectDirection = false
-        @Published var angularOffset: Double = 180.0
-        @Published var proximityLevel: Int = 0
+    @Published var cityName: String = String(localized: "Recherche...")
+    @Published var heading: Double = 0.0
+    @Published var qiblaAngle: Double = 0.0
+    @Published var isCorrectDirection = false
+    @Published var angularOffset: Double = 180.0
+    @Published var proximityLevel: Int = 0
 
-        private let locationManager = CLLocationManager()
+    private let locationManager = CLLocationManager()
     private let meccaLatitude  = 21.4225 * .pi / 180
     private let meccaLongitude = 39.8262 * .pi / 180
-    
+
     /// Palier précédent pour ne pas re-trigger le même haptic en boucle
-        private var lastHapticLevel: Int = 0
-        private var cancellables = Set<AnyCancellable>()
+    private var lastHapticLevel: Int = 0
+    private var cancellables = Set<AnyCancellable>()
+
+    /// `true` dès qu'un reverse geocoding a réussi (ou échoué et abandonné).
+    /// Évite la comparaison fragile à `String(localized: "Recherche...")`
+    /// qui casse au changement de langue de l'app.
+    private var cityFetched: Bool = false
+
+    // MARK: - Feedback generators pré-instanciés (perf + latency)
+    //
+    // Les `UIImpactFeedbackGenerator` sont coûteux à allouer. Les garder en
+    // propriétés évite l'instantiation à chaque palier de proximité atteint.
+    #if os(iOS)
+    private let lightHaptic = UIImpactFeedbackGenerator(style: .light)
+    private let mediumHaptic = UIImpactFeedbackGenerator(style: .medium)
+    private let heavyHaptic = UIImpactFeedbackGenerator(style: .heavy)
+    private let rigidHaptic = UIImpactFeedbackGenerator(style: .rigid)
+    private let successNotification = UINotificationFeedbackGenerator()
+    #endif
 
     // MARK: - Initialisation
     override init() {
-            super.init()
-            locationManager.delegate = self
-            // On ne gère que le Heading ici
-            
-            SharedLocationManager.shared.$currentLocation
-                .compactMap { $0 }
-                .sink { [weak self] location in
-                    Task { @MainActor in
-                        self?.userLocation = location
-                        self?.qiblaAngle = self?.calculateQiblaAngle(for: location) ?? 0
-                        if self?.cityName == String(localized: "Recherche...") {
-                            self?.cityName = await location.fetchCityName()
-                        }
+        super.init()
+        locationManager.delegate = self
+        // On ne gère que le Heading ici (la position GPS vient de SharedLocationManager).
+
+        SharedLocationManager.shared.$currentLocation
+            .compactMap { $0 }
+            .sink { [weak self] location in
+                Task { @MainActor in
+                    guard let self else { return }
+                    self.userLocation = location
+                    self.qiblaAngle = self.calculateQiblaAngle(for: location)
+                    if !self.cityFetched {
+                        self.cityName = await location.fetchCityName()
+                        self.cityFetched = true
                     }
                 }
-                .store(in: &cancellables)
-        }
+            }
+            .store(in: &cancellables)
+    }
 
         func startCompass() {
             locationManager.startUpdatingHeading()
@@ -77,25 +96,19 @@ class CompassManager: NSObject, ObservableObject, CLLocationManagerDelegate {
         
         switch level {
         case 1:
-            let g = UIImpactFeedbackGenerator(style: .light)
-            g.impactOccurred()
+            lightHaptic.impactOccurred()
         case 2:
-            let g = UIImpactFeedbackGenerator(style: .medium)
-            g.impactOccurred()
+            mediumHaptic.impactOccurred()
         case 3:
-            let g = UIImpactFeedbackGenerator(style: .heavy)
-            g.impactOccurred()
-            case 4:
-                let g = UIImpactFeedbackGenerator(style: .rigid)
-                g.prepare()
-                g.impactOccurred(intensity: 1.0)
-                let n = UINotificationFeedbackGenerator()
-                n.prepare()
-                Task { @MainActor [weak self] in
-                    try? await Task.sleep(nanoseconds: 80_000_000)
-                    guard self != nil else { return }
-                    n.notificationOccurred(.success)
-                }
+            heavyHaptic.impactOccurred()
+        case 4:
+            rigidHaptic.prepare()
+            rigidHaptic.impactOccurred(intensity: 1.0)
+            successNotification.prepare()
+            Task { @MainActor [weak self] in
+                try? await Task.sleep(nanoseconds: 80_000_000)
+                self?.successNotification.notificationOccurred(.success)
+            }
         default:
             break
         }

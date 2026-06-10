@@ -103,19 +103,15 @@ struct QiblaView: View {
         
         return ZStack {
             
-            // ── Cercle Liquid Glass ──
-            Circle()
-                .fill(.ultraThinMaterial)
+            // ── Cercle Liquid Glass — tint progressif selon la proximité ──
+            Color.clear
                 .frame(width: size, height: size)
-                .shadow(color: .black.opacity(0.25), radius: 30, y: 12)
-                .overlay(
-                    Circle()
-                        .stroke(
-                            .white.opacity(0.08 + glowIntensity * 0.4),
-                            lineWidth: 1.2
-                        )
+                .glassEffect(
+                    .regular.tint(orQiblah.opacity(glowIntensity * 0.20)).interactive(),
+                    in: Circle()
                 )
-                // Glow progressif autour du cercle
+                .shadow(color: .black.opacity(0.25), radius: 30, y: 12)
+                // Glow externe progressif
                 .overlay(
                     Circle()
                         .stroke(orQiblah.opacity(glowIntensity * 0.5), lineWidth: 3)
@@ -408,33 +404,51 @@ struct ProximityBar: View {
 
 struct CompassDialView: View {
     let size: CGFloat
-    
+
     private let cardinals: [(String, Double, Color)] = [
         ("N", 0,   .red),
         ("E", 90,  .white),
         ("S", 180, .white),
         ("W", 270, .white),
     ]
-    
+
     var body: some View {
         ZStack {
-            // Graduations tous les 5°
-            ForEach(0..<72, id: \.self) { i in
-                let angle = Double(i) * 5
-                let isMajor = angle.truncatingRemainder(dividingBy: 30) == 0
-                let isCardinal = angle.truncatingRemainder(dividingBy: 90) == 0
-                
-                Rectangle()
-                    .fill(.white.opacity(isCardinal ? 0.8 : (isMajor ? 0.4 : 0.15)))
-                    .frame(
-                        width: isCardinal ? 2.0 : (isMajor ? 1.5 : 1.0),
-                        height: isCardinal ? 16 : (isMajor ? 10 : 6)
+            // Graduations dessinées via Canvas (1 seul draw GPU au lieu de 72 vues).
+            Canvas { context, canvasSize in
+                let center = CGPoint(x: canvasSize.width / 2, y: canvasSize.height / 2)
+                let radius = size / 2 - 24
+
+                for i in 0..<72 {
+                    let angle = Double(i) * 5
+                    let isMajor = angle.truncatingRemainder(dividingBy: 30) == 0
+                    let isCardinal = angle.truncatingRemainder(dividingBy: 90) == 0
+
+                    let lineWidth: CGFloat = isCardinal ? 2.0 : (isMajor ? 1.5 : 1.0)
+                    let lineHeight: CGFloat = isCardinal ? 16 : (isMajor ? 10 : 6)
+                    let opacity = isCardinal ? 0.8 : (isMajor ? 0.4 : 0.15)
+
+                    let radians = angle * .pi / 180
+                    let cosA = cos(radians - .pi / 2)
+                    let sinA = sin(radians - .pi / 2)
+
+                    let outer = CGPoint(x: center.x + cosA * radius, y: center.y + sinA * radius)
+                    let inner = CGPoint(x: center.x + cosA * (radius - lineHeight), y: center.y + sinA * (radius - lineHeight))
+
+                    var line = Path()
+                    line.move(to: outer)
+                    line.addLine(to: inner)
+
+                    context.stroke(
+                        line,
+                        with: .color(.white.opacity(opacity)),
+                        style: StrokeStyle(lineWidth: lineWidth, lineCap: .round)
                     )
-                    .offset(y: -(size / 2 - 24))
-                    .rotationEffect(.degrees(angle))
+                }
             }
-            
-            // Lettres cardinales
+            .frame(width: size, height: size)
+
+            // Lettres cardinales (Text reste en SwiftUI pour la qualité de rendu typo)
             ForEach(cardinals, id: \.1) { label, angle, color in
                 Text(label)
                     .font(.system(size: label == "N" ? 18 : 14, weight: .bold, design: .rounded))
@@ -442,7 +456,7 @@ struct CompassDialView: View {
                     .offset(y: -(size / 2 - 50))
                     .rotationEffect(.degrees(angle))
             }
-            
+
             // Degrés intermédiaires
             ForEach([30, 60, 120, 150, 210, 240, 300, 330], id: \.self) { deg in
                 Text("\(deg)")

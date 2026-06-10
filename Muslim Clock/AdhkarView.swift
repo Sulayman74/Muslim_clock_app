@@ -308,8 +308,7 @@ struct AdhkarView: View {
                     }
                 }
             }
-            .background(.ultraThinMaterial)
-            .clipShape(Capsule())
+            .glassEffect(.regular, in: Capsule())
         }
         .padding(.top, 8)
         .padding(.bottom, 6)
@@ -367,8 +366,7 @@ struct AdhkarView: View {
                 .foregroundColor(.white.opacity(0.7))
         }
         .padding(40)
-        .background(.ultraThinMaterial)
-        .clipShape(RoundedRectangle(cornerRadius: 30))
+        .glassEffect(.regular, in: RoundedRectangle(cornerRadius: 30))
         .shadow(color: .green.opacity(0.3), radius: 20)
         .transition(.scale.combined(with: .opacity))
         .onTapGesture {
@@ -445,8 +443,7 @@ struct DhikrCardView: View {
                         .font(.system(size: 10, weight: .bold, design: .rounded))
                         .padding(.horizontal, 8)
                         .padding(.vertical, 3)
-                        .background(.ultraThinMaterial)
-                        .clipShape(Capsule())
+                        .glassEffect(.clear, in: Capsule())
                 }
                 
                 // Toggle bienfait
@@ -555,13 +552,9 @@ struct AdhkarQuickAccessButton: View {
             }
             .padding(.horizontal, 20)
             .padding(.vertical, 14)
-            .background(.ultraThinMaterial)
-            .clipShape(RoundedRectangle(cornerRadius: 18))
-            .overlay(
-                RoundedRectangle(cornerRadius: 18)
-                    .stroke(timing.accentColor.opacity(0.2), lineWidth: 1)
-            )
+            .glassEffect(.regular.tint(timing.accentColor.opacity(0.10)), in: RoundedRectangle(cornerRadius: 18))
         }
+        .sensoryFeedback(.impact(weight: .light), trigger: showAdhkarSheet)
         .sheet(isPresented: $showAdhkarSheet) {
             ZStack {
                 LinearGradient(

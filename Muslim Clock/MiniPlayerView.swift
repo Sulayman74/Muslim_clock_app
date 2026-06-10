@@ -189,14 +189,11 @@ struct FullPlayerView: View {
                         .scaleEffect(manager.isPlaying ? 1.0 : 0.88)
                         .animation(.interpolatingSpring(stiffness: 80, damping: 12), value: manager.isPlaying)
                 default:
-                    RoundedRectangle(cornerRadius: 24)
-                        .fill(.ultraThinMaterial)
+                    Image(systemName: "waveform")
+                        .font(.system(size: 50))
+                        .foregroundStyle(.secondary)
                         .frame(width: 280, height: 280)
-                        .overlay(
-                            Image(systemName: "waveform")
-                                .font(.system(size: 50))
-                                .foregroundStyle(.secondary)
-                        )
+                        .glassEffect(.regular, in: RoundedRectangle(cornerRadius: 24))
                 }
             }
             .padding(.bottom, 30)
@@ -293,12 +290,7 @@ struct FullPlayerView: View {
                         }
                     }
                 } label: {
-                    ZStack {
-                        Circle()
-                            .fill(.ultraThinMaterial)
-                            .frame(width: 70, height: 70)
-                            .overlay(Circle().stroke(tintColor.opacity(0.3), lineWidth: 1))
-                        
+                    Group {
                         if manager.isBuffering {
                             ProgressView().tint(.white).scaleEffect(1.3)
                         } else {
@@ -308,6 +300,8 @@ struct FullPlayerView: View {
                                 .offset(x: manager.isPlaying ? 0 : 2)
                         }
                     }
+                    .frame(width: 70, height: 70)
+                    .glassEffect(.regular.tint(tintColor.opacity(0.15)).interactive(), in: Circle())
                 }
                 
                 Button { manager.skipForward() } label: {
@@ -332,15 +326,17 @@ struct FullPlayerView: View {
                         .font(.system(size: 13, weight: .bold, design: .rounded))
                         .padding(.horizontal, 14)
                         .padding(.vertical, 6)
-                        .background(.ultraThinMaterial)
-                        .clipShape(Capsule())
-                        .overlay(Capsule().stroke(tintColor.opacity(0.2), lineWidth: 0.5))
+                        .glassEffect(.clear.tint(tintColor.opacity(0.10)), in: Capsule())
                 }
                 Spacer()
             }
         }
+        // Feedback haptique moderne (.sensoryFeedback) — fire automatiquement
+        // au changement du trigger. Pas besoin de wrapper les Buttons.
+        .sensoryFeedback(.impact(weight: .light), trigger: manager.isPlaying)
+        .sensoryFeedback(.selection, trigger: manager.playbackRate)
     }
-    
+
     private func formatTime(_ seconds: Double) -> String {
         guard seconds.isFinite && seconds >= 0 else { return "0:00" }
         let total = Int(seconds)

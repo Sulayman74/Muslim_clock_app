@@ -817,6 +817,9 @@ private struct AdhkarReminderSettingsSection: View {
             .font(.caption2)
             .foregroundStyle(.white.opacity(0.5))
         }
+        // Feedback haptique léger au toggle des rappels Adhkar.
+        .sensoryFeedback(.impact(weight: .light), trigger: morningEnabled)
+        .sensoryFeedback(.impact(weight: .light), trigger: eveningEnabled)
     }
 }
 
