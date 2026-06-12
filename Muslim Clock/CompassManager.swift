@@ -8,6 +8,7 @@
 
 import Foundation
 import CoreLocation
+import CoreMotion
 import Combine
 import SwiftUI
 import MapKit
@@ -24,6 +25,19 @@ class CompassManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     @Published var proximityLevel: Int = 0
 
     private let locationManager = CLLocationManager()
+
+    /// `CMMotionManager` fournit `motion.heading` qui fusionne magnéto + gyro + accel
+    /// côté iOS (filtre Kalman interne). Plus précis et plus rapide que le heading
+    /// brut de `CLLocationManager` (qui n'inclut pas le gyro). Update 60Hz.
+    private let motionManager = CMMotionManager()
+
+    /// `true` si on consomme actuellement DeviceMotion (60Hz fusion).
+    /// `false` si fallback CLLocationManager heading (capteur magnéto seul).
+    @Published private(set) var usesMotionFusion: Bool = false
+
+    /// Compteur d'updates reçues — utilisé par l'overlay DEBUG pour afficher le taux.
+    @Published private(set) var headingUpdateCount: Int = 0
+
     private let meccaLatitude  = 21.4225 * .pi / 180
     private let meccaLongitude = 39.8262 * .pi / 180
 
@@ -74,11 +88,38 @@ class CompassManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     }
 
         func startCompass() {
-            locationManager.startUpdatingHeading()
+            // Priorité : DeviceMotion (60Hz, gyro + magnéto fusionnés) si dispo.
+            // Fallback : CLLocationManager heading (~10Hz, magnéto seul).
+            if motionManager.isDeviceMotionAvailable {
+                motionManager.deviceMotionUpdateInterval = 1.0 / 60.0
+                motionManager.startDeviceMotionUpdates(
+                    using: .xMagneticNorthZVertical,
+                    to: .main
+                ) { [weak self] motion, _ in
+                    guard let self, let motion else { return }
+                    // `motion.heading` : -1 si invalide (calibration en cours), sinon 0-360°.
+                    let h = motion.heading
+                    guard h >= 0 else { return }
+                    Task { @MainActor in
+                        self.heading = h
+                        self.headingUpdateCount &+= 1
+                        self.checkAlignment()
+                    }
+                }
+                usesMotionFusion = true
+            } else {
+                locationManager.startUpdatingHeading()
+                usesMotionFusion = false
+            }
         }
-        
+
         func stopCompass() {
-            locationManager.stopUpdatingHeading()
+            if usesMotionFusion {
+                motionManager.stopDeviceMotionUpdates()
+                usesMotionFusion = false
+            } else {
+                locationManager.stopUpdatingHeading()
+            }
         }
     
     // MARK: - Haptic Progressif
@@ -118,12 +159,13 @@ class CompassManager: NSObject, ObservableObject, CLLocationManagerDelegate {
         #endif
     }
 
-    // MARK: - Délégué : Heading
+    // MARK: - Délégué : Heading (fallback si DeviceMotion indisponible)
     func locationManager(_ manager: CLLocationManager, didUpdateHeading newHeading: CLHeading) {
         let validHeading = newHeading.trueHeading >= 0 ? newHeading.trueHeading : newHeading.magneticHeading
-        
+
         Task { @MainActor in
             self.heading = validHeading
+            self.headingUpdateCount &+= 1
             self.checkAlignment()
         }
     }

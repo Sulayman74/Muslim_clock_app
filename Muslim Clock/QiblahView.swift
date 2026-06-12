@@ -72,6 +72,12 @@ struct QiblaView: View {
             }
             .padding(.horizontal, 20)
         }
+        #if DEBUG
+        .overlay(alignment: .bottomTrailing) {
+            CompassDebugOverlay(manager: manager)
+                .padding(8)
+        }
+        #endif
         .onAppear {
             manager.startCompass()
             // Init display angles sur les valeurs courantes (évite saut au mount).
@@ -573,6 +579,69 @@ struct Diamond: Shape {
         }
     }
 }
+
+// MARK: - ═══════════════════════════════════════════════════
+// DEBUG : OVERLAY PERFORMANCE
+// ═══════════════════════════════════════════════════════════
+#if DEBUG
+/// Overlay diagnostique en bas à droite (DEBUG only).
+/// Affiche : source du capteur, taux d'updates sensor, taux de rendu UI (FPS).
+private struct CompassDebugOverlay: View {
+    @ObservedObject var manager: CompassManager
+
+    @State private var sensorRate: Double = 0
+    @State private var renderRate: Double = 0
+    @State private var lastSensorCount: Int = 0
+    @State private var lastSensorSample: Date = .now
+    @State private var lastRenderSample: Date = .now
+    @State private var renderTicks: Int = 0
+
+    var body: some View {
+        TimelineView(.animation(minimumInterval: 1.0 / 60.0)) { context in
+            // Mesure FPS du render
+            HStack(spacing: 8) {
+                VStack(alignment: .leading, spacing: 2) {
+                    HStack(spacing: 4) {
+                        Image(systemName: manager.usesMotionFusion ? "gyroscope" : "location.magnifyingglass")
+                            .font(.system(size: 9))
+                        Text(verbatim: manager.usesMotionFusion ? "DeviceMotion" : "CL Heading")
+                            .font(.system(size: 9, weight: .bold, design: .monospaced))
+                    }
+                    Text(verbatim: "sensor: \(Int(sensorRate)) Hz")
+                        .font(.system(size: 9, design: .monospaced))
+                    Text(verbatim: "render: \(Int(renderRate)) fps")
+                        .font(.system(size: 9, design: .monospaced))
+                }
+                .foregroundStyle(.white.opacity(0.75))
+            }
+            .padding(.horizontal, 8)
+            .padding(.vertical, 5)
+            .background(.black.opacity(0.4), in: RoundedRectangle(cornerRadius: 8))
+            .onChange(of: context.date) { _, now in
+                tick(now: now)
+            }
+        }
+    }
+
+    private func tick(now: Date) {
+        renderTicks &+= 1
+        let elapsedRender = now.timeIntervalSince(lastRenderSample)
+        if elapsedRender >= 1.0 {
+            renderRate = Double(renderTicks) / elapsedRender
+            renderTicks = 0
+            lastRenderSample = now
+        }
+
+        let elapsedSensor = now.timeIntervalSince(lastSensorSample)
+        if elapsedSensor >= 1.0 {
+            let delta = manager.headingUpdateCount - lastSensorCount
+            sensorRate = Double(delta) / elapsedSensor
+            lastSensorCount = manager.headingUpdateCount
+            lastSensorSample = now
+        }
+    }
+}
+#endif
 
 // MARK: - Preview
 #Preview {
