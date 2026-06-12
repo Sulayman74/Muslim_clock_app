@@ -1522,6 +1522,9 @@
     "Pour t'aider à progresser dans ta récitation, l'app propose un enregistrement audio simple :\n\n• Bouton micro dans le lecteur de chaque sourate\n• Format M4A léger (~240 Ko/min), durée maximale 10 min\n• Réécoute avant de partager\n• Partage via WhatsApp, Mail, Messages ou AirDrop — par exemple à un imam pour relecture\n\nMode optionnel « Suivi verset par verset » :\n• À chaque transition, tape sur « Verset suivant » pendant l'enregistrement\n• À la relecture, le texte défile et le verset courant est mis en valeur, synchronisé avec l'audio\n• Utile pour repérer une erreur précise et y revenir\n\nConfidentialité :\n• L'enregistrement est stocké dans le répertoire temporaire de l'app et écrasé au prochain\n• Rien n'est envoyé vers un serveur — toi seul décides à qui l'envoyer via le partage iOS\n• L'autorisation micro est demandée uniquement au moment du premier enregistrement" : {
 
     },
+    "Pourquoi pas de tracker de prière ?" : {
+
+    },
     "Pourquoi une notification et pas l'Adhan ?" : {
 
     },
@@ -2091,6 +2094,9 @@
 
     },
     "Vie privée" : {
+
+    },
+    "Vous remarquerez que Muslim Clock ne propose pas de « tracker » des prières quotidiennes (cocher Fajr, Dhuhr… avec série / badges / statistiques de performance). C'est un choix éditorial assumé.\n\nLe Cheikh Ibn 'Uthaymîn رحمه الله a mis en garde contre cette pratique :\n\n« Compter ses prières et en tenir un registre fait partie des innovations religieuses (bid'a). Le Messager ﷺ et ses Compagnons ne l'ont pas fait, alors qu'ils étaient les plus soucieux de l'adoration. »\n\nSource : Majmû' al-Fatâwâ du Cheikh Ibn 'Uthaymîn, vol. 16, page 111.\n\nL'app vous aide à être assidu autrement : adhan, rappels post-prière (adhkar), horaires précis, Live Activity. Mais transformer la prière en un score à gamifier serait une innovation contraire à la voie des Salaf.\n\nÀ noter : pour la lecture du Coran, le découpage en wird (portions journalières, hizb) est une pratique attestée chez les Compagnons et les premiers savants — c'est pourquoi le module Khatma existe avec un indicateur de régularité, sans gamification." : {
 
     },
     "Widgets" : {

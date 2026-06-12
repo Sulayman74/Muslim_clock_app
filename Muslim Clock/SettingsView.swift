@@ -1165,6 +1165,21 @@ Approche bienveillante :
 Tes données restent sur ton appareil — aucun envoi vers un serveur.
 """)
 
+                    // ── POURQUOI PAS DE TRACKER DE PRIÈRE ──
+                    sourceCard(icon: "questionmark.circle.fill", title: "Pourquoi pas de tracker de prière ?", color: .gray, content: """
+Vous remarquerez que Muslim Clock ne propose pas de « tracker » des prières quotidiennes (cocher Fajr, Dhuhr… avec série / badges / statistiques de performance). C'est un choix éditorial assumé.
+
+Le Cheikh Ibn 'Uthaymîn رحمه الله a mis en garde contre cette pratique :
+
+« Compter ses prières et en tenir un registre fait partie des innovations religieuses (bid'a). Le Messager ﷺ et ses Compagnons ne l'ont pas fait, alors qu'ils étaient les plus soucieux de l'adoration. »
+
+Source : Majmû' al-Fatâwâ du Cheikh Ibn 'Uthaymîn, vol. 16, page 111.
+
+L'app vous aide à être assidu autrement : adhan, rappels post-prière (adhkar), horaires précis, Live Activity. Mais transformer la prière en un score à gamifier serait une innovation contraire à la voie des Salaf.
+
+À noter : pour la lecture du Coran, le découpage en wird (portions journalières, hizb) est une pratique attestée chez les Compagnons et les premiers savants — c'est pourquoi le module Khatma existe avec un indicateur de régularité, sans gamification.
+""")
+
                     // ── ENREGISTREMENT DE RÉCITATION ──
                     sourceCard(icon: "mic.circle.fill", title: "Enregistrement de récitation", color: .red, content: """
 Pour t'aider à progresser dans ta récitation, l'app propose un enregistrement audio simple :
