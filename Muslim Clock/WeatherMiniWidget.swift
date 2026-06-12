@@ -113,7 +113,7 @@ struct NextPrayerWidget: View {
     
     var body: some View {
         VStack(spacing: 8) {
-            Text(verbatim: prayerVM.nextPrayerName)
+            Text(verbatim: IslamicSeasonInfo.displayPrayerLabel(for: prayerVM.nextPrayerName))
                 .font(.system(size: 16, weight: .bold, design: .rounded))
                 .foregroundStyle(.white)
             Text(verbatim: prayerVM.nextPrayerTime)
@@ -162,8 +162,8 @@ struct PrayerListView: View {
         VStack(spacing: 12) {
             ForEach(prayerVM.dailyPrayers) { prayer in
                 HStack(spacing: 12) {
-                    // Nom de la prière
-                    Text(verbatim: prayer.name)
+                    // Nom de la prière — substitué par « Iftar » pour Maghrib pendant Ramadan.
+                    Text(verbatim: IslamicSeasonInfo.displayPrayerLabel(for: prayer.name))
                         .font(.headline)
                         .foregroundStyle(prayer.isNext ? .green : .primary)
                     

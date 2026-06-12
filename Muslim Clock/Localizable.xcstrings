@@ -84,10 +84,10 @@
         }
       }
     },
-    "%lld j de suite" : {
+    "%lld jours" : {
 
     },
-    "%lld jours" : {
+    "%lld jours suivis" : {
 
     },
     "%lld min après iqamah" : {
@@ -915,6 +915,9 @@
     "Hors ligne" : {
 
     },
+    "Iftar" : {
+
+    },
     "Ignorer pour l'instant" : {
       "localizations" : {
         "ar" : {
@@ -1083,7 +1086,7 @@
     "La qualité prime sur la quantité — la régularité, même petite, est plus aimée que beaucoup d'efforts ponctuels." : {
 
     },
-    "La section « Khatma » t'aide à organiser ta lecture du Mushaf à ton rythme :\n\n• Choisis un objectif : par durée (jours), par pages, ou par date cible\n• Presets indicatifs : 1 Juz/jour (~1 mois), ½ Juz/jour (~2 mois), ¼ Juz/jour (~4 mois), Khatma de Ramadan\n• Découpage automatique en pages après chaque prière sélectionnée\n• Journal de lecture sauvegardé localement, streak de régularité, statistiques\n\nRappels post-prière :\n• Notifications discrètes après chaque prière du plan (« 📖 Tes N pages après {prière} »)\n• Identifiants séparés des notifs de prière — elles ne se remplacent jamais\n• Désactivables à tout moment dans la configuration du plan\n\nApproche bienveillante :\n• Pas de couleur alarmante en cas de retard, pas de culpabilisation\n• Met l'accent sur la régularité (streak) plutôt que la performance\n• Rappel constant : « la qualité prime sur la quantité »\n\nTes données restent sur ton appareil — aucun envoi vers un serveur." : {
+    "La section « Khatma » t'aide à organiser ta lecture du Mushaf à ton rythme :\n\n• Choisis un objectif : par durée (jours), par pages, ou par date cible\n• Presets indicatifs : 1 Juz/jour (~1 mois), ½ Juz/jour (~2 mois), ¼ Juz/jour (~4 mois), Khatma de Ramadan\n• Découpage automatique en pages après chaque prière sélectionnée\n• Journal de lecture sauvegardé localement, indicateur de régularité, statistiques\n\nRappels post-prière :\n• Notifications discrètes après chaque prière du plan (« 📖 Tes N pages après {prière} »)\n• Identifiants séparés des notifs de prière — elles ne se remplacent jamais\n• Désactivables à tout moment dans la configuration du plan\n\nApproche bienveillante :\n• Pas de couleur alarmante en cas de retard, pas de culpabilisation\n• Met l'accent sur la régularité plutôt que la performance\n• Rappel constant : « la qualité prime sur la quantité »\n\nTes données restent sur ton appareil — aucun envoi vers un serveur." : {
 
     },
     "La section audio propose des séries de cours islamiques soigneusement sélectionnés :\n\n• Les séries sont choisies parmi des savants et prédicateurs reconnus pour leur attachement au Coran et à la Sounnah authentique\n• La playlist est mise à jour à distance — de nouvelles séries sont ajoutées régulièrement sans mise à jour de l'app\n• Les audios sont mis en cache localement pour une écoute hors-ligne\n• La progression est sauvegardée automatiquement : reprenez là où vous vous étiez arrêté\n\nL'objectif est de faciliter l'apprentissage de la science religieuse au quotidien, pendant vos trajets ou temps libres." : {

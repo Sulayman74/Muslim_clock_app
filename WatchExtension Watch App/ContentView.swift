@@ -203,6 +203,14 @@ private struct PrayerOrb: View {
 struct PrayerListView: View {
     @ObservedObject var vm: WatchPrayerViewModel
 
+    /// Pendant Ramadan, Maghrib s'affiche en « Iftar » (rupture du jeûne).
+    private func displayName(_ prayer: WatchPrayer) -> String {
+        if prayer.name == "Maghrib" && vm.season.hijriMonth == 9 {
+            return String(localized: "Iftar")
+        }
+        return prayer.name
+    }
+
     var body: some View {
         List(vm.prayers) { prayer in
             let isJumuah = prayer.name == "Jumu'ah"
@@ -215,7 +223,7 @@ struct PrayerListView: View {
                     Text(prayer.arabicName)
                         .font(.system(size: 14, weight: (prayer.isNext || isJumuah) ? .bold : .regular))
                         .foregroundStyle(prayer.isNext ? Color.green : (isJumuah ? Color.orange : .primary))
-                    Text(prayer.name)
+                    Text(displayName(prayer))
                         .font(.caption2)
                         .foregroundStyle(isJumuah ? .orange : .secondary)
                 }

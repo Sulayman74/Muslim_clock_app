@@ -184,6 +184,22 @@ struct IslamicSeasonInfo {
     var hasBanner: Bool {
         seasonKey != "general"
     }
+
+    // MARK: - Helpers Ramadan
+
+    /// `true` si la date donnée tombe pendant le mois de Ramadan (mois hégirien 9).
+    /// Respecte l'override DEBUG `debugSeasonDate` via `current(for:)`.
+    static func isRamadan(at date: Date = .now) -> Bool {
+        current(for: date).hijriMonth == 9
+    }
+
+    /// Label d'affichage d'une prière, avec substitution « Iftar » pour Maghrib
+    /// pendant Ramadan. Le rupture du jeûne se faisant à l'adhan du Maghrib,
+    /// le countdown vers Maghrib est en réalité un countdown vers l'Iftar.
+    static func displayPrayerLabel(for prayerName: String, at date: Date = .now) -> String {
+        guard prayerName == "Maghrib", isRamadan(at: date) else { return prayerName }
+        return String(localized: "Iftar")
+    }
 }
 
 // MARK: - ═══════════════════════════════════════════════════

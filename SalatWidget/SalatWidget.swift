@@ -23,6 +23,20 @@ struct SimpleEntry: TimelineEntry {
 
 enum WidgetUtils {
 
+    /// `true` si la date donnée tombe pendant le mois de Ramadan (mois hégirien 9).
+    /// Helper local au widget — `IslamicSeasonInfo` n'est pas dans ce target.
+    static func isRamadan(at date: Date) -> Bool {
+        var cal = Calendar(identifier: .islamicUmmAlQura)
+        cal.locale = Locale(identifier: "ar")
+        return cal.component(.month, from: date) == 9
+    }
+
+    /// Substitue « Iftar » à « Maghrib » pendant Ramadan. Pure.
+    static func displayPrayerLabel(_ name: String, at date: Date) -> String {
+        guard name == "Maghrib", isRamadan(at: date) else { return name }
+        return String(localized: "Iftar")
+    }
+
     static let timeFormatter: DateFormatter = {
         let f = DateFormatter()
         f.dateFormat = "HH:mm"
@@ -222,6 +236,8 @@ struct SalatProvider: TimelineProvider {
     struct MainPrayerSphere: View {
         var name: String
         var status: PrayerStatus
+        /// Date d'affichage utilisée pour la substitution Maghrib → Iftar pendant Ramadan.
+        var displayDate: Date = .now
         var themeColor: Color {
             switch status {
                 case .passed: return .indigo
@@ -239,7 +255,7 @@ struct SalatProvider: TimelineProvider {
                     .background(.ultraThinMaterial, in: Circle())
                     .overlay(Circle().stroke(Color.white.opacity(isActive ? 0.6 : 0.15), lineWidth: 1))
                     .shadow(color: isActive ? themeColor.opacity(0.7) : .clear, radius: 8)
-                Text(verbatim: name)
+                Text(verbatim: WidgetUtils.displayPrayerLabel(name, at: displayDate))
                     .font(.system(size: 12, weight: .bold, design: .rounded))
                     .foregroundColor((status == .nextNormal || status == .nextImminent) ? .white : .white.opacity(0.5))
             }
@@ -277,11 +293,11 @@ struct SalatProvider: TimelineProvider {
                 VStack(spacing: 16) {
                     HomeWidgetDateHeader(date: entry.date)
                     HStack(alignment: .center, spacing: 12) {
-                        MainPrayerSphere(name: "Fajr", status: entry.prayerStatuses["Fajr"] ?? .future)
-                        MainPrayerSphere(name: "Dhuhr", status: entry.prayerStatuses["Dhuhr"] ?? .future)
-                        MainPrayerSphere(name: "Asr", status: entry.prayerStatuses["Asr"] ?? .future)
-                        MainPrayerSphere(name: "Maghrib", status: entry.prayerStatuses["Maghrib"] ?? .future)
-                        MainPrayerSphere(name: "Isha", status: entry.prayerStatuses["Isha"] ?? .future)
+                        MainPrayerSphere(name: "Fajr", status: entry.prayerStatuses["Fajr"] ?? .future, displayDate: entry.date)
+                        MainPrayerSphere(name: "Dhuhr", status: entry.prayerStatuses["Dhuhr"] ?? .future, displayDate: entry.date)
+                        MainPrayerSphere(name: "Asr", status: entry.prayerStatuses["Asr"] ?? .future, displayDate: entry.date)
+                        MainPrayerSphere(name: "Maghrib", status: entry.prayerStatuses["Maghrib"] ?? .future, displayDate: entry.date)
+                        MainPrayerSphere(name: "Isha", status: entry.prayerStatuses["Isha"] ?? .future, displayDate: entry.date)
                     }
                 }
                 .containerBackground(for: .widget) {
@@ -308,7 +324,7 @@ struct SalatProvider: TimelineProvider {
                         .foregroundColor(.orange)
                         .environment(\.layoutDirection, .rightToLeft)
                     
-                    Text(verbatim: entry.nextPrayerName)
+                    Text(verbatim: WidgetUtils.displayPrayerLabel(entry.nextPrayerName, at: entry.date))
                         .font(.system(size: 13, weight: .bold, design: .rounded))
                         .foregroundColor(.white.opacity(0.7))
                     
@@ -452,7 +468,7 @@ struct SalatProvider: TimelineProvider {
                 }
                 // Ligne 1 : prière + heure
                 HStack {
-                    Label(entry.nextPrayerName, systemImage: "moon.stars.fill")
+                    Label(WidgetUtils.displayPrayerLabel(entry.nextPrayerName, at: entry.date), systemImage: "moon.stars.fill")
                         .font(.headline.weight(.bold))
                     
                     Spacer()
@@ -473,9 +489,10 @@ struct SalatProvider: TimelineProvider {
         
         // ── INLINE ──
         private var inlineView: some View {
-            ViewThatFits {
-                Text(verbatim: "🕌 \(entry.nextPrayerName) \(WidgetUtils.formatTime(entry.nextPrayerDate))")
-                Text(verbatim: "\(entry.nextPrayerName) \(WidgetUtils.formatTime(entry.nextPrayerDate))")
+            let label = WidgetUtils.displayPrayerLabel(entry.nextPrayerName, at: entry.date)
+            return ViewThatFits {
+                Text(verbatim: "🕌 \(label) \(WidgetUtils.formatTime(entry.nextPrayerDate))")
+                Text(verbatim: "\(label) \(WidgetUtils.formatTime(entry.nextPrayerDate))")
                 Text(verbatim: WidgetUtils.formatTime(entry.nextPrayerDate))
             }
         }
@@ -526,7 +543,7 @@ struct SalatProvider: TimelineProvider {
 
                 // Prochaine prière + décompte
                 HStack(alignment: .firstTextBaseline, spacing: 4) {
-                    Text(verbatim: entry.nextPrayerName)
+                    Text(verbatim: WidgetUtils.displayPrayerLabel(entry.nextPrayerName, at: entry.date))
                         .font(.system(size: 11, weight: .bold, design: .rounded))
                         .widgetAccentable()
                     if let target = entry.nextPrayerDate, target > entry.date {
