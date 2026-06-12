@@ -187,18 +187,41 @@ struct IslamicSeasonInfo {
 
     // MARK: - Helpers Ramadan
 
+    /// Contexte d'appel pour `displayPrayerLabel` — détermine si la substitution
+    /// Fajr → Suhoor s'applique. La substitution Maghrib → Iftar s'applique toujours
+    /// pendant Ramadan, quel que soit le contexte.
+    enum PrayerLabelContext {
+        /// Widgets, app principale, watch — Iftar uniquement.
+        case standard
+        /// Live Activity — cible imminente (≤ 30 min) → Suhoor pertinent.
+        case liveActivity
+    }
+
     /// `true` si la date donnée tombe pendant le mois de Ramadan (mois hégirien 9).
     /// Respecte l'override DEBUG `debugSeasonDate` via `current(for:)`.
     static func isRamadan(at date: Date = .now) -> Bool {
         current(for: date).hijriMonth == 9
     }
 
-    /// Label d'affichage d'une prière, avec substitution « Iftar » pour Maghrib
-    /// pendant Ramadan. Le rupture du jeûne se faisant à l'adhan du Maghrib,
-    /// le countdown vers Maghrib est en réalité un countdown vers l'Iftar.
-    static func displayPrayerLabel(for prayerName: String, at date: Date = .now) -> String {
-        guard prayerName == "Maghrib", isRamadan(at: date) else { return prayerName }
-        return String(localized: "Iftar")
+    /// Label d'affichage d'une prière, avec substitutions Ramadan :
+    /// - **Maghrib → Iftar** (rupture du jeûne à l'adhan, applicable partout).
+    /// - **Fajr → Suhoor** (fin du repas avant l'aube, applicable seulement en
+    ///   contexte `.liveActivity` car la LA ne s'arme que dans les 30 min précédant
+    ///   la prière — fenêtre exacte du sahari).
+    static func displayPrayerLabel(
+        for prayerName: String,
+        at date: Date = .now,
+        context: PrayerLabelContext = .standard
+    ) -> String {
+        guard isRamadan(at: date) else { return prayerName }
+        switch prayerName {
+        case "Maghrib":
+            return String(localized: "Iftar")
+        case "Fajr" where context == .liveActivity:
+            return String(localized: "Suhoor")
+        default:
+            return prayerName
+        }
     }
 }
 
