@@ -17,12 +17,43 @@ struct SurahData: Codable {
 }
 
 // MARK: - Modèle JSON local Hadith
+
+/// Niveau d'authenticité — chaîne fermée côté schéma JSON : "sahih", "hasan", "coran".
+///
+/// Décodage tolérant via `init(from:)` ci-dessous : toute valeur inconnue tombe sur
+/// `.hasan` (fallback prudent). Aucune valeur `daif` n'est attendue (les hadiths
+/// faibles ont été retirés du fichier source).
+enum HadithAuthenticity: String, Codable {
+    case sahih, hasan, coran
+}
+
 struct CuratedHadith: Codable {
     let text: String
     let arabic: String
     let source: String
     let theme: String
     let season: String
+    /// Authenticité — `decodeIfPresent` + fallback `.hasan` pour 2 raisons :
+    /// 1. Rétrocompat avec l'ancien JSON cache (sans le champ) → ne crashe pas.
+    /// 2. Tolérance forward — si une valeur future inconnue apparaît, on dégrade
+    ///    gracieusement au lieu de planter le décodage de toute la liste.
+    let authenticity: HadithAuthenticity
+
+    enum CodingKeys: String, CodingKey {
+        case text, arabic, source, theme, season, authenticity
+    }
+
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        self.text = try c.decode(String.self, forKey: .text)
+        self.arabic = try c.decode(String.self, forKey: .arabic)
+        self.source = try c.decode(String.self, forKey: .source)
+        self.theme = try c.decode(String.self, forKey: .theme)
+        self.season = try c.decode(String.self, forKey: .season)
+        // Lenient : raw string → enum, fallback .hasan si manquant ou inconnu.
+        let raw = try c.decodeIfPresent(String.self, forKey: .authenticity)
+        self.authenticity = raw.flatMap { HadithAuthenticity(rawValue: $0) } ?? .hasan
+    }
 }
 
 // MARK: - Enum Season
@@ -47,6 +78,9 @@ class DailyContentService: ObservableObject {
     @Published var dailyHadith: String = "Chargement..."
     @Published var dailyHadithArabic: String = ""
     @Published var dailyHadithSource: String = ""
+    /// Niveau d'authenticité du hadith courant — utilisé pour afficher le badge UI.
+    /// `nil` pendant le chargement initial / si fallback réseau échoué.
+    @Published var dailyHadithAuthenticity: HadithAuthenticity? = nil
     
     @Published var isLoading: Bool = true
     /// `true` si le dernier chargement a échoué (réseau absent)
@@ -195,6 +229,7 @@ class DailyContentService: ObservableObject {
         self.dailyHadith = chosenHadith.text
         self.dailyHadithArabic = chosenHadith.arabic
         self.dailyHadithSource = "\(chosenHadith.source) • \(chosenHadith.theme)"
+        self.dailyHadithAuthenticity = chosenHadith.authenticity
     }
     
     // MARK: - Fallback
