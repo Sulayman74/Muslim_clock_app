@@ -24,6 +24,10 @@ struct QuranPlanSetupView: View {
     /// est modifié manuellement par l'utilisateur.
     @State private var selectedPreset: QuranPlanPreset?
 
+    /// Affiche l'overlay de célébration après la validation, juste avant le dismiss.
+    /// Trigger pour le `.sensoryFeedback` aussi.
+    @State private var planSaved: Bool = false
+
     var body: some View {
         NavigationStack {
             Form {
@@ -150,8 +154,42 @@ struct QuranPlanSetupView: View {
                 }
             }
             .onAppear(perform: prefillFromCurrent)
+            .overlay {
+                if planSaved {
+                    celebrationOverlay
+                }
+            }
         }
         .preferredColorScheme(.dark)
+        // Feedback haptique de succès à la validation du plan.
+        .sensoryFeedback(.success, trigger: planSaved)
+    }
+
+    // MARK: - Celebration overlay
+
+    private var celebrationOverlay: some View {
+        VStack(spacing: 14) {
+            Image(systemName: "checkmark.seal.fill")
+                .font(.system(size: 56))
+                .foregroundStyle(.teal)
+                .symbolEffect(.bounce, value: planSaved)
+
+            Text(verbatim: "بسم الله")
+                .font(.system(size: 26, weight: .bold))
+                .foregroundColor(.white)
+
+            Text("Plan de lecture créé")
+                .font(.system(size: 15, weight: .semibold, design: .rounded))
+                .foregroundColor(.white.opacity(0.85))
+
+            Text("Qu'Allah facilite ta lecture")
+                .font(.caption)
+                .foregroundColor(.white.opacity(0.55))
+        }
+        .padding(32)
+        .glassEffect(.regular.tint(.teal.opacity(0.10)), in: RoundedRectangle(cornerRadius: 30))
+        .shadow(color: .teal.opacity(0.3), radius: 24)
+        .transition(.scale(scale: 0.7).combined(with: .opacity))
     }
 
     // MARK: - Validation
@@ -204,7 +242,16 @@ struct QuranPlanSetupView: View {
             notificationsEnabled: notificationsEnabled
         )
         vm.savePlan(plan)
-        dismiss()
+
+        // Feedback UX : célébration ~1.4s avant dismiss (laisse le temps de voir
+        // le sceau qui bounce et le « بسم الله »).
+        withAnimation(.spring(response: 0.45, dampingFraction: 0.7)) {
+            planSaved = true
+        }
+        Task { @MainActor in
+            try? await Task.sleep(for: .seconds(1.4))
+            dismiss()
+        }
     }
 
     private func prefillFromCurrent() {
