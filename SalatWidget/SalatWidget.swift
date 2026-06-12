@@ -37,6 +37,26 @@ enum WidgetUtils {
         return String(localized: "Iftar")
     }
 
+    /// Gradient de fond des widgets Home — variante ambre/lanterne pendant Ramadan,
+    /// bleu nuit habituel sinon. Cohérent avec la palette du bandeau saison.
+    static func widgetBackground(at date: Date) -> LinearGradient {
+        if isRamadan(at: date) {
+            return LinearGradient(
+                colors: [
+                    Color(red: 0.35, green: 0.25, blue: 0.05),
+                    Color(red: 0.18, green: 0.13, blue: 0.04)
+                ],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+        }
+        return LinearGradient(
+            colors: [Color(red: 0.05, green: 0.05, blue: 0.15), .black],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
+    }
+
     static let timeFormatter: DateFormatter = {
         let f = DateFormatter()
         f.dateFormat = "HH:mm"
@@ -301,7 +321,7 @@ struct SalatProvider: TimelineProvider {
                     }
                 }
                 .containerBackground(for: .widget) {
-                    LinearGradient(colors: [Color(red: 0.05, green: 0.05, blue: 0.15), .black], startPoint: .topLeading, endPoint: .bottomTrailing)
+                    WidgetUtils.widgetBackground(at: entry.date)
                 }
             }
             .configurationDisplayName("Le Cycle de Lumière")
@@ -349,7 +369,7 @@ struct SalatProvider: TimelineProvider {
                     }
                 }
                 .containerBackground(for: .widget) {
-                    LinearGradient(colors: [Color(red: 0.05, green: 0.05, blue: 0.15), .black], startPoint: .topLeading, endPoint: .bottomTrailing)
+                    WidgetUtils.widgetBackground(at: entry.date)
                 }
             }
             .configurationDisplayName("Prochaine Prière")
