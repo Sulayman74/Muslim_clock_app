@@ -191,7 +191,34 @@ struct MainView: View {
     // Iqamah delays — lus depuis Settings pour calculer le trigger des rappels.
     @AppStorage("iqamahFajrDelay") private var iqamahFajrDelay = 20
     @AppStorage("iqamahAsrDelay") private var iqamahAsrDelay = 15
-    
+
+    /// Toggle DEBUG : force le jour de la semaine à vendredi pour tester l'UI
+    /// Jumu'ah + bienséances vendredi sans attendre le jour réel.
+    /// N'a aucun effet en Release (clé ignorée).
+    @AppStorage("debugForceFriday") private var debugForceFriday = false
+
+    // MARK: - Helpers contextuels pour les cards (Rawatib + ProphetSunnah)
+
+    /// Nom de la prière à utiliser pour les cards : prière en cours si dans une
+    /// fenêtre, sinon prochaine. Convertit Dhuhr → Jumu'ah le vendredi si activé.
+    private var prayerContextForCards: String {
+        if prayerVM.currentPrayerWindow != .none {
+            if prayerVM.currentPrayerWindow == .dhuhr && prayerVM.isFridayJumuah {
+                return "Jumu'ah"
+            }
+            return prayerVM.currentPrayerWindow.rawValue
+        }
+        return prayerVM.nextPrayerName
+    }
+
+    /// Vendredi réel OU forcé via DEBUG.
+    private var isCurrentlyFriday: Bool {
+        #if DEBUG
+        if debugForceFriday { return true }
+        #endif
+        return Calendar.current.component(.weekday, from: Date()) == 6
+    }
+
     /// Saison islamique courante (recalculée à chaque apparition)
         private var currentSeason: IslamicSeasonInfo {
             IslamicSeasonInfo.current()
@@ -261,15 +288,12 @@ struct MainView: View {
                                     CurrentPrayerGaugeView()
                                     PrayerListView()
                                     AdhkarQuickAccessButton()
-                                    RawatibCardView(prayerContext: {
-                                        if prayerVM.currentPrayerWindow != .none {
-                                            if prayerVM.currentPrayerWindow == .dhuhr && prayerVM.isFridayJumuah {
-                                                return "Jumu'ah"
-                                            }
-                                            return prayerVM.currentPrayerWindow.rawValue
-                                        }
-                                        return prayerVM.nextPrayerName
-                                    }())
+                                    RawatibCardView(prayerContext: prayerContextForCards)
+                                    ProphetSunnahCardView(sunnah: ProphetSunnahProvider.current(
+                                        prayerName: prayerContextForCards,
+                                        season: currentSeason,
+                                        isFriday: isCurrentlyFriday
+                                    ))
                                     MoonWidgetView(date: .now)
                                 }
                             }

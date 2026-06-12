@@ -36,6 +36,15 @@
         }
       }
     },
+    "**2 rak'at après Isha** + clôturez la nuit par le **Witr** : Al-A'la (87), Al-Kafirun (109), Al-Ikhlas (112) — ou ajoutez Al-Falaq + An-Nas en 3ème rak'a." : {
+
+    },
+    "**2 rak'at après Maghrib** (Sunnah muakkadah) : Al-Kafirun (109) + Al-Ikhlas (112), comme dans la Sunnah avant Fajr." : {
+
+    },
+    "**4 rak'at avant** Dhuhr (très méritoires, le Prophète ﷺ ne les délaissait pas) + **2 rak'at après**." : {
+
+    },
     "%@ (%lld), verset %lld" : {
       "localizations" : {
         "fr" : {
@@ -198,6 +207,9 @@
         }
       }
     },
+    "2 rak'at de Sunnah avant Fajr : Al-Kafirun (109) en 1ère, Al-Ikhlas (112) en 2ème." : {
+
+    },
     "2 Rak'at très méritoires avant l'obligatoire." : {
       "localizations" : {
         "ar" : {
@@ -246,6 +258,9 @@
         }
       }
     },
+    "4 rak'at avant Asr (Sunnah ghayr muakkadah) : « Qu'Allah fasse miséricorde à celui qui les prie »." : {
+
+    },
     "4 Rak'at avant, et 2 Rak'at après." : {
       "localizations" : {
         "ar" : {
@@ -268,6 +283,9 @@
     "5 sphères de prière, date hijri (FR · AR) et phase lunaire du jour." : {
 
     },
+    "10 jours bénis de Dhul-Hijjah" : {
+
+    },
     "114 sourates · arabe + traduction FR" : {
 
     },
@@ -275,6 +293,9 @@
 
     },
     "¼ Juz / jour (≈ 4 mois)" : {
+
+    },
+    "À Jumu'ah, le Prophète ﷺ récitait **Al-A'la (87)** puis **Al-Ghashiyah (88)**, ou parfois **Al-Jumu'ah (62)** + **Al-Munafiqun (63)**." : {
 
     },
     "Accès au micro refusé" : {
@@ -471,6 +492,9 @@
     "Cap" : {
 
     },
+    "Ce que le Prophète ﷺ aimait" : {
+
+    },
     "Ces informations sont uniquement affichées sur votre appareil." : {
 
     },
@@ -532,6 +556,9 @@
       }
     },
     "Combien de pages aujourd'hui ?" : {
+
+    },
+    "Combinez la baraka : récitez **Al-Kahf** dans la journée, multipliez les **Salawat** sur le Prophète ﷺ, et préparez votre cœur pour **Tarawih** ce soir." : {
 
     },
     "Commencer" : {
@@ -670,6 +697,9 @@
       }
     },
     "Donner votre avis" : {
+
+    },
+    "Du'a Iftar : « ذَهَبَ الظَّمَأُ، وَابْتَلَّتِ الْعُرُوقُ، وَثَبَتَ الْأَجْرُ إِنْ شَاءَ اللَّهُ » — La soif est partie, les veines sont humectées, la récompense est acquise, in chā Allah." : {
 
     },
     "Durée" : {
@@ -853,6 +883,9 @@
       }
     },
     "heure" : {
+
+    },
+    "Heure d'exaucement : la dernière heure avant Maghrib, ne pas négliger l'invocation." : {
 
     },
     "Heure du Khoutba" : {
@@ -1111,6 +1144,21 @@
     "Le cycle des 5 prières sur votre cadran." : {
 
     },
+    "Le Prophète ﷺ allongeait Fajr. Il récitait souvent **Qaf (50)**, **At-Tur (52)**, **At-Takwir (81)** ou similaires du Mufassal long. **2 rak'at avant Fajr** sont plus précieuses que ce monde et tout ce qu'il contient." : {
+
+    },
+    "Le Prophète ﷺ disait : « Priez comme vous m'avez vu prier. » Soyez assidu, calmes et concentrés dans chaque rak'a." : {
+
+    },
+    "Le Prophète ﷺ récitait à Isha le **Mufassal moyen** : **Al-Inshiqaq (84)**, **As-Shams (91)**, **Al-Layl (92)**. Il a réprouvé Mu'adh quand il a rallongé trop." : {
+
+    },
+    "Le Prophète ﷺ récitait à l'Asr environ la **moitié** de ce qu'il récitait à Dhuhr. Asr est la **prière médiane** — particulièrement préservée." : {
+
+    },
+    "Le Prophète ﷺ récitait dans Dhuhr des sourates du **Mufassal moyen** (~30-40 versets). Il aimait les rallonger en 1ère rak'a." : {
+
+    },
     "Le rappel arrive après l'iqamah de chaque prière (configuré dans « Ma mosquée ») + %lld min de marge pour finir tes adhkar tranquillement." : {
 
     },
@@ -1151,6 +1199,9 @@
     "Les notifications ne sont programmées que pour les prières **à venir** : si Fajr et Asr sont déjà passés aujourd'hui, elles arriveront demain matin." : {
 
     },
+    "Lire Al-Kahf dans la journée + multiplier les Salawat sur le Prophète ﷺ." : {
+
+    },
     "Lire le Coran" : {
 
     },
@@ -1172,6 +1223,9 @@
           }
         }
       }
+    },
+    "Maghrib se récitait avec le **Mufassal court** : **At-Tin (95)**, **Ad-Dhariyat (51)**, **At-Tur (52)**, **Al-Mursalat (77)** sont rapportées. Parfois plus court (At-Tin), parfois plus long (At-Tur)." : {
+
     },
     "Marque-page actuel" : {
 
@@ -1232,6 +1286,9 @@
           }
         }
       }
+    },
+    "Multipliez le **Takbir, Tahlil et Tahmid**. Jeûnez le **9 (Arafah)** : il efface les péchés de l'année passée et de l'année à venir. Les meilleures œuvres sont en ces jours." : {
+
     },
     "Muslim Clock" : {
 
@@ -1442,6 +1499,9 @@
         }
       }
     },
+    "Préparez le **Suhur** (béni, ne le manquez pas), rompez vite après Maghrib avec une **datte** et de l'**eau**, et prolongez la nuit en **Tarawih**. Les 10 dernières nuits : cherchez **Laylat al-Qadr**." : {
+
+    },
     "Preset rapide" : {
 
     },
@@ -1562,6 +1622,9 @@
     "Quoi de neuf" : {
 
     },
+    "Ramadan Mubarak" : {
+
+    },
     "Rappel" : {
       "localizations" : {
         "ar" : {
@@ -1646,6 +1709,9 @@
 
     },
     "Récitation enregistrée (%@). Qu'Allah accepte de nous, آمين." : {
+
+    },
+    "Récitez **Sourate Al-Kahf** durant la journée — une lumière entre les deux vendredis. À Jumu'ah, le Prophète ﷺ aimait réciter **Al-A'la (87)** puis **Al-Ghashiyah (88)**, ou parfois **Al-Jumu'ah (62)** + **Al-Munafiqun (63)**. Multipliez les **Salawat**." : {
 
     },
     "Reconnecté · Actualisation…" : {
@@ -1808,6 +1874,18 @@
     "Suivi verset par verset" : {
 
     },
+    "Sunnah de Jumu'ah" : {
+
+    },
+    "Sunnah de l'Asr" : {
+
+    },
+    "Sunnah de l'Isha" : {
+
+    },
+    "Sunnah du Dhuhr" : {
+
+    },
     "Sunnah du Fajr" : {
       "localizations" : {
         "ar" : {
@@ -1824,6 +1902,12 @@
         }
       }
     },
+    "Sunnah du Maghrib" : {
+
+    },
+    "Sunnah du Prophète ﷺ" : {
+
+    },
     "Supprimer" : {
 
     },
@@ -1833,7 +1917,13 @@
     "Synchronisation" : {
 
     },
+    "Takbir d'Arafah à dire à voix haute du Fajr du 9 au Asr du 13 Dhul-Hijjah." : {
+
+    },
     "Tape sur « Verset suivant » à chaque transition pour synchroniser la lecture." : {
+
+    },
+    "Tarawih après Isha — récitation longue, multipliez les rak'at selon votre énergie." : {
 
     },
     "Temps de la prière" : {
@@ -1910,6 +2000,12 @@
 
     },
     "Vendredi" : {
+
+    },
+    "Vendredi — Jour béni" : {
+
+    },
+    "Vendredi en Ramadan" : {
 
     },
     "Verset" : {

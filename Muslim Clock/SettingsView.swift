@@ -835,6 +835,10 @@ private struct DebugPanelSection: View {
     // Override de saison islamique
     @AppStorage("debugSeasonDate") private var debugSeasonTimestamp: Double = 0
 
+    /// Force `isCurrentlyFriday` à `true` dans MainView pour tester l'UI Jumu'ah.
+    /// Aucun effet en Release.
+    @AppStorage("debugForceFriday") private var debugForceFriday: Bool = false
+
     private struct SeasonScenario: Identifiable {
         let id: Int
         let label: String
@@ -913,6 +917,17 @@ private struct DebugPanelSection: View {
                     .font(.system(size: 11, design: .monospaced))
                     .foregroundStyle(.orange)
             }
+
+            // ── FORCE VENDREDI (UI Jumu'ah / Al-Kahf / Salawat) ──
+            Toggle(isOn: $debugForceFriday) {
+                VStack(alignment: .leading, spacing: 1) {
+                    Text("Forcer Vendredi")
+                    Text("Bascule l'UI sur Jumu'ah / lecture Al-Kahf / Salawat ++ comme si on était un vendredi.")
+                        .font(.caption2)
+                        .foregroundStyle(.white.opacity(0.5))
+                }
+            }
+            .foregroundStyle(debugForceFriday ? .orange : .primary)
 
             // ── ÉTAT COURANT ──
             Group {
