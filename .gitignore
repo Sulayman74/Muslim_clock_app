@@ -4,3 +4,6 @@ hadiths.json
 
 # Xcode build artefacts
 build/
+
+# Documents de briefing internes (non versionnés)
+AI_AGENT_BRIEFING.md
