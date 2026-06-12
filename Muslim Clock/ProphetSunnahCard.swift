@@ -77,8 +77,21 @@ enum ProphetSunnahProvider {
             )
         }
 
-        // 3. 10 premiers jours de Dhul-Hijjah
-        if season.seasonKey == "hajj" && season.hijriMonth == 12 {
+        // 3. Aïd al-Adha + jours de Tashreeq (10-13 Dhul-Hijjah)
+        if season.hijriMonth == 12 && (10...13).contains(season.hijriDay) {
+            return ProphetSunnah(
+                title: String(localized: "Aïd al-Adha & Tashreeq"),
+                icon: "star.fill",
+                accentColor: Color(red: 0.1, green: 0.55, blue: 0.35),
+                mainText: String(localized: "Jours de réjouissance et de **Dhikr**. Multipliez le **Takbir** à voix haute, partagez le sacrifice avec famille, voisins et pauvres. Les 3 jours de **Tashreeq** (11-13) sont des jours de manger, de boire et d'évoquer Allah."),
+                arabicText: "« اللهُ أَكْبَرُ، اللهُ أَكْبَرُ، لاَ إِلَهَ إِلاَّ اللهُ، وَاللهُ أَكْبَرُ، اللهُ أَكْبَرُ، وَلِلَّهِ الْحَمْدُ »",
+                sunnahRecommendation: String(localized: "Takbir muqayyad à voix haute après chaque prière obligatoire, du Fajr du 9 jusqu'à Asr du 13."),
+                sources: ["Sahih Bukhari 969", "Sahih Muslim 1141 (Tashreeq)"]
+            )
+        }
+
+        // 4. 10 premiers jours de Dhul-Hijjah (1-9, avec Arafah le 9)
+        if season.hijriMonth == 12 && season.hijriDay <= 9 {
             return ProphetSunnah(
                 title: String(localized: "10 jours bénis de Dhul-Hijjah"),
                 icon: "building.columns.fill",
@@ -89,6 +102,7 @@ enum ProphetSunnahProvider {
                 sources: ["Sahih Bukhari 969", "Sahih Muslim 1162 (jeûne d'Arafah)"]
             )
         }
+        // Jour 14+ de Dhul-Hijjah → tombe dans la logique par-prière (default switch)
 
         // 4. Vendredi (général)
         if isFriday {

@@ -15,6 +15,7 @@ import SwiftUI
 
 struct IslamicSeasonInfo {
     let hijriMonth: Int
+    let hijriDay: Int               // Jour hijri (1-30) — utile pour les vues qui dépendent du jour
     let seasonKey: String           // "ramadan", "hajj", "muharram", "shaban", "shawwal", ou "general"
     let labelFr: String             // "Ramadan Mubarak", etc.
     let labelAr: String             // "رمضان مبارك", etc.
@@ -22,7 +23,7 @@ struct IslamicSeasonInfo {
     let bannerColors: [Color]       // Gradient du bandeau
     let backgroundColors: [Color]   // Gradient du fond de la tab Salat
     let isSacredMonth: Bool
-    
+
     // MARK: - Factory
     static func current(for date: Date = .now) -> IslamicSeasonInfo {
         // En DEBUG, une date de substitution peut être injectée depuis le panneau debug
@@ -36,11 +37,13 @@ struct IslamicSeasonInfo {
         var cal = Calendar(identifier: .islamicUmmAlQura)
         cal.locale = Locale(identifier: "ar")
         let month = cal.component(.month, from: effectiveDate)
-        
+        let day = cal.component(.day, from: effectiveDate)
+
         switch month {
         case 1: // Muharram
             return IslamicSeasonInfo(
                 hijriMonth: 1,
+                hijriDay: day,
                 seasonKey: "muharram",
                 labelFr: "Muharram — Mois Sacré",
                 labelAr: "شهر الله المحرّم",
@@ -52,6 +55,7 @@ struct IslamicSeasonInfo {
         case 7: // Rajab
             return IslamicSeasonInfo(
                 hijriMonth: 7,
+                hijriDay: day,
                 seasonKey: "rajab",
                 labelFr: "Rajab — Mois Sacré",
                 labelAr: "رجب الحرام",
@@ -63,6 +67,7 @@ struct IslamicSeasonInfo {
         case 8: // Sha'ban
             return IslamicSeasonInfo(
                 hijriMonth: 8,
+                hijriDay: day,
                 seasonKey: "shaban",
                 labelFr: "Sha'ban — Préparation au Ramadan",
                 labelAr: "شعبان",
@@ -74,6 +79,7 @@ struct IslamicSeasonInfo {
         case 9: // Ramadan
             return IslamicSeasonInfo(
                 hijriMonth: 9,
+                hijriDay: day,
                 seasonKey: "ramadan",
                 labelFr: "Ramadan Mubarak",
                 labelAr: "رمضان مبارك 🌙",
@@ -83,10 +89,10 @@ struct IslamicSeasonInfo {
                 isSacredMonth: false  // pas sacré au sens "haram" mais mois à part
             )
         case 10: // Shawwal — bandeau Aïd uniquement le 1er jour
-            let hijriDay = cal.component(.day, from: effectiveDate)
-            if hijriDay == 1 {
+            if day == 1 {
                 return IslamicSeasonInfo(
                     hijriMonth: 10,
+                    hijriDay: day,
                     seasonKey: "shawwal",
                     labelFr: "Aïd al-Fitr Mubarak",
                     labelAr: "عيد الفطر المبارك 🎉",
@@ -99,6 +105,7 @@ struct IslamicSeasonInfo {
                 // Reste de Shawwal → pas de bandeau, fond par défaut
                 return IslamicSeasonInfo(
                     hijriMonth: 10,
+                    hijriDay: day,
                     seasonKey: "general",
                     labelFr: "",
                     labelAr: "",
@@ -111,6 +118,7 @@ struct IslamicSeasonInfo {
         case 11: // Dhu al-Qi'dah (sacré)
             return IslamicSeasonInfo(
                 hijriMonth: 11,
+                hijriDay: day,
                 seasonKey: "dhulqidah",
                 labelFr: "Dhu al-Qi'dah — Mois Sacré",
                 labelAr: "ذو القعدة",
@@ -120,10 +128,10 @@ struct IslamicSeasonInfo {
                 isSacredMonth: true
             )
         case 12: // Dhu al-Hijjah
-            let hijriDay = cal.component(.day, from: effectiveDate)
-            if hijriDay >= 10 && hijriDay <= 13 { // Aïd al-Adha + jours de Tashreeq
+            if day >= 10 && day <= 13 { // Aïd al-Adha + jours de Tashreeq
                 return IslamicSeasonInfo(
                     hijriMonth: 12,
+                    hijriDay: day,
                     seasonKey: "hajj",
                     labelFr: "Aïd al-Adha Mubarak",
                     labelAr: "عيد الأضحى المبارك 🐑",
@@ -132,9 +140,10 @@ struct IslamicSeasonInfo {
                     backgroundColors: [Color(red: 0.06, green: 0.32, blue: 0.18).opacity(0.8), Color(red: 0.04, green: 0.22, blue: 0.1)],
                     isSacredMonth: true
                 )
-            } else if hijriDay <= 9 { // Les 10 premiers jours bénis
+            } else if day <= 9 { // Les 10 premiers jours bénis
                 return IslamicSeasonInfo(
                     hijriMonth: 12,
+                    hijriDay: day,
                     seasonKey: "hajj",
                     labelFr: "Les 10 jours bénis — Dhu al-Hijjah",
                     labelAr: "ذو الحجّة — لبّيك اللهم لبّيك",
@@ -143,9 +152,10 @@ struct IslamicSeasonInfo {
                     backgroundColors: [Color(red: 0.06, green: 0.32, blue: 0.18).opacity(0.8), Color(red: 0.04, green: 0.22, blue: 0.1)],
                     isSacredMonth: true
                 )
-            } else { // Reste du mois
+            } else { // Reste du mois (jour 14+)
                 return IslamicSeasonInfo(
                     hijriMonth: 12,
+                    hijriDay: day,
                     seasonKey: "hajj",
                     labelFr: "Dhu al-Hijjah — Mois Sacré",
                     labelAr: "ذو الحجّة",
@@ -158,6 +168,7 @@ struct IslamicSeasonInfo {
         default: // Mois normal
             return IslamicSeasonInfo(
                 hijriMonth: month,
+                hijriDay: day,
                 seasonKey: "general",
                 labelFr: "",
                 labelAr: "",
