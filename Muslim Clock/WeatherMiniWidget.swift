@@ -113,7 +113,7 @@ struct NextPrayerWidget: View {
     
     var body: some View {
         VStack(spacing: 8) {
-            Text(verbatim: IslamicSeasonInfo.displayPrayerLabel(for: prayerVM.nextPrayerName))
+            Text(verbatim: prayerVM.nextPrayerName)
                 .font(.system(size: 16, weight: .bold, design: .rounded))
                 .foregroundStyle(.white)
             Text(verbatim: prayerVM.nextPrayerTime)
@@ -162,11 +162,16 @@ struct PrayerListView: View {
         VStack(spacing: 12) {
             ForEach(prayerVM.dailyPrayers) { prayer in
                 HStack(spacing: 12) {
-                    // Nom de la prière — substitué par « Iftar » pour Maghrib pendant Ramadan.
-                    Text(verbatim: IslamicSeasonInfo.displayPrayerLabel(for: prayer.name))
+                    // Nom de la prière — toujours canonique (« Maghrib », « Fajr »…).
+                    Text(verbatim: prayer.name)
                         .font(.headline)
                         .foregroundStyle(prayer.isNext ? .green : .primary)
-                    
+
+                    // Badge contextuel Ramadan (« Iftar » / « Fin du Sohoor »).
+                    if let badge = IslamicSeasonInfo.ramadanBadge(for: prayer.name) {
+                        RamadanPrayerBadge(label: badge, prayerName: prayer.name)
+                    }
+
                     // Badge "En cours" (Priorité sur prochaine)
                     if prayer.isCurrent {
                         Text("En cours")
@@ -242,5 +247,39 @@ extension View {
         } else {
             self
         }
+    }
+}
+
+// MARK: - Ramadan badge
+
+/// Petite capsule affichée à côté d'une prière pendant Ramadan pour signaler
+/// son rôle contextuel (« Iftar » à côté de Maghrib, « Fin du Sohoor » à côté de Fajr).
+struct RamadanPrayerBadge: View {
+    let label: String
+    let prayerName: String
+
+    private var tint: Color {
+        // Iftar = chaleur du coucher (ambre/orange). Sohoor = nuit (indigo doux).
+        prayerName == "Fajr"
+            ? Color(red: 0.55, green: 0.45, blue: 0.85)
+            : Color(red: 0.95, green: 0.55, blue: 0.15)
+    }
+
+    private var icon: String {
+        prayerName == "Fajr" ? "moon.stars.fill" : "sunset.fill"
+    }
+
+    var body: some View {
+        HStack(spacing: 4) {
+            Image(systemName: icon)
+                .font(.system(size: 9, weight: .semibold))
+            Text(verbatim: label)
+                .font(.system(size: 10, weight: .bold, design: .rounded))
+        }
+        .foregroundStyle(tint)
+        .padding(.horizontal, 7)
+        .padding(.vertical, 2)
+        .glassEffect(.clear.tint(tint.opacity(0.20)), in: Capsule())
+        .accessibilityLabel(Text("Contexte Ramadan : \(label)"))
     }
 }

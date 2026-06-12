@@ -118,18 +118,9 @@ final class SalatLiveActivityManager {
 
     @available(iOS 16.2, *)
     private func start(prayerKey: String, frenchName: String, targetTime: Date) {
-        // Pendant Ramadan, le countdown vers Maghrib devient « Iftar » et vers Fajr
-        // devient « Suhoor » (fin du repas avant l'aube). La LA ne s'arme que dans
-        // les 30 min précédant la prière — fenêtre exacte du sahari côté Fajr. La
-        // clé canonique reste inchangée pour préserver le mapping.
-        let displayName = IslamicSeasonInfo.displayPrayerLabel(
-            for: frenchName,
-            at: targetTime,
-            context: .liveActivity
-        )
         let attributes = SalatLiveActivityAttributes(
             prayerKey: prayerKey,
-            frenchName: displayName,
+            frenchName: frenchName,
             arabicName: Self.arabicName(for: prayerKey),
             iconName: Self.iconName(for: prayerKey)
         )

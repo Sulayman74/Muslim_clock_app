@@ -203,12 +203,15 @@ private struct PrayerOrb: View {
 struct PrayerListView: View {
     @ObservedObject var vm: WatchPrayerViewModel
 
-    /// Pendant Ramadan, Maghrib s'affiche en « Iftar » (rupture du jeûne).
-    private func displayName(_ prayer: WatchPrayer) -> String {
-        if prayer.name == "Maghrib" && vm.season.hijriMonth == 9 {
-            return String(localized: "Iftar")
+    /// Badge contextuel Ramadan (« Iftar » à côté de Maghrib, « Fin du Sohoor » à côté de Fajr).
+    /// `nil` hors Ramadan.
+    private func ramadanBadge(_ prayer: WatchPrayer) -> String? {
+        guard vm.season.hijriMonth == 9 else { return nil }
+        switch prayer.name {
+        case "Maghrib": return String(localized: "Iftar")
+        case "Fajr":    return String(localized: "Fin du Sohoor")
+        default:        return nil
         }
-        return prayer.name
     }
 
     var body: some View {
@@ -223,9 +226,21 @@ struct PrayerListView: View {
                     Text(prayer.arabicName)
                         .font(.system(size: 14, weight: (prayer.isNext || isJumuah) ? .bold : .regular))
                         .foregroundStyle(prayer.isNext ? Color.green : (isJumuah ? Color.orange : .primary))
-                    Text(displayName(prayer))
-                        .font(.caption2)
-                        .foregroundStyle(isJumuah ? .orange : .secondary)
+                    HStack(spacing: 4) {
+                        Text(prayer.name)
+                            .font(.caption2)
+                            .foregroundStyle(isJumuah ? .orange : .secondary)
+                        if let badge = ramadanBadge(prayer) {
+                            Text(verbatim: badge)
+                                .font(.system(size: 8, weight: .bold, design: .rounded))
+                                .foregroundStyle(prayer.name == "Fajr" ? Color.purple : Color.orange)
+                                .padding(.horizontal, 4)
+                                .padding(.vertical, 1)
+                                .background(
+                                    Capsule().fill((prayer.name == "Fajr" ? Color.purple : Color.orange).opacity(0.18))
+                                )
+                        }
+                    }
                 }
                 Spacer()
                 Text(prayer.time, style: .time)

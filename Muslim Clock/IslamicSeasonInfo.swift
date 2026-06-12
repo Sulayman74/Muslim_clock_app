@@ -187,40 +187,22 @@ struct IslamicSeasonInfo {
 
     // MARK: - Helpers Ramadan
 
-    /// Contexte d'appel pour `displayPrayerLabel` — détermine si la substitution
-    /// Fajr → Suhoor s'applique. La substitution Maghrib → Iftar s'applique toujours
-    /// pendant Ramadan, quel que soit le contexte.
-    enum PrayerLabelContext {
-        /// Widgets, app principale, watch — Iftar uniquement.
-        case standard
-        /// Live Activity — cible imminente (≤ 30 min) → Suhoor pertinent.
-        case liveActivity
-    }
-
     /// `true` si la date donnée tombe pendant le mois de Ramadan (mois hégirien 9).
     /// Respecte l'override DEBUG `debugSeasonDate` via `current(for:)`.
     static func isRamadan(at date: Date = .now) -> Bool {
         current(for: date).hijriMonth == 9
     }
 
-    /// Label d'affichage d'une prière, avec substitutions Ramadan :
-    /// - **Maghrib → Iftar** (rupture du jeûne à l'adhan, applicable partout).
-    /// - **Fajr → Suhoor** (fin du repas avant l'aube, applicable seulement en
-    ///   contexte `.liveActivity` car la LA ne s'arme que dans les 30 min précédant
-    ///   la prière — fenêtre exacte du sahari).
-    static func displayPrayerLabel(
-        for prayerName: String,
-        at date: Date = .now,
-        context: PrayerLabelContext = .standard
-    ) -> String {
-        guard isRamadan(at: date) else { return prayerName }
+    /// Renvoie le badge contextuel Ramadan à afficher **à côté** du nom de la prière,
+    /// ou `nil` si aucun badge n'est pertinent. Le nom canonique de la prière
+    /// (« Maghrib » / « Fajr ») est conservé partout — c'est le badge qui apporte
+    /// le contexte Ramadan (rupture du jeûne / fin du sahari).
+    static func ramadanBadge(for prayerName: String, at date: Date = .now) -> String? {
+        guard isRamadan(at: date) else { return nil }
         switch prayerName {
-        case "Maghrib":
-            return String(localized: "Iftar")
-        case "Fajr" where context == .liveActivity:
-            return String(localized: "Suhoor")
-        default:
-            return prayerName
+        case "Maghrib": return String(localized: "Iftar")
+        case "Fajr":    return String(localized: "Fin du Sohoor")
+        default:        return nil
         }
     }
 }
