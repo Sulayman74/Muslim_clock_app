@@ -115,7 +115,7 @@ struct IslamicSeasonInfo {
                     isSacredMonth: false
                 )
             }
-        case 11: // Dhu al-Qi'dah (sacré)
+        case 11: // Dhu al-Qi'dah (sacré) — teal pour différencier du vert émeraude de Dhul-Hijjah
             return IslamicSeasonInfo(
                 hijriMonth: 11,
                 hijriDay: day,
@@ -123,8 +123,8 @@ struct IslamicSeasonInfo {
                 labelFr: "Dhu al-Qi'dah — Mois Sacré",
                 labelAr: "ذو القعدة",
                 icon: "shield.fill",
-                bannerColors: [Color(red: 0.2, green: 0.35, blue: 0.25), Color(red: 0.12, green: 0.25, blue: 0.18)],
-                backgroundColors: [Color(red: 0.15, green: 0.3, blue: 0.2).opacity(0.7), Color(red: 0.1, green: 0.22, blue: 0.15)],
+                bannerColors: [Color(red: 0.08, green: 0.45, blue: 0.50), Color(red: 0.04, green: 0.30, blue: 0.35)],
+                backgroundColors: [Color(red: 0.06, green: 0.32, blue: 0.38).opacity(0.75), Color(red: 0.04, green: 0.22, blue: 0.28)],
                 isSacredMonth: true
             )
         case 12: // Dhu al-Hijjah

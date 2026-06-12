@@ -41,6 +41,13 @@ struct CosmicBackground: View {
                 Color(red: 0.12, green: 0.06, blue: 0.18), Color(red: 0.18, green: 0.10, blue: 0.28), Color(red: 0.10, green: 0.05, blue: 0.15),
                 Color(red: 0.06, green: 0.03, blue: 0.10), Color(red: 0.12, green: 0.06, blue: 0.16), Color(red: 0.04, green: 0.02, blue: 0.08)
             ]
+        case "dhulqidah":
+            // Teal cosmique — différencie visuellement du vert émeraude de "hajj"
+            return [
+                Color(red: 0.02, green: 0.08, blue: 0.10), Color(red: 0.03, green: 0.14, blue: 0.16), Color(red: 0.02, green: 0.07, blue: 0.09),
+                Color(red: 0.04, green: 0.16, blue: 0.20), Color(red: 0.06, green: 0.22, blue: 0.28), Color(red: 0.03, green: 0.12, blue: 0.15),
+                Color(red: 0.01, green: 0.06, blue: 0.08), Color(red: 0.04, green: 0.14, blue: 0.18), Color(red: 0.01, green: 0.05, blue: 0.06)
+            ]
         default:
             return [
                 Color(red: 0.04, green: 0.04, blue: 0.12), Color(red: 0.08, green: 0.06, blue: 0.20), Color(red: 0.03, green: 0.03, blue: 0.10),
@@ -55,6 +62,7 @@ struct CosmicBackground: View {
         case "ramadan": return Color(red: 1.0, green: 0.9, blue: 0.6)
         case "hajj": return Color(red: 0.7, green: 1.0, blue: 0.8)
         case "muharram": return Color(red: 0.7, green: 0.8, blue: 1.0)
+        case "dhulqidah": return Color(red: 0.7, green: 1.0, blue: 1.0) // teal pâle
         default: return .white
         }
     }
