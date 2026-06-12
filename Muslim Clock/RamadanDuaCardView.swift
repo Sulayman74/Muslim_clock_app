@@ -82,7 +82,7 @@ struct RamadanDuaCardView: View {
     private var accent: Color {
         switch window {
         case .iftar:   return .orange
-        case .suhoor:  return Color(red: 0.6, green: 0.5, blue: 0.85) // violet doux nuit
+        case .suhoor:  return IslamicSeasonInfo.ramadanNightTint
         case .general: return .teal
         }
     }
@@ -106,15 +106,18 @@ struct RamadanDuaCardView: View {
     // MARK: - Body
 
     var body: some View {
-        Group {
+        // Le ZStack reste toujours présent dans l'arbre de vue (même quand
+        // `shouldDisplay` est false ou que le pool est vide) — c'est ce qui
+        // garantit que `.task` s'attache et déclenche le chargement initial.
+        // Avec un simple `Group { if ... }` vide, SwiftUI optimise la branche
+        // et la `.task` ne fire jamais → pool reste vide pour toujours.
+        ZStack {
             if shouldDisplay {
                 if let dua {
                     content(dua: dua)
                 } else if service.isLoading {
                     placeholder
                 }
-                // Si pool vide après load complet → on n'affiche rien
-                // plutôt qu'un fallback codé en dur (le bundle sert presque toujours).
             }
         }
         .task {

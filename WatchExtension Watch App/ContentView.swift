@@ -231,14 +231,17 @@ struct PrayerListView: View {
                             .font(.caption2)
                             .foregroundStyle(isJumuah ? .orange : .secondary)
                         if let badge = ramadanBadge(prayer) {
+                            // Teinte alignée avec IslamicSeasonInfo.ramadanNightTint (iOS),
+                            // dupliquée ici car IslamicSeasonInfo n'est pas dans ce target.
+                            let badgeTint: Color = prayer.name == "Fajr"
+                                ? Color(red: 0.58, green: 0.48, blue: 0.85)
+                                : Color.orange
                             Text(verbatim: badge)
                                 .font(.system(size: 8, weight: .bold, design: .rounded))
-                                .foregroundStyle(prayer.name == "Fajr" ? Color.purple : Color.orange)
+                                .foregroundStyle(badgeTint)
                                 .padding(.horizontal, 4)
                                 .padding(.vertical, 1)
-                                .background(
-                                    Capsule().fill((prayer.name == "Fajr" ? Color.purple : Color.orange).opacity(0.18))
-                                )
+                                .background(Capsule().fill(badgeTint.opacity(0.18)))
                         }
                     }
                 }

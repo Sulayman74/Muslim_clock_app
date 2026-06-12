@@ -259,9 +259,10 @@ struct RamadanPrayerBadge: View {
     let prayerName: String
 
     private var tint: Color {
-        // Iftar = chaleur du coucher (ambre/orange). Sohoor = nuit (indigo doux).
+        // Iftar = chaleur du coucher (ambre/orange). Sohoor = nuit (violet doux,
+        // teinte partagée avec l'accent de la carte du'a Suhoor).
         prayerName == "Fajr"
-            ? Color(red: 0.55, green: 0.45, blue: 0.85)
+            ? IslamicSeasonInfo.ramadanNightTint
             : Color(red: 0.95, green: 0.55, blue: 0.15)
     }
 

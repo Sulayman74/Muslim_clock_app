@@ -187,6 +187,11 @@ struct IslamicSeasonInfo {
 
     // MARK: - Helpers Ramadan
 
+    /// Teinte « nuit du sahari » partagée par les composants Ramadan (accent de la
+    /// carte Suhoor + badge Fajr). Centralisée ici pour garder une seule source de
+    /// vérité visuelle entre les surfaces.
+    static let ramadanNightTint = Color(red: 0.58, green: 0.48, blue: 0.85)
+
     /// `true` si la date donnée tombe pendant le mois de Ramadan (mois hégirien 9).
     /// Respecte l'override DEBUG `debugSeasonDate` via `current(for:)`.
     static func isRamadan(at date: Date = .now) -> Bool {
