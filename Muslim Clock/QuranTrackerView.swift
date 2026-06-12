@@ -100,6 +100,7 @@ struct QuranTrackerView: View {
                     .clipShape(Capsule())
                     .foregroundColor(.white)
             }
+            .sensoryFeedback(.impact(weight: .light), trigger: showSetup)
         }
     }
 
@@ -124,6 +125,7 @@ struct QuranTrackerView: View {
                     .foregroundColor(.white)
                     .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                 }
+                .sensoryFeedback(.impact(weight: .light), trigger: showLogSheet)
 
                 // Reprendre où j'en étais (utilise lastPageReached + mapper)
                 Button { resumeKhatmaReading() } label: {

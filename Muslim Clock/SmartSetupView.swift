@@ -149,6 +149,10 @@ struct SmartSetupView: View {
         }
         .navigationTitle("Configuration Magique")
         .preferredColorScheme(.dark)
+        // Feedback haptique : medium au tap (analyse lancée) + success quand le
+        // résultat arrive (analyse terminée).
+        .sensoryFeedback(.impact(weight: .medium), trigger: isAnalyzing)
+        .sensoryFeedback(.success, trigger: analysisResult)
     }
     
     // MARK: - 🧠 LE CERVEAU MATHÉMATIQUE

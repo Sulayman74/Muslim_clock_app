@@ -306,6 +306,7 @@ struct QuranRecorderView: View {
         switch recorder.state {
         case .idle, .requestingPermission, .error:
             Button {
+                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
                 Task {
                     let granted = await recorder.requestPermission()
                     if granted {
