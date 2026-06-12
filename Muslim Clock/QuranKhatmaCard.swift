@@ -154,10 +154,10 @@ struct QuranKhatmaCard: View {
                 Spacer()
                 if vm.streak > 0 {
                     HStack(spacing: 4) {
-                        Image(systemName: "flame.fill")
-                            .foregroundStyle(.orange)
+                        Image(systemName: "calendar.badge.checkmark")
+                            .foregroundStyle(.teal)
                         Text("\(vm.streak)j")
-                            .foregroundColor(.orange)
+                            .foregroundColor(.teal)
                     }
                     .font(.caption.bold())
                 }

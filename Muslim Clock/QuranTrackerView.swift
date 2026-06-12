@@ -246,11 +246,11 @@ struct QuranTrackerView: View {
                     .monospacedDigit()
                 if vm.streak > 0 {
                     HStack(spacing: 4) {
-                        Image(systemName: "flame.fill").foregroundStyle(.orange)
-                        Text("\(vm.streak) j de suite")
+                        Image(systemName: "calendar.badge.checkmark").foregroundStyle(.teal)
+                        Text("\(vm.streak) jours suivis")
                     }
                     .font(.caption.bold())
-                    .foregroundColor(.orange)
+                    .foregroundColor(.teal)
                 }
             }
         }

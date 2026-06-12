@@ -1134,7 +1134,7 @@ La section « Khatma » t'aide à organiser ta lecture du Mushaf à ton rythme :
 • Choisis un objectif : par durée (jours), par pages, ou par date cible
 • Presets indicatifs : 1 Juz/jour (~1 mois), ½ Juz/jour (~2 mois), ¼ Juz/jour (~4 mois), Khatma de Ramadan
 • Découpage automatique en pages après chaque prière sélectionnée
-• Journal de lecture sauvegardé localement, streak de régularité, statistiques
+• Journal de lecture sauvegardé localement, indicateur de régularité, statistiques
 
 Rappels post-prière :
 • Notifications discrètes après chaque prière du plan (« 📖 Tes N pages après {prière} »)
@@ -1143,7 +1143,7 @@ Rappels post-prière :
 
 Approche bienveillante :
 • Pas de couleur alarmante en cas de retard, pas de culpabilisation
-• Met l'accent sur la régularité (streak) plutôt que la performance
+• Met l'accent sur la régularité plutôt que la performance
 • Rappel constant : « la qualité prime sur la quantité »
 
 Tes données restent sur ton appareil — aucun envoi vers un serveur.
