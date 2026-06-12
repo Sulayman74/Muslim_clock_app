@@ -190,10 +190,21 @@ struct DailyContentView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .animation(.smooth(duration: 0.3), value: showHadithArabic)
 
-                Text(verbatim: "— \(service.dailyHadithSource)")
-                    .font(.footnote)
-                    .foregroundColor(.secondary)
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                HStack(spacing: 6) {
+                    Text(verbatim: "— \(service.dailyHadithSource)")
+                        .font(.footnote)
+                        .foregroundColor(.secondary)
+                        .lineLimit(2)
+                        .minimumScaleFactor(0.85)
+
+                    Spacer(minLength: 4)
+
+                    // Badge d'authenticité — petite capsule à côté de la source.
+                    if let auth = service.dailyHadithAuthenticity {
+                        HadithAuthenticityBadge(authenticity: auth)
+                    }
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
             .padding()
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -694,5 +705,48 @@ struct PodcastCarouselView: View {
         .onChange(of: podcastManager.activeSeriesIndex) { _, _ in
             visibleCount = Self.pageSize
         }
+    }
+}
+
+// MARK: - ═══════════════════════════════════════════════════
+// BADGE D'AUTHENTICITÉ HADITH
+// ═══════════════════════════════════════════════════════════
+
+/// Petite capsule discrète indiquant le niveau d'authenticité du hadith.
+///
+/// - `sahih` → libellé « Sahîh », teinte verte (authentique fort)
+/// - `hasan` → libellé « Hasan », teinte ambre (bon)
+/// - `coran` → libellé « Coran », teinte indigo (parole d'Allah, distinct
+///   d'un jugement de hadith)
+///
+/// VoiceOver explicite : « Authenticité : <label> » pour l'accessibilité.
+struct HadithAuthenticityBadge: View {
+    let authenticity: HadithAuthenticity
+
+    private var label: String {
+        switch authenticity {
+        case .sahih: return String(localized: "Sahîh")
+        case .hasan: return String(localized: "Hasan")
+        case .coran: return String(localized: "Coran")
+        }
+    }
+
+    private var tint: Color {
+        switch authenticity {
+        case .sahih: return .green
+        case .hasan: return Color(red: 0.95, green: 0.65, blue: 0.1) // ambre
+        case .coran: return .indigo
+        }
+    }
+
+    var body: some View {
+        Text(verbatim: label)
+            .font(.system(size: 10, weight: .bold, design: .rounded))
+            .tracking(0.3)
+            .padding(.horizontal, 7)
+            .padding(.vertical, 2)
+            .glassEffect(.clear.tint(tint.opacity(0.18)), in: Capsule())
+            .foregroundStyle(tint)
+            .accessibilityLabel(Text("Authenticité : \(label)"))
     }
 }
