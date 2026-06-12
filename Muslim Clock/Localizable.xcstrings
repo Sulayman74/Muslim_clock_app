@@ -45,6 +45,9 @@
     "**4 rak'at avant** Dhuhr (très méritoires, le Prophète ﷺ ne les délaissait pas) + **2 rak'at après**." : {
 
     },
+    "**Witr** : 1ère **Al-A'la (87)**, 2ème **Al-Kafirun (109)**, 3ème **Al-Ikhlas (112)** (parfois + Al-Falaq et An-Nas)." : {
+
+    },
     "%@ (%lld), verset %lld" : {
       "localizations" : {
         "fr" : {
@@ -1159,6 +1162,9 @@
     "Le Prophète ﷺ récitait dans Dhuhr des sourates du **Mufassal moyen** (~30-40 versets). Il aimait les rallonger en 1ère rak'a." : {
 
     },
+    "Le Prophète ﷺ y récitait **Al-Kafirun (109)** + **Al-Ikhlas (112)**." : {
+
+    },
     "Le rappel arrive après l'iqamah de chaque prière (configuré dans « Ma mosquée ») + %lld min de marge pour finir tes adhkar tranquillement." : {
 
     },
@@ -1404,6 +1410,9 @@
     "Parcourir les sourates" : {
 
     },
+    "Parmi ce qui est rapporté, le Prophète ﷺ y récitait **Al-Kafirun (109)** + **Al-Ikhlas (112)**." : {
+
+    },
     "Partager" : {
 
     },
@@ -1537,7 +1546,7 @@
     "Priere du Vendredi" : {
 
     },
-    "Priere du Vendredi. Sourate Al-Kahf recommandee." : {
+    "Prière du Vendredi. Sourate Al-Kahf recommandée." : {
 
     },
     "Prières · Lune" : {
