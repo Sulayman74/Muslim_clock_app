@@ -20,6 +20,10 @@ struct Dhikr: Codable, Identifiable {
     let `repeat`: Int
     let timing: String       // "morning", "evening", "both"
     let benefit: String
+
+    /// Niveau d'authenticité du hadith — "sahih" (authentique) ou "hasan" (bon).
+    /// Optional pour rester rétrocompatible avec les anciens JSON bundlés/distants.
+    let authenticity: String?
 }
 
 enum AdhkarTiming: String, CaseIterable {
@@ -434,7 +438,23 @@ struct DhikrCardView: View {
                 Text(verbatim: dhikr.source)
                     .font(.system(size: 10, weight: .medium))
                     .foregroundColor(.white.opacity(0.4))
-                
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.85)
+
+                // Badge authenticité (sahih / hasan) — affiché à côté de la source
+                if let auth = dhikr.authenticity {
+                    Text(verbatim: auth.uppercased())
+                        .font(.system(size: 8, weight: .bold, design: .rounded))
+                        .tracking(0.5)
+                        .padding(.horizontal, 5)
+                        .padding(.vertical, 2)
+                        .glassEffect(
+                            .clear.tint((auth == "sahih" ? Color.green : Color.yellow).opacity(0.18)),
+                            in: Capsule()
+                        )
+                        .foregroundStyle(auth == "sahih" ? Color.green : Color.yellow)
+                }
+
                 Spacer()
                 
                 // Toggle langue
