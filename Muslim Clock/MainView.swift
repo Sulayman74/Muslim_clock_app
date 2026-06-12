@@ -286,6 +286,10 @@ struct MainView: View {
                                         )
                                     }
                                     CurrentPrayerGaugeView()
+                                    // Carte du'a contextuelle pendant Ramadan (Iftar / Suhoor / général)
+                                    if IslamicSeasonInfo.isRamadan() {
+                                        RamadanDuaCardView()
+                                    }
                                     PrayerListView()
                                     AdhkarQuickAccessButton()
                                     RawatibCardView(prayerContext: prayerContextForCards)

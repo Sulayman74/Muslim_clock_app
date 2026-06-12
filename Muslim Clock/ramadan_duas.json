@@ -1,0 +1,23 @@
+[
+  {
+    "id": "iftar_authentic",
+    "category": "iftar",
+    "arabic": "ذَهَبَ الظَّمَأُ وَابْتَلَّتِ الْعُرُوقُ وَثَبَتَ الْأَجْرُ إِنْ شَاءَ اللَّهُ",
+    "french": "La soif s'en est allée, les veines sont irriguées et la récompense est établie, si Allah le veut.",
+    "source": "Abu Dawud 2357 (hasan)"
+  },
+  {
+    "id": "suhoor_barakah",
+    "category": "suhoor",
+    "arabic": "تَسَحَّرُوا فَإِنَّ فِي السَّحُورِ بَرَكَةً",
+    "french": "Prenez le Sahoor, car il y a une bénédiction dans le Sahoor.",
+    "source": "Sahih al-Bukhari 1923"
+  },
+  {
+    "id": "laylat_qadr",
+    "category": "general",
+    "arabic": "اللَّهُمَّ إِنَّكَ عَفُوٌّ تُحِبُّ الْعَفْوَ فَاعْفُ عَنِّي",
+    "french": "Ô Allah, Tu es Pardonneur, Tu aimes le pardon, alors pardonne-moi.",
+    "source": "Tirmidhi 3513 (sahih) — Aïcha demanda au Prophète ﷺ que dire si elle trouvait Laylatul Qadr."
+  }
+]

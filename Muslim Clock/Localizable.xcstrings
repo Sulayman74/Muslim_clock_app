@@ -526,6 +526,9 @@
     "Chargement de %@…" : {
 
     },
+    "Chargement de la du'a..." : {
+
+    },
     "CHERCHER" : {
       "localizations" : {
         "ar" : {
@@ -706,6 +709,15 @@
       }
     },
     "Donner votre avis" : {
+
+    },
+    "Du'a de l'Iftar" : {
+
+    },
+    "Du'a du Ramadan" : {
+
+    },
+    "Du'a du Suhoor" : {
 
     },
     "Du'a Iftar : « ذَهَبَ الظَّمَأُ، وَابْتَلَّتِ الْعُرُوقُ، وَثَبَتَ الْأَجْرُ إِنْ شَاءَ اللَّهُ » — La soif est partie, les veines sont humectées, la récompense est acquise, in chā Allah." : {
@@ -1893,6 +1905,9 @@
       }
     },
     "Sources des contenus religieux" : {
+
+    },
+    "Suhoor" : {
 
     },
     "Suivez vos prières d'un simple coup d'œil." : {
