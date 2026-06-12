@@ -94,6 +94,10 @@ final class RamadanDuaService {
     /// - Fenêtre **Suhoor** : `[Isha, Fajr]` (gestion du débord après minuit) — fenêtre du sahari.
     /// - Sinon : `general` — du'a du mois.
     ///
+    /// En DEBUG, l'override `debugRamadanWindow` (settings) force une fenêtre
+    /// (`iftar`, `suhoor`, `general`) pour pouvoir tester la carte sans attendre
+    /// l'heure réelle. Vide = auto.
+    ///
     /// - Parameters:
     ///   - now: Date courante (injectable pour tests).
     ///   - maghrib: Heure du Maghrib aujourd'hui.
@@ -105,6 +109,15 @@ final class RamadanDuaService {
         isha: Date?,
         fajr: Date?
     ) -> RamadanDuaWindow {
+        #if DEBUG
+        switch UserDefaults.standard.string(forKey: "debugRamadanWindow") {
+        case "iftar":   return .iftar
+        case "suhoor":  return .suhoor
+        case "general": return .general
+        default:        break // tombe sur logique réelle ci-dessous
+        }
+        #endif
+
         let iftarOffset: TimeInterval = 30 * 60
         if let m = maghrib,
            now >= m.addingTimeInterval(-iftarOffset),

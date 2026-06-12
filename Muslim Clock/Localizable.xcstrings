@@ -630,6 +630,9 @@
     "Conseillé : laisser au moins 5 min d'écart avec le rappel Coran (défaut 10 min) pour éviter deux notifs simultanées." : {
 
     },
+    "Contexte Ramadan : %@" : {
+
+    },
     "Continuer" : {
 
     },
@@ -844,6 +847,9 @@
 
     },
     "Fichiers caches" : {
+
+    },
+    "Fin du Sohoor" : {
 
     },
     "Fonctionnement des Widgets" : {
@@ -1905,9 +1911,6 @@
       }
     },
     "Sources des contenus religieux" : {
-
-    },
-    "Suhoor" : {
 
     },
     "Suivez vos prières d'un simple coup d'œil." : {

@@ -6,6 +6,11 @@
 //  Sélectionne contextuellement une du'a (Iftar / Suhoor / général) selon
 //  l'heure courante et les horaires de prière.
 //
+//  Règles d'affichage :
+//  - Iftar  : Maghrib ± 30 min — toujours affichée
+//  - Suhoor : Isha → Fajr — toujours affichée
+//  - Général (Laylatul Qadr) : seulement durant les 10 dernières nuits (jour hijri ≥ 20)
+//
 
 import SwiftUI
 
@@ -15,6 +20,11 @@ struct RamadanDuaCardView: View {
     /// Tick toutes les minutes pour redéterminer la fenêtre (iftar ↔ suhoor ↔ general)
     /// sans recharger le JSON.
     @State private var tick: Int = 0
+    /// Override DEBUG — observer pour rafraîchir immédiatement la card quand le
+    /// picker change dans SettingsView. Pas d'effet en Release (clé toujours vide).
+    @AppStorage("debugRamadanWindow") private var debugRamadanWindow: String = ""
+    /// Langue de l'app — détermine si on affiche la traduction (masquée si arabe).
+    @AppStorage("appLanguage") private var appLanguage: String = "system"
 
     private var maghribDate: Date? {
         prayerVM.dailyPrayers.first { $0.name == "Maghrib" }?.date
@@ -24,7 +34,8 @@ struct RamadanDuaCardView: View {
     }
 
     private var window: RamadanDuaWindow {
-        _ = tick // force la dépendance reactive
+        _ = tick // force la dépendance reactive sur le tick minute
+        _ = debugRamadanWindow // observe l'override DEBUG pour refresh instantané
         return RamadanDuaService.currentWindow(
             now: .now,
             maghrib: maghribDate,
@@ -35,6 +46,35 @@ struct RamadanDuaCardView: View {
 
     private var dua: RamadanDua? {
         service.dua(for: window)
+    }
+
+    /// Jour hijri courant (respecte l'override DEBUG `debugSeasonDate`).
+    private var hijriDay: Int {
+        IslamicSeasonInfo.current().hijriDay
+    }
+
+    /// La carte n'est rendue que si elle a un sens dans le moment courant :
+    /// - fenêtres Iftar et Suhoor → toujours
+    /// - fenêtre Général → seulement durant les 10 dernières nuits (jour ≥ 20)
+    ///
+    /// En DEBUG, un override explicite via le picker `debugRamadanWindow` bypasse
+    /// la règle des 10 nuits pour faciliter les tests de n'importe quelle catégorie.
+    private var shouldDisplay: Bool {
+        #if DEBUG
+        if !debugRamadanWindow.isEmpty { return true }
+        #endif
+        if window == .general && hijriDay < 20 { return false }
+        return true
+    }
+
+    /// `true` si l'app affiche son contenu en arabe (langue explicite ou système).
+    /// Quand vrai, on masque la traduction FR : l'arabe parle de lui-même.
+    private var isArabicUI: Bool {
+        if appLanguage == "ar" { return true }
+        if appLanguage == "system" {
+            return Locale.current.language.languageCode?.identifier == "ar"
+        }
+        return false
     }
 
     // MARK: - Palette par fenêtre
@@ -67,21 +107,20 @@ struct RamadanDuaCardView: View {
 
     var body: some View {
         Group {
-            if let dua {
-                content(dua: dua)
-            } else if service.isLoading {
-                placeholder
-            } else {
-                // Échec total du chargement (réseau + cache + bundle) — on n'affiche rien
-                // plutôt qu'un fallback codé en dur. Le bundle servira presque toujours.
-                EmptyView()
+            if shouldDisplay {
+                if let dua {
+                    content(dua: dua)
+                } else if service.isLoading {
+                    placeholder
+                }
+                // Si pool vide après load complet → on n'affiche rien
+                // plutôt qu'un fallback codé en dur (le bundle sert presque toujours).
             }
         }
         .task {
             await service.loadIfNeeded()
         }
         .task {
-            // Tick minute pour réévaluer la fenêtre contextuelle.
             while !Task.isCancelled {
                 try? await Task.sleep(for: .seconds(60))
                 tick &+= 1
@@ -91,45 +130,42 @@ struct RamadanDuaCardView: View {
 
     @ViewBuilder
     private func content(dua: RamadanDua) -> some View {
-        VStack(alignment: .leading, spacing: 12) {
-            // En-tête : icône + titre + badge catégorie
-            HStack(spacing: 8) {
+        VStack(spacing: 14) {
+            // En-tête centré
+            HStack(spacing: 6) {
                 Image(systemName: icon)
                     .font(.system(size: 14, weight: .semibold))
-                    .foregroundStyle(accent)
                 Text(verbatim: title)
                     .font(.caption.bold())
-                    .foregroundStyle(accent)
-                Spacer()
             }
+            .foregroundStyle(accent)
 
-            // Arabe (RTL)
+            // Arabe — toujours affiché, centré
             Text(verbatim: dua.arabic)
                 .font(.custom("AmiriQuran-Regular", size: 22))
                 .lineSpacing(8)
-                .multilineTextAlignment(.trailing)
-                .frame(maxWidth: .infinity, alignment: .trailing)
-                .environment(\.layoutDirection, .rightToLeft)
+                .multilineTextAlignment(.center)
+                .frame(maxWidth: .infinity)
                 .foregroundColor(.white)
 
-            // Traduction FR
-            Text(verbatim: dua.french)
-                .font(.system(size: 14, design: .rounded))
-                .italic()
-                .foregroundStyle(.white.opacity(0.85))
-                .fixedSize(horizontal: false, vertical: true)
-
-            // Source
-            HStack {
-                Spacer()
-                Text(verbatim: dua.source)
-                    .font(.caption2)
-                    .foregroundStyle(.white.opacity(0.55))
-                    .multilineTextAlignment(.trailing)
+            // Traduction — masquée si l'UI est en arabe
+            if !isArabicUI {
+                Text(verbatim: dua.french)
+                    .font(.system(size: 14, design: .rounded))
+                    .italic()
+                    .multilineTextAlignment(.center)
+                    .foregroundStyle(.white.opacity(0.85))
+                    .fixedSize(horizontal: false, vertical: true)
             }
+
+            // Source centrée
+            Text(verbatim: dua.source)
+                .font(.caption2)
+                .foregroundStyle(.white.opacity(0.55))
+                .multilineTextAlignment(.center)
         }
         .padding(16)
-        .frame(maxWidth: .infinity, alignment: .leading)
+        .frame(maxWidth: .infinity)
         .glassEffect(.regular.tint(accent.opacity(0.18)), in: RoundedRectangle(cornerRadius: 18, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 18, style: .continuous)

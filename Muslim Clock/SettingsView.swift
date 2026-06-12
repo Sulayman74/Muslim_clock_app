@@ -839,6 +839,11 @@ private struct DebugPanelSection: View {
     /// Aucun effet en Release.
     @AppStorage("debugForceFriday") private var debugForceFriday: Bool = false
 
+    /// Force la fenêtre temporelle du module Ramadan pour tester la carte du'a
+    /// (iftar / suhoor / general) sans attendre l'heure réelle. "" = auto.
+    /// Aucun effet en Release.
+    @AppStorage("debugRamadanWindow") private var debugRamadanWindow: String = ""
+
     private struct SeasonScenario: Identifiable {
         let id: Int
         let label: String
@@ -851,7 +856,8 @@ private struct DebugPanelSection: View {
         SeasonScenario(id: 1,  label: "1 · Muharram",                    hijriMonth: 1,  hijriDay: 5),
         SeasonScenario(id: 2,  label: "7 · Rajab",                       hijriMonth: 7,  hijriDay: 5),
         SeasonScenario(id: 3,  label: "8 · Sha'ban",                     hijriMonth: 8,  hijriDay: 5),
-        SeasonScenario(id: 4,  label: "9 · Ramadan",                     hijriMonth: 9,  hijriDay: 5),
+        SeasonScenario(id: 4,  label: "9 · Ramadan (jour 5)",            hijriMonth: 9,  hijriDay: 5),
+        SeasonScenario(id: 10, label: "9 · Ramadan (jour 25 — Laylatul Qadr)", hijriMonth: 9, hijriDay: 25),
         SeasonScenario(id: 5,  label: "10 · Aïd al-Fitr (1 Shawwal)",   hijriMonth: 10, hijriDay: 1),
         SeasonScenario(id: 6,  label: "11 · Dhu al-Qi'dah",             hijriMonth: 11, hijriDay: 5),
         SeasonScenario(id: 7,  label: "12 · Dhul Hijjah — 10 j. bénis", hijriMonth: 12, hijriDay: 5),
@@ -928,6 +934,16 @@ private struct DebugPanelSection: View {
                 }
             }
             .foregroundStyle(debugForceFriday ? .orange : .primary)
+
+            // ── FORCE FENÊTRE RAMADAN (carte du'a Iftar / Suhoor / général) ──
+            Picker("Fenêtre Ramadan (carte du'a)", selection: $debugRamadanWindow) {
+                Text("Auto (selon heure réelle)").tag("")
+                Text("🌅 Iftar").tag("iftar")
+                Text("🌙 Suhoor").tag("suhoor")
+                Text("🌙 Général").tag("general")
+            }
+            .pickerStyle(.menu)
+            .foregroundStyle(debugRamadanWindow.isEmpty ? .white.opacity(0.6) : .orange)
 
             // ── ÉTAT COURANT ──
             Group {
