@@ -14,14 +14,36 @@ import CoreLocation
 
 struct QiblaView: View {
     @ObservedObject var manager: CompassManager
-    
+
     // MARK: - Couleurs
     private let vertSapin = Color(red: 0.09, green: 0.33, blue: 0.16)
     private let orQiblah  = Color(red: 0.85, green: 0.68, blue: 0.32)
-    
+
+    /// Angle relatif Qibla normalisé 0-360° (recalcul live depuis manager).
     private var relativeQibla: Double {
         (manager.qiblaAngle - manager.heading + 360)
             .truncatingRemainder(dividingBy: 360)
+    }
+
+    // MARK: - Angles d'affichage cumulatifs
+    //
+    // Stocker les angles "bruts" 0-360° fait sauter SwiftUI à chaque
+    // franchissement de 360°/0° (l'aiguille fait un tour complet visible).
+    // On accumule les deltas en prenant toujours le chemin le plus court
+    // (-180° ≤ Δ ≤ +180°), ce qui supprime le « tour fantôme ».
+
+    @State private var displayHeading: Double = 0
+    @State private var displayRelativeQibla: Double = 0
+
+    /// Renvoie le delta angulaire le plus court entre `current` et `target`
+    /// (résultat dans [-180°, +180°]).
+    private func shortestAngularDelta(from current: Double, to target: Double) -> Double {
+        let currentNorm = ((current.truncatingRemainder(dividingBy: 360)) + 360)
+            .truncatingRemainder(dividingBy: 360)
+        var delta = target - currentNorm
+        if delta > 180 { delta -= 360 }
+        if delta < -180 { delta += 360 }
+        return delta
     }
     
     /// Opacité du glow basée sur la proximité (0→4 mapped to 0→1)
@@ -50,8 +72,20 @@ struct QiblaView: View {
             }
             .padding(.horizontal, 20)
         }
-        .onAppear  { manager.startCompass() }
+        .onAppear {
+            manager.startCompass()
+            // Init display angles sur les valeurs courantes (évite saut au mount).
+            displayHeading = manager.heading
+            displayRelativeQibla = relativeQibla
+        }
         .onDisappear { manager.stopCompass() }
+        // Accumule les deltas les plus courts à chaque update du capteur ou de la Qibla.
+        .onChange(of: manager.heading) { _, _ in
+            displayHeading += shortestAngularDelta(from: displayHeading, to: manager.heading)
+        }
+        .onChange(of: relativeQibla) { _, _ in
+            displayRelativeQibla += shortestAngularDelta(from: displayRelativeQibla, to: relativeQibla)
+        }
     }
     
     // MARK: - Background
@@ -120,10 +154,10 @@ struct QiblaView: View {
             
             // ── Graduations (tournent avec le heading) ──
             CompassDialView(size: size)
-                .rotationEffect(.degrees(-manager.heading))
+                .rotationEffect(.degrees(-displayHeading))
                 .animation(
                     .interpolatingSpring(stiffness: 80, damping: 14),
-                    value: manager.heading
+                    value: displayHeading
                 )
             
             // ── Triangle indicateur fixe en haut ──
@@ -143,10 +177,10 @@ struct QiblaView: View {
                 accentColor: orQiblah,
                 size: size
             )
-            .rotationEffect(.degrees(relativeQibla))
+            .rotationEffect(.degrees(displayRelativeQibla))
             .animation(
                 .interpolatingSpring(stiffness: 80, damping: 14),
-                value: relativeQibla
+                value: displayRelativeQibla
             )
             
             // ── KAABA AU CENTRE — apparaît quand aligné ──

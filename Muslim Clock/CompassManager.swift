@@ -52,6 +52,9 @@ class CompassManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     override init() {
         super.init()
         locationManager.delegate = self
+        // Filtre noise capteur magnétique : ne reçoit une update que si delta ≥ 1°.
+        // Réduit le jitter visible (boussole qui « tremble ») sans perte UX significative.
+        locationManager.headingFilter = 1
         // On ne gère que le Heading ici (la position GPS vient de SharedLocationManager).
 
         SharedLocationManager.shared.$currentLocation
