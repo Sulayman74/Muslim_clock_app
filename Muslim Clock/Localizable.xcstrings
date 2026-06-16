@@ -507,6 +507,9 @@
     "Ces informations sont uniquement affichées sur votre appareil." : {
 
     },
+    "Cette contribution n'est pas un don au sens fiscal — c'est un soutien direct au développement, traité par Apple via l'App Store. Aucun reçu fiscal ne peut être délivré." : {
+
+    },
     "Changement de Saison" : {
       "localizations" : {
         "ar" : {
@@ -1216,6 +1219,9 @@
     "Les audios ecoutes sont sauvegardes pour une lecture instantanee et hors-ligne." : {
 
     },
+    "Les contributions ne sont pas disponibles pour le moment. Réessaie plus tard." : {
+
+    },
     "Les horaires de votre mosquée ont probablement changé avec la nouvelle saison (heure d'été/hiver). \nVoulez-vous relancer une analyse rapide pour rester synchronisé ?" : {
       "localizations" : {
         "ar" : {
@@ -1335,6 +1341,9 @@
     "Muslim Clock — Votre compagnon quotidien" : {
 
     },
+    "Muslim Clock est développé en indépendant, sans publicité ni tracker." : {
+
+    },
     "Muslim Clock est une application complète conçue pour accompagner le musulman au quotidien :\n\n• Horaires de prière précis basés sur votre géolocalisation (calcul astronomique, méthode MWL/ISNA/Egypte au choix)\n• Notification de rappel à chaque prière — avec alerte visuelle et sonore\n• Boussole de Qibla calibrée en temps réel\n• Adhkar du matin et du soir avec compteur de répétitions\n• Invocations après la prière (post-salat) et Rawatib\n• Rappel quotidien : un verset du Coran + un Hadith authentique chaque jour\n• Série de cours audio (podcasts islamiques) avec lecture en arrière-plan\n• Widget iOS, Apple Watch et complications pour ne jamais manquer une prière\n• Calendrier hégirien avec mise en avant des mois sacrés, vendredis et jours de Aïd\n• Météo locale intégrée" : {
 
     },
@@ -1376,6 +1385,9 @@
 
     },
     "Objectif" : {
+
+    },
+    "Offrir une contribution" : {
 
     },
     "OK" : {
@@ -1664,6 +1676,9 @@
     "Qu'Allah facilite ta lecture" : {
 
     },
+    "Qu'Allah te récompense pour ton soutien." : {
+
+    },
     "Quoi de neuf" : {
 
     },
@@ -1888,6 +1903,9 @@
         }
       }
     },
+    "Si l'app t'aide au quotidien, tu peux participer à son développement avec une contribution symbolique." : {
+
+    },
     "Sourates" : {
 
     },
@@ -1914,6 +1932,9 @@
       }
     },
     "Sources des contenus religieux" : {
+
+    },
+    "Soutenir le développement de l'app" : {
 
     },
     "Suivez vos prières d'un simple coup d'œil." : {
@@ -2057,6 +2078,9 @@
 
     },
     "Vendredi en Ramadan" : {
+
+    },
+    "Vérification de l'achat échouée" : {
 
     },
     "Verset" : {

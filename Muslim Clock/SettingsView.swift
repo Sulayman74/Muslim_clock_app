@@ -42,6 +42,7 @@ struct SettingsView: View {
     @State private var showReviewAlert = false
     @State private var reviewAlertMessage = ""
     @State private var showWhatsNew = false
+    @State private var showDonationSheet = false
     
     let calculationMethods = ["UOIF (12°)", "Ligue Islamique (18°)", "ISNA (15°)", "Mosquée de Paris"]
 
@@ -101,6 +102,35 @@ struct SettingsView: View {
 
                     // ── SECTION ADHKAR — RAPPELS POST-FAJR / POST-ASR ──
                     AdhkarReminderSettingsSection()
+
+                    // ── SECTION CONTRIBUTION — Tip jar StoreKit ──
+                    Section {
+                        Button { showDonationSheet = true } label: {
+                            HStack(spacing: 15) {
+                                Image(systemName: "heart.text.square.fill")
+                                    .font(.title2)
+                                    .foregroundColor(.white)
+                                    .padding(10)
+                                    .background(Color.teal.gradient)
+                                    .clipShape(RoundedRectangle(cornerRadius: 12))
+
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("Offrir une contribution")
+                                        .font(.headline)
+                                        .foregroundColor(.white)
+                                    Text("Soutenir le développement de l'app")
+                                        .font(.caption)
+                                        .foregroundColor(.white.opacity(0.6))
+                                }
+                                Spacer()
+                                Image(systemName: "chevron.right")
+                                    .font(.caption.bold())
+                                    .foregroundColor(.white.opacity(0.4))
+                            }
+                            .padding(.vertical, 4)
+                        }
+                    }
+                    .listRowBackground(Color.white.opacity(0.1))
 
                     // ── SECTION APERÇU : bannière mise à jour (DEBUG uniquement) ──
                     #if DEBUG
@@ -343,6 +373,11 @@ struct SettingsView: View {
             }
             .sheet(isPresented: $showWhatsNew) {
                 WhatsNewView()
+                    .presentationDetents([.large])
+                    .presentationCornerRadius(30)
+            }
+            .sheet(isPresented: $showDonationSheet) {
+                DonationView()
                     .presentationDetents([.large])
                     .presentationCornerRadius(30)
             }

@@ -1,0 +1,99 @@
+{
+  "identifier" : "MuslimClockStoreKit",
+  "nonRenewingSubscriptions" : [],
+  "products" : [
+    {
+      "displayPrice" : "1.99",
+      "familyShareable" : false,
+      "internalID" : "tip_small_001",
+      "localizations" : [
+        {
+          "description" : "Un petit clin d'œil pour le développement",
+          "displayName" : "Petite contribution",
+          "locale" : "fr_FR"
+        },
+        {
+          "description" : "A small token of appreciation",
+          "displayName" : "Small contribution",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "clock.tip.small",
+      "referenceName" : "Petite contribution",
+      "type" : "Consumable"
+    },
+    {
+      "displayPrice" : "4.99",
+      "familyShareable" : false,
+      "internalID" : "tip_medium_001",
+      "localizations" : [
+        {
+          "description" : "Pour la pause boisson",
+          "displayName" : "Une boisson",
+          "locale" : "fr_FR"
+        },
+        {
+          "description" : "Buy us a drink",
+          "displayName" : "A drink",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "clock.tip.medium",
+      "referenceName" : "Une boisson",
+      "type" : "Consumable"
+    },
+    {
+      "displayPrice" : "9.99",
+      "familyShareable" : false,
+      "internalID" : "tip_large_001",
+      "localizations" : [
+        {
+          "description" : "Un vrai soutien pour le mois sacré",
+          "displayName" : "Soutien Ramadan",
+          "locale" : "fr_FR"
+        },
+        {
+          "description" : "Real support for the sacred month",
+          "displayName" : "Ramadan support",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "clock.tip.large",
+      "referenceName" : "Soutien Ramadan",
+      "type" : "Consumable"
+    },
+    {
+      "displayPrice" : "19.99",
+      "familyShareable" : false,
+      "internalID" : "tip_xlarge_001",
+      "localizations" : [
+        {
+          "description" : "Encouragement particulièrement généreux",
+          "displayName" : "Soutien généreux",
+          "locale" : "fr_FR"
+        },
+        {
+          "description" : "Particularly generous encouragement",
+          "displayName" : "Generous support",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "clock.tip.xlarge",
+      "referenceName" : "Soutien généreux",
+      "type" : "Consumable"
+    }
+  ],
+  "settings" : {
+    "_applicationInternalID" : "",
+    "_developerTeamID" : "",
+    "_lastSynchronizedDate" : 0,
+    "_locale" : "fr_FR",
+    "_storefront" : "FRA",
+    "_storeKitErrors" : []
+  },
+  "subscriptionGroups" : [],
+  "version" : {
+    "major" : 4,
+    "minor" : 0
+  }
+}
