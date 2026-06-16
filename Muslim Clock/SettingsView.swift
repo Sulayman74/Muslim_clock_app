@@ -104,6 +104,13 @@ struct SettingsView: View {
                     AdhkarReminderSettingsSection()
 
                     // ── SECTION CONTRIBUTION — Tip jar StoreKit ──
+                    // Mise en suspens pour la prochaine release : le code est prêt
+                    // mais on attend la finalisation des infos bancaires côté App
+                    // Store Connect (Agreements, Tax, Banking) avant d'exposer le
+                    // bouton au public. Testable en DEBUG.
+                    // Pour activer en Release : retirer le `#if DEBUG` ci-dessous
+                    // ET retirer celui qui entoure le `.sheet(isPresented: $showDonationSheet)`.
+                    #if DEBUG
                     Section {
                         Button { showDonationSheet = true } label: {
                             HStack(spacing: 15) {
@@ -131,6 +138,7 @@ struct SettingsView: View {
                         }
                     }
                     .listRowBackground(Color.white.opacity(0.1))
+                    #endif
 
                     // ── SECTION APERÇU : bannière mise à jour (DEBUG uniquement) ──
                     #if DEBUG
@@ -376,11 +384,15 @@ struct SettingsView: View {
                     .presentationDetents([.large])
                     .presentationCornerRadius(30)
             }
+            // Sheet contribution — mise en suspens jusqu'à la prochaine release.
+            // Cf. commentaire au-dessus de la Section CONTRIBUTION.
+            #if DEBUG
             .sheet(isPresented: $showDonationSheet) {
                 DonationView()
                     .presentationDetents([.large])
                     .presentationCornerRadius(30)
             }
+            #endif
         }
     }
 }
