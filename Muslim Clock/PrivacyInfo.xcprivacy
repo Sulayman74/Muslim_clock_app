@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!--
+        Privacy manifest pour Muslim Clock.
+        Requis par Apple pour toute nouvelle soumission depuis mai 2024.
+
+        Politique de l'app :
+        - Aucun tracker tiers, aucun analytics, aucune publicité.
+        - Position GPS : reste sur l'appareil, utilisée localement pour calculer
+          les horaires de prière + transmise à Apple WeatherKit (Apple gère).
+        - Achats IAP : traités par Apple via StoreKit, aucune donnée collectée
+          côté Muslim Clock.
+        - Toutes les données utilisateur (réglages, journal de lecture, adhkar)
+          stockées localement.
+    -->
+
+    <key>NSPrivacyTracking</key>
+    <false/>
+
+    <key>NSPrivacyTrackingDomains</key>
+    <array/>
+
+    <key>NSPrivacyCollectedDataTypes</key>
+    <array/>
+
+    <!--
+        Required Reason APIs déclarées.
+
+        UserDefaults (CA92.1) : usage généralisé pour persister réglages,
+        cache horaires, état lecture Coran, etc. — uniquement accessible
+        à l'app elle-même.
+
+        DiskSpace (B728.1) : AudioCacheManager affiche la taille du cache
+        audio à l'utilisateur (section Settings) et purge automatiquement
+        quand la limite est dépassée.
+    -->
+    <key>NSPrivacyAccessedAPITypes</key>
+    <array>
+        <dict>
+            <key>NSPrivacyAccessedAPIType</key>
+            <string>NSPrivacyAccessedAPICategoryUserDefaults</string>
+            <key>NSPrivacyAccessedAPITypeReasons</key>
+            <array>
+                <string>CA92.1</string>
+            </array>
+        </dict>
+        <dict>
+            <key>NSPrivacyAccessedAPIType</key>
+            <string>NSPrivacyAccessedAPICategoryDiskSpace</string>
+            <key>NSPrivacyAccessedAPITypeReasons</key>
+            <array>
+                <string>B728.1</string>
+            </array>
+        </dict>
+    </array>
+</dict>
+</plist>
