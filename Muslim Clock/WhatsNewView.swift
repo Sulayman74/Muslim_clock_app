@@ -22,46 +22,40 @@ struct WhatsNewView: View {
     /// Liste des nouveautés. À mettre à jour à chaque release.
     private let items: [WhatsNewItem] = [
         WhatsNewItem(
-            icon: "book.fill",
+            icon: "moon.stars.fill",
+            color: .orange,
+            title: "Mode Ramadan adaptatif",
+            description: "Pendant le mois béni, les widgets Home prennent une teinte ambre lanterne, un badge « Iftar » apparaît à côté de Maghrib et « Fin du Sohoor » à côté de Fajr. Le nom canonique des prières reste préservé partout."
+        ),
+        WhatsNewItem(
+            icon: "hands.sparkles.fill",
             color: .teal,
-            title: "Lecteur Coran complet",
-            description: "Les 114 sourates avec texte authentique Mushaf (police Amiri Quran), traduction française, translittération, marque-page, partage et copie de verset."
+            title: "Du'a au bon moment",
+            description: "Une carte contextuelle s'affiche pour l'iftar (Abu Dawud 2357), pendant la nuit du sahari (Bukhari 1923) et durant les 10 dernières nuits avec la du'a de Laylatul Qadr (Tirmidhi 3513)."
         ),
         WhatsNewItem(
             icon: "book.pages.fill",
             color: .indigo,
-            title: "Khatma & rappels après l'iqamah",
-            description: "Planifie ta lecture (1 Juz/jour, ½, ¼ ou Khatma Ramadan). Les rappels arrivent après l'iqamah de chaque prière + une marge personnalisable."
+            title: "Khatma plus sobre",
+            description: "Le suivi de lecture met l'accent sur la régularité avec un indicateur sobre — pour rester fidèle à l'esprit du wird sans glisser vers la gamification."
         ),
         WhatsNewItem(
-            icon: "play.circle.fill",
+            icon: "questionmark.circle.fill",
+            color: .gray,
+            title: "Transparence éditoriale",
+            description: "Une page « Pourquoi pas de tracker de prière ? » explique le choix de ne pas gamifier la salât, conforme à la fatwa du Cheikh Ibn 'Uthaymîn (Majmû' al-Fatâwâ 16/111)."
+        ),
+        WhatsNewItem(
+            icon: "location.north.line.fill",
             color: .teal,
-            title: "Lecteur automatique posé",
-            description: "Auto-scroll verset par verset, vitesse de 0,5 à 15 s par ayah, sablier visuel sous la card, et reprise depuis ton marque-page."
-        ),
-        WhatsNewItem(
-            icon: "mic.circle.fill",
-            color: .red,
-            title: "Enregistre ta récitation",
-            description: "Récite la sourate, réécoute-toi, et partage à ton imam par WhatsApp ou Mail pour relecture (jusqu'à 10 min). Mode optionnel « Suivi verset par verset » : à la relecture, le texte défile au rythme de ta récitation."
-        ),
-        WhatsNewItem(
-            icon: "bell.badge.circle.fill",
-            color: .orange,
-            title: "Live Activity « Prochaine Salât »",
-            description: "Bannière live 30 min avant chaque prière sur l'écran verrouillé et la Dynamic Island. Bascule sur « C'est l'heure de la prière » à l'adhan."
-        ),
-        WhatsNewItem(
-            icon: "switch.2",
-            color: .indigo,
-            title: "Contrôles Centre de Contrôle (iOS 18+)",
-            description: "Ajoute « Qibla » et « Adhkar du moment » à ton Centre de Contrôle, au bouton Action ou à ton écran verrouillé."
+            title: "Qibla plus précise",
+            description: "Fusion CoreMotion 60 Hz pour une aiguille fluide, sans secousses ni « tour fantôme » lors des changements brusques d'orientation."
         ),
         WhatsNewItem(
             icon: "sparkles",
             color: .yellow,
-            title: "Affinage de l'expérience",
-            description: "Transitions plus fluides au passage français ↔ arabe, accessibilité améliorée, stabilité visuelle et optimisations pour grandes tailles de texte."
+            title: "Stabilité & performances",
+            description: "Robustesse du chargement des contenus religieux, fluidité du module Khatma, et conformité totale au nouveau privacy manifest Apple."
         ),
     ]
 
