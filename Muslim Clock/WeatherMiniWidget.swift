@@ -110,22 +110,56 @@ struct WeatherMiniWidget: View {
 struct NextPrayerWidget: View {
     // 1. 🔌 On attrape le cerveau global injecté par MainView
         @EnvironmentObject var prayerVM: PrayerTimesViewModel
-    
+
+    /// Dans une fenêtre de prière active : le widget bascule sur la prière en
+    /// cours + heure de fin de fenêtre. Évite la redondance avec
+    /// `CurrentPrayerGaugeView` qui montre déjà le décompte détaillé.
+    private var isInWindow: Bool {
+        prayerVM.currentPrayerWindow != .none && prayerVM.currentWindowEnd != nil
+    }
+
+    private var displayName: String {
+        guard isInWindow else { return prayerVM.nextPrayerName }
+        if prayerVM.currentPrayerWindow == .dhuhr && prayerVM.isFridayJumuah {
+            return "Jumu'ah"
+        }
+        return prayerVM.currentPrayerWindow.rawValue
+    }
+
+    private var displayTime: String {
+        if isInWindow, let end = prayerVM.currentWindowEnd {
+            return end.formatted(date: .omitted, time: .shortened)
+        }
+        return prayerVM.nextPrayerTime
+    }
+
     var body: some View {
-        VStack(spacing: 8) {
-            Text(verbatim: prayerVM.nextPrayerName)
+        VStack(spacing: isInWindow ? 2 : 8) {
+            Text(verbatim: displayName)
                 .font(.system(size: 16, weight: .bold, design: .rounded))
                 .foregroundStyle(.white)
-            Text(verbatim: prayerVM.nextPrayerTime)
-                .font(.system(size: 24, weight: .light, design: .rounded))
-                                .monospacedDigit()
-                                .foregroundStyle(.white)
+                .lineLimit(1)
+                .minimumScaleFactor(0.7)
+
+            if isInWindow {
+                Text("jusqu'à")
+                    .font(.system(size: 10, weight: .medium, design: .rounded))
+                    .foregroundStyle(.orange.opacity(0.9))
+            }
+
+            Text(verbatim: displayTime)
+                .font(.system(size: isInWindow ? 22 : 24, weight: .light, design: .rounded))
+                .monospacedDigit()
+                .foregroundStyle(.white)
+                .lineLimit(1)
+                .minimumScaleFactor(0.6)
         }
         .frame(width: 100, height: 100)
         .padding(10)
         .glassEffect(.clear, in: .circle)
         .redacted(reason: prayerVM.isLoading ? .placeholder : []) // SKELETON RESTAURÉ
         .animation(.easeInOut(duration: 0.3), value: prayerVM.isLoading)
+        .animation(.easeInOut(duration: 0.3), value: isInWindow)
     }
 }
 
