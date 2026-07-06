@@ -324,34 +324,50 @@ struct MainView: View {
                                         .padding(.top, -6)
                                 }
 
-                                VStack(spacing: 20) {
-                                    VStack(spacing: 10) {
-                                        HStack {
-                                            WeatherMiniWidget(location: manager.userLocation)
-                                            NextPrayerWidget()
+                                // Hiérarchie en 3 niveaux : le décompte / prochaine prière
+                                // (hero) respire au-dessus du fold ; l'enrichissement
+                                // spirituel (Sunnah, Lune) passe en dessous. Respiration
+                                // inter-niveaux (28) > intra-niveau (16).
+                                VStack(spacing: 28) {
+
+                                    // ── HERO : météo + prochaine prière + décompte ──
+                                    VStack(spacing: 16) {
+                                        VStack(spacing: 10) {
+                                            HStack {
+                                                WeatherMiniWidget(location: manager.userLocation)
+                                                NextPrayerWidget()
+                                            }
+                                            // Ville + attribution Apple Weather (App Review 5.2.5)
+                                            // Capsule adaptable : gère les noms de ville longs.
+                                            WeatherCityAttributionRow(
+                                                cityName: manager.cityName,
+                                                attribution: weatherVM.attribution
+                                            )
                                         }
-                                        // Ville + attribution Apple Weather (App Review 5.2.5)
-                                        // Capsule adaptable : gère les noms de ville longs.
-                                        WeatherCityAttributionRow(
-                                            cityName: manager.cityName,
-                                            attribution: weatherVM.attribution
-                                        )
+                                        CurrentPrayerGaugeView()
+                                        // Carte du'a contextuelle pendant Ramadan (Iftar / Suhoor / général)
+                                        if IslamicSeasonInfo.isRamadan() {
+                                            RamadanDuaCardView()
+                                        }
                                     }
-                                    CurrentPrayerGaugeView()
-                                    // Carte du'a contextuelle pendant Ramadan (Iftar / Suhoor / général)
-                                    if IslamicSeasonInfo.isRamadan() {
-                                        RamadanDuaCardView()
+
+                                    // ── ACTIF : la prière du moment ──
+                                    VStack(spacing: 16) {
+                                        PrayerListView()
+                                        AdhkarQuickAccessButton()
                                     }
-                                    PrayerListView()
-                                    AdhkarQuickAccessButton()
-                                    // RawatibCardView retirée : ProphetSunnahCardView couvre déjà
-                                    // les Rawatib via son champ `sunnahRecommendation` (doublon).
-                                    ProphetSunnahCardView(sunnah: ProphetSunnahProvider.current(
-                                        prayerName: prayerContextForCards,
-                                        season: currentSeason,
-                                        isFriday: isCurrentlyFriday
-                                    ))
-                                    MoonWidgetView(date: .now)
+
+                                    // ── ENRICHISSEMENT : contenu spirituel (cartes repliables) ──
+                                    VStack(spacing: 16) {
+                                        // RawatibCardView retirée : ProphetSunnahCardView couvre déjà
+                                        // les Rawatib via son champ `sunnahRecommendation` (doublon).
+                                        ProphetSunnahCardView(sunnah: ProphetSunnahProvider.current(
+                                            prayerName: prayerContextForCards,
+                                            season: currentSeason,
+                                            isFriday: isCurrentlyFriday
+                                        ))
+                                        MoonWidgetView(date: .now)
+                                    }
                                 }
                             }
                             .frame(maxWidth: .infinity)
