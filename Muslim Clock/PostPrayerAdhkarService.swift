@@ -261,10 +261,25 @@ struct CurrentPrayerGaugeView: View {
                 
             } else {
                 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-                // 3. CARTE : RAPPEL CORANIQUE (Rotation intelligente)
+                // 3a. CARTE : COMPTE À REBOURS
+                //     Période sans fenêtre de prière active (après le lever du
+                //     soleil, en attendant Dhuhr). Décompte vers la prochaine Salât.
+                // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+                if let target = prayerVM.nextPrayerDate {
+                    NextPrayerCountdownCard(
+                        target: target,
+                        prayerName: prayerVM.nextPrayerName,
+                        prayerTime: prayerVM.nextPrayerTime,
+                        start: prayerVM.sunriseTime
+                    )
+                    .padding(.bottom, 20)
+                }
+
+                // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+                // 3b. CARTE : RAPPEL CORANIQUE (Rotation intelligente)
                 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
                 let reminder = currentReminder
-                
+
                 VStack(alignment: .leading, spacing: 16) {
                     // En-tête avec icône et badge "Rappel"
                     HStack(spacing: 10) {
@@ -369,6 +384,86 @@ struct CurrentPrayerGaugeView: View {
         let s = Int(timeInterval) % 60
         if h > 0 { return String(format: "-%d:%02d:%02d", h, m, s) }
         return String(format: "-%02d:%02d", m, s)
+    }
+}
+
+// MARK: - NextPrayerCountdownCard
+
+/// Compte à rebours vers la prochaine prière pendant les périodes sans fenêtre
+/// active (typiquement après le lever du soleil, en attendant Dhuhr).
+///
+/// Affiche une jauge de progression `start → target` si `start` est fourni
+/// (le lever du soleil sert d'ancre visuelle), et le temps restant en direct.
+struct NextPrayerCountdownCard: View {
+    let target: Date
+    let prayerName: String
+    let prayerTime: String
+    /// Ancre de départ de la jauge (lever du soleil). `nil` ⇒ pas de jauge.
+    let start: Date?
+
+    private func timeString(from timeInterval: TimeInterval) -> String {
+        let h = Int(timeInterval) / 3600
+        let m = Int(timeInterval) / 60 % 60
+        let s = Int(timeInterval) % 60
+        if h > 0 { return String(format: "-%d:%02d:%02d", h, m, s) }
+        return String(format: "-%02d:%02d", m, s)
+    }
+
+    var body: some View {
+        VStack(spacing: 20) {
+            // En-tête
+            HStack {
+                Image(systemName: "hourglass")
+                    .font(.title2)
+                Text("Prochaine : \(prayerName)")
+                    .font(.headline)
+                Spacer()
+                Text(verbatim: prayerTime)
+                    .font(.system(.title3, design: .monospaced).bold())
+            }
+            .foregroundColor(.teal)
+
+            // Jauge + décompte live
+            TimelineView(.periodic(from: .now, by: 1.0)) { context in
+                let now = context.date
+                let timeRemaining = max(0, target.timeIntervalSince(now))
+
+                VStack(spacing: 12) {
+                    if let start, target > start {
+                        let totalDuration = target.timeIntervalSince(start)
+                        let elapsed = now.timeIntervalSince(start)
+                        let progress = max(0.0, min(1.0, elapsed / totalDuration))
+
+                        GeometryReader { geo in
+                            ZStack(alignment: .leading) {
+                                Capsule()
+                                    .fill(Color.white.opacity(0.1))
+                                Capsule()
+                                    .fill(LinearGradient(colors: [Color.teal.opacity(0.6), Color.teal], startPoint: .leading, endPoint: .trailing))
+                                    .frame(width: geo.size.width * CGFloat(progress))
+                                    .animation(.linear(duration: 1.0), value: progress)
+                            }
+                        }
+                        .frame(height: 10)
+                    }
+
+                    HStack {
+                        if let start {
+                            Text("\(start.formatted(date: .omitted, time: .shortened)) → \(target.formatted(date: .omitted, time: .shortened))")
+                                .font(.subheadline)
+                                .foregroundColor(.white.opacity(0.7))
+                        }
+                        Spacer()
+                        Text(timeString(from: timeRemaining))
+                            .font(.system(.body, design: .monospaced).bold())
+                            .foregroundColor(.teal)
+                    }
+                }
+            }
+        }
+        .padding(24)
+        .background(.ultraThinMaterial)
+        .cornerRadius(16)
     }
 }
 
