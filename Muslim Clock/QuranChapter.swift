@@ -76,12 +76,47 @@ struct QuranChapter: Codable, Identifiable {
 struct QuranAyah: Codable, Identifiable, Hashable {
     /// Numéro du verset dans la sourate (1...totalVerses).
     let id: Int
-    /// Texte arabe Uthmani avec diacritiques.
+    /// Texte arabe Uthmani avec diacritiques, tanwin ouverts normalisés (cf. `normalizingOpenTanwin`).
     let text: String
     /// Traduction française. `nil` si endpoint sans traduction.
     let translation: String?
     /// Translittération latine (style alquran.cloud, ASCII brut).
     let transliteration: String
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(Int.self, forKey: .id)
+        text = try container.decode(String.self, forKey: .text).normalizingOpenTanwin
+        translation = try container.decodeIfPresent(String.self, forKey: .translation)
+        transliteration = try container.decode(String.self, forKey: .transliteration)
+    }
+}
+
+private extension String {
+    /// Remappe les tanwin ouverts (idghâm/ikhfâ) hérités du jeu KFGQPC Hafs — encodage
+    /// utilisé par `quran-json` — vers les codepoints Unicode modernes U+08F0–U+08F2,
+    /// les seuls couverts correctement par la police AmiriQuran.
+    ///
+    /// Sans ce remappage, U+065E (absent du cmap de la police) force CoreText à rendre
+    /// la lettre porteuse + son tanwin en GeezaPro dans un run séparé, ce qui casse la
+    /// liaison des lettres (ex. le ي de عُمۡيٞ) et déforme le tanwin.
+    ///
+    /// Opère sur les scalaires Unicode : ces signes sont combinants, donc jamais
+    /// isolés dans un `Character` (grappe de graphèmes) — un `map` sur `Character`
+    /// ne les verrait pas.
+    var normalizingOpenTanwin: String {
+        let mapping: [Unicode.Scalar: Unicode.Scalar] = [
+            "\u{0657}": "\u{08F0}",  // fathatan ouvert (هُدٗى)
+            "\u{065E}": "\u{08F1}",  // dammatan ouvert (قَدِيرٞ)
+            "\u{0656}": "\u{08F2}",  // kasratan ouvert (يَوۡمَئِذٖ)
+        ]
+        guard unicodeScalars.contains(where: { mapping[$0] != nil }) else { return self }
+        var result = String.UnicodeScalarView()
+        for scalar in unicodeScalars {
+            result.append(mapping[scalar] ?? scalar)
+        }
+        return String(result)
+    }
 }
 
 // MARK: - Constantes
