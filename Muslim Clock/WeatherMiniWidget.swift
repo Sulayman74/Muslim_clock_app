@@ -133,6 +133,12 @@ struct NextPrayerWidget: View {
         return prayerVM.nextPrayerTime
     }
 
+    /// Code couleur sémantique : orange = prière en cours (maintenant),
+    /// green = prochaine prière (à venir).
+    private var stateTint: Color {
+        isInWindow ? .orange : .green
+    }
+
     var body: some View {
         VStack(spacing: isInWindow ? 2 : 8) {
             Text(verbatim: displayName)
@@ -144,7 +150,7 @@ struct NextPrayerWidget: View {
             if isInWindow {
                 Text("jusqu'à")
                     .font(.system(size: 10, weight: .medium, design: .rounded))
-                    .foregroundStyle(.orange.opacity(0.9))
+                    .foregroundStyle(stateTint.opacity(0.9))
             }
 
             Text(verbatim: displayTime)
@@ -156,7 +162,7 @@ struct NextPrayerWidget: View {
         }
         .frame(width: 100, height: 100)
         .padding(10)
-        .glassEffect(.clear, in: .circle)
+        .glassEffect(.regular.tint(stateTint.opacity(0.12)), in: .circle)
         .redacted(reason: prayerVM.isLoading ? .placeholder : []) // SKELETON RESTAURÉ
         .animation(.easeInOut(duration: 0.3), value: prayerVM.isLoading)
         .animation(.easeInOut(duration: 0.3), value: isInWindow)

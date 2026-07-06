@@ -402,7 +402,7 @@ struct NextPrayerCountdownCard: View {
                 Text(verbatim: prayerTime)
                     .font(.system(.title3, design: .monospaced).bold())
             }
-            .foregroundColor(.teal)
+            .foregroundColor(.green)
 
             // Jauge + décompte live
             TimelineView(.periodic(from: .now, by: 1.0)) { context in
@@ -420,7 +420,7 @@ struct NextPrayerCountdownCard: View {
                                 Capsule()
                                     .fill(Color.white.opacity(0.1))
                                 Capsule()
-                                    .fill(LinearGradient(colors: [Color.teal.opacity(0.6), Color.teal], startPoint: .leading, endPoint: .trailing))
+                                    .fill(LinearGradient(colors: [Color.green.opacity(0.6), Color.green], startPoint: .leading, endPoint: .trailing))
                                     .frame(width: geo.size.width * CGFloat(progress))
                                     .animation(.linear(duration: 1.0), value: progress)
                             }
@@ -437,13 +437,13 @@ struct NextPrayerCountdownCard: View {
                         Spacer()
                         Text(timeString(from: timeRemaining))
                             .font(.system(.body, design: .monospaced).bold())
-                            .foregroundColor(.teal)
+                            .foregroundColor(.green)
                     }
                 }
             }
         }
         .padding(24)
-        .glassCard(tint: .teal)
+        .glassCard(tint: .green)
     }
 }
 
