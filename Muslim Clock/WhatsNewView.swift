@@ -24,40 +24,34 @@ struct WhatsNewView: View {
     /// — ne pas le reformuler sans raison, ça orphelinerait les traductions en/ar.
     private let items: [WhatsNewItem] = [
         WhatsNewItem(
-            icon: "moon.stars.fill",
+            icon: "timer",
+            color: .green,
+            title: String(localized: "Compte à rebours continu"),
+            description: String(localized: "Le temps restant jusqu'à la prochaine prière s'affiche désormais en continu, y compris après le lever du soleil en attendant Dhuhr. Le widget bascule automatiquement sur la prière en cours.")
+        ),
+        WhatsNewItem(
+            icon: "bell.badge.fill",
             color: .orange,
-            title: String(localized: "Mode Ramadan adaptatif"),
-            description: String(localized: "Pendant le mois béni, les widgets Home prennent une teinte ambre lanterne, un badge « Iftar » apparaît à côté de Maghrib et « Fin du Sohoor » à côté de Fajr. Le nom canonique des prières reste préservé partout.")
+            title: String(localized: "Notifications plus fiables"),
+            description: String(localized: "Toucher une notification (prière, Coran, Adhkar) ouvre directement le bon écran — même si l'application était complètement fermée.")
         ),
         WhatsNewItem(
-            icon: "hands.sparkles.fill",
-            color: .teal,
-            title: String(localized: "Du'a au bon moment"),
-            description: String(localized: "Une carte contextuelle s'affiche pour l'iftar (Abu Dawud 2357), pendant la nuit du sahari (Bukhari 1923) et durant les 10 dernières nuits avec la du'a de Laylatul Qadr (Tirmidhi 3513).")
-        ),
-        WhatsNewItem(
-            icon: "book.pages.fill",
+            icon: "clock.arrow.2.circlepath",
             color: .indigo,
-            title: String(localized: "Khatma plus sobre"),
-            description: String(localized: "Le suivi de lecture met l'accent sur la régularité avec un indicateur sobre — pour rester fidèle à l'esprit du wird sans glisser vers la gamification.")
-        ),
-        WhatsNewItem(
-            icon: "questionmark.circle.fill",
-            color: .gray,
-            title: String(localized: "Transparence éditoriale"),
-            description: String(localized: "Une page « Pourquoi pas de tracker de prière ? » explique le choix de ne pas gamifier la salât, conforme à la fatwa du Cheikh Ibn 'Uthaymîn (Majmû' al-Fatâwâ 16/111).")
-        ),
-        WhatsNewItem(
-            icon: "location.north.line.fill",
-            color: .teal,
-            title: String(localized: "Qibla plus précise"),
-            description: String(localized: "Fusion CoreMotion 60 Hz pour une aiguille fluide, sans secousses ni « tour fantôme » lors des changements brusques d'orientation.")
+            title: String(localized: "Horaires justes au changement d'heure"),
+            description: String(localized: "Au passage à l'heure d'été ou d'hiver, les horaires se recalculent automatiquement, sans décalage d'une heure.")
         ),
         WhatsNewItem(
             icon: "sparkles",
-            color: .yellow,
-            title: String(localized: "Stabilité & performances"),
-            description: String(localized: "Robustesse du chargement des contenus religieux, fluidité du module Khatma, et conformité totale au nouveau privacy manifest Apple.")
+            color: .orange,
+            title: String(localized: "Interface épurée"),
+            description: String(localized: "Un style visuel unifié, des cartes Sunnah et Lune que l'on déplie à la demande, et un écran d'accueil réorganisé pour garder l'essentiel en haut.")
+        ),
+        WhatsNewItem(
+            icon: "location.slash.fill",
+            color: .red,
+            title: String(localized: "Alerte de localisation"),
+            description: String(localized: "Si l'accès à votre position est désactivé, un message clair vous l'indique avec un raccourci direct vers les Réglages.")
         ),
     ]
 
