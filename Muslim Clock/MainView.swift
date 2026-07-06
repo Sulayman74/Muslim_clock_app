@@ -292,7 +292,8 @@ struct MainView: View {
                                     }
                                     PrayerListView()
                                     AdhkarQuickAccessButton()
-                                    RawatibCardView(prayerContext: prayerContextForCards)
+                                    // RawatibCardView retirée : ProphetSunnahCardView couvre déjà
+                                    // les Rawatib via son champ `sunnahRecommendation` (doublon).
                                     ProphetSunnahCardView(sunnah: ProphetSunnahProvider.current(
                                         prayerName: prayerContextForCards,
                                         season: currentSeason,
