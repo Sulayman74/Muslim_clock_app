@@ -35,17 +35,13 @@ struct QiblaView: View {
     @State private var displayHeading: Double = 0
     @State private var displayRelativeQibla: Double = 0
 
-    /// Renvoie le delta angulaire le plus court entre `current` et `target`
-    /// (résultat dans [-180°, +180°]).
-    private func shortestAngularDelta(from current: Double, to target: Double) -> Double {
-        let currentNorm = ((current.truncatingRemainder(dividingBy: 360)) + 360)
-            .truncatingRemainder(dividingBy: 360)
-        var delta = target - currentNorm
-        if delta > 180 { delta -= 360 }
-        if delta < -180 { delta += 360 }
-        return delta
+    /// `false` tant qu'aucun fix GPS n'est arrivé : l'azimut Qibla n'est pas
+    /// encore calculable, l'aiguille est grisée et le statut l'explique.
+    private var hasLocation: Bool {
+        manager.userLocation != nil
     }
-    
+
+
     /// Opacité du glow basée sur la proximité (0→4 mapped to 0→1)
     private var glowIntensity: Double {
         Double(manager.proximityLevel) / 4.0
@@ -87,10 +83,10 @@ struct QiblaView: View {
         .onDisappear { manager.stopCompass() }
         // Accumule les deltas les plus courts à chaque update du capteur ou de la Qibla.
         .onChange(of: manager.heading) { _, _ in
-            displayHeading += shortestAngularDelta(from: displayHeading, to: manager.heading)
+            displayHeading += CompassManager.shortestAngularDelta(from: displayHeading, to: manager.heading)
         }
         .onChange(of: relativeQibla) { _, _ in
-            displayRelativeQibla += shortestAngularDelta(from: displayRelativeQibla, to: relativeQibla)
+            displayRelativeQibla += CompassManager.shortestAngularDelta(from: displayRelativeQibla, to: relativeQibla)
         }
     }
     
@@ -133,8 +129,24 @@ struct QiblaView: View {
             
             // ✅ Date hégirien compact sous le nom de ville
             WidgetDateHeader(date: .now, compact: true)
+
+            // Invite de calibration (cap invalide ou précision > 25°)
+            if manager.needsCalibration {
+                HStack(spacing: 6) {
+                    Image(systemName: "arrow.triangle.2.circlepath")
+                        .font(.system(size: 11))
+                    Text("Calibrez la boussole (mouvement en 8)")
+                        .font(.system(size: 12, weight: .semibold, design: .rounded))
+                }
+                .foregroundStyle(.orange)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+                .background(.orange.opacity(0.15), in: Capsule())
+                .transition(.opacity.combined(with: .scale(scale: 0.9)))
+            }
         }
         .foregroundStyle(.white)
+        .animation(.easeInOut(duration: 0.3), value: manager.needsCalibration)
     }
     
     // MARK: - Compass
@@ -177,7 +189,7 @@ struct QiblaView: View {
             }
             .frame(height: size)
             
-            // ── Aiguille Qiblah ──
+            // ── Aiguille Qiblah — grisée tant que la position est inconnue ──
             QiblaNeedle(
                 proximityLevel: manager.proximityLevel,
                 accentColor: orQiblah,
@@ -188,6 +200,9 @@ struct QiblaView: View {
                 .interpolatingSpring(stiffness: 80, damping: 14),
                 value: displayRelativeQibla
             )
+            .saturation(hasLocation ? 1 : 0)
+            .opacity(hasLocation ? 1 : 0.35)
+            .animation(.easeInOut(duration: 0.3), value: hasLocation)
             
             // ── KAABA AU CENTRE — apparaît quand aligné ──
             KaabaIcon(
@@ -236,6 +251,7 @@ struct QiblaView: View {
     }
     
     private var statusText: String {
+        guard hasLocation else { return String(localized: "POSITION EN ATTENTE...") }
         switch manager.proximityLevel {
         case 4: return String(localized: "ALIGNÉ")
         case 3: return String(localized: "PRESQUE...")
@@ -244,8 +260,9 @@ struct QiblaView: View {
         default: return String(localized: "CHERCHER")
         }
     }
-    
+
     private var statusColor: Color {
+        guard hasLocation else { return .white.opacity(0.35) }
         switch manager.proximityLevel {
         case 4: return orQiblah
         case 3: return .green
