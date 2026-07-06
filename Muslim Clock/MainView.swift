@@ -1,5 +1,6 @@
 import SwiftUI
 import StoreKit
+import UIKit
 
 // MARK: - ═══════════════════════════════════════════════════
 // EN-TÊTE DES DATES (Grégorien & Hégirien)
@@ -140,6 +141,51 @@ private struct NetworkStatusBanner: View {
     }
 }
 
+// MARK: - Bannière localisation refusée
+
+/// Affichée quand l'accès à la localisation est refusé/restreint : sans position,
+/// aucun horaire ne peut être calculé. Propose un raccourci vers les Réglages.
+private struct LocationDeniedBanner: View {
+    @Environment(\.openURL) private var openURL
+
+    var body: some View {
+        HStack(spacing: 10) {
+            Image(systemName: "location.slash.fill")
+                .font(.system(size: 14, weight: .bold))
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Localisation désactivée")
+                    .font(.system(size: 13, weight: .semibold, design: .rounded))
+                Text("Impossible de calculer les horaires sans votre position.")
+                    .font(.system(size: 11, design: .rounded))
+                    .foregroundStyle(.white.opacity(0.8))
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+
+            Spacer()
+
+            Button {
+                if let url = URL(string: UIApplication.openSettingsURLString) {
+                    openURL(url)
+                }
+            } label: {
+                Text("Réglages")
+                    .font(.system(size: 12, weight: .bold, design: .rounded))
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .glassEffect(.clear, in: Capsule())
+            }
+        }
+        .foregroundStyle(.white)
+        .padding(.horizontal, 14)
+        .padding(.vertical, 10)
+        .background(
+            RoundedRectangle(cornerRadius: CornerRadius.card, style: .continuous)
+                .fill(Color.red.opacity(0.85))
+        )
+    }
+}
+
 // MARK: - Main View
 
 struct MainView: View {
@@ -150,6 +196,7 @@ struct MainView: View {
     @StateObject private var updateChecker = AppUpdateChecker()
     @StateObject private var dailyContentService = DailyContentService()
     @ObservedObject private var networkMonitor = NetworkMonitor.shared
+    @ObservedObject private var locationManager = SharedLocationManager.shared
     // Variables pour la détection du changement de saison
     @AppStorage("lastSmartSetupDate") private var lastSmartSetupDate: Double = 0
     @AppStorage("lastDSTState") private var lastDSTState: Bool = TimeZone.current.isDaylightSavingTime(for: Date())
@@ -262,6 +309,11 @@ struct MainView: View {
 
                                 GPSRelocationIndicator()
                                     .padding(.top, -4)
+
+                                if locationManager.isAccessDenied {
+                                    LocationDeniedBanner()
+                                        .padding(.top, 4)
+                                }
 
                                 SeasonBannerView(season: currentSeason)
                                     .padding(.top, -6)
