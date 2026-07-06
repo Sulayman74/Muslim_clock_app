@@ -47,7 +47,7 @@ class NotificationManager {
 
                 let content = UNMutableNotificationContent()
                 content.title = "\(prayerName) (\(formatter.string(from: prayerDate)))"
-                content.body  = "C'est l'heure de la prière du \(prayerName)."
+                content.body  = String(localized: "C'est l'heure de la prière du \(prayerName).")
                 content.sound = .default
                 content.userInfo = [
                     "prayerName": prayerName,
@@ -118,7 +118,7 @@ class NotificationManager {
         
         let content = UNMutableNotificationContent()
         content.title = "🕌 \(prayerName) (\(timeString))"
-        content.body = "C'est l'heure de la prière du \(prayerName)."
+        content.body = String(localized: "C'est l'heure de la prière du \(prayerName).")
         content.sound = .default
         content.userInfo = ["prayerName": prayerName, "prayerTime": date.timeIntervalSince1970]
         

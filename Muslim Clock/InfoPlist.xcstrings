@@ -1,0 +1,22 @@
+{
+  "sourceLanguage" : "fr",
+  "strings" : {
+    "NSMicrophoneUsageDescription" : {
+      "comment" : "Demande d'autorisation micro (enregistrement de récitation).",
+      "localizations" : {
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Pour enregistrer ta récitation du Coran et la partager (par exemple à ton imam pour relecture)." } },
+        "ar" : { "stringUnit" : { "state" : "translated", "value" : "لتسجيل تلاوتك للقرآن ومشاركتها (مثلاً مع إمامك للمراجعة)." } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "To record your Quran recitation and share it (for example with your imam for review)." } }
+      }
+    },
+    "NSLocationWhenInUseUsageDescription" : {
+      "comment" : "Demande d'autorisation localisation (Qiblah, horaires, météo).",
+      "localizations" : {
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Nous avons besoin de votre position pour la Qiblah et la météo." } },
+        "ar" : { "stringUnit" : { "state" : "translated", "value" : "نحتاج إلى موقعك لتحديد اتجاه القبلة وعرض الطقس." } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "We need your location for the Qiblah direction and weather." } }
+      }
+    }
+  },
+  "version" : "1.0"
+}
