@@ -66,6 +66,11 @@ class PrayerTimesViewModel: ObservableObject {
     // 1. LE GARDE-FOU
     var lastLocation: CLLocation?
     private var lastCalculationDate: Date? = nil
+    /// Offset GMT (secondes) au moment du dernier calcul. Sert à détecter un
+    /// changement d'heure d'été/hiver (DST) : au passage, l'offset varie alors
+    /// que le jour et le lieu ne changent pas — sans ça, le garde-fou anti-boucle
+    /// bloquerait le recalcul et les horaires resteraient décalés d'une heure.
+    private var lastCalculationTZOffset: Int? = nil
     private var calculationLocation: CLLocation?
     
     // 2. LECTURE DES RÉGLAGES UTILISATEUR (SMART SETUP)
@@ -103,6 +108,12 @@ class PrayerTimesViewModel: ObservableObject {
         NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)
             .sink { [weak self] _ in
                 self?.checkIfPrayerTimePassed()
+                // Recalcule si l'offset DST a changé pendant la suspension. Le
+                // garde-fou de calculatePrayers court-circuite si jour, lieu et
+                // fuseau sont inchangés — donc no-op dans le cas normal.
+                if let loc = self?.lastLocation {
+                    self?.calculatePrayers(for: loc)
+                }
             }
             .store(in: &cancellables)
         
@@ -159,25 +170,32 @@ class PrayerTimesViewModel: ObservableObject {
     func calculatePrayers(for location: CLLocation) {
         let now = Date()
         
+        // Offset GMT courant : s'il diffère du dernier calcul, on a franchi un
+        // changement DST → le garde-fou ne doit PAS court-circuiter le recalcul.
+        let currentTZOffset = TimeZone.current.secondsFromGMT(for: now)
+
         if let lastDate = lastCalculationDate {
                 let isSameDay = Calendar.current.isDate(now, inSameDayAs: lastDate)
                 let isSamePlace = (lastLocation?.distance(from: location) ?? .infinity) < 2000
-                
-                if isSameDay && isSamePlace && !self.dailyPrayers.isEmpty {
+                let isSameTZ = lastCalculationTZOffset == currentTZOffset
+
+                if isSameDay && isSamePlace && isSameTZ && !self.dailyPrayers.isEmpty {
                     return
                 }
             }
-        
+
         // LE GARDE-FOU ANTI-BOUCLE
         let isSameDay = Calendar.current.isDate(now, inSameDayAs: lastCalculationDate ?? Date.distantPast)
         let isSamePlace = (lastLocation?.distance(from: location) ?? .infinity) < 2000
-        
-        if isSameDay && isSamePlace && !self.dailyPrayers.isEmpty {
+        let isSameTZ = lastCalculationTZOffset == currentTZOffset
+
+        if isSameDay && isSamePlace && isSameTZ && !self.dailyPrayers.isEmpty {
             return
         }
-        
+
         self.lastLocation = location
         self.lastCalculationDate = now
+        self.lastCalculationTZOffset = currentTZOffset
         
         let coordinates = Coordinates(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
         
