@@ -70,9 +70,15 @@ private enum PrayerData {
             return v > 0 ? Date(timeIntervalSince1970: v) : nil
         }
         let tomorrowFajrV = defaults?.double(forKey: "prayer_fajr_tomorrow") ?? 0
-        let tomorrowFajr  = tomorrowFajrV > 0
-            ? Date(timeIntervalSince1970: tomorrowFajrV)
-            : now.addingTimeInterval(8 * 3600)
+        let storedTomorrowFajr = tomorrowFajrV > 0 ? Date(timeIntervalSince1970: tomorrowFajrV) : nil
+        // Garde anti-stale : si l'app iOS n'a pas tourné depuis plusieurs jours, la
+        // clé "prayer_fajr_tomorrow" pointe vers une date passée. On ne la retient
+        // que si elle est dans le futur ; sinon on retombe sur une approximation
+        // (now + 8h) plutôt que de fausser les fenêtres nocturnes (Isha/middleOfNight).
+        let tomorrowFajr: Date = {
+            if let stored = storedTomorrowFajr, stored > now { return stored }
+            return now.addingTimeInterval(8 * 3600)
+        }()
 
         // Sunrise : fin de la fenêtre Fajr
         let sunriseV = defaults?.double(forKey: "prayer_sunrise") ?? 0
