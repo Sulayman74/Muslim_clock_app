@@ -111,6 +111,10 @@ enum MoonPhaseCalculator {
 struct MoonWidgetView: View {
     var date: Date = .now
 
+    /// Carte d'enrichissement repliée par défaut pour alléger la densité de
+    /// l'écran Salat. Le bandeau « Jours Blancs » reste visible même replié.
+    @State private var isExpanded: Bool = false
+
     private var strip: [MoonDayInfo] { MoonPhaseCalculator.strip(centeredOn: date) }
     private var today: MoonDayInfo   { MoonPhaseCalculator.info(for: date) }
 
@@ -125,21 +129,33 @@ struct MoonWidgetView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
 
-            // ── EN-TÊTE ──
-            HStack {
-                Label("Phases Lunaires", systemImage: "moon.stars.fill")
-                    .font(.system(size: 13, weight: .semibold, design: .rounded))
-                    .foregroundStyle(.white.opacity(0.85))
-                    .labelStyle(.titleAndIcon)
+            // ── EN-TÊTE (cliquable : repli / dépli) ──
+            Button {
+                withAnimation(.easeInOut(duration: 0.25)) { isExpanded.toggle() }
+            } label: {
+                HStack {
+                    Label("Phases Lunaires", systemImage: "moon.stars.fill")
+                        .font(.system(size: 13, weight: .semibold, design: .rounded))
+                        .foregroundStyle(.white.opacity(0.85))
+                        .labelStyle(.titleAndIcon)
 
-                Spacer()
+                    Spacer()
 
-                Text(verbatim: hijriMonthYear)
-                    .font(.system(size: 11, weight: .medium, design: .rounded))
-                    .foregroundStyle(.white.opacity(0.45))
+                    Text(verbatim: hijriMonthYear)
+                        .font(.system(size: 11, weight: .medium, design: .rounded))
+                        .foregroundStyle(.white.opacity(0.45))
+
+                    Image(systemName: "chevron.down")
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundStyle(.white.opacity(0.5))
+                        .rotationEffect(.degrees(isExpanded ? 180 : 0))
+                }
+                .contentShape(Rectangle())
             }
+            .buttonStyle(.plain)
+            .sensoryFeedback(.selection, trigger: isExpanded)
 
-            // ── BANDEAU "JOURS BLANCS" (visible si applicable) ──
+            // ── BANDEAU "JOURS BLANCS" (visible si applicable, même replié) ──
             if today.isWhiteDays {
                 HStack(spacing: 5) {
                     Image(systemName: "sparkles")
@@ -155,47 +171,49 @@ struct MoonWidgetView: View {
                 .overlay(Capsule().stroke(Color.orange.opacity(0.3), lineWidth: 0.5))
             }
 
-            // ── BANDE 5 JOURS ──
-            HStack(spacing: 0) {
-                ForEach(strip) { day in
-                    MoonDayCell(info: day)
-                }
-            }
-
-            // ── CARTE INVOCATION HILAL (1er jour du mois) ──
-            if today.hijriDay == 1 {
-                NewMoonInvocationCard()
-            }
-
-            // ── PHASE + ILLUMINATION DU JOUR ──
-            HStack(spacing: 6) {
-                Text(verbatim: today.phaseName)
-                    .font(.system(size: 11, weight: .semibold, design: .rounded))
-                    .foregroundStyle(today.isWhiteDays ? .orange : .white.opacity(0.7))
-
-                Spacer()
-
-                // Barre d'illumination
-                GeometryReader { geo in
-                    ZStack(alignment: .leading) {
-                        Capsule().fill(.white.opacity(0.1)).frame(height: 4)
-                        Capsule()
-                            .fill(
-                                LinearGradient(
-                                    colors: today.isWhiteDays
-                                        ? [.orange.opacity(0.6), .orange]
-                                        : [.indigo.opacity(0.6), .indigo],
-                                    startPoint: .leading, endPoint: .trailing
-                                )
-                            )
-                            .frame(width: geo.size.width * today.illumination, height: 4)
+            if isExpanded {
+                // ── BANDE 5 JOURS ──
+                HStack(spacing: 0) {
+                    ForEach(strip) { day in
+                        MoonDayCell(info: day)
                     }
                 }
-                .frame(width: 60, height: 4)
 
-                Text(verbatim: "\(Int(today.illumination * 100))%")
-                    .font(.system(size: 10, weight: .bold, design: .monospaced))
-                    .foregroundStyle(.white.opacity(0.5))
+                // ── CARTE INVOCATION HILAL (1er jour du mois) ──
+                if today.hijriDay == 1 {
+                    NewMoonInvocationCard()
+                }
+
+                // ── PHASE + ILLUMINATION DU JOUR ──
+                HStack(spacing: 6) {
+                    Text(verbatim: today.phaseName)
+                        .font(.system(size: 11, weight: .semibold, design: .rounded))
+                        .foregroundStyle(today.isWhiteDays ? .orange : .white.opacity(0.7))
+
+                    Spacer()
+
+                    // Barre d'illumination
+                    GeometryReader { geo in
+                        ZStack(alignment: .leading) {
+                            Capsule().fill(.white.opacity(0.1)).frame(height: 4)
+                            Capsule()
+                                .fill(
+                                    LinearGradient(
+                                        colors: today.isWhiteDays
+                                            ? [.orange.opacity(0.6), .orange]
+                                            : [.indigo.opacity(0.6), .indigo],
+                                        startPoint: .leading, endPoint: .trailing
+                                    )
+                                )
+                                .frame(width: geo.size.width * today.illumination, height: 4)
+                        }
+                    }
+                    .frame(width: 60, height: 4)
+
+                    Text(verbatim: "\(Int(today.illumination * 100))%")
+                        .font(.system(size: 10, weight: .bold, design: .monospaced))
+                        .foregroundStyle(.white.opacity(0.5))
+                }
             }
         }
         .padding(16)

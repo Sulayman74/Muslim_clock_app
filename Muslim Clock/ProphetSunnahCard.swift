@@ -205,98 +205,118 @@ struct ProphetSunnahCardView: View {
     let sunnah: ProphetSunnah
 
     @State private var showArabic: Bool = false
+    /// Carte d'enrichissement repliée par défaut pour alléger la densité de
+    /// l'écran Salat. L'utilisateur déplie au tap sur l'en-tête.
+    @State private var isExpanded: Bool = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            // En-tête
-            HStack(spacing: 12) {
-                ZStack {
-                    Circle()
-                        .fill(sunnah.accentColor.opacity(0.18))
-                        .frame(width: 38, height: 38)
-                    Image(systemName: sunnah.icon)
-                        .font(.system(size: 16, weight: .semibold))
-                        .foregroundStyle(sunnah.accentColor)
-                }
+            // En-tête cliquable (repli / dépli)
+            Button {
+                withAnimation(.easeInOut(duration: 0.25)) { isExpanded.toggle() }
+            } label: {
+                HStack(spacing: 12) {
+                    ZStack {
+                        Circle()
+                            .fill(sunnah.accentColor.opacity(0.18))
+                            .frame(width: 38, height: 38)
+                        Image(systemName: sunnah.icon)
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundStyle(sunnah.accentColor)
+                    }
 
-                VStack(alignment: .leading, spacing: 1) {
-                    Text(sunnah.title)
-                        .font(.system(size: 13, weight: .bold, design: .rounded))
-                        .foregroundStyle(sunnah.accentColor)
-                    Text("Ce que le Prophète ﷺ aimait")
-                        .font(.system(size: 10, weight: .medium, design: .rounded))
+                    VStack(alignment: .leading, spacing: 1) {
+                        Text(sunnah.title)
+                            .font(.system(size: 13, weight: .bold, design: .rounded))
+                            .foregroundStyle(sunnah.accentColor)
+                        Text("Ce que le Prophète ﷺ aimait")
+                            .font(.system(size: 10, weight: .medium, design: .rounded))
+                            .foregroundStyle(.white.opacity(0.5))
+                    }
+
+                    Spacer()
+
+                    Image(systemName: "chevron.down")
+                        .font(.system(size: 12, weight: .semibold))
                         .foregroundStyle(.white.opacity(0.5))
+                        .rotationEffect(.degrees(isExpanded ? 180 : 0))
                 }
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .sensoryFeedback(.selection, trigger: isExpanded)
 
-                Spacer()
-
+            if isExpanded {
                 // Toggle FR/AR si arabe disponible
                 if sunnah.arabicText != nil {
-                    Button {
-                        withAnimation(.easeInOut(duration: 0.2)) { showArabic.toggle() }
-                    } label: {
-                        Text(verbatim: showArabic ? "FR" : "عربي")
-                            .font(.system(size: 10, weight: .bold, design: .rounded))
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 3)
-                            .glassEffect(.clear, in: Capsule())
-                            .foregroundStyle(.white.opacity(0.85))
+                    HStack {
+                        Spacer()
+                        Button {
+                            withAnimation(.easeInOut(duration: 0.2)) { showArabic.toggle() }
+                        } label: {
+                            Text(verbatim: showArabic ? "FR" : "عربي")
+                                .font(.system(size: 10, weight: .bold, design: .rounded))
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 3)
+                                .glassEffect(.clear, in: Capsule())
+                                .foregroundStyle(.white.opacity(0.85))
+                        }
+                        .sensoryFeedback(.selection, trigger: showArabic)
                     }
-                    .sensoryFeedback(.selection, trigger: showArabic)
                 }
-            }
 
-            // Corps : texte FR ou AR
-            Group {
-                if showArabic, let arabic = sunnah.arabicText {
-                    Text(verbatim: arabic)
-                        .font(.system(size: 17, weight: .medium))
-                        .multilineTextAlignment(.trailing)
-                        .frame(maxWidth: .infinity, alignment: .trailing)
-                        .environment(\.layoutDirection, .rightToLeft)
-                        .lineSpacing(6)
-                } else {
-                    // mainText supporte le markdown **bold**
-                    Text(.init(sunnah.mainText))
-                        .font(.system(size: 14, design: .rounded))
-                        .foregroundStyle(.white.opacity(0.92))
-                        .multilineTextAlignment(.leading)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .lineSpacing(3)
-                        .fixedSize(horizontal: false, vertical: true)
+                // Corps : texte FR ou AR
+                Group {
+                    if showArabic, let arabic = sunnah.arabicText {
+                        Text(verbatim: arabic)
+                            .font(.system(size: 17, weight: .medium))
+                            .multilineTextAlignment(.trailing)
+                            .frame(maxWidth: .infinity, alignment: .trailing)
+                            .environment(\.layoutDirection, .rightToLeft)
+                            .lineSpacing(6)
+                    } else {
+                        // mainText supporte le markdown **bold**
+                        Text(.init(sunnah.mainText))
+                            .font(.system(size: 14, design: .rounded))
+                            .foregroundStyle(.white.opacity(0.92))
+                            .multilineTextAlignment(.leading)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .lineSpacing(3)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
                 }
-            }
-            .animation(.easeInOut(duration: 0.2), value: showArabic)
+                .animation(.easeInOut(duration: 0.2), value: showArabic)
 
-            // Recommandation Sunnah/Rawatib (encart bouton-like)
-            if let recommendation = sunnah.sunnahRecommendation {
-                HStack(alignment: .top, spacing: 8) {
-                    Image(systemName: "hand.raised.fill")
-                        .font(.system(size: 11, weight: .bold))
-                        .foregroundStyle(sunnah.accentColor.opacity(0.85))
-                        .padding(.top, 2)
-                    Text(.init(recommendation))
-                        .font(.system(size: 12, design: .rounded))
-                        .foregroundStyle(.white.opacity(0.8))
-                        .lineSpacing(2)
-                        .fixedSize(horizontal: false, vertical: true)
+                // Recommandation Sunnah/Rawatib (encart bouton-like)
+                if let recommendation = sunnah.sunnahRecommendation {
+                    HStack(alignment: .top, spacing: 8) {
+                        Image(systemName: "hand.raised.fill")
+                            .font(.system(size: 11, weight: .bold))
+                            .foregroundStyle(sunnah.accentColor.opacity(0.85))
+                            .padding(.top, 2)
+                        Text(.init(recommendation))
+                            .font(.system(size: 12, design: .rounded))
+                            .foregroundStyle(.white.opacity(0.8))
+                            .lineSpacing(2)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                    .padding(10)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(sunnah.accentColor.opacity(0.08), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
                 }
-                .padding(10)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .background(sunnah.accentColor.opacity(0.08), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
-            }
 
-            // Sources
-            if !sunnah.sources.isEmpty {
-                HStack(spacing: 4) {
-                    Image(systemName: "book.closed.fill")
-                        .font(.system(size: 9))
-                    Text(verbatim: sunnah.sources.joined(separator: " · "))
-                        .font(.system(size: 10, weight: .medium, design: .rounded))
-                        .lineLimit(2)
-                        .minimumScaleFactor(0.85)
+                // Sources
+                if !sunnah.sources.isEmpty {
+                    HStack(spacing: 4) {
+                        Image(systemName: "book.closed.fill")
+                            .font(.system(size: 9))
+                        Text(verbatim: sunnah.sources.joined(separator: " · "))
+                            .font(.system(size: 10, weight: .medium, design: .rounded))
+                            .lineLimit(2)
+                            .minimumScaleFactor(0.85)
+                    }
+                    .foregroundStyle(.white.opacity(0.45))
                 }
-                .foregroundStyle(.white.opacity(0.45))
             }
         }
         .padding(16)
