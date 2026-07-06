@@ -12,18 +12,36 @@ import Combine
 // MODÈLE ADHKAR
 // ═══════════════════════════════════════════════════════════
 
+/// Modèle unique pour toutes les invocations (matin/soir ET après la prière).
+/// `timing` est renseigné dans adhkar.json, `prayer` dans post_prayer_adhkar.json —
+/// les deux sont optionnels pour décoder chaque fichier avec le même type.
 struct Dhikr: Codable, Identifiable {
     let id: Int
     let text: String
     let arabic: String
     let source: String
     let `repeat`: Int
-    let timing: String       // "morning", "evening", "both"
+    /// "morning", "evening", "both" — adhkar matin/soir uniquement.
+    let timing: String?
+    /// "all", "fajr", "fajr_maghrib", "qiyam" — adhkar post-prière uniquement.
+    let prayer: String?
+    /// Répétition spécifique après Fajr et Maghrib (ex : sourates protectrices ×3
+    /// au lieu de ×1 — Abu Dawud 5082). `nil` ⇒ `repeat` s'applique partout.
+    let repeatFajrMaghrib: Int?
     let benefit: String
 
     /// Niveau d'authenticité du hadith — "sahih" (authentique) ou "hasan" (bon).
     /// Optional pour rester rétrocompatible avec les anciens JSON bundlés/distants.
     let authenticity: String?
+
+    /// Nombre de répétitions effectif pour la prière donnée (clé en minuscules :
+    /// "fajr", "dhuhr", ...). Applique l'exception Fajr/Maghrib si définie.
+    func effectiveRepeat(for prayerKey: String) -> Int {
+        if let override = repeatFajrMaghrib, prayerKey == "fajr" || prayerKey == "maghrib" {
+            return override
+        }
+        return `repeat`
+    }
 }
 
 enum AdhkarTiming: String, CaseIterable {
@@ -240,6 +258,7 @@ struct AdhkarView: View {
                     ForEach(service.adhkarList) { dhikr in
                         DhikrCardView(
                             dhikr: dhikr,
+                            repeatCount: dhikr.repeat,
                             count: service.completedCounts[dhikr.id] ?? 0,
                             isCompleted: service.isCompleted(dhikr: dhikr),
                             showArabic: showArabic[dhikr.id] ?? true,
@@ -385,12 +404,16 @@ struct AdhkarView: View {
 
 struct DhikrCardView: View {
     let dhikr: Dhikr
+    /// Répétitions affichées — passer `dhikr.effectiveRepeat(for:)` côté post-prière
+    /// pour appliquer l'exception Fajr/Maghrib.
+    let repeatCount: Int
     let count: Int
     let isCompleted: Bool
     let showArabic: Bool
     let showBenefit: Bool
     let accentColor: Color
-    let onTap: () -> Void
+    /// `nil` ⇒ mode consultation : badge statique "x N" au lieu du compteur interactif.
+    let onTap: (() -> Void)?
     let onToggleArabic: () -> Void
     let onToggleBenefit: () -> Void
     
@@ -473,36 +496,49 @@ struct DhikrCardView: View {
                         .foregroundColor(showBenefit ? accentColor : .white.opacity(0.5))
                 }
                 
-                // ── COMPTEUR / TAP ZONE ──
-                Button(action: onTap) {
-                    HStack(spacing: 6) {
-                        if isCompleted {
-                            Image(systemName: "checkmark.circle.fill")
-                                .foregroundColor(.green)
-                                .font(.system(size: 18))
-                        } else {
-                            Text(verbatim: "\(count)/\(dhikr.repeat)")
-                                .font(.system(size: 14, weight: .bold, design: .monospaced))
-                                .foregroundColor(.white)
+                // ── COMPTEUR / TAP ZONE (ou badge statique en mode consultation) ──
+                if let onTap {
+                    Button(action: onTap) {
+                        HStack(spacing: 6) {
+                            if isCompleted {
+                                Image(systemName: "checkmark.circle.fill")
+                                    .foregroundColor(.green)
+                                    .font(.system(size: 18))
+                            } else {
+                                Text(verbatim: "\(count)/\(repeatCount)")
+                                    .font(.system(size: 14, weight: .bold, design: .monospaced))
+                                    .foregroundColor(.white)
+                            }
                         }
+                        .padding(.horizontal, 14)
+                        .padding(.vertical, 8)
+                        .background(
+                            isCompleted
+                            ? Color.green.opacity(0.15)
+                            : accentColor.opacity(0.2)
+                        )
+                        .clipShape(Capsule())
+                        .overlay(
+                            Capsule()
+                                .stroke(
+                                    isCompleted ? Color.green.opacity(0.3) : accentColor.opacity(0.3),
+                                    lineWidth: 1
+                                )
+                        )
                     }
-                    .padding(.horizontal, 14)
-                    .padding(.vertical, 8)
-                    .background(
-                        isCompleted
-                        ? Color.green.opacity(0.15)
-                        : accentColor.opacity(0.2)
-                    )
-                    .clipShape(Capsule())
-                    .overlay(
-                        Capsule()
-                            .stroke(
-                                isCompleted ? Color.green.opacity(0.3) : accentColor.opacity(0.3),
-                                lineWidth: 1
-                            )
-                    )
+                    .sensoryFeedback(.impact(weight: .light), trigger: count)
+                } else {
+                    Text(verbatim: "x \(repeatCount)")
+                        .font(.system(size: 12, weight: .bold, design: .monospaced))
+                        .foregroundColor(accentColor)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 6)
+                        .background(accentColor.opacity(0.2))
+                        .clipShape(Capsule())
+                        .overlay(
+                            Capsule().stroke(accentColor.opacity(0.3), lineWidth: 1)
+                        )
                 }
-                .sensoryFeedback(.impact(weight: .light), trigger: count)
             }
         }
         .padding(16)

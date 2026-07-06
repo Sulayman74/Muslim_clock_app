@@ -9,26 +9,10 @@ import Foundation
 import SwiftUI
 import Combine
 
-struct PostPrayerDhikr: Codable, Identifiable {
-    let id: Int
-    let text: String
-    let arabic: String
-    let source: String
-    let repeatCount: Int
-    let prayer: String
-    let benefit: String
-    
-    enum CodingKeys: String, CodingKey {
-        case id, text, arabic, source, prayer, benefit
-        case repeatCount = "repeat"
-    }
-}
-
 @MainActor
 class PostPrayerAdhkarService: ObservableObject {
-    @Published var adhkarList: [PostPrayerDhikr] = []
-    @Published var isCompleted: Bool = false
-    
+    @Published var adhkarList: [Dhikr] = []
+
     func loadAdhkar(for prayerName: String) {
         let currentPrayerKey = prayerName.lowercased()
 
@@ -37,16 +21,23 @@ class PostPrayerAdhkarService: ObservableObject {
             guard let allAdhkar = await RemoteJSONLoader.load(
                 filename: "post_prayer_adhkar.json",
                 remoteURL: githubURL,
-                type: [PostPrayerDhikr].self
+                type: [Dhikr].self
             ) else {
                 print("Erreur : Impossible de charger post_prayer_adhkar.json")
                 return
             }
 
-            self.adhkarList = allAdhkar.filter { dhikr in
-                dhikr.prayer == "all" ||
-                dhikr.prayer == currentPrayerKey ||
-                (dhikr.prayer == "fajr_maghrib" && (currentPrayerKey == "fajr" || currentPrayerKey == "maghrib"))
+            if currentPrayerKey == "qiyam" {
+                // Les adhkar "all" sont liés aux prières prescrites
+                // (« دُبُرَ كُلِّ صَلَاةٍ مَكْتُوبَةٍ » — Muslim 596) : seuls les
+                // adhkar propres à la prière de nuit sont affichés ici.
+                self.adhkarList = allAdhkar.filter { $0.prayer == "qiyam" }
+            } else {
+                self.adhkarList = allAdhkar.filter { dhikr in
+                    dhikr.prayer == "all" ||
+                    dhikr.prayer == currentPrayerKey ||
+                    (dhikr.prayer == "fajr_maghrib" && (currentPrayerKey == "fajr" || currentPrayerKey == "maghrib"))
+                }
             }
         }
     }
@@ -451,10 +442,15 @@ struct NextPrayerCountdownCard: View {
 struct PostPrayerAdhkarView: View {
     let prayerName: String
     @StateObject private var service = PostPrayerAdhkarService()
-    
+    @State private var showArabic: [Int: Bool] = [:]
+    @State private var showBenefit: [Int: Bool] = [:]
+
+    /// Clé minuscule utilisée pour le filtre et l'exception Fajr/Maghrib.
+    private var prayerKey: String { prayerName.lowercased() }
+
     // Déduction d'un nom propre pour l'affichage
     private var displayName: String {
-        if prayerName.lowercased() == "qiyam" {
+        if prayerKey == "qiyam" {
             return "la Prière de la Nuit"
         }
         return "la prière (\(prayerName.capitalized))"
@@ -480,7 +476,20 @@ struct PostPrayerAdhkarView: View {
             ScrollView(.vertical, showsIndicators: false) {
                 LazyVStack(spacing: 14) {
                     ForEach(service.adhkarList) { dhikr in
-                        PostPrayerDhikrCardView(dhikr: dhikr)
+                        // Carte partagée avec les adhkar matin/soir, en mode
+                        // consultation (onTap nil ⇒ badge "x N" statique).
+                        DhikrCardView(
+                            dhikr: dhikr,
+                            repeatCount: dhikr.effectiveRepeat(for: prayerKey),
+                            count: 0,
+                            isCompleted: false,
+                            showArabic: showArabic[dhikr.id] ?? true,
+                            showBenefit: showBenefit[dhikr.id] ?? false,
+                            accentColor: .orange,
+                            onTap: nil,
+                            onToggleArabic: { showArabic[dhikr.id] = !(showArabic[dhikr.id] ?? true) },
+                            onToggleBenefit: { showBenefit[dhikr.id] = !(showBenefit[dhikr.id] ?? false) }
+                        )
                     }
                 }
                 .padding(.horizontal, 16)
@@ -499,113 +508,6 @@ struct PostPrayerAdhkarView: View {
         .task {
             service.loadAdhkar(for: prayerName)
         }
-    }
-}
-
-// MARK: - ═══════════════════════════════════════════════════
-// CARTE INDIVIDUELLE (Design sans clic/compteur)
-// ═══════════════════════════════════════════════════════════
-
-struct PostPrayerDhikrCardView: View {
-    let dhikr: PostPrayerDhikr
-    let accentColor: Color = .orange // Couleur raccord avec le thème Salat
-    
-    // État local pour chaque carte (pas besoin de les sauvegarder globalement ici)
-    @State private var showArabic: Bool = true
-    @State private var showBenefit: Bool = false
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            
-            // ── TEXTE ARABE ──
-            if showArabic {
-                Text(dhikr.arabic)
-                    .font(.system(size: 20, weight: .regular))
-                    .multilineTextAlignment(.center)
-                    .frame(maxWidth: .infinity)
-                    .lineSpacing(10)
-                    .foregroundColor(.white.opacity(0.9))
-            }
-            
-            // ── TEXTE FRANÇAIS ──
-            if !showArabic {
-                Text(dhikr.text)
-                    .font(.system(size: 14, weight: .regular, design: .serif))
-                    .italic()
-                    .multilineTextAlignment(.leading)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .foregroundColor(.white.opacity(0.8))
-            }
-            
-            // ── BIENFAIT (EXPANDABLE) ──
-            if showBenefit {
-                Text(dhikr.benefit)
-                    .font(.system(size: 12, weight: .medium, design: .rounded))
-                    .foregroundColor(accentColor.opacity(0.8))
-                    .padding(10)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(accentColor.opacity(0.08))
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
-            }
-            
-            // ── BARRE DU BAS : Source + Boutons + Badge ──
-            HStack(spacing: 10) {
-                // Source
-                Text(dhikr.source)
-                    .font(.system(size: 10, weight: .medium))
-                    .foregroundColor(.white.opacity(0.4))
-                
-                Spacer()
-                
-                // Toggle langue
-                Button {
-                    withAnimation(.easeInOut(duration: 0.2)) {
-                        showArabic.toggle()
-                    }
-                } label: {
-                    Text(showArabic ? "FR" : "عربي")
-                        .font(.system(size: 10, weight: .bold, design: .rounded))
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 3)
-                        .background(.ultraThinMaterial)
-                        .clipShape(Capsule())
-                        .foregroundColor(.white)
-                }
-                
-                // Toggle bienfait
-                Button {
-                    withAnimation(.easeInOut(duration: 0.2)) {
-                        showBenefit.toggle()
-                    }
-                } label: {
-                    Image(systemName: showBenefit ? "lightbulb.fill" : "lightbulb")
-                        .font(.system(size: 12))
-                        .foregroundColor(showBenefit ? accentColor : .white.opacity(0.5))
-                }
-                
-                // ── BADGE DE RÉPÉTITION (Statique) ──
-                // On l'affiche toujours pour être clair sur ce qu'il faut faire
-                Text("x \(dhikr.repeatCount)")
-                    .font(.system(size: 12, weight: .bold, design: .monospaced))
-                    .foregroundColor(accentColor)
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 6)
-                    .background(accentColor.opacity(0.2))
-                    .clipShape(Capsule())
-                    .overlay(
-                        Capsule().stroke(accentColor.opacity(0.3), lineWidth: 1)
-                    )
-            }
-        }
-        .padding(16)
-        .background(Color.white.opacity(0.06))
-        .clipShape(RoundedRectangle(cornerRadius: 18))
-        .overlay(
-            RoundedRectangle(cornerRadius: 18)
-                .stroke(Color.white.opacity(0.08), lineWidth: 1)
-        )
-        .animation(.easeInOut(duration: 0.2), value: showArabic)
-        .animation(.easeInOut(duration: 0.2), value: showBenefit)
     }
 }
 
