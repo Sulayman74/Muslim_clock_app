@@ -11,6 +11,98 @@
 
 import SwiftUI
 
+// MARK: - Thème de lecture
+
+/// Fond de lecture du Coran — surfaces unies et statiques, pensées pour la lecture
+/// prolongée : contraste élevé mais non maximal (pas de blanc/noir purs, évite la
+/// halation), aucune animation sous le texte pour garder les diacritiques nets.
+enum QuranReadingTheme: String, CaseIterable, Identifiable {
+    /// Papier crème, texte brun foncé — confort de jour, évoque le mushaf imprimé.
+    case sepia
+    /// Gris très sombre, texte blanc cassé — confort du soir. Défaut (comportement historique).
+    case dark
+
+    var id: String { rawValue }
+
+    var label: String {
+        switch self {
+        case .sepia: String(localized: "Sépia")
+        case .dark: String(localized: "Sombre")
+        }
+    }
+
+    var icon: String {
+        switch self {
+        case .sepia: "sun.max"
+        case .dark: "moon"
+        }
+    }
+
+    /// Schéma imposé à la vue pour que barre de navigation, menus et matériaux suivent le fond.
+    var colorScheme: ColorScheme {
+        switch self {
+        case .sepia: .light
+        case .dark: .dark
+        }
+    }
+
+    var background: Color {
+        switch self {
+        case .sepia: Color(red: 0.98, green: 0.95, blue: 0.89)
+        case .dark: Color(red: 0.09, green: 0.10, blue: 0.11)
+        }
+    }
+
+    var cardBackground: Color {
+        switch self {
+        case .sepia: Color(red: 1.0, green: 0.99, blue: 0.96)
+        case .dark: Color.white.opacity(0.06)
+        }
+    }
+
+    var cardStroke: Color {
+        switch self {
+        case .sepia: sepiaInk.opacity(0.14)
+        case .dark: Color.white.opacity(0.06)
+        }
+    }
+
+    /// Texte principal (arabe, titres).
+    var textPrimary: Color {
+        switch self {
+        case .sepia: sepiaInk
+        case .dark: Color.white.opacity(0.87)
+        }
+    }
+
+    /// Texte secondaire (traduction, translittération).
+    var textSecondary: Color {
+        switch self {
+        case .sepia: sepiaInk.opacity(0.65)
+        case .dark: Color.white.opacity(0.6)
+        }
+    }
+
+    /// Métadonnées discrètes (compteurs, fins de section, séparateurs de titre).
+    var textTertiary: Color {
+        switch self {
+        case .sepia: sepiaInk.opacity(0.45)
+        case .dark: Color.white.opacity(0.4)
+        }
+    }
+
+    /// Filets et pistes de progression.
+    var divider: Color {
+        switch self {
+        case .sepia: sepiaInk.opacity(0.12)
+        case .dark: Color.white.opacity(0.08)
+        }
+    }
+
+    /// Encre brun foncé du thème sépia (#3E2F1C).
+    private var sepiaInk: Color { Color(red: 0.24, green: 0.18, blue: 0.11) }
+}
+
 struct QuranChapterDetailView: View {
     let chapterIndex: QuranChapterIndex
     /// Numéro d'ayah ciblé (auto-scroll au mount). `nil` = pas de scroll auto.
@@ -32,6 +124,8 @@ struct QuranChapterDetailView: View {
 
     @AppStorage("quranShowTransliteration") private var showTransliteration: Bool = false
     @AppStorage("quranShowTranslation") private var showTranslation: Bool = true
+    /// Fond de lecture (sépia / sombre) — persistant, propre au lecteur.
+    @AppStorage("quranReadingTheme") private var readingTheme: QuranReadingTheme = .dark
 
     /// Marque-page libre — sourate et ayah sauvegardées au tap "Marquer ici" sur une carte.
     /// 0 = aucun marque-page.
@@ -50,7 +144,9 @@ struct QuranChapterDetailView: View {
 
     var body: some View {
         ZStack {
-            CosmicBackground(season: IslamicSeasonInfo.current())
+            // Fond uni statique — pas de CosmicBackground ici : un fond animé sous le
+            // texte dégrade la netteté des diacritiques et fatigue sur lecture longue.
+            readingTheme.background
                 .ignoresSafeArea()
 
             if let chapter {
@@ -68,6 +164,11 @@ struct QuranChapterDetailView: View {
                 Menu {
                     Toggle("Translittération", isOn: $showTransliteration)
                     Toggle("Traduction française", isOn: $showTranslation)
+                    Picker("Fond de lecture", selection: $readingTheme) {
+                        ForEach(QuranReadingTheme.allCases) { theme in
+                            Label(theme.label, systemImage: theme.icon).tag(theme)
+                        }
+                    }
                 } label: {
                     Image(systemName: "textformat")
                         .foregroundStyle(.teal)
@@ -94,7 +195,7 @@ struct QuranChapterDetailView: View {
                 onMarkNextVerse: { markNextVerse() }
             )
         }
-        .preferredColorScheme(.dark)
+        .preferredColorScheme(readingTheme.colorScheme)
         .task { await load() }
     }
 
@@ -107,7 +208,7 @@ struct QuranChapterDetailView: View {
                 .scaleEffect(1.3)
             Text("Chargement de \(chapterIndex.transliteration)…")
                 .font(.caption)
-                .foregroundStyle(.white.opacity(0.6))
+                .foregroundStyle(readingTheme.textSecondary)
         }
     }
 
@@ -118,10 +219,10 @@ struct QuranChapterDetailView: View {
                 .foregroundStyle(.orange.opacity(0.8))
             Text("Impossible de charger cette sourate")
                 .font(.subheadline)
-                .foregroundStyle(.white.opacity(0.8))
+                .foregroundStyle(readingTheme.textPrimary)
             Text(message)
                 .font(.caption)
-                .foregroundStyle(.white.opacity(0.5))
+                .foregroundStyle(readingTheme.textSecondary)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 32)
             Button {
@@ -161,7 +262,7 @@ struct QuranChapterDetailView: View {
 
                         Text("— Fin de la sourate \(chapter.transliteration) —")
                             .font(.caption2)
-                            .foregroundStyle(.white.opacity(0.4))
+                            .foregroundStyle(readingTheme.textTertiary)
                             .padding(.top, 12)
                             .padding(.bottom, 80) // espace pour le HUD auto-scroll en bas
                     }
@@ -231,16 +332,16 @@ struct QuranChapterDetailView: View {
                 HStack {
                     Image(systemName: "hare.fill")
                         .font(.caption2)
-                        .foregroundStyle(.white.opacity(0.5))
+                        .foregroundStyle(readingTheme.textSecondary)
                     Slider(value: $autoScrollSeconds, in: 0.5...15.0, step: 0.5)
                         .tint(.teal)
                     Image(systemName: "tortoise.fill")
                         .font(.caption2)
-                        .foregroundStyle(.white.opacity(0.5))
+                        .foregroundStyle(readingTheme.textSecondary)
                 }
                 Text("\(String(format: "%.1f", autoScrollSeconds)) s / verset")
                     .font(.caption2.monospacedDigit())
-                    .foregroundStyle(.white.opacity(0.55))
+                    .foregroundStyle(readingTheme.textSecondary)
             }
         }
         .padding(.horizontal, 16)
@@ -349,7 +450,7 @@ struct QuranChapterDetailView: View {
         VStack(spacing: 4) {
             Text(chapter.name)
                 .font(.system(size: 36, weight: .bold))
-                .foregroundColor(.white)
+                .foregroundColor(readingTheme.textPrimary)
                 .environment(\.layoutDirection, .rightToLeft)
             HStack(spacing: 6) {
                 Text(chapter.transliteration)
@@ -357,15 +458,15 @@ struct QuranChapterDetailView: View {
                     .foregroundStyle(.teal)
                 if let translation = chapter.translation {
                     Text("•")
-                        .foregroundStyle(.white.opacity(0.3))
+                        .foregroundStyle(readingTheme.textTertiary)
                     Text(translation)
                         .font(.system(size: 14))
-                        .foregroundStyle(.white.opacity(0.6))
+                        .foregroundStyle(readingTheme.textSecondary)
                 }
             }
             Text("\(chapter.totalVerses) versets · \(chapter.isMeccan ? "Révélée à La Mecque" : "Révélée à Médine")")
                 .font(.caption2)
-                .foregroundStyle(.white.opacity(0.4))
+                .foregroundStyle(readingTheme.textTertiary)
         }
         .padding(.bottom, 4)
     }
@@ -374,7 +475,7 @@ struct QuranChapterDetailView: View {
         VStack(spacing: 6) {
             Text(QuranConstants.bismillah)
                 .font(.custom("AmiriQuran-Regular", size: 26))
-                .foregroundColor(.white)
+                .foregroundColor(readingTheme.textPrimary)
                 .environment(\.layoutDirection, .rightToLeft)
                 .lineSpacing(8)
                 .multilineTextAlignment(.center)
@@ -383,12 +484,12 @@ struct QuranChapterDetailView: View {
                 Text(QuranConstants.bismillahTransliteration)
                     .font(.system(size: 12, weight: .regular, design: .serif))
                     .italic()
-                    .foregroundStyle(.white.opacity(0.5))
+                    .foregroundStyle(readingTheme.textSecondary)
             }
             if showTranslation {
                 Text(QuranConstants.bismillahFrench)
                     .font(.caption)
-                    .foregroundStyle(.white.opacity(0.6))
+                    .foregroundStyle(readingTheme.textSecondary)
                     .multilineTextAlignment(.center)
                     .fixedSize(horizontal: false, vertical: true)
             }
@@ -396,7 +497,7 @@ struct QuranChapterDetailView: View {
         .padding(.horizontal, 16)
         .padding(.vertical, 14)
         .frame(maxWidth: .infinity)
-        .background(.ultraThinMaterial)
+        .background(readingTheme.cardBackground)
         .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 18, style: .continuous)
@@ -420,17 +521,17 @@ struct QuranChapterDetailView: View {
                 Text(ayah.transliteration)
                     .font(.system(size: 12, weight: .regular, design: .serif))
                     .italic()
-                    .foregroundStyle(.white.opacity(0.5))
+                    .foregroundStyle(readingTheme.textSecondary)
                     .multilineTextAlignment(.center)
                     .fixedSize(horizontal: false, vertical: true)
             }
 
             if showTranslation, let translation = ayah.translation {
                 Divider()
-                    .background(Color.white.opacity(0.08))
+                    .background(readingTheme.divider)
                 Text(translation)
                     .font(.system(size: 13, weight: .regular, design: .serif))
-                    .foregroundStyle(.white.opacity(0.7))
+                    .foregroundStyle(readingTheme.textSecondary)
                     .multilineTextAlignment(.leading)
                     .fixedSize(horizontal: false, vertical: true)
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -440,13 +541,13 @@ struct QuranChapterDetailView: View {
         .background(
             highlightedAyah == ayah.id
                 ? AnyShapeStyle(Color.teal.opacity(0.18))
-                : AnyShapeStyle(.ultraThinMaterial)
+                : AnyShapeStyle(readingTheme.cardBackground)
         )
         .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 14, style: .continuous)
                 .stroke(
-                    highlightedAyah == ayah.id ? Color.teal.opacity(0.6) : Color.white.opacity(0.06),
+                    highlightedAyah == ayah.id ? Color.teal.opacity(0.6) : readingTheme.cardStroke,
                     lineWidth: highlightedAyah == ayah.id ? 1.5 : 1
                 )
         )
@@ -456,7 +557,7 @@ struct QuranChapterDetailView: View {
                 GeometryReader { geo in
                     ZStack(alignment: .leading) {
                         Capsule()
-                            .fill(Color.white.opacity(0.08))
+                            .fill(readingTheme.divider)
                             .frame(height: 3)
                         Capsule()
                             .fill(Color.teal)
@@ -523,7 +624,7 @@ struct QuranChapterDetailView: View {
     /// Construit le texte arabe avec le marker ﴿n﴾ teal en fin.
     private func arabicTextWithMarker(ayah: QuranAyah) -> AttributedString {
         var text = AttributedString(ayah.text)
-        text.foregroundColor = .white
+        text.foregroundColor = readingTheme.textPrimary
 
         var marker = AttributedString(" ﴿\(ayah.id)﴾")
         marker.foregroundColor = .teal.opacity(0.85)
