@@ -183,9 +183,8 @@ struct CurrentPrayerGaugeView: View {
                     }
                 }
                 .padding(24)
-                .background(.ultraThinMaterial)
-                .cornerRadius(16)
-                
+                .glassCard(tint: .orange)
+
             } else if prayerVM.nextPrayerName == "Fajr",
                       let middle = prayerVM.middleOfNight,
                       let lastThird = prayerVM.lastThirdOfNight {
@@ -252,13 +251,9 @@ struct CurrentPrayerGaugeView: View {
                     }
                 }
                 .padding(24)
-                .background(.regularMaterial)
-                .cornerRadius(24)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 24)
-                        .stroke(Color.indigo.opacity(0.4), lineWidth: 1)
-                )
-                
+                .glassCard(tint: .indigo)
+
+
             } else {
                 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
                 // 3a. CARTE : COMPTE À REBOURS
@@ -347,21 +342,7 @@ struct CurrentPrayerGaugeView: View {
                     }
                 }
                 .padding(20)
-                .background(.regularMaterial)
-                .cornerRadius(20)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 20)
-                        .stroke(
-                            LinearGradient(
-                                colors: [reminder.color.opacity(0.4), reminder.color.opacity(0.1)],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            ),
-                            lineWidth: 1
-                        )
-                )
-                // Petite ombre colorée subtile
-                .shadow(color: reminder.color.opacity(0.15), radius: 8, x: 0, y: 4)
+                .glassCard(tint: reminder.color)
                 // Animation d'apparition
                 .transition(.scale.combined(with: .opacity))
             }
@@ -462,8 +443,7 @@ struct NextPrayerCountdownCard: View {
             }
         }
         .padding(24)
-        .background(.ultraThinMaterial)
-        .cornerRadius(16)
+        .glassCard(tint: .teal)
     }
 }
 

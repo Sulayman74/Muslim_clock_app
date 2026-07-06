@@ -300,6 +300,6 @@ struct ProphetSunnahCardView: View {
             }
         }
         .padding(16)
-        .glassEffect(.regular.tint(sunnah.accentColor.opacity(0.10)), in: RoundedRectangle(cornerRadius: 20))
+        .glassCard(tint: sunnah.accentColor)
     }
 }

@@ -199,15 +199,9 @@ struct MoonWidgetView: View {
             }
         }
         .padding(16)
-        .background(.ultraThinMaterial)
-        .clipShape(RoundedRectangle(cornerRadius: 20))
-        .overlay(
-            RoundedRectangle(cornerRadius: 20)
-                .stroke(
-                    today.isWhiteDays ? Color.orange.opacity(0.4) : Color.white.opacity(0.08),
-                    lineWidth: 1
-                )
-        )
+        // Teinte ambre pendant les Jours Blancs (jeûne recommandé) — porte le
+        // signal auparavant véhiculé par la bordure orange.
+        .glassCard(tint: today.isWhiteDays ? .orange : nil)
     }
 }
 

@@ -248,23 +248,9 @@ struct PrayerListView: View {
                 } // fin HStack de la ligne
                 .padding(.horizontal, 20)
                 .frame(height: 70)
-                // ✅ Liquid Glass pour la prochaine, material classique pour les autres
-                .background {
-                                    if prayer.isNext || prayer.isCurrent {
-                                        Color.clear
-                                    } else {
-                                        RoundedRectangle(cornerRadius: 20).fill(.regularMaterial)
-                                    }
-                                }
-                                .if(prayer.isNext) { view in
-                                    view.glassEffect(.regular.tint(.green.opacity(0.15)), in: RoundedRectangle(cornerRadius: 20))
-                                }
-                                .if(prayer.isCurrent) { view in
-                                    view.glassEffect(.regular.tint(.orange.opacity(0.15)), in: RoundedRectangle(cornerRadius: 20))
-                                }
-                                .if(!prayer.isNext && !prayer.isCurrent) { view in
-                                    view.cornerRadius(20)
-                                }
+                // Surface unique : teinte orange (en cours) / verte (prochaine),
+                // neutre pour les prières passées.
+                .glassCard(tint: prayer.isCurrent ? .orange : (prayer.isNext ? .green : nil))
                             }
                         }
         .redacted(reason: prayerVM.isLoading ? .placeholder : [])

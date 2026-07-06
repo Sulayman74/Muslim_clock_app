@@ -13,9 +13,31 @@ import SwiftUI
 /// ═══════════════════════════════════════════════════════════════
 
 extension View {
-    
+
+    // MARK: - SURFACE UNIQUE (Liquid Glass)
+
+    /// Surface de carte **unique** de l'app.
+    ///
+    /// Remplace les usages dispersés de `.regularMaterial` / `.ultraThinMaterial` /
+    /// `.glassEffect(...)` inline par un seul style cohérent (Liquid Glass). Une
+    /// teinte optionnelle porte l'état sémantique de la carte (voir la refonte
+    /// couleur : orange = maintenant, green = à venir, indigo = nuit).
+    ///
+    /// - Parameters:
+    ///   - cornerRadius: cran de l'échelle (`CornerRadius.card` par défaut).
+    ///   - tint: teinte d'accent optionnelle, appliquée à faible opacité.
+    @ViewBuilder
+    func glassCard(cornerRadius: CGFloat = CornerRadius.card, tint: Color? = nil) -> some View {
+        let shape = RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+        if let tint {
+            glassEffect(.regular.tint(tint.opacity(0.12)), in: shape)
+        } else {
+            glassEffect(.regular, in: shape)
+        }
+    }
+
     // MARK: - CARDS (20pt corner radius)
-    
+
     /// Carte standard (widgets, contenu principal)
     func cardStyle() -> some View {
         self
@@ -96,20 +118,25 @@ extension View {
 /// ═══════════════════════════════════════════════════════════════
 
 enum CornerRadius {
-    /// 20pt - Standard iOS 18 (TabBar, Cards, Sheets)
-    static let standard: CGFloat = 20
-    
-    /// 16pt - Gros boutons
-    static let large: CGFloat = 16
-    
-    /// 12pt - Boutons moyens
-    static let medium: CGFloat = 12
-    
-    /// 10pt - Petits boutons
-    static let small: CGFloat = 10
-    
-    /// 8pt - Mini éléments (badges, chips)
-    static let mini: CGFloat = 8
+
+    // MARK: Échelle sémantique (3 crans)
+
+    /// 12pt — badges, chips, petits boutons.
+    static let badge: CGFloat = 12
+
+    /// 20pt — cartes et sheets (surface standard de l'app).
+    static let card: CGFloat = 20
+
+    /// 28pt — overlays plein écran et grandes modals.
+    static let modal: CGFloat = 28
+
+    // MARK: Alias de compatibilité (ancienne API — à retirer après migration complète)
+
+    static let standard = card
+    static let large = card
+    static let medium = badge
+    static let small = badge
+    static let mini = badge
 }
 
 /// ═══════════════════════════════════════════════════════════════

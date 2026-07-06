@@ -169,11 +169,7 @@ struct RamadanDuaCardView: View {
         }
         .padding(16)
         .frame(maxWidth: .infinity)
-        .glassEffect(.regular.tint(accent.opacity(0.18)), in: RoundedRectangle(cornerRadius: 18, style: .continuous))
-        .overlay(
-            RoundedRectangle(cornerRadius: 18, style: .continuous)
-                .stroke(accent.opacity(0.3), lineWidth: 1)
-        )
+        .glassCard(tint: accent)
     }
 
     private var placeholder: some View {
