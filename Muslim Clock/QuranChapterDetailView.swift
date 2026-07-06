@@ -147,6 +147,21 @@ struct QuranChapterDetailView: View {
         var ids = Set<Int>()
     }
 
+    // MARK: - Crédit automatique des pages lues
+    @Environment(\.modelContext) private var modelContext
+    /// VM local pour le crédit automatique (le plan est rechargé depuis UserDefaults à
+    /// l'init). Le tracker a sa propre instance — la synchro passe par SwiftData.
+    @State private var planVM = QuranPlanViewModel()
+    /// Instant d'arrivée sur la page courante — filtre les défilements de navigation.
+    @State private var pageEnteredAt: Date = .now
+    /// Page tout juste créditée au journal (feedback "✓ +1" transitoire dans la capsule).
+    @State private var justCreditedPage: Int?
+
+    /// Temps minimal passé sur une page pour qu'elle compte comme lue en la quittant.
+    /// Une vraie lecture prend plusieurs minutes ; 20 s écarte les scrolls de repérage
+    /// tout en créditant l'auto-scroll au rythme par défaut (~50 s/page).
+    private static let minimumPageDwell: TimeInterval = 20
+
     // MARK: - Auto-scroll
     /// Lecture automatique active : un timer avance vers le verset suivant à intervalle régulier.
     @State private var isAutoScrolling: Bool = false
@@ -487,20 +502,29 @@ struct QuranChapterDetailView: View {
     }
 
     /// Capsule "Page N / 604" flottante en haut — suit le verset visible le plus haut.
+    /// Affiche brièvement "✓ +1" quand une page vient d'être créditée au journal.
     @ViewBuilder
     private var pageIndicator: some View {
         if let currentPage {
-            Text("Page \(currentPage) / \(QuranConstants.totalMadinahPages)")
-                .font(.caption2.weight(.semibold).monospacedDigit())
-                .foregroundStyle(readingTheme.textSecondary)
-                .padding(.horizontal, 10)
-                .padding(.vertical, 5)
-                .background(readingTheme.background.opacity(0.92))
-                .clipShape(Capsule())
-                .overlay(Capsule().stroke(readingTheme.cardStroke, lineWidth: 1))
-                .padding(.top, 6)
-                .allowsHitTesting(false)
-                .animation(.easeInOut(duration: 0.2), value: currentPage)
+            HStack(spacing: 6) {
+                Text("Page \(currentPage) / \(QuranConstants.totalMadinahPages)")
+                    .foregroundStyle(readingTheme.textSecondary)
+                if justCreditedPage != nil {
+                    Text("✓ +1")
+                        .foregroundStyle(.teal)
+                        .transition(.opacity.combined(with: .scale(scale: 0.7)))
+                }
+            }
+            .font(.caption2.weight(.semibold).monospacedDigit())
+            .padding(.horizontal, 10)
+            .padding(.vertical, 5)
+            .background(readingTheme.background.opacity(0.92))
+            .clipShape(Capsule())
+            .overlay(Capsule().stroke(readingTheme.cardStroke, lineWidth: 1))
+            .padding(.top, 6)
+            .allowsHitTesting(false)
+            .animation(.easeInOut(duration: 0.2), value: currentPage)
+            .animation(.spring(duration: 0.35), value: justCreditedPage)
         }
     }
 
@@ -508,10 +532,25 @@ struct QuranChapterDetailView: View {
     /// Ne touche l'état (donc le rendu) que si la page a réellement changé.
     private func refreshCurrentPage(chapter: QuranChapter) {
         guard let topAyah = visibleAyahs.ids.min() else { return }
-        let page = QuranPageMapper.shared.page(for: chapter.id, ayah: topAyah)
-        if let page, page != currentPage {
-            currentPage = page
+        guard let page = QuranPageMapper.shared.page(for: chapter.id, ayah: topAyah),
+              page != currentPage else { return }
+
+        // Franchissement vers l'avant : la page qu'on quitte est terminée si on y a
+        // passé un temps de lecture plausible. Le crédit ne s'applique que si c'est la
+        // page attendue par la Khatma (règle séquentielle dans `autoLogPage`).
+        if let previous = currentPage,
+           page == previous + 1,
+           Date.now.timeIntervalSince(pageEnteredAt) >= Self.minimumPageDwell,
+           planVM.autoLogPage(previous, context: modelContext) {
+            justCreditedPage = previous
+            UINotificationFeedbackGenerator().notificationOccurred(.success)
+            Task { @MainActor in
+                try? await Task.sleep(nanoseconds: 2_500_000_000)
+                if justCreditedPage == previous { justCreditedPage = nil }
+            }
         }
+        pageEnteredAt = .now
+        currentPage = page
     }
 
     // MARK: - Sub-views

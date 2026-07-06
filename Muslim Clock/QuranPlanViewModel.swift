@@ -100,6 +100,24 @@ final class QuranPlanViewModel {
         try? context.save()
     }
 
+    /// Crédite automatiquement UNE page terminée pendant la lecture, si et seulement si
+    /// c'est la page immédiatement après le curseur du plan (lecture séquentielle de la
+    /// Khatma). Consulter une autre sourate ou relire un passage déjà compté ne crédite
+    /// rien — le log manuel reste la voie pour ces cas (et pour la lecture sur mushaf papier).
+    ///
+    /// - Parameters:
+    ///   - page: Page Madinah que l'utilisateur vient de terminer (frontière franchie).
+    ///   - context: `ModelContext` SwiftData (injecté depuis la View via `@Environment`).
+    /// - Returns: `true` si la page a été créditée au journal.
+    @discardableResult
+    func autoLogPage(_ page: Int, context: ModelContext) -> Bool {
+        guard let plan, page <= plan.endPage else { return false }
+        let cursor = lastKnownCursor(context: context) ?? (plan.startPage - 1)
+        guard page == cursor + 1 else { return false }
+        logPages(1, context: context)
+        return true
+    }
+
     /// Renvoie la dernière `lastPageReached` connue (toute date confondue), ou `nil`.
     private func lastKnownCursor(context: ModelContext) -> Int? {
         let descriptor = FetchDescriptor<ReadingEntry>(
