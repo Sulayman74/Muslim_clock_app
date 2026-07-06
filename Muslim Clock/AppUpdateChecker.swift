@@ -7,12 +7,14 @@
 //
 
 import SwiftUI
-import Combine
+import Combine   // Requis pour @Published/ObservableObject (pas de nouveau code Combine ici)
 
 // MARK: - Clés UserDefaults
 
 private let updateCheckDateKey = "lastUpdateCheckDate"
 private let dismissedVersionKey = "dismissedUpdateVersion"
+private let availableVersionKey = "availableUpdateVersion"
+private let availableStoreURLKey = "availableUpdateStoreURL"
 
 // MARK: - Service
 
@@ -23,47 +25,104 @@ final class AppUpdateChecker: ObservableObject {
     @Published private(set) var latestVersion = ""
     @Published private(set) var storeURL: URL?
 
-    var currentVersion: String {
-        Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "0"
+    /// `nil` plutôt que "0" : un Info.plist corrompu ne doit pas déclencher
+    /// une fausse bannière (toute version Store serait > "0").
+    var currentVersion: String? {
+        Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
+    }
+
+    /// Anti-réentrance : `.task` et `.onChange(scenePhase, initial: true)`
+    /// peuvent appeler checkForUpdate() quasi simultanément au lancement.
+    private var checkInFlight = false
+
+    init() {
+        restorePersistedUpdate()
     }
 
     // MARK: - Vérification
 
+    /// Restaure une MAJ détectée lors d'un lancement précédent : le @StateObject est
+    /// recréé à chaque lancement mais le throttling 24h persiste — sans restauration,
+    /// la bannière disparaît pendant 24h alors que la MAJ existe toujours.
+    /// Purge l'état persisté s'il n'est plus pertinent (app mise à jour ou version ignorée).
+    private func restorePersistedUpdate() {
+        let defaults = UserDefaults.standard
+        guard let persisted = defaults.string(forKey: availableVersionKey),
+              let current = currentVersion else { return }
+
+        let dismissed = defaults.string(forKey: dismissedVersionKey)
+        guard persisted != dismissed,
+              persisted.compare(current, options: .numeric) == .orderedDescending else {
+            defaults.removeObject(forKey: availableVersionKey)
+            defaults.removeObject(forKey: availableStoreURLKey)
+            return
+        }
+
+        latestVersion = persisted
+        storeURL = defaults.string(forKey: availableStoreURLKey).flatMap { URL(string: $0) }
+        updateAvailable = true   // sans animation : état initial, pas une transition
+    }
+
     /// Vérifie l'App Store au maximum une fois par jour.
     func checkForUpdate() async {
-        let lastCheck = UserDefaults.standard.double(forKey: updateCheckDateKey)
+        guard !checkInFlight else { return }
+        checkInFlight = true
+        defer { checkInFlight = false }
+
+        let defaults = UserDefaults.standard
+        let lastCheck = defaults.double(forKey: updateCheckDateKey)
         let now = Date().timeIntervalSince1970
+        let elapsed = now - lastCheck
 
-        // Une seule vérification par jour
-        guard lastCheck == 0 || (now - lastCheck) >= 86_400 else { return }
+        // Une vérification par jour. `elapsed < 0` = horloge reculée → date invalide, on re-check.
+        guard lastCheck == 0 || elapsed >= 86_400 || elapsed < 0 else { return }
 
-        guard let bundleId = Bundle.main.bundleIdentifier,
-              let url = URL(string: "https://itunes.apple.com/lookup?bundleId=\(bundleId)") else { return }
+        guard let current = currentVersion,
+              let bundleId = Bundle.main.bundleIdentifier else { return }
+
+        // Storefront local : sans `country`, le lookup interroge le store US
+        // et peut renvoyer `results` vide pour une app non distribuée aux US.
+        var urlString = "https://itunes.apple.com/lookup?bundleId=\(bundleId)"
+        if let region = Locale.current.region?.identifier.lowercased() {
+            urlString += "&country=\(region)"
+        }
+        guard let url = URL(string: urlString) else { return }
 
         do {
             let (data, _) = try await URLSession.shared.data(from: url)
             guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
-                  let results = json["results"] as? [[String: Any]],
-                  let info = results.first,
+                  let results = json["results"] as? [[String: Any]] else { return }
+
+            // Réponse valide (même avec results vide) → date enregistrée, sinon
+            // on refait une requête réseau à chaque lancement.
+            defaults.set(now, forKey: updateCheckDateKey)
+
+            guard let info = results.first,
                   let latest = info["version"] as? String else { return }
 
-            // Enregistre la date de vérification
-            UserDefaults.standard.set(now, forKey: updateCheckDateKey)
+            guard latest.compare(current, options: .numeric) == .orderedDescending else {
+                // À jour → purge un éventuel état persisté obsolète.
+                defaults.removeObject(forKey: availableVersionKey)
+                defaults.removeObject(forKey: availableStoreURLKey)
+                return
+            }
 
-            let dismissed = UserDefaults.standard.string(forKey: dismissedVersionKey)
+            // Persiste la détection pour survivre au throttling 24h (cf. restorePersistedUpdate).
+            let trackURL = info["trackViewUrl"] as? String
+            defaults.set(latest, forKey: availableVersionKey)
+            defaults.set(trackURL, forKey: availableStoreURLKey)
 
-            // Affiche la bannière uniquement si la version du Store est plus récente
-            // et que l'user ne l'a pas déjà ignorée
-            guard latest != dismissed,
-                  latest.compare(currentVersion, options: .numeric) == .orderedDescending else { return }
+            // Affiche la bannière uniquement si l'user ne l'a pas déjà ignorée
+            guard latest != defaults.string(forKey: dismissedVersionKey) else { return }
 
             self.latestVersion = latest
-            self.storeURL = (info["trackViewUrl"] as? String).flatMap { URL(string: $0) }
+            self.storeURL = trackURL.flatMap { URL(string: $0) }
             withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
                 self.updateAvailable = true
             }
-            print("✅ [UpdateChecker] Nouvelle version disponible : \(latest) (actuelle : \(currentVersion))")
+            print("✅ [UpdateChecker] Nouvelle version disponible : \(latest) (actuelle : \(current))")
         } catch {
+            // Erreur réseau : on n'écrit PAS la date → nouvel essai au prochain lancement.
             print("⚠️ [UpdateChecker] \(error.localizedDescription)")
         }
     }

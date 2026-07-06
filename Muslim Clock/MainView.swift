@@ -446,6 +446,8 @@ struct MainView: View {
                 handleNotificationDeepLink()
                 handleControlDeepLink()
                 prayerVM.refreshLiveActivity()
+                // Throttlé 24h + anti-réentrance interne (double-tir avec le .task au lancement).
+                Task { await updateChecker.checkForUpdate() }
             }
         }
         .environmentObject(podcastManager)
@@ -490,8 +492,14 @@ struct MainView: View {
                     }
                 }
         .onAppear {
-                    checkSeasonalChanges()
                     checkWhatsNew()
+                    // Une seule sheet possible par ancre : WhatsNew prioritaire (fenêtre
+                    // de tir unique, liée à la version). Les triggers saisonniers
+                    // (DST / 120 jours) ne sont PAS consommés quand on saute
+                    // checkSeasonalChanges() → le popup ressortira au lancement suivant.
+                    if !showWhatsNew {
+                        checkSeasonalChanges()
+                    }
                 }
                 .sheet(isPresented: $showSeasonalUpdatePopup) {
                     SeasonalUpdatePopupView(isPresented: $showSeasonalUpdatePopup, lastSetupTimestamp: $lastSmartSetupDate)
@@ -499,7 +507,12 @@ struct MainView: View {
                         .presentationBackground(.ultraThinMaterial)
                         .presentationCornerRadius(30)
                 }
-                .sheet(isPresented: $showWhatsNew) {
+                .sheet(isPresented: $showWhatsNew, onDismiss: {
+                    // Écrit ici (et pas dans checkWhatsNew) : si la sheet n'a jamais
+                    // été affichée (app tuée avant), le Quoi de neuf reviendra.
+                    let currentVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? ""
+                    if !currentVersion.isEmpty { lastSeenAppVersion = currentVersion }
+                }) {
                     WhatsNewView()
                         .presentationDetents([.large])
                         .presentationCornerRadius(30)
@@ -710,9 +723,16 @@ struct MainView: View {
             return
         }
 
-        if lastSeenAppVersion != currentVersion {
+        switch currentVersion.compare(lastSeenAppVersion, options: .numeric) {
+        case .orderedDescending:
+            // Vraie MAJ → sheet. `lastSeenAppVersion` est écrit au onDismiss pour ne
+            // pas perdre le Quoi de neuf si la sheet n'est jamais affichée.
             showWhatsNew = true
+        case .orderedAscending:
+            // Downgrade (ex. TestFlight) : resync silencieux, pas de sheet.
             lastSeenAppVersion = currentVersion
+        case .orderedSame:
+            break
         }
     }
 

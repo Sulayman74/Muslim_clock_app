@@ -3,7 +3,7 @@
 //  Muslim Clock
 //
 //  Popup "Quoi de neuf" affichée une fois au premier lancement après une mise à jour.
-//  Comparaison Bundle.shortVersion vs @AppStorage("lastSeenVersion") dans MainView.
+//  Comparaison Bundle.shortVersion vs @AppStorage("lastSeenAppVersion") dans MainView.
 //
 
 import SwiftUI
@@ -20,44 +20,51 @@ struct WhatsNewView: View {
     @Environment(\.dismiss) private var dismiss
 
     /// Liste des nouveautés. À mettre à jour à chaque release.
+    /// Strings via `String(localized:)` : le texte français est la clé (sourceLanguage fr)
+    /// — ne pas le reformuler sans raison, ça orphelinerait les traductions en/ar.
     private let items: [WhatsNewItem] = [
         WhatsNewItem(
             icon: "moon.stars.fill",
             color: .orange,
-            title: "Mode Ramadan adaptatif",
-            description: "Pendant le mois béni, les widgets Home prennent une teinte ambre lanterne, un badge « Iftar » apparaît à côté de Maghrib et « Fin du Sohoor » à côté de Fajr. Le nom canonique des prières reste préservé partout."
+            title: String(localized: "Mode Ramadan adaptatif"),
+            description: String(localized: "Pendant le mois béni, les widgets Home prennent une teinte ambre lanterne, un badge « Iftar » apparaît à côté de Maghrib et « Fin du Sohoor » à côté de Fajr. Le nom canonique des prières reste préservé partout.")
         ),
         WhatsNewItem(
             icon: "hands.sparkles.fill",
             color: .teal,
-            title: "Du'a au bon moment",
-            description: "Une carte contextuelle s'affiche pour l'iftar (Abu Dawud 2357), pendant la nuit du sahari (Bukhari 1923) et durant les 10 dernières nuits avec la du'a de Laylatul Qadr (Tirmidhi 3513)."
+            title: String(localized: "Du'a au bon moment"),
+            description: String(localized: "Une carte contextuelle s'affiche pour l'iftar (Abu Dawud 2357), pendant la nuit du sahari (Bukhari 1923) et durant les 10 dernières nuits avec la du'a de Laylatul Qadr (Tirmidhi 3513).")
         ),
         WhatsNewItem(
             icon: "book.pages.fill",
             color: .indigo,
-            title: "Khatma plus sobre",
-            description: "Le suivi de lecture met l'accent sur la régularité avec un indicateur sobre — pour rester fidèle à l'esprit du wird sans glisser vers la gamification."
+            title: String(localized: "Khatma plus sobre"),
+            description: String(localized: "Le suivi de lecture met l'accent sur la régularité avec un indicateur sobre — pour rester fidèle à l'esprit du wird sans glisser vers la gamification.")
         ),
         WhatsNewItem(
             icon: "questionmark.circle.fill",
             color: .gray,
-            title: "Transparence éditoriale",
-            description: "Une page « Pourquoi pas de tracker de prière ? » explique le choix de ne pas gamifier la salât, conforme à la fatwa du Cheikh Ibn 'Uthaymîn (Majmû' al-Fatâwâ 16/111)."
+            title: String(localized: "Transparence éditoriale"),
+            description: String(localized: "Une page « Pourquoi pas de tracker de prière ? » explique le choix de ne pas gamifier la salât, conforme à la fatwa du Cheikh Ibn 'Uthaymîn (Majmû' al-Fatâwâ 16/111).")
         ),
         WhatsNewItem(
             icon: "location.north.line.fill",
             color: .teal,
-            title: "Qibla plus précise",
-            description: "Fusion CoreMotion 60 Hz pour une aiguille fluide, sans secousses ni « tour fantôme » lors des changements brusques d'orientation."
+            title: String(localized: "Qibla plus précise"),
+            description: String(localized: "Fusion CoreMotion 60 Hz pour une aiguille fluide, sans secousses ni « tour fantôme » lors des changements brusques d'orientation.")
         ),
         WhatsNewItem(
             icon: "sparkles",
             color: .yellow,
-            title: "Stabilité & performances",
-            description: "Robustesse du chargement des contenus religieux, fluidité du module Khatma, et conformité totale au nouveau privacy manifest Apple."
+            title: String(localized: "Stabilité & performances"),
+            description: String(localized: "Robustesse du chargement des contenus religieux, fluidité du module Khatma, et conformité totale au nouveau privacy manifest Apple.")
         ),
     ]
+
+    /// Version marketing affichée sous le titre — ancre visuellement la sheet à la release.
+    private var appVersion: String {
+        Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? ""
+    }
 
     var body: some View {
         ZStack {
@@ -75,6 +82,11 @@ struct WhatsNewView: View {
                     Text("Quoi de neuf")
                         .font(.system(.title, design: .rounded, weight: .bold))
                         .foregroundColor(.white)
+                    if !appVersion.isEmpty {
+                        Text("Version \(appVersion)")
+                            .font(.subheadline.bold())
+                            .foregroundStyle(.orange)
+                    }
                     Text("Découvre les nouveautés de cette mise à jour")
                         .font(.subheadline)
                         .foregroundStyle(.white.opacity(0.7))
