@@ -132,6 +132,21 @@ struct QuranChapterDetailView: View {
     @AppStorage("quranBookmarkSura") private var bookmarkSura: Int = 0
     @AppStorage("quranBookmarkAyah") private var bookmarkAyah: Int = 0
 
+    // MARK: - Pages Madinah
+    /// Débuts de page dans cette sourate (`ayah → page`), calculé au chargement.
+    /// Vide si le mapping est indisponible ou si aucune page ne commence dans la sourate.
+    @State private var pageBreaks: [Int: Int] = [:]
+    /// Page Madinah du verset visible le plus haut — alimente l'indicateur "Page N / 604".
+    @State private var currentPage: Int?
+    /// Versets actuellement montés par la LazyVStack. Type référence volontaire :
+    /// muter ce Set à chaque onAppear/onDisappear ne doit PAS invalider la vue —
+    /// seul `currentPage` (qui ne change qu'aux frontières de page) déclenche un rendu.
+    @State private var visibleAyahs = VisibleAyahTracker()
+
+    private final class VisibleAyahTracker {
+        var ids = Set<Int>()
+    }
+
     // MARK: - Auto-scroll
     /// Lecture automatique active : un timer avance vers le verset suivant à intervalle régulier.
     @State private var isAutoScrolling: Bool = false
@@ -254,6 +269,9 @@ struct QuranChapterDetailView: View {
 
                         LazyVStack(spacing: 14) {
                             ForEach(chapter.verses) { ayah in
+                                if let page = pageBreaks[ayah.id] {
+                                    pageSeparator(page: page)
+                                }
                                 ayahCard(ayah: ayah, chapter: chapter)
                                     .id(ayah.id)
                             }
@@ -277,6 +295,9 @@ struct QuranChapterDetailView: View {
 
                 // HUD auto-scroll en bas
                 autoScrollHUD(chapter: chapter, proxy: proxy)
+            }
+            .overlay(alignment: .top) {
+                pageIndicator
             }
             .task(id: scrollToAyah) {
                 // Auto-scroll vers le verset cible si fourni (ex: reprise Khatma / bookmark).
@@ -444,6 +465,55 @@ struct QuranChapterDetailView: View {
         UIImpactFeedbackGenerator(style: .light).impactOccurred()
     }
 
+    // MARK: - Pages Madinah
+
+    /// Séparateur inséré avant le 1er verset de chaque page du mushaf.
+    private func pageSeparator(page: Int) -> some View {
+        HStack(spacing: 10) {
+            Rectangle()
+                .fill(readingTheme.divider)
+                .frame(height: 1)
+            Text("Page \(page)")
+                .font(.caption2.weight(.semibold).monospacedDigit())
+                .foregroundStyle(readingTheme.textTertiary)
+                .fixedSize()
+            Rectangle()
+                .fill(readingTheme.divider)
+                .frame(height: 1)
+        }
+        .padding(.horizontal, 8)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(Text("Début de la page \(page) du mushaf"))
+    }
+
+    /// Capsule "Page N / 604" flottante en haut — suit le verset visible le plus haut.
+    @ViewBuilder
+    private var pageIndicator: some View {
+        if let currentPage {
+            Text("Page \(currentPage) / \(QuranConstants.totalMadinahPages)")
+                .font(.caption2.weight(.semibold).monospacedDigit())
+                .foregroundStyle(readingTheme.textSecondary)
+                .padding(.horizontal, 10)
+                .padding(.vertical, 5)
+                .background(readingTheme.background.opacity(0.92))
+                .clipShape(Capsule())
+                .overlay(Capsule().stroke(readingTheme.cardStroke, lineWidth: 1))
+                .padding(.top, 6)
+                .allowsHitTesting(false)
+                .animation(.easeInOut(duration: 0.2), value: currentPage)
+        }
+    }
+
+    /// Recalcule la page courante à partir du verset monté le plus haut.
+    /// Ne touche l'état (donc le rendu) que si la page a réellement changé.
+    private func refreshCurrentPage(chapter: QuranChapter) {
+        guard let topAyah = visibleAyahs.ids.min() else { return }
+        let page = QuranPageMapper.shared.page(for: chapter.id, ayah: topAyah)
+        if let page, page != currentPage {
+            currentPage = page
+        }
+    }
+
     // MARK: - Sub-views
 
     private func header(chapter: QuranChapter) -> some View {
@@ -570,6 +640,14 @@ struct QuranChapterDetailView: View {
                 .padding(.bottom, 6)
             }
         }
+        .onAppear {
+            visibleAyahs.ids.insert(ayah.id)
+            refreshCurrentPage(chapter: chapter)
+        }
+        .onDisappear {
+            visibleAyahs.ids.remove(ayah.id)
+            refreshCurrentPage(chapter: chapter)
+        }
         .contextMenu {
             // Marquer ici
             Button {
@@ -641,6 +719,11 @@ struct QuranChapterDetailView: View {
         loadError = nil
         if let result = await loader.loadChapter(chapterIndex.id) {
             chapter = result
+            let mapper = QuranPageMapper.shared
+            pageBreaks = mapper.pageBreaks(for: result.id)
+            // Page initiale : celle du verset ciblé (reprise Khatma/bookmark), sinon celle
+            // du 1er verset — couvre aussi les sourates qui commencent en milieu de page.
+            currentPage = mapper.page(for: result.id, ayah: scrollToAyah ?? 1)
         } else {
             loadError = "Vérifie ta connexion réseau, puis réessaie."
         }

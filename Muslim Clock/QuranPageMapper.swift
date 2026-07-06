@@ -117,6 +117,17 @@ final class QuranPageMapper {
     func firstPage(of sura: Int) -> Int? {
         pages.first(where: { $0.firstSura == sura })?.page
     }
+
+    /// Renvoie les débuts de page situés dans une sourate donnée : `[ayah: page]`.
+    ///
+    /// Une entrée `ayah → page` signifie « la page `page` du mushaf commence à ce verset ».
+    /// Sert à insérer les séparateurs de page dans le lecteur. Vide si la sourate ne
+    /// contient aucun début de page (courte sourate au milieu d'une page partagée,
+    /// ex. An-Nas) ou si le mapping n'est pas chargé.
+    func pageBreaks(for sura: Int) -> [Int: Int] {
+        pages.filter { $0.firstSura == sura }
+            .reduce(into: [:]) { $0[$1.firstAyah] = $1.page }
+    }
 }
 
 // MARK: - Helper de comparaison de tuples
