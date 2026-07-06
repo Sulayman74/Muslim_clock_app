@@ -222,6 +222,12 @@ struct DailyContentView: View {
             .padding(.top, 10)
 
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        // PROGRAMME ʿILM — apprentissage des mutūn (module Ilm)
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        IlmProgramCard()
+            .padding(.top, 10)
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         // CARTE AUDIO / PODCAST
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         PodcastCarouselView()

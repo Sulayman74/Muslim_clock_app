@@ -10,6 +10,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 // MARK: - Thème de lecture
 
