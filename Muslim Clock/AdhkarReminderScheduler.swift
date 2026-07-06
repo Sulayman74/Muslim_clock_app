@@ -90,7 +90,7 @@ enum AdhkarReminderScheduler {
     /// Utilisé par le bouton de test DEBUG dans SettingsView pour valider la pipeline
     /// (schedule → fire → tap → deeplink → ouverture AdhkarView).
     /// - Parameters:
-    ///   - timing: Matin ou soir (détermine titre, deepLinkTarget, gradient sheet).
+    ///   - timing: Matin ou soir (détermine titre et gradient sheet).
     ///   - seconds: Délai avant déclenchement (recommandé 10s pour avoir le temps de
     ///     background l'app).
     static func scheduleTestNotification(timing: AdhkarTiming, seconds: TimeInterval = 10) {
@@ -103,7 +103,6 @@ enum AdhkarReminderScheduler {
         content.userInfo = [
             "module": "adhkar_reminder",
             "timing": internalTiming.rawValue,
-            "deepLinkTarget": internalTiming.deepLinkTarget,
         ]
 
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: max(1, seconds), repeats: false)
@@ -153,14 +152,6 @@ enum AdhkarReminderScheduler {
             case .evening: return String(localized: "Adoucis ta soirée par les invocations du soir.")
             }
         }
-
-        /// Cible deep-link consommée par MainView pour ouvrir la sheet Adhkar.
-        var deepLinkTarget: String {
-            switch self {
-            case .morning: return "adhkar_morning"
-            case .evening: return "adhkar_evening"
-            }
-        }
     }
 
     private static func schedule(
@@ -182,7 +173,6 @@ enum AdhkarReminderScheduler {
         content.userInfo = [
             "module": "adhkar_reminder",
             "timing": timing.rawValue,
-            "deepLinkTarget": timing.deepLinkTarget,
         ]
 
         let trigger = UNCalendarNotificationTrigger(dateMatching: comps, repeats: false)

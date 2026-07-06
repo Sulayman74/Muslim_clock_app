@@ -443,6 +443,7 @@ struct MainView: View {
         .onChange(of: scenePhase, initial: true) {
             print("📱 [ScenePhase] phase=\(scenePhase)")
             if scenePhase == .active {
+                handleNotificationDeepLink()
                 handleControlDeepLink()
                 prayerVM.refreshLiveActivity()
             }
@@ -554,10 +555,12 @@ struct MainView: View {
                 }
                 // Notif Quran tapée → switch automatique vers tab Rappel (où la card vit).
                 .onReceive(NotificationCenter.default.publisher(for: .quranReadingTapped)) { _ in
+                    NotificationDeepLink.clear()
                     selectedTab = 1
                 }
                 // Notif Adhkar tapée → ouvre la sheet Adhkar avec le timing forcé.
                 .onReceive(NotificationCenter.default.publisher(for: .adhkarReminderTapped)) { notif in
+                    NotificationDeepLink.clear()
                     if let raw = notif.userInfo?["timing"] as? String,
                        let timing = AdhkarTiming(rawValue: raw) {
                         adhkarSheetForcedTiming = timing
@@ -571,7 +574,10 @@ struct MainView: View {
                     guard let userInfo = notification.userInfo,
                           let prayerName = userInfo["prayerName"] as? String,
                           let prayerTime = userInfo["prayerTime"] as? Date else { return }
-                    
+
+                    NotificationDeepLink.clear()   // no-op si posté par willPresent
+
+
                     // ✅ Pause automatique du podcast pendant l'Adhan
                     if podcastManager.isPlaying {
                         if let id = podcastManager.currentlyPlayingID,
@@ -606,6 +612,37 @@ struct MainView: View {
             iqamahDelaysMinutes: iqamahDelays,
             reminderOffsetMinutes: adhkarReminderOffsetMinutes
         )
+    }
+
+    /// Consomme la route posée par `AppDelegate.didReceive` au tap d'une notification.
+    ///
+    /// Couvre le cold start : le post NotificationCenter du delegate est perdu si
+    /// les `.onReceive` ne sont pas encore montés — la route persistée prend le
+    /// relais. Si l'app était en mémoire, le handler live a déjà routé ET effacé
+    /// la route (`NotificationDeepLink.clear()`), donc pas de double déclenchement.
+    private func handleNotificationDeepLink() {
+        guard let route = NotificationDeepLink.consume() else { return }
+        switch route {
+        case .adhan:
+            let defaults = UserDefaults.standard
+            guard let name = defaults.string(forKey: NotificationDeepLink.adhanNameKey) else { return }
+            let time = Date(timeIntervalSince1970: defaults.double(forKey: NotificationDeepLink.adhanTimeKey))
+            withAnimation(.easeIn(duration: 0.4)) {
+                adhanPrayerName = name
+                adhanPrayerTime = time
+                showAdhanOverlay = true
+            }
+        case .quranTracker:
+            // Le switch de tab monte DailyContentView → QuranKhatmaCard, qui
+            // consomme `pendingOpenQuranTracker` à son onAppear et ouvre la sheet.
+            selectedTab = 1
+        case .adhkarMorning:
+            adhkarSheetForcedTiming = .morning
+            showAdhkarFromControl = true
+        case .adhkarEvening:
+            adhkarSheetForcedTiming = .evening
+            showAdhkarFromControl = true
+        }
     }
 
     /// Lit la clé `controlDeepLinkTarget` écrite par un Control Widget (Qibla / Adhkar)

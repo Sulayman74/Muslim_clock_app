@@ -39,42 +39,54 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         completionHandler([.banner, .sound, .list])
     }
 
-    // Appelée quand l'utilisateur CLIQUE sur la notification
+    // Appelée quand l'utilisateur CLIQUE sur la notification.
+    // Double mécanisme : post NotificationCenter (app en mémoire, réaction
+    // immédiate) + route persistée NotificationDeepLink (cold start — le post
+    // serait perdu car les .onReceive de MainView ne sont pas encore montés).
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
 
         let userInfo = response.notification.request.content.userInfo
 
-        // Notif prière → AdhanOverlay
-        if let prayerName = userInfo["prayerName"] as? String,
-           let timestamp = userInfo["prayerTime"] as? TimeInterval,
-           userInfo["module"] as? String != "quran_reading" {
-            let prayerTime = Date(timeIntervalSince1970: timestamp)
-            NotificationCenter.default.post(
-                name: NSNotification.Name("AdhanTriggered"),
-                object: nil,
-                userInfo: [
-                    "prayerName": prayerName,
-                    "prayerTime": prayerTime
-                ]
-            )
-        }
+        switch userInfo["module"] as? String {
 
-        // Notif rappel Quran → ouvre la sheet QuranTrackerView
-        if userInfo["module"] as? String == "quran_reading" {
-            // Flag persistant pour le cas où la card n'est pas encore montée
+        // Notif prière (aucune clé "module") → AdhanOverlay
+        case nil:
+            if let prayerName = userInfo["prayerName"] as? String,
+               let timestamp = userInfo["prayerTime"] as? TimeInterval {
+                let prayerTime = Date(timeIntervalSince1970: timestamp)
+                // Garde anti-replay : ignorer un tap sur une vieille notif
+                // restée dans le centre de notifications.
+                if abs(prayerTime.timeIntervalSinceNow) <= NotificationDeepLink.adhanReplayWindow {
+                    NotificationDeepLink.storeAdhan(prayerName: prayerName, prayerTime: prayerTime)
+                    NotificationCenter.default.post(
+                        name: NSNotification.Name("AdhanTriggered"),
+                        object: nil,
+                        userInfo: ["prayerName": prayerName, "prayerTime": prayerTime]
+                    )
+                }
+            }
+
+        // Notif rappel Quran → tab Rappel + sheet QuranTrackerView
+        case "quran_reading":
+            NotificationDeepLink.store(.quranTracker)
+            // Flag dédié consommé par QuranKhatmaCard à son mount (la card vit
+            // dans le tab 1, monté paresseusement par TabView).
             UserDefaults.standard.set(true, forKey: "pendingOpenQuranTracker")
-            // Notification live pour MainView (switch tab) et QuranKhatmaCard (open sheet)
             NotificationCenter.default.post(name: .quranReadingTapped, object: nil)
-        }
 
-        // Notif rappel Adhkar (matin/soir) → ouvre la sheet AdhkarView au bon timing
-        if userInfo["module"] as? String == "adhkar_reminder",
-           let timing = userInfo["timing"] as? String {
-            NotificationCenter.default.post(
-                name: .adhkarReminderTapped,
-                object: nil,
-                userInfo: ["timing": timing]
-            )
+        // Notif rappel Adhkar (matin/soir) → sheet AdhkarView au bon timing
+        case "adhkar_reminder":
+            if let timing = userInfo["timing"] as? String {
+                NotificationDeepLink.store(timing == "morning" ? .adhkarMorning : .adhkarEvening)
+                NotificationCenter.default.post(
+                    name: .adhkarReminderTapped,
+                    object: nil,
+                    userInfo: ["timing": timing]
+                )
+            }
+
+        default:
+            break
         }
 
         completionHandler()
