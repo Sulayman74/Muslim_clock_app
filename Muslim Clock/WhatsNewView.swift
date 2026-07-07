@@ -24,34 +24,28 @@ struct WhatsNewView: View {
     /// — ne pas le reformuler sans raison, ça orphelinerait les traductions en/ar.
     private let items: [WhatsNewItem] = [
         WhatsNewItem(
-            icon: "timer",
+            icon: "books.vertical.fill",
+            color: .purple,
+            title: String(localized: "Programme d'apprentissage ʿIlm"),
+            description: String(localized: "68 leçons pour étudier les Trois Fondements, les Quatre Règles et les 40 hadiths de Nawawi — arabe entièrement vocalisé, traduction française et notes d'authenticité.")
+        ),
+        WhatsNewItem(
+            icon: "calendar.badge.checkmark",
             color: .green,
-            title: String(localized: "Compte à rebours continu"),
-            description: String(localized: "Le temps restant jusqu'à la prochaine prière s'affiche désormais en continu, y compris après le lever du soleil en attendant Dhuhr. Le widget bascule automatiquement sur la prière en cours.")
+            title: String(localized: "Un plan à ton rythme"),
+            description: String(localized: "Choisis ton texte et ta cadence : l'app estime la durée du parcours et t'envoie un rappel quotidien avec ta prochaine leçon.")
         ),
         WhatsNewItem(
-            icon: "bell.badge.fill",
-            color: .orange,
-            title: String(localized: "Notifications plus fiables"),
-            description: String(localized: "Toucher une notification (prière, Coran, Adhkar) ouvre directement le bon écran — même si l'application était complètement fermée.")
-        ),
-        WhatsNewItem(
-            icon: "clock.arrow.2.circlepath",
+            icon: "eye.slash.fill",
             color: .indigo,
-            title: String(localized: "Horaires justes au changement d'heure"),
-            description: String(localized: "Au passage à l'heure d'été ou d'hiver, les horaires se recalculent automatiquement, sans décalage d'une heure.")
+            title: String(localized: "Mode Mémoriser"),
+            description: String(localized: "Le texte se voile pour t'entraîner à réciter de tête, et tu peux enregistrer ta récitation pour te réécouter et te corriger.")
         ),
         WhatsNewItem(
-            icon: "sparkles",
+            icon: "square.stack.3d.up.fill",
             color: .orange,
-            title: String(localized: "Interface épurée"),
-            description: String(localized: "Un style visuel unifié, des cartes Sunnah et Lune que l'on déplie à la demande, et un écran d'accueil réorganisé pour garder l'essentiel en haut.")
-        ),
-        WhatsNewItem(
-            icon: "location.slash.fill",
-            color: .red,
-            title: String(localized: "Alerte de localisation"),
-            description: String(localized: "Si l'accès à votre position est désactivé, un message clair vous l'indique avec un raccourci direct vers les Réglages.")
+            title: String(localized: "Révision espacée"),
+            description: String(localized: "Des flash cards recto/verso reviennent au bon moment (méthode Leitner) pour ancrer durablement ce que tu as appris.")
         ),
     ]
 
