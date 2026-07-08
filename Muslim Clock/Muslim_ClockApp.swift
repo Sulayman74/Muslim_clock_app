@@ -117,6 +117,27 @@ struct Muslim_ClockApp: App {
     @AppStorage("appLanguage") private var appLanguage = "system"
     @Environment(\.scenePhase) private var scenePhase
 
+    /// Conteneur SwiftData du journal de lecture du Quran.
+    ///
+    /// `groupContainer: .none` force le store dans le conteneur de l'app. Sans ça,
+    /// SwiftData utilise `.automatic` : comme l'app possède un App Group entitlement,
+    /// il tentait d'écrire le store dans le conteneur App Group — dont le dossier
+    /// `Application Support` n'est pas toujours provisionné (observé en revue App
+    /// Store → échec de création du `ModelContainer` → crash au lancement).
+    /// `ReadingEntry` n'étant partagé avec aucune extension, le conteneur app suffit.
+    /// Fallback en mémoire : l'app démarre toujours, même si le store persistant échoue.
+    private let sharedModelContainer: ModelContainer = {
+        let config = ModelConfiguration(groupContainer: .none)
+        do {
+            return try ModelContainer(for: ReadingEntry.self, configurations: config)
+        } catch {
+            print("⚠️ [SwiftData] Store persistant indisponible, bascule en mémoire : \(error.localizedDescription)")
+            let memory = ModelConfiguration(isStoredInMemoryOnly: true)
+            // Why: un store in-memory n'échoue que sur invariant interne (jamais en pratique).
+            return try! ModelContainer(for: ReadingEntry.self, configurations: memory)
+        }
+    }()
+
     init() {
         NotificationManager.shared.requestPermission()
         SharedLocationManager.shared.requestPermissionAndStart()
@@ -144,7 +165,7 @@ struct Muslim_ClockApp: App {
                     }
                 }
         }
-        // SwiftData : conteneur du journal de lecture du Quran.
-        .modelContainer(for: ReadingEntry.self)
+        // SwiftData : conteneur du journal de lecture du Quran (cf. sharedModelContainer).
+        .modelContainer(sharedModelContainer)
     }
 }
