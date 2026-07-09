@@ -1,0 +1,604 @@
+[
+  {
+    "id": "wake",
+    "titleAr": "أذكار الاستيقاظ من النوم",
+    "titleFr": "Au réveil",
+    "icon": "sunrise.fill",
+    "moments": ["wake"],
+    "adhkar": [
+      {
+        "id": 1001,
+        "arabic": "الْحَمْدُ لِلَّهِ الَّذِي أَحْيَانَا بَعْدَ مَا أَمَاتَنَا وَإِلَيْهِ النُّشُورُ",
+        "text": "Louange à Allah qui nous a rendu la vie après nous avoir fait mourir, et c'est vers Lui qu'est la résurrection.",
+        "source": "Sahih al-Bukhari 6312",
+        "repeat": 1,
+        "benefit": "Invocation du Prophète ﷺ au réveil.",
+        "authenticity": "sahih"
+      },
+      {
+        "id": 1002,
+        "arabic": "لَا إِلَٰهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَىٰ كُلِّ شَيْءٍ قَدِيرٌ، سُبْحَانَ اللَّهِ وَالْحَمْدُ لِلَّهِ وَلَا إِلَٰهَ إِلَّا اللَّهُ وَاللَّهُ أَكْبَرُ وَلَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ",
+        "text": "Il n'y a de divinité qu'Allah, Seul, sans associé… Quiconque dit cela puis invoque, il est exaucé ; s'il fait ses ablutions et prie, sa prière est acceptée.",
+        "source": "Sahih al-Bukhari 1154",
+        "repeat": 1,
+        "benefit": "Celui qui se réveille la nuit et dit cela puis invoque est exaucé.",
+        "authenticity": "sahih"
+      }
+    ]
+  },
+  {
+    "id": "wudu",
+    "titleAr": "أذكار الوضوء",
+    "titleFr": "Les ablutions",
+    "icon": "drop.fill",
+    "moments": ["wudu"],
+    "adhkar": [
+      {
+        "id": 2001,
+        "arabic": "بِسْمِ اللَّهِ",
+        "text": "Au nom d'Allah. (À dire avant de commencer les ablutions.)",
+        "source": "Abu Dawud 101 — Hasan",
+        "repeat": 1,
+        "benefit": "Point de wudû' pour qui ne mentionne pas le nom d'Allah dessus.",
+        "authenticity": "hasan"
+      },
+      {
+        "id": 2002,
+        "arabic": "أَشْهَدُ أَنْ لَا إِلَٰهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، وَأَشْهَدُ أَنَّ مُحَمَّدًا عَبْدُهُ وَرَسُولُهُ",
+        "text": "J'atteste qu'il n'y a de divinité qu'Allah, Seul, sans associé, et j'atteste que Muhammad est Son serviteur et Son messager. (Après les ablutions.)",
+        "source": "Sahih Muslim 234",
+        "repeat": 1,
+        "benefit": "Les huit portes du Paradis lui sont ouvertes, il y entre par celle qu'il veut.",
+        "authenticity": "sahih"
+      }
+    ]
+  },
+  {
+    "id": "mosque",
+    "titleAr": "أذكار دخول وخروج المسجد",
+    "titleFr": "Entrée & sortie de la mosquée",
+    "icon": "building.columns.fill",
+    "moments": ["mosque"],
+    "adhkar": [
+      {
+        "id": 3001,
+        "arabic": "اللَّهُمَّ افْتَحْ لِي أَبْوَابَ رَحْمَتِكَ",
+        "text": "Ô Allah, ouvre-moi les portes de Ta miséricorde. (En entrant dans la mosquée, بعد avoir salué le Prophète ﷺ.)",
+        "source": "Sahih Muslim 713",
+        "repeat": 1,
+        "benefit": "Invocation de l'entrée à la mosquée.",
+        "authenticity": "sahih"
+      },
+      {
+        "id": 3002,
+        "arabic": "اللَّهُمَّ إِنِّي أَسْأَلُكَ مِنْ فَضْلِكَ",
+        "text": "Ô Allah, je Te demande de Ta grâce. (En sortant de la mosquée.)",
+        "source": "Sahih Muslim 713",
+        "repeat": 1,
+        "benefit": "Invocation de la sortie de la mosquée.",
+        "authenticity": "sahih"
+      }
+    ]
+  },
+  {
+    "id": "adhan_response",
+    "titleAr": "أذكار إجابة المؤذن",
+    "titleFr": "Réponse à l'appel à la prière",
+    "icon": "megaphone.fill",
+    "moments": ["adhan_response"],
+    "adhkar": [
+      {
+        "id": 4001,
+        "arabic": "يَقُولُ مِثْلَ مَا يَقُولُ الْمُؤَذِّنُ، إِلَّا فِي الْحَيْعَلَتَيْنِ فَيَقُولُ: لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ",
+        "text": "Répéter après le muezzin, sauf pour « Hayya 'ala-s-salât » et « Hayya 'ala-l-falâh » où l'on dit : « Il n'y a de force ni de puissance qu'en Allah ».",
+        "source": "Sahih al-Bukhari 611 / Muslim 385",
+        "repeat": 1,
+        "benefit": "Celui qui répond ainsi du fond du cœur entre au Paradis.",
+        "authenticity": "sahih"
+      },
+      {
+        "id": 4002,
+        "arabic": "اللَّهُمَّ رَبَّ هَٰذِهِ الدَّعْوَةِ التَّامَّةِ وَالصَّلَاةِ الْقَائِمَةِ، آتِ مُحَمَّدًا الْوَسِيلَةَ وَالْفَضِيلَةَ، وَابْعَثْهُ مَقَامًا مَحْمُودًا الَّذِي وَعَدْتَهُ",
+        "text": "Ô Allah, Seigneur de cet appel parfait et de la prière établie, accorde à Muhammad al-wasîla et la faveur, et ressuscite-le en la station louée que Tu lui as promise. (Après l'adhan.)",
+        "source": "Sahih al-Bukhari 614",
+        "repeat": 1,
+        "benefit": "Mon intercession lui est due au Jour de la Résurrection.",
+        "authenticity": "sahih"
+      },
+      {
+        "id": 4003,
+        "arabic": "الدُّعَاءُ بَيْنَ الْأَذَانِ وَالْإِقَامَةِ لَا يُرَدُّ، فَادْعُوا",
+        "text": "L'invocation entre l'adhan et l'iqâma n'est pas rejetée : invoquez. (Demandez à Allah ce que vous souhaitez de bien.)",
+        "source": "Abu Dawud 521 — Sahih",
+        "repeat": 1,
+        "benefit": "Moment d'exaucement à ne pas négliger.",
+        "authenticity": "sahih"
+      }
+    ]
+  },
+  {
+    "id": "sleep",
+    "titleAr": "أذكار النوم",
+    "titleFr": "Avant de dormir",
+    "icon": "moon.zzz.fill",
+    "moments": ["sleep"],
+    "adhkar": [
+      {
+        "id": 5001,
+        "arabic": "بِاسْمِكَ اللَّهُمَّ أَمُوتُ وَأَحْيَا",
+        "text": "En Ton nom, ô Allah, je meurs et je vis. (Au moment de se coucher.)",
+        "source": "Sahih al-Bukhari 6324",
+        "repeat": 1,
+        "benefit": "Invocation du Prophète ﷺ avant de dormir.",
+        "authenticity": "sahih"
+      },
+      {
+        "id": 5002,
+        "arabic": "اللَّهُمَّ قِنِي عَذَابَكَ يَوْمَ تَبْعَثُ عِبَادَكَ",
+        "text": "Ô Allah, préserve-moi de Ton châtiment le Jour où Tu ressusciteras Tes serviteurs. (À dire en posant la main droite sous la joue.)",
+        "source": "Abu Dawud 5045 — Sahih",
+        "repeat": 3,
+        "benefit": "Le Prophète ﷺ le répétait trois fois avant de dormir.",
+        "authenticity": "sahih"
+      }
+    ]
+  },
+  {
+    "id": "toilet",
+    "titleAr": "أذكار دخول وخروج الخلاء",
+    "titleFr": "Aux toilettes",
+    "icon": "door.left.hand.open",
+    "moments": ["toilet"],
+    "adhkar": [
+      {
+        "id": 6001,
+        "arabic": "(بِسْمِ اللَّهِ) اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الْخُبْثِ وَالْخَبَائِثِ",
+        "text": "(Au nom d'Allah). Ô Allah, je cherche refuge auprès de Toi contre les démons mâles et femelles. (Avant d'entrer)",
+        "source": "Sahih al-Bukhari 142 / Muslim 375 (L'ajout du Bismillah : Sahih Al-Jami' 3611)",
+        "repeat": 1,
+        "benefit": "Prononcer \"Bismillah\" forme un voile entre les yeux des djinns et la nudité des enfants d'Adam.",
+        "authenticity": "sahih"
+      },
+      {
+        "id": 6002,
+        "arabic": "غُفْرَانَكَ",
+        "text": "Ton pardon, [ô Allah]. (En sortant)",
+        "source": "Abu Dawud 30 — Sahih",
+        "repeat": 1,
+        "benefit": "Demande de pardon au Seigneur à la sortie des lieux d'aisance.",
+        "authenticity": "sahih"
+      }
+    ]
+  },
+  {
+    "id": "house",
+    "titleAr": "أذكار دخول المنزل والخروج منه",
+    "titleFr": "Entrée & sortie de la maison",
+    "icon": "house.fill",
+    "moments": ["house"],
+    "adhkar": [
+      {
+        "id": 7001,
+        "arabic": "بِسْمِ اللَّهِ تَوَكَّلْتُ عَلَى اللَّهِ، وَلَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ",
+        "text": "Au nom d'Allah, je place ma confiance en Allah. Il n'y a de force ni de puissance qu'en Allah. (En sortant de chez soi)",
+        "source": "Abu Dawud 5095 — Sahih",
+        "repeat": 1,
+        "benefit": "On lui dit : « Tu es guidé, on t'a suffi et tu es protégé », et le diable s'écarte de lui.",
+        "authenticity": "sahih"
+      },
+      {
+        "id": 7002,
+        "arabic": "بِسْمِ اللَّهِ",
+        "text": "Au nom d'Allah. (À dire en entrant chez soi, puis on salue les gens de la maison).",
+        "source": "Sahih Muslim 2018",
+        "repeat": 1,
+        "benefit": "Lorsqu'on mentionne Allah en entrant, le diable dit à ses troupes : « Vous n'avez ici ni endroit où passer la nuit ni de quoi dîner ».",
+        "authenticity": "sahih"
+      }
+    ]
+  },
+  {
+    "id": "morning_evening",
+    "titleAr": "أذكار الصباح والمساء",
+    "titleFr": "Matin & Soir",
+    "icon": "sun.max.fill",
+    "moments": ["morning", "evening"],
+    "adhkar": [
+      {
+        "id": 8001,
+        "arabic": "اللَّهُمَّ أَنْتَ رَبِّي لَا إِلَٰهَ إِلَّا أَنْتَ، خَلَقْتَنِي وَأَنَا عَبْدُكَ، وَأَنَا عَلَىٰ عَهْدِكَ وَوَعْدِكَ مَا اسْتَطَعْتُ، أَعُوذُ بِكَ مِنْ شَرِّ مَا صَنَعْتُ، أَبُوءُ لَكَ بِنِعْمَتِكَ عَلَيَّ، وَأَبُوءُ لَكَ بِذَنْبِي فَاغْفِرْ لِي، فَإِنَّهُ لَا يَغْفِرُ الذُّنُوبَ إِلَّا أَنْتَ",
+        "text": "Ô Allah, Tu es mon Seigneur, il n'y a de divinité que Toi. Tu m'as créé et je suis Ton serviteur... (La maîtresse formule de demande de pardon - Sayyid al-Istighfar)",
+        "source": "Sahih al-Bukhari 6306",
+        "repeat": 1,
+        "benefit": "Celui qui la dit avec conviction le soir et meurt la nuit entre au Paradis (idem pour le matin).",
+        "authenticity": "sahih"
+      },
+      {
+        "id": 8002,
+        "arabic": "بِسْمِ اللَّهِ الَّذِي لَا يَضُرُّ مَعَ اسْمِهِ شَيْءٌ فِي الْأَرْضِ وَلَا فِي السَّمَاءِ وَهُوَ السَّمِيعُ الْعَلِيمُ",
+        "text": "Au nom d'Allah, dont la mention empêche toute chose de nuire, sur terre comme au ciel, et Il est l'Audient, l'Omniscient.",
+        "source": "Abu Dawud 5088 — Sahih",
+        "repeat": 3,
+        "benefit": "Celui qui le dit trois fois matin et soir, rien ne pourra lui nuire.",
+        "authenticity": "sahih"
+      }
+    ]
+  },
+  {
+    "id": "prayer_after",
+    "titleAr": "الأذكار بعد السلام من الصلاة",
+    "titleFr": "Après la prière",
+    "icon": "hands.sparkles.fill",
+    "moments": ["prayer"],
+    "adhkar": [
+      {
+        "id": 9001,
+        "arabic": "أَسْتَغْفِرُ اللَّهَ (ثَلَاثاً) اللَّهُمَّ أَنْتَ السَّلَامُ، وَمِنْكَ السَّلَامُ، تَبَارَكْتَ يَا ذَا الْجَلَالِ وَالْإِكْرَامِ",
+        "text": "Je demande pardon à Allah (3 fois). Ô Allah, Tu es la Paix et la paix vient de Toi. Béni sois-Tu, ô Digne de glorification et de munificence.",
+        "source": "Sahih Muslim 591",
+        "repeat": 1,
+        "benefit": "Ce que disait le Prophète ﷺ directement après avoir salué pour clôturer sa prière.",
+        "authenticity": "sahih"
+      },
+      {
+        "id": 9002,
+        "arabic": "اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ... (آية الكرسي)",
+        "text": "Allah ! Point de divinité à part Lui, le Vivant, Celui qui subsiste par lui-même (Récitation du Verset du Trône - Ayat Al-Kursi, Sourate 2, Verset 255).",
+        "source": "An-Nasa'i 100 — Sahih",
+        "repeat": 1,
+        "benefit": "Celui qui le récite après chaque prière prescrite, seule la mort l'empêche d'entrer au Paradis.",
+        "authenticity": "sahih"
+      }
+    ]
+  },
+  {
+    "id": "eating",
+    "titleAr": "أذكار الطعام",
+    "titleFr": "À table",
+    "icon": "fork.knife",
+    "moments": ["eating"],
+    "adhkar": [
+      {
+        "id": 10001,
+        "arabic": "بِسْمِ اللَّهِ (وإذا نسي في أوله قال): بِسْمِ اللَّهِ فِي أَوَّلِهِ وَآخِرِهِ",
+        "text": "Au nom d'Allah. (S'il oublie au début, qu'il dise au cours du repas) : Au nom d'Allah au début et à la fin.",
+        "source": "Abu Dawud 3767 — Sahih",
+        "repeat": 1,
+        "benefit": "Empêche le diable de partager la nourriture.",
+        "authenticity": "sahih"
+      },
+      {
+        "id": 10002,
+        "arabic": "الْحَمْدُ لِلَّهِ الَّذِي أَطْعَمَنِي هَٰذَا وَرَزَقَنِيهِ مِنْ غَيْرِ حَوْلٍ مِنِّي وَلَا قُوَّةٍ",
+        "text": "Louange à Allah qui m'a nourri de cela et me l'a accordé sans aucune force ni puissance de ma part.",
+        "source": "Abu Dawud 4023 — Hasan",
+        "repeat": 1,
+        "benefit": "Ses péchés passés lui sont pardonnés.",
+        "authenticity": "hasan"
+      }
+    ]
+  }
+]
+
+with open('hisn_adhkar_complet.json', 'w', encoding='utf-8') as f:
+    json.dump(data, f, ensure_ascii=False, indent=2)
+
+print("hisn_adhkar_complet.json generated successfully.")
+
+
+```
+
+```text
+hisn_adhkar_complet.json generated successfully.
+
+
+```
+
+Ton fichier JSON est prêt avec l'intégralité des invocations fusionnées, vérifiées et corrigées.
+
+
+Tu peux télécharger le fichier ci-dessus, ou bien copier-coller directement le bloc ci-dessous dans ton projet. Les identifiants et les icônes (comme `sunrise.fill` ou `building.columns.fill`) ont été rigoureusement conservés dans la même structure de tableau pour que l'intégration soit instantanée, t'assurant qu'aucune fonctionnalité ou icône précédente de ton application ne sera écrasée.
+
+```json
+[
+  {
+    "id": "wake",
+    "titleAr": "أذكار الاستيقاظ من النوم",
+    "titleFr": "Au réveil",
+    "icon": "sunrise.fill",
+    "moments": [
+      "wake"
+    ],
+    "adhkar": [
+      {
+        "id": 1001,
+        "arabic": "الْحَمْدُ لِلَّهِ الَّذِي أَحْيَانَا بَعْدَ مَا أَمَاتَنَا وَإِلَيْهِ النُّشُورُ",
+        "text": "Louange à Allah qui nous a rendu la vie après nous avoir fait mourir, et c'est vers Lui qu'est la résurrection.",
+        "source": "Sahih al-Bukhari 6312",
+        "repeat": 1,
+        "benefit": "Invocation du Prophète ﷺ au réveil.",
+        "authenticity": "sahih"
+      },
+      {
+        "id": 1002,
+        "arabic": "لَا إِلَٰهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَىٰ كُلِّ شَيْءٍ قَدِيرٌ، سُبْحَانَ اللَّهِ وَالْحَمْدُ لِلَّهِ وَلَا إِلَٰهَ إِلَّا اللَّهُ وَاللَّهُ أَكْبَرُ وَلَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ",
+        "text": "Il n'y a de divinité qu'Allah, Seul, sans associé… Quiconque dit cela puis invoque, il est exaucé ; s'il fait ses ablutions et prie, sa prière est acceptée.",
+        "source": "Sahih al-Bukhari 1154",
+        "repeat": 1,
+        "benefit": "Celui qui se réveille la nuit et dit cela puis invoque est exaucé.",
+        "authenticity": "sahih"
+      }
+    ]
+  },
+  {
+    "id": "wudu",
+    "titleAr": "أذكار الوضوء",
+    "titleFr": "Les ablutions",
+    "icon": "drop.fill",
+    "moments": [
+      "wudu"
+    ],
+    "adhkar": [
+      {
+        "id": 2001,
+        "arabic": "بِسْمِ اللَّهِ",
+        "text": "Au nom d'Allah. (À dire avant de commencer les ablutions.)",
+        "source": "Abu Dawud 101 — Hasan",
+        "repeat": 1,
+        "benefit": "Point de wudû' pour qui ne mentionne pas le nom d'Allah dessus.",
+        "authenticity": "hasan"
+      },
+      {
+        "id": 2002,
+        "arabic": "أَشْهَدُ أَنْ لَا إِلَٰهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، وَأَشْهَدُ أَنَّ مُحَمَّدًا عَبْدُهُ وَرَسُولُهُ",
+        "text": "J'atteste qu'il n'y a de divinité qu'Allah, Seul, sans associé, et j'atteste que Muhammad est Son serviteur et Son messager. (Après les ablutions.)",
+        "source": "Sahih Muslim 234",
+        "repeat": 1,
+        "benefit": "Les huit portes du Paradis lui sont ouvertes, il y entre par celle qu'il veut.",
+        "authenticity": "sahih"
+      }
+    ]
+  },
+  {
+    "id": "mosque",
+    "titleAr": "أذكار دخول وخروج المسجد",
+    "titleFr": "Entrée & sortie de la mosquée",
+    "icon": "building.columns.fill",
+    "moments": [
+      "mosque"
+    ],
+    "adhkar": [
+      {
+        "id": 3001,
+        "arabic": "اللَّهُمَّ افْتَحْ لِي أَبْوَابَ رَحْمَتِكَ",
+        "text": "Ô Allah, ouvre-moi les portes de Ta miséricorde. (En entrant dans la mosquée, بعد avoir salué le Prophète ﷺ.)",
+        "source": "Sahih Muslim 713",
+        "repeat": 1,
+        "benefit": "Invocation de l'entrée à la mosquée.",
+        "authenticity": "sahih"
+      },
+      {
+        "id": 3002,
+        "arabic": "اللَّهُمَّ إِنِّي أَسْأَلُكَ مِنْ فَضْلِكَ",
+        "text": "Ô Allah, je Te demande de Ta grâce. (En sortant de la mosquée.)",
+        "source": "Sahih Muslim 713",
+        "repeat": 1,
+        "benefit": "Invocation de la sortie de la mosquée.",
+        "authenticity": "sahih"
+      }
+    ]
+  },
+  {
+    "id": "adhan_response",
+    "titleAr": "أذكار إجابة المؤذن",
+    "titleFr": "Réponse à l'appel à la prière",
+    "icon": "megaphone.fill",
+    "moments": [
+      "adhan_response"
+    ],
+    "adhkar": [
+      {
+        "id": 4001,
+        "arabic": "يَقُولُ مِثْلَ مَا يَقُولُ الْمُؤَذِّنُ، إِلَّا فِي الْحَيْعَلَتَيْنِ فَيَقُولُ: لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ",
+        "text": "Répéter après le muezzin, sauf pour « Hayya 'ala-s-salât » et « Hayya 'ala-l-falâh » où l'on dit : « Il n'y a de force ni de puissance qu'en Allah ».",
+        "source": "Sahih al-Bukhari 611 / Muslim 385",
+        "repeat": 1,
+        "benefit": "Celui qui répond ainsi du fond du cœur entre au Paradis.",
+        "authenticity": "sahih"
+      },
+      {
+        "id": 4002,
+        "arabic": "اللَّهُمَّ رَبَّ هَٰذِهِ الدَّعْوَةِ التَّامَّةِ وَالصَّلَاةِ الْقَائِمَةِ، آتِ مُحَمَّدًا الْوَسِيلَةَ وَالْفَضِيلَةَ، وَابْعَثْهُ مَقَامًا مَحْمُودًا الَّذِي وَعَدْتَهُ",
+        "text": "Ô Allah, Seigneur de cet appel parfait et de la prière établie, accorde à Muhammad al-wasîla et la faveur, et ressuscite-le en la station louée que Tu lui as promise. (Après l'adhan.)",
+        "source": "Sahih al-Bukhari 614",
+        "repeat": 1,
+        "benefit": "Mon intercession lui est due au Jour de la Résurrection.",
+        "authenticity": "sahih"
+      },
+      {
+        "id": 4003,
+        "arabic": "الدُّعَاءُ بَيْنَ الْأَذَانِ وَالْإِقَامَةِ لَا يُرَدُّ، فَادْعُوا",
+        "text": "L'invocation entre l'adhan et l'iqâma n'est pas rejetée : invoquez. (Demandez à Allah ce que vous souhaitez de bien.)",
+        "source": "Abu Dawud 521 — Sahih",
+        "repeat": 1,
+        "benefit": "Moment d'exaucement à ne pas négliger.",
+        "authenticity": "sahih"
+      }
+    ]
+  },
+  {
+    "id": "sleep",
+    "titleAr": "أذكار النوم",
+    "titleFr": "Avant de dormir",
+    "icon": "moon.zzz.fill",
+    "moments": [
+      "sleep"
+    ],
+    "adhkar": [
+      {
+        "id": 5001,
+        "arabic": "بِاسْمِكَ اللَّهُمَّ أَمُوتُ وَأَحْيَا",
+        "text": "En Ton nom, ô Allah, je meurs et je vis. (Au moment de se coucher.)",
+        "source": "Sahih al-Bukhari 6324",
+        "repeat": 1,
+        "benefit": "Invocation du Prophète ﷺ avant de dormir.",
+        "authenticity": "sahih"
+      },
+      {
+        "id": 5002,
+        "arabic": "اللَّهُمَّ قِنِي عَذَابَكَ يَوْمَ تَبْعَثُ عِبَادَكَ",
+        "text": "Ô Allah, préserve-moi de Ton châtiment le Jour où Tu ressusciteras Tes serviteurs. (À dire en posant la main droite sous la joue.)",
+        "source": "Abu Dawud 5045 — Sahih",
+        "repeat": 3,
+        "benefit": "Le Prophète ﷺ le répétait trois fois avant de dormir.",
+        "authenticity": "sahih"
+      }
+    ]
+  },
+  {
+    "id": "toilet",
+    "titleAr": "أذكار دخول وخروج الخلاء",
+    "titleFr": "Aux toilettes",
+    "icon": "door.left.hand.open",
+    "moments": [
+      "toilet"
+    ],
+    "adhkar": [
+      {
+        "id": 6001,
+        "arabic": "(بِسْمِ اللَّهِ) اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الْخُبْثِ وَالْخَبَائِثِ",
+        "text": "(Au nom d'Allah). Ô Allah, je cherche refuge auprès de Toi contre les démons mâles et femelles. (Avant d'entrer)",
+        "source": "Sahih al-Bukhari 142 / Muslim 375 (L'ajout du Bismillah : Sahih Al-Jami' 3611)",
+        "repeat": 1,
+        "benefit": "Prononcer \"Bismillah\" forme un voile entre les yeux des djinns et la nudité des enfants d'Adam.",
+        "authenticity": "sahih"
+      },
+      {
+        "id": 6002,
+        "arabic": "غُفْرَانَكَ",
+        "text": "Ton pardon, [ô Allah]. (En sortant)",
+        "source": "Abu Dawud 30 — Sahih",
+        "repeat": 1,
+        "benefit": "Demande de pardon au Seigneur à la sortie des lieux d'aisance.",
+        "authenticity": "sahih"
+      }
+    ]
+  },
+  {
+    "id": "house",
+    "titleAr": "أذكار دخول المنزل والخروج منه",
+    "titleFr": "Entrée & sortie de la maison",
+    "icon": "house.fill",
+    "moments": [
+      "house"
+    ],
+    "adhkar": [
+      {
+        "id": 7001,
+        "arabic": "بِسْمِ اللَّهِ تَوَكَّلْتُ عَلَى اللَّهِ، وَلَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ",
+        "text": "Au nom d'Allah, je place ma confiance en Allah. Il n'y a de force ni de puissance qu'en Allah. (En sortant de chez soi)",
+        "source": "Abu Dawud 5095 — Sahih",
+        "repeat": 1,
+        "benefit": "On lui dit : « Tu es guidé, on t'a suffi et tu es protégé », et le diable s'écarte de lui.",
+        "authenticity": "sahih"
+      },
+      {
+        "id": 7002,
+        "arabic": "بِسْمِ اللَّهِ",
+        "text": "Au nom d'Allah. (À dire en entrant chez soi, puis on salue les gens de la maison).",
+        "source": "Sahih Muslim 2018",
+        "repeat": 1,
+        "benefit": "Lorsqu'on mentionne Allah en entrant, le diable dit à ses troupes : « Vous n'avez ici ni endroit où passer la nuit ni de quoi dîner ».",
+        "authenticity": "sahih"
+      }
+    ]
+  },
+  {
+    "id": "morning_evening",
+    "titleAr": "أذكار الصباح والمساء",
+    "titleFr": "Matin & Soir",
+    "icon": "sun.max.fill",
+    "moments": [
+      "morning",
+      "evening"
+    ],
+    "adhkar": [
+      {
+        "id": 8001,
+        "arabic": "اللَّهُمَّ أَنْتَ رَبِّي لَا إِلَٰهَ إِلَّا أَنْتَ، خَلَقْتَنِي وَأَنَا عَبْدُكَ، وَأَنَا عَلَىٰ عَهْدِكَ وَوَعْدِكَ مَا اسْتَطَعْتُ، أَعُوذُ بِكَ مِنْ شَرِّ مَا صَنَعْتُ، أَبُوءُ لَكَ بِنِعْمَتِكَ عَلَيَّ، وَأَبُوءُ لَكَ بِذَنْبِي فَاغْفِرْ لِي، فَإِنَّهُ لَا يَغْفِرُ الذُّنُوبَ إِلَّا أَنْتَ",
+        "text": "Ô Allah, Tu es mon Seigneur, il n'y a de divinité que Toi. Tu m'as créé et je suis Ton serviteur... (La maîtresse formule de demande de pardon - Sayyid al-Istighfar)",
+        "source": "Sahih al-Bukhari 6306",
+        "repeat": 1,
+        "benefit": "Celui qui la dit avec conviction le soir et meurt la nuit entre au Paradis (idem pour le matin).",
+        "authenticity": "sahih"
+      },
+      {
+        "id": 8002,
+        "arabic": "بِسْمِ اللَّهِ الَّذِي لَا يَضُرُّ مَعَ اسْمِهِ شَيْءٌ فِي الْأَرْضِ وَلَا فِي السَّمَاءِ وَهُوَ السَّمِيعُ الْعَلِيمُ",
+        "text": "Au nom d'Allah, dont la mention empêche toute chose de nuire, sur terre comme au ciel, et Il est l'Audient, l'Omniscient.",
+        "source": "Abu Dawud 5088 — Sahih",
+        "repeat": 3,
+        "benefit": "Celui qui le dit trois fois matin et soir, rien ne pourra lui nuire.",
+        "authenticity": "sahih"
+      }
+    ]
+  },
+  {
+    "id": "prayer_after",
+    "titleAr": "الأذكار بعد السلام من الصلاة",
+    "titleFr": "Après la prière",
+    "icon": "hands.sparkles.fill",
+    "moments": [
+      "prayer"
+    ],
+    "adhkar": [
+      {
+        "id": 9001,
+        "arabic": "أَسْتَغْفِرُ اللَّهَ (ثَلَاثاً) اللَّهُمَّ أَنْتَ السَّلَامُ، وَمِنْكَ السَّلَامُ، تَبَارَكْتَ يَا ذَا الْجَلَالِ وَالْإِكْرَامِ",
+        "text": "Je demande pardon à Allah (3 fois). Ô Allah, Tu es la Paix et la paix vient de Toi. Béni sois-Tu, ô Digne de glorification et de munificence.",
+        "source": "Sahih Muslim 591",
+        "repeat": 1,
+        "benefit": "Ce que disait le Prophète ﷺ directement après avoir salué pour clôturer sa prière.",
+        "authenticity": "sahih"
+      },
+      {
+        "id": 9002,
+        "arabic": "اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ... (آية الكرسي)",
+        "text": "Allah ! Point de divinité à part Lui, le Vivant, Celui qui subsiste par lui-même (Récitation du Verset du Trône - Ayat Al-Kursi, Sourate 2, Verset 255).",
+        "source": "An-Nasa'i 100 — Sahih",
+        "repeat": 1,
+        "benefit": "Celui qui le récite après chaque prière prescrite, seule la mort l'empêche d'entrer au Paradis.",
+        "authenticity": "sahih"
+      }
+    ]
+  },
+  {
+    "id": "eating",
+    "titleAr": "أذكار الطعام",
+    "titleFr": "À table",
+    "icon": "fork.knife",
+    "moments": [
+      "eating"
+    ],
+    "adhkar": [
+      {
+        "id": 10001,
+        "arabic": "بِسْمِ اللَّهِ (وإذا نسي في أوله قال): بِسْمِ اللَّهِ فِي أَوَّلِهِ وَآخِرِهِ",
+        "text": "Au nom d'Allah. (S'il oublie au début, qu'il dise au cours du repas) : Au nom d'Allah au début et à la fin.",
+        "source": "Abu Dawud 3767 — Sahih",
+        "repeat": 1,
+        "benefit": "Empêche le diable de partager la nourriture.",
+        "authenticity": "sahih"
+      },
+      {
+        "id": 10002,
+        "arabic": "الْحَمْدُ لِلَّهِ الَّذِي أَطْعَمَنِي هَٰذَا وَرَزَقَنِيهِ مِنْ غَيْرِ حَوْلٍ مِنِّي وَلَا قُوَّةٍ",
+        "text": "Louange à Allah qui m'a nourri de cela et me l'a accordé sans aucune force ni puissance de ma part.",
+        "source": "Abu Dawud 4023 — Hasan",
+        "repeat": 1,
+        "benefit": "Ses péchés passés lui sont pardonnés.",
+        "authenticity": "hasan"
+      }
+    ]
+  }
+]
