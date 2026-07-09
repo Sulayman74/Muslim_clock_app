@@ -354,7 +354,9 @@ struct MainView: View {
                                     // ── ACTIF : la prière du moment ──
                                     VStack(spacing: 16) {
                                         PrayerListView()
+                                        AdhkarMomentCard()
                                         AdhkarQuickAccessButton()
+                                        AdhkarBookletButton()
                                     }
 
                                     // ── ENRICHISSEMENT : contenu spirituel (cartes repliables) ──
