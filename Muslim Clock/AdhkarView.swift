@@ -416,7 +416,41 @@ struct DhikrCardView: View {
     let onTap: (() -> Void)?
     let onToggleArabic: () -> Void
     let onToggleBenefit: () -> Void
-    
+
+    /// Couleur du badge d'authenticité : vert (sahih), jaune (hasan),
+    /// gris (à vérifier / inconnu — contenu à ne pas diffuser tel quel).
+    private var authColor: Color {
+        switch dhikr.authenticity {
+        case "sahih": return .green
+        case "hasan": return .yellow
+        default:      return .gray
+        }
+    }
+
+    /// Libellé lisible du badge d'authenticité.
+    private var authLabel: String {
+        switch dhikr.authenticity {
+        case "sahih":      return "SAHIH"
+        case "hasan":      return "HASAN"
+        case "a_verifier": return String(localized: "À VÉRIFIER")
+        default:           return dhikr.authenticity?.uppercased() ?? ""
+        }
+    }
+
+    /// Pastille d'authenticité affichée à côté de la source (rien si absente).
+    @ViewBuilder
+    private var authBadge: some View {
+        if dhikr.authenticity != nil {
+            Text(verbatim: authLabel)
+                .font(.system(size: 8, weight: .bold, design: .rounded))
+                .tracking(0.5)
+                .padding(.horizontal, 5)
+                .padding(.vertical, 2)
+                .glassEffect(.clear.tint(authColor.opacity(0.18)), in: Capsule())
+                .foregroundStyle(authColor)
+        }
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             
@@ -464,19 +498,8 @@ struct DhikrCardView: View {
                     .lineLimit(1)
                     .minimumScaleFactor(0.85)
 
-                // Badge authenticité (sahih / hasan) — affiché à côté de la source
-                if let auth = dhikr.authenticity {
-                    Text(verbatim: auth.uppercased())
-                        .font(.system(size: 8, weight: .bold, design: .rounded))
-                        .tracking(0.5)
-                        .padding(.horizontal, 5)
-                        .padding(.vertical, 2)
-                        .glassEffect(
-                            .clear.tint((auth == "sahih" ? Color.green : Color.yellow).opacity(0.18)),
-                            in: Capsule()
-                        )
-                        .foregroundStyle(auth == "sahih" ? Color.green : Color.yellow)
-                }
+                // Badge authenticité (sahih / hasan / à vérifier)
+                authBadge
 
                 Spacer()
                 

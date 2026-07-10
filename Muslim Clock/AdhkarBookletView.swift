@@ -22,9 +22,23 @@ struct AdhkarBookletView: View {
     @State private var referenceDate = Date()
     /// Pile de navigation (ids de catégorie) — permet le push initial programmatique.
     @State private var path: [String] = []
+    /// Texte de recherche (FR sans accents / arabe sans harakât).
+    @State private var query = ""
+    /// Filtre d'authenticité : `nil` = tout, sinon "sahih" / "hasan".
+    @State private var authenticityFilter: String? = nil
 
     private static let remoteURL = "https://sulayman74.github.io/Muslim_clock_app/hisn_adhkar.json"
-    private let accent = Color(red: 0.4, green: 0.7, blue: 0.75)
+    private let accent = adhkarBookletAccent
+
+    /// Mode recherche actif dès qu'un texte est saisi ou qu'un filtre est posé.
+    private var isSearching: Bool {
+        !query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || authenticityFilter != nil
+    }
+
+    /// Résultats filtrés (texte + authenticité), via la logique pure `AdhkarSearch`.
+    private var results: [AdhkarCategory] {
+        AdhkarSearch.filter(categories, query: query, authenticity: authenticityFilter)
+    }
 
     /// Catégories mises en avant selon le moment (fonction pure, testable).
     private var suggested: [AdhkarCategory] {
@@ -48,6 +62,8 @@ struct AdhkarBookletView: View {
                         .tint(.white)
                 } else if categories.isEmpty {
                     emptyState
+                } else if isSearching {
+                    resultsContent
                 } else {
                     content
                 }
@@ -57,6 +73,22 @@ struct AdhkarBookletView: View {
             .navigationDestination(for: String.self) { id in
                 if let category = categories.first(where: { $0.id == id }) {
                     AdhkarCategoryDetailView(category: category)
+                }
+            }
+            .searchable(text: $query, prompt: Text("Rechercher (français ou عربي)"))
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Menu {
+                        Picker("Authenticité", selection: $authenticityFilter) {
+                            Text("Tout").tag(String?.none)
+                            Text("Sahîh").tag(String?.some("sahih"))
+                            Text("Hasan").tag(String?.some("hasan"))
+                        }
+                    } label: {
+                        Image(systemName: authenticityFilter == nil
+                              ? "line.3.horizontal.decrease.circle"
+                              : "line.3.horizontal.decrease.circle.fill")
+                    }
                 }
             }
         }
@@ -126,6 +158,39 @@ struct AdhkarBookletView: View {
         }
     }
 
+    // MARK: - Résultats de recherche
+
+    private var resultsContent: some View {
+        ScrollView(.vertical, showsIndicators: false) {
+            if results.isEmpty {
+                VStack(spacing: 12) {
+                    Image(systemName: "magnifyingglass")
+                        .font(.system(size: 34))
+                        .foregroundStyle(.white.opacity(0.35))
+                    Text("Aucune invocation trouvée.")
+                        .font(.system(size: 14, design: .rounded))
+                        .foregroundStyle(.white.opacity(0.6))
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.top, 60)
+            } else {
+                LazyVStack(alignment: .leading, spacing: 24) {
+                    ForEach(results) { category in
+                        VStack(alignment: .leading, spacing: 12) {
+                            Label(category.titleFr, systemImage: category.icon)
+                                .font(.system(size: 13, weight: .bold, design: .rounded))
+                                .foregroundStyle(accent)
+                            DhikrConsultationList(adhkar: category.adhkar, accent: accent)
+                        }
+                    }
+                }
+                .padding(.horizontal, 16)
+                .padding(.top, 12)
+                .padding(.bottom, 40)
+            }
+        }
+    }
+
     private var emptyState: some View {
         VStack(spacing: 12) {
             Image(systemName: "book.closed")
@@ -190,7 +255,7 @@ private struct CategoryRow: View {
 struct AdhkarBookletButton: View {
     @EnvironmentObject private var prayerVM: PrayerTimesViewModel
     @State private var show = false
-    private let accent = Color(red: 0.4, green: 0.7, blue: 0.75)
+    private let accent = adhkarBookletAccent
 
     var body: some View {
         Button {
@@ -239,7 +304,7 @@ struct AdhkarMomentCard: View {
     @EnvironmentObject private var prayerVM: PrayerTimesViewModel
     @State private var categories: [AdhkarCategory] = []
     @State private var showBooklet = false
-    private let accent = Color(red: 0.4, green: 0.7, blue: 0.75)
+    private let accent = adhkarBookletAccent
 
     private var topCategory: AdhkarCategory? {
         AdhkarSuggestion.suggested(

@@ -114,6 +114,24 @@
         "authenticity": "sahih"
       },
       {
+        "id": 4004,
+        "arabic": "وَأَنَا أَشْهَدُ أَنْ لَا إِلَٰهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، وَأَنَّ مُحَمَّدًا عَبْدُهُ وَرَسُولُهُ، رَضِيتُ بِاللَّهِ رَبًّا، وَبِمُحَمَّدٍ رَسُولًا، وَبِالْإِسْلَامِ دِينًا",
+        "text": "Et moi j'atteste qu'il n'y a de divinité qu'Allah, Seul sans associé, et que Muhammad est Son serviteur et Son messager. Je suis satisfait d'Allah comme Seigneur, de Muhammad comme messager, et de l'Islam comme religion. (À dire après la double attestation du muezzin.)",
+        "source": "Sahih Muslim 386",
+        "repeat": 1,
+        "benefit": "Celui qui le dit en entendant le muezzin, ses péchés lui sont pardonnés.",
+        "authenticity": "sahih"
+      },
+      {
+        "id": 4005,
+        "arabic": "ثُمَّ صَلُّوا عَلَيَّ… (يُصَلِّي عَلَى النَّبِيِّ ﷺ بَعْدَ إِجَابَةِ الْمُؤَذِّنِ)",
+        "text": "Priez ensuite sur moi (la formule de la prière sur le Prophète ﷺ, ex. la formule ibrâhîmiyya), avant de demander pour lui al-wasîla.",
+        "source": "Sahih Muslim 384",
+        "repeat": 1,
+        "benefit": "« Quiconque prie sur moi une fois, Allah prie sur lui dix fois. » — puis demandez al-wasîla.",
+        "authenticity": "sahih"
+      },
+      {
         "id": 4003,
         "arabic": "الدُّعَاءُ بَيْنَ الْأَذَانِ وَالْإِقَامَةِ لَا يُرَدُّ، فَادْعُوا",
         "text": "L'invocation entre l'adhan et l'iqâma n'est pas rejetée : invoquez. (Demandez à Allah ce que vous souhaitez de bien.)",
@@ -237,6 +255,149 @@
         "repeat": 1,
         "benefit": "Ses péchés passés lui sont pardonnés.",
         "authenticity": "hasan"
+      }
+    ]
+  },
+  {
+    "id": "travel",
+    "titleAr": "أذكار السفر",
+    "titleFr": "Le voyage",
+    "icon": "airplane",
+    "moments": [
+      "travel"
+    ],
+    "adhkar": [
+      {
+        "id": 11001,
+        "arabic": "اللَّهُ أَكْبَرُ، اللَّهُ أَكْبَرُ، اللَّهُ أَكْبَرُ، سُبْحَانَ الَّذِي سَخَّرَ لَنَا هَٰذَا وَمَا كُنَّا لَهُ مُقْرِنِينَ، وَإِنَّا إِلَىٰ رَبِّنَا لَمُنْقَلِبُونَ، اللَّهُمَّ إِنَّا نَسْأَلُكَ فِي سَفَرِنَا هَٰذَا الْبِرَّ وَالتَّقْوَىٰ، وَمِنَ الْعَمَلِ مَا تَرْضَىٰ، اللَّهُمَّ هَوِّنْ عَلَيْنَا سَفَرَنَا هَٰذَا وَاطْوِ عَنَّا بُعْدَهُ، اللَّهُمَّ أَنْتَ الصَّاحِبُ فِي السَّفَرِ، وَالْخَلِيفَةُ فِي الْأَهْلِ",
+        "text": "Allah est le plus grand (×3). Gloire à Celui qui a mis ceci à notre service, alors que nous n'étions pas capables de le dominer. C'est vers notre Seigneur que nous retournerons. Ô Allah, nous Te demandons dans notre voyage la piété, la crainte et les œuvres que Tu agrées. Ô Allah, facilite-nous ce voyage et raccourcis-en la distance. Ô Allah, Tu es le Compagnon dans le voyage et le Garant auprès de la famille. (En montant dans le véhicule.)",
+        "source": "Sahih Muslim 1342",
+        "repeat": 1,
+        "benefit": "Invocation du départ en voyage rapportée du Prophète ﷺ.",
+        "authenticity": "sahih"
+      },
+      {
+        "id": 11002,
+        "arabic": "أَعُوذُ بِكَلِمَاتِ اللَّهِ التَّامَّاتِ مِنْ شَرِّ مَا خَلَقَ",
+        "text": "Je cherche refuge dans les paroles parfaites d'Allah contre le mal de ce qu'Il a créé. (Lors d'une halte, en s'arrêtant dans un lieu.)",
+        "source": "Sahih Muslim 2708",
+        "repeat": 1,
+        "benefit": "Celui qui s'arrête quelque part et dit cela, rien ne lui nuira jusqu'à ce qu'il reparte.",
+        "authenticity": "sahih"
+      },
+      {
+        "id": 11003,
+        "arabic": "آيِبُونَ تَائِبُونَ عَابِدُونَ لِرَبِّنَا حَامِدُونَ",
+        "text": "Nous revenons, repentants, adorateurs, louant notre Seigneur. (Au retour de voyage, après avoir répété le takbîr trois fois.)",
+        "source": "Sahih al-Bukhari 1797 / Muslim 1344",
+        "repeat": 1,
+        "benefit": "Ce que disait le Prophète ﷺ en revenant d'un voyage.",
+        "authenticity": "sahih"
+      }
+    ]
+  },
+  {
+    "id": "istikhara",
+    "titleAr": "دعاء الاستخارة",
+    "titleFr": "Prière de consultation (Istikhâra)",
+    "icon": "signpost.right.fill",
+    "moments": [
+      "istikhara"
+    ],
+    "adhkar": [
+      {
+        "id": 12001,
+        "arabic": "اللَّهُمَّ إِنِّي أَسْتَخِيرُكَ بِعِلْمِكَ، وَأَسْتَقْدِرُكَ بِقُدْرَتِكَ، وَأَسْأَلُكَ مِنْ فَضْلِكَ الْعَظِيمِ، فَإِنَّكَ تَقْدِرُ وَلَا أَقْدِرُ، وَتَعْلَمُ وَلَا أَعْلَمُ، وَأَنْتَ عَلَّامُ الْغُيُوبِ. اللَّهُمَّ إِنْ كُنْتَ تَعْلَمُ أَنَّ هَٰذَا الْأَمْرَ خَيْرٌ لِي فِي دِينِي وَمَعَاشِي وَعَاقِبَةِ أَمْرِي فَاقْدُرْهُ لِي وَيَسِّرْهُ لِي ثُمَّ بَارِكْ لِي فِيهِ، وَإِنْ كُنْتَ تَعْلَمُ أَنَّ هَٰذَا الْأَمْرَ شَرٌّ لِي فِي دِينِي وَمَعَاشِي وَعَاقِبَةِ أَمْرِي فَاصْرِفْهُ عَنِّي وَاصْرِفْنِي عَنْهُ، وَاقْدُرْ لِيَ الْخَيْرَ حَيْثُ كَانَ ثُمَّ أَرْضِنِي بِهِ",
+        "text": "Ô Allah, je Te demande de m'assister par Ta science, je recherche la force par Ta puissance et je Te demande de Ta grâce immense. Car Tu es capable et je ne le suis pas, Tu sais et je ne sais pas, et Tu es le grand connaisseur de l'invisible. Ô Allah, si Tu sais que cette affaire est un bien pour moi dans ma religion, ma vie et l'issue de mes actes, décrète-la pour moi, facilite-la-moi puis bénis-la pour moi. Et si Tu sais qu'elle est un mal pour moi dans ma religion, ma vie et l'issue de mes actes, détourne-la de moi et détourne-moi d'elle, et décrète pour moi le bien où qu'il soit, puis fais que j'en sois satisfait. (Après 2 rak'ât surérogatoires, en nommant l'affaire.)",
+        "source": "Sahih al-Bukhari 1162",
+        "repeat": 1,
+        "benefit": "Le Prophète ﷺ nous enseignait l'istikhâra dans toute affaire, comme il nous enseignait une sourate du Coran.",
+        "authenticity": "sahih"
+      }
+    ]
+  },
+  {
+    "id": "storm",
+    "titleAr": "أذكار الريح والمطر والرعد",
+    "titleFr": "Vent, pluie & orage",
+    "icon": "cloud.bolt.rain.fill",
+    "moments": [
+      "storm"
+    ],
+    "adhkar": [
+      {
+        "id": 13001,
+        "arabic": "اللَّهُمَّ إِنِّي أَسْأَلُكَ خَيْرَهَا وَخَيْرَ مَا فِيهَا وَخَيْرَ مَا أُرْسِلَتْ بِهِ، وَأَعُوذُ بِكَ مِنْ شَرِّهَا وَشَرِّ مَا فِيهَا وَشَرِّ مَا أُرْسِلَتْ بِهِ",
+        "text": "Ô Allah, je Te demande son bien, le bien qu'il contient et le bien pour lequel il a été envoyé ; et je cherche refuge auprès de Toi contre son mal, le mal qu'il contient et le mal pour lequel il a été envoyé. (Lors d'un vent fort.)",
+        "source": "Sahih Muslim 899",
+        "repeat": 1,
+        "benefit": "Invocation du Prophète ﷺ lorsque le vent soufflait fort.",
+        "authenticity": "sahih"
+      },
+      {
+        "id": 13002,
+        "arabic": "اللَّهُمَّ صَيِّبًا نَافِعًا",
+        "text": "Ô Allah, [fais que ce soit] une pluie bienfaisante. (Pendant la pluie.)",
+        "source": "Sahih al-Bukhari 1032",
+        "repeat": 1,
+        "benefit": "Ce que disait le Prophète ﷺ quand il pleuvait.",
+        "authenticity": "sahih"
+      },
+      {
+        "id": 13003,
+        "arabic": "مُطِرْنَا بِفَضْلِ اللَّهِ وَرَحْمَتِهِ",
+        "text": "Nous avons reçu la pluie par la grâce d'Allah et Sa miséricorde. (Après la pluie.)",
+        "source": "Sahih al-Bukhari 846 / Muslim 71",
+        "repeat": 1,
+        "benefit": "Reconnaître que la pluie vient de la grâce d'Allah (et non des astres).",
+        "authenticity": "sahih"
+      },
+      {
+        "id": 13004,
+        "arabic": "سُبْحَانَ الَّذِي يُسَبِّحُ الرَّعْدُ بِحَمْدِهِ وَالْمَلَائِكَةُ مِنْ خِيفَتِهِ",
+        "text": "Gloire à Celui que le tonnerre glorifie par Sa louange, ainsi que les anges, par crainte de Lui. (En entendant le tonnerre.)",
+        "source": "Muwatta Malik — parole d'Ibn 'Umar (mawqûf), non attribuée au Prophète ﷺ",
+        "repeat": 1,
+        "benefit": "Rapporté comme parole d'Abdullah ibn 'Umar ; à confirmer avant diffusion (statut discuté comme dhikr recommandé).",
+        "authenticity": "a_verifier"
+      }
+    ]
+  },
+  {
+    "id": "fear",
+    "titleAr": "دعاء الخوف من العدو",
+    "titleFr": "Peur d'un ennemi",
+    "icon": "shield.lefthalf.filled",
+    "moments": [
+      "fear"
+    ],
+    "adhkar": [
+      {
+        "id": 14001,
+        "arabic": "اللَّهُمَّ إِنَّا نَجْعَلُكَ فِي نُحُورِهِمْ، وَنَعُوذُ بِكَ مِنْ شُرُورِهِمْ",
+        "text": "Ô Allah, nous Te plaçons face à eux et nous cherchons refuge auprès de Toi contre leurs maux. (Face à un ennemi ou un groupe que l'on craint.)",
+        "source": "Abu Dawud 1537 — Sahih",
+        "repeat": 1,
+        "benefit": "Ce que disait le Prophète ﷺ quand il craignait un groupe.",
+        "authenticity": "sahih"
+      },
+      {
+        "id": 14002,
+        "arabic": "حَسْبُنَا اللَّهُ وَنِعْمَ الْوَكِيلُ",
+        "text": "Allah nous suffit et Il est le meilleur Garant.",
+        "source": "Sahih al-Bukhari 4563",
+        "repeat": 1,
+        "benefit": "Parole d'Ibrahim jeté au feu, et des croyants — cf. Coran 3:173.",
+        "authenticity": "sahih"
+      },
+      {
+        "id": 14003,
+        "arabic": "اللَّهُمَّ مُنْزِلَ الْكِتَابِ، سَرِيعَ الْحِسَابِ، اهْزِمِ الْأَحْزَابَ، اللَّهُمَّ اهْزِمْهُمْ وَزَلْزِلْهُمْ",
+        "text": "Ô Allah, Toi qui as fait descendre le Livre, prompt à demander les comptes, mets en déroute les coalisés. Ô Allah, mets-les en déroute et ébranle-les.",
+        "source": "Sahih Muslim 1742",
+        "repeat": 1,
+        "benefit": "Invocation du Prophète ﷺ contre les coalisés.",
+        "authenticity": "sahih"
       }
     ]
   }
