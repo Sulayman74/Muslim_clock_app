@@ -100,6 +100,7 @@ enum AdhkarReminderScheduler {
         content.title = "🧪 [TEST] " + internalTiming.title
         content.body = internalTiming.body
         content.sound = .default
+        content.threadIdentifier = "adhkar_reminder"
         content.userInfo = [
             "module": "adhkar_reminder",
             "timing": internalTiming.rawValue,
@@ -170,6 +171,7 @@ enum AdhkarReminderScheduler {
         content.title = timing.title
         content.body = timing.body
         content.sound = .default
+        content.threadIdentifier = "adhkar_reminder"
         content.userInfo = [
             "module": "adhkar_reminder",
             "timing": timing.rawValue,

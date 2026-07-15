@@ -43,6 +43,7 @@ enum IlmReminderScheduler {
                 content.body = String(localized: "Un peu de science aujourd'hui — quelques minutes suffisent.")
             }
             content.sound = .default
+            content.threadIdentifier = "ilm_program"
             content.userInfo = ["module": "ilm_program"]
 
             // Trigger calendaire répétitif (heure locale) : gère DST nativement,

@@ -68,6 +68,7 @@ class NotificationManager {
                 content.title = "\(prayerName) (\(formatter.string(from: prayerDate)))"
                 content.body  = String(localized: "C'est l'heure de la prière du \(prayerName).")
                 content.sound = .default
+                content.threadIdentifier = "adhan"   // regroupe les adhan dans le centre de notifs
                 content.userInfo = [
                     "prayerName": prayerName,
                     "prayerTime": prayerDate.timeIntervalSince1970
@@ -114,6 +115,7 @@ class NotificationManager {
             content.title    = "🌙 Nouvelle Lune — Hilal"
             content.body     = "اللَّهُمَّ أَهِلَّهُ عَلَيْنَا بِالأَمْنِ وَالإِيمَانِ وَالسَّلَامَةِ وَالإِسْلَامِ"
             content.sound    = .default
+            content.threadIdentifier = "newmoon"
             
             let trigger  = UNCalendarNotificationTrigger(dateMatching: notifComps, repeats: false)
             let id       = "newmoon_\(y)-\(m)"

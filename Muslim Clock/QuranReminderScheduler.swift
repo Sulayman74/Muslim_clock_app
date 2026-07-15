@@ -123,6 +123,7 @@ enum QuranReminderScheduler {
             pagesPerPrayer, prayer.name
         )
         content.sound = .default
+        content.threadIdentifier = "quran_reading"
         content.userInfo = [
             "module": "quran_reading",
             "prayerName": prayer.name,
