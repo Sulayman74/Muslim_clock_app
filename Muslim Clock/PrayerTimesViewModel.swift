@@ -74,19 +74,19 @@ class PrayerTimesViewModel: ObservableObject {
     private var calculationLocation: CLLocation?
     
     // 2. LECTURE DES RÉGLAGES UTILISATEUR (SMART SETUP)
-    @AppStorage("userFajrOffset") private var fajrOffset = 0
-    @AppStorage("userCalculationMethod") private var calculationMethod = "UOIF (12°)"
-    @AppStorage("userMaghribOffset") private var maghribOffset = 0
-    @AppStorage("isIshaFixed") private var isIshaFixed = true
-    @AppStorage("userIshaFixedDuration") private var ishaFixedDuration = 90
-    @AppStorage("userIshaOffset") private var ishaOffset = 0
-    @AppStorage("userDhuhrOffset") private var dhuhrOffset = 0
-    @AppStorage("userAsrOffset") private var asrOffset = 0
+    @AppStorage(StorageKeys.fajrOffset) private var fajrOffset = 0
+    @AppStorage(StorageKeys.calculationMethod) private var calculationMethod = "UOIF (12°)"
+    @AppStorage(StorageKeys.maghribOffset) private var maghribOffset = 0
+    @AppStorage(StorageKeys.isIshaFixed) private var isIshaFixed = true
+    @AppStorage(StorageKeys.ishaFixedDuration) private var ishaFixedDuration = 90
+    @AppStorage(StorageKeys.ishaOffset) private var ishaOffset = 0
+    @AppStorage(StorageKeys.dhuhrOffset) private var dhuhrOffset = 0
+    @AppStorage(StorageKeys.asrOffset) private var asrOffset = 0
 
     // Jumu'ah (vendredi)
-    @AppStorage("jumuahEnabled") private var jumuahEnabled = false
-    @AppStorage("jumuahHour") private var jumuahHour = 13
-    @AppStorage("jumuahMinute") private var jumuahMinute = 0
+    @AppStorage(StorageKeys.jumuahEnabled) private var jumuahEnabled = false
+    @AppStorage(StorageKeys.jumuahHour) private var jumuahHour = 13
+    @AppStorage(StorageKeys.jumuahMinute) private var jumuahMinute = 0
 
     /// True si on est vendredi et que le Jumu'ah est active
     @Published var isFridayJumuah: Bool = false
@@ -218,20 +218,20 @@ class PrayerTimesViewModel: ObservableObject {
             self.isLoading = false
             // Write prayer times for Watch app and complications
             let sharedWatch = UserDefaults(suiteName: AppGroup.identifier)
-            sharedWatch?.set(prayerTimesToday.fajr.timeIntervalSince1970, forKey: "prayer_fajr")
+            sharedWatch?.set(prayerTimesToday.fajr.timeIntervalSince1970, forKey: StorageKeys.prayerFajr)
             // Si vendredi + Jumu'ah active, ecrire l'heure Jumu'ah a la place de Dhuhr
             if isFridayJumuah {
                 var comps = Calendar.current.dateComponents([.year, .month, .day], from: Date())
                 comps.hour = jumuahHour; comps.minute = jumuahMinute; comps.second = 0
                 let jumuahDate = Calendar.current.date(from: comps) ?? prayerTimesToday.dhuhr
-                sharedWatch?.set(jumuahDate.timeIntervalSince1970, forKey: "prayer_dhuhr")
+                sharedWatch?.set(jumuahDate.timeIntervalSince1970, forKey: StorageKeys.prayerDhuhr)
             } else {
-                sharedWatch?.set(prayerTimesToday.dhuhr.timeIntervalSince1970, forKey: "prayer_dhuhr")
+                sharedWatch?.set(prayerTimesToday.dhuhr.timeIntervalSince1970, forKey: StorageKeys.prayerDhuhr)
             }
-            sharedWatch?.set(prayerTimesToday.asr.timeIntervalSince1970, forKey: "prayer_asr")
-            sharedWatch?.set(prayerTimesToday.maghrib.timeIntervalSince1970, forKey: "prayer_maghrib")
-            sharedWatch?.set(prayerTimesToday.isha.timeIntervalSince1970, forKey: "prayer_isha")
-            sharedWatch?.set(prayerTimesToday.sunrise.timeIntervalSince1970, forKey: "prayer_sunrise")
+            sharedWatch?.set(prayerTimesToday.asr.timeIntervalSince1970, forKey: StorageKeys.prayerAsr)
+            sharedWatch?.set(prayerTimesToday.maghrib.timeIntervalSince1970, forKey: StorageKeys.prayerMaghrib)
+            sharedWatch?.set(prayerTimesToday.isha.timeIntervalSince1970, forKey: StorageKeys.prayerIsha)
+            sharedWatch?.set(prayerTimesToday.sunrise.timeIntervalSince1970, forKey: StorageKeys.prayerSunrise)
 
             // Fajr de demain — toujours écrit pour que la complication Watch puisse calculer
             // la fin de la fenêtre Isha (middleOfNight) à n'importe quelle heure du jour.
@@ -240,7 +240,7 @@ class PrayerTimesViewModel: ObservableObject {
                 let tomorrowComps = Calendar.current.dateComponents([.year, .month, .day], from: tomorrow)
                 if let pTomorrow = PrayerTimes(coordinates: coordinates, date: tomorrowComps, calculationParameters: params) {
                     tomorrowFajrTS = pTomorrow.fajr.timeIntervalSince1970
-                    sharedWatch?.set(tomorrowFajrTS, forKey: "prayer_fajr_tomorrow")
+                    sharedWatch?.set(tomorrowFajrTS, forKey: StorageKeys.prayerFajrTomorrow)
                 }
             }
 
@@ -255,14 +255,14 @@ class PrayerTimesViewModel: ObservableObject {
                 return prayerTimesToday.dhuhr.timeIntervalSince1970
             }()
             var watchPayload: [String: Double] = [
-                "prayer_fajr":    prayerTimesToday.fajr.timeIntervalSince1970,
-                "prayer_sunrise": prayerTimesToday.sunrise.timeIntervalSince1970,
-                "prayer_dhuhr":   dhuhrToSend,
-                "prayer_asr":     prayerTimesToday.asr.timeIntervalSince1970,
-                "prayer_maghrib": prayerTimesToday.maghrib.timeIntervalSince1970,
-                "prayer_isha":    prayerTimesToday.isha.timeIntervalSince1970,
+                StorageKeys.prayerFajr:    prayerTimesToday.fajr.timeIntervalSince1970,
+                StorageKeys.prayerSunrise: prayerTimesToday.sunrise.timeIntervalSince1970,
+                StorageKeys.prayerDhuhr:   dhuhrToSend,
+                StorageKeys.prayerAsr:     prayerTimesToday.asr.timeIntervalSince1970,
+                StorageKeys.prayerMaghrib: prayerTimesToday.maghrib.timeIntervalSince1970,
+                StorageKeys.prayerIsha:    prayerTimesToday.isha.timeIntervalSince1970,
             ]
-            if tomorrowFajrTS > 0 { watchPayload["prayer_fajr_tomorrow"] = tomorrowFajrTS }
+            if tomorrowFajrTS > 0 { watchPayload[StorageKeys.prayerFajrTomorrow] = tomorrowFajrTS }
             WatchSessionManager.shared.sendPrayerTimes(watchPayload)
         }
         //  📅 NOUVEAU : PLANIFICATION SUR 14 JOURS POUR LES NOTIFICATIONS
@@ -272,27 +272,27 @@ class PrayerTimesViewModel: ObservableObject {
         // Le widget lit ces valeurs pour appliquer la même logique
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         let shared = UserDefaults(suiteName: AppGroup.identifier)
-        shared?.set(location.coordinate.latitude, forKey: "saved_latitude")
-        shared?.set(location.coordinate.longitude, forKey: "saved_longitude")
-        
+        shared?.set(location.coordinate.latitude, forKey: StorageKeys.savedLatitude)
+        shared?.set(location.coordinate.longitude, forKey: StorageKeys.savedLongitude)
+
         // Réglages de calcul
-        shared?.set(calculationMethod, forKey: "w_calculationMethod")
-        shared?.set(fajrOffset, forKey: "w_fajrOffset")
-        shared?.set(dhuhrOffset, forKey: "w_dhuhrOffset")
-        shared?.set(asrOffset, forKey: "w_asrOffset")
-        shared?.set(maghribOffset, forKey: "w_maghribOffset")
-        shared?.set(isIshaFixed, forKey: "w_isIshaFixed")
-        shared?.set(ishaFixedDuration, forKey: "w_ishaFixedDuration")
-        shared?.set(ishaOffset, forKey: "w_ishaOffset")
-        shared?.set(jumuahEnabled, forKey: "w_jumuahEnabled")
-        shared?.set(jumuahHour, forKey: "w_jumuahHour")
-        shared?.set(jumuahMinute, forKey: "w_jumuahMinute")
+        shared?.set(calculationMethod, forKey: StorageKeys.wCalculationMethod)
+        shared?.set(fajrOffset, forKey: StorageKeys.wFajrOffset)
+        shared?.set(dhuhrOffset, forKey: StorageKeys.wDhuhrOffset)
+        shared?.set(asrOffset, forKey: StorageKeys.wAsrOffset)
+        shared?.set(maghribOffset, forKey: StorageKeys.wMaghribOffset)
+        shared?.set(isIshaFixed, forKey: StorageKeys.wIsIshaFixed)
+        shared?.set(ishaFixedDuration, forKey: StorageKeys.wIshaFixedDuration)
+        shared?.set(ishaOffset, forKey: StorageKeys.wIshaOffset)
+        shared?.set(jumuahEnabled, forKey: StorageKeys.wJumuahEnabled)
+        shared?.set(jumuahHour, forKey: StorageKeys.wJumuahHour)
+        shared?.set(jumuahMinute, forKey: StorageKeys.wJumuahMinute)
 
         // Sync réglages vers Apple Watch via WatchConnectivity
         WatchSessionManager.shared.sendSettings([
-            "w_jumuahEnabled": jumuahEnabled,
-            "w_jumuahHour": jumuahHour,
-            "w_jumuahMinute": jumuahMinute,
+            StorageKeys.wJumuahEnabled: jumuahEnabled,
+            StorageKeys.wJumuahHour: jumuahHour,
+            StorageKeys.wJumuahMinute: jumuahMinute,
         ])
 
         WidgetCenter.shared.reloadAllTimelines()
@@ -425,8 +425,8 @@ class PrayerTimesViewModel: ObservableObject {
             self.nextPrayerDate = nextFajrDate
             self.nextPrayerName = "Fajr"
             self.nextPrayerTime = nextFajrTimeString
-            UserDefaults(suiteName: AppGroup.identifier)?.set(nextFajrDate.timeIntervalSince1970, forKey: "prayer_fajr_tomorrow")
-            WatchSessionManager.shared.sendPrayerTimes(["prayer_fajr_tomorrow": nextFajrDate.timeIntervalSince1970])
+            UserDefaults(suiteName: AppGroup.identifier)?.set(nextFajrDate.timeIntervalSince1970, forKey: StorageKeys.prayerFajrTomorrow)
+            WatchSessionManager.shared.sendPrayerTimes([StorageKeys.prayerFajrTomorrow: nextFajrDate.timeIntervalSince1970])
 
             if let firstIndex = self.dailyPrayers.firstIndex(where: { $0.name == "Fajr" }) {
                 self.dailyPrayers[firstIndex] = DailyPrayer(
