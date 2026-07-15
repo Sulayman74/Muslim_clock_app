@@ -2,33 +2,6 @@ import AppIntents
 import Foundation
 import os
 
-// MARK: - ToggleSunnahIntent
-
-struct ToggleSunnahIntent: AppIntent {
-    static var title: LocalizedStringResource = "Valider une Sunnah"
-
-    @Parameter(title: "Nom de la Sunnah")
-    var sunnahName: String
-
-    // ⚠️ AJOUT OBLIGATOIRE POUR iOS 17
-    init() {}
-
-    init(sunnahName: String) {
-        self.sunnahName = sunnahName
-    }
-
-    func perform() async throws -> some IntentResult {
-        guard let sharedDefaults = UserDefaults(suiteName: AppGroup.identifier) else {
-            return .result()
-        }
-
-        let currentState = sharedDefaults.bool(forKey: sunnahName)
-        sharedDefaults.set(!currentState, forKey: sunnahName)
-
-        return .result()
-    }
-}
-
 // MARK: - OpenIntent : Qibla / Adhkar (Control Center deep-link)
 
 /// Cible de l'ouverture de l'app depuis un Control Widget.
