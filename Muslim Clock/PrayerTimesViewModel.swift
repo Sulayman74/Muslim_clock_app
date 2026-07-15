@@ -199,39 +199,18 @@ class PrayerTimesViewModel: ObservableObject {
         
         let coordinates = Coordinates(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
         
-        // ⚙️ APPLICATION DE LA MÉTHODE (ANGLES)
-        var params: CalculationParameters
-        
-        switch calculationMethod {
-        case "UOIF (12°)":
-            params = CalculationMethod.muslimWorldLeague.params
-            params.fajrAngle = 12
-            params.ishaAngle = 12
-        case "ISNA (15°)":
-            params = CalculationMethod.northAmerica.params
-        case "Mosquée de Paris":
-            params = CalculationMethod.muslimWorldLeague.params
-            params.fajrAngle = 18
-            params.ishaAngle = 18
-        default: // "Ligue Islamique (18°)"
-            params = CalculationMethod.muslimWorldLeague.params
-        }
-        
-        params.madhab = .shafi
-        
-        // 🎛️ APPLICATION DU TEMKINE ET DU LISSAGE
-        params.adjustments.fajr = fajrOffset
-        params.adjustments.dhuhr = dhuhrOffset
-        params.adjustments.asr = asrOffset
-        params.adjustments.maghrib = maghribOffset
-        
-        if isIshaFixed {
-            params.ishaInterval = ishaFixedDuration
-            params.adjustments.isha = maghribOffset
-        } else {
-            params.adjustments.isha = ishaOffset
-        }
-        
+        // ⚙️ Paramètres Adhan (méthode + temkine) — moteur pur testable.
+        let params = PrayerCalculationEngine.parameters(
+            method: calculationMethod,
+            fajrOffset: fajrOffset,
+            dhuhrOffset: dhuhrOffset,
+            asrOffset: asrOffset,
+            maghribOffset: maghribOffset,
+            ishaOffset: ishaOffset,
+            isIshaFixed: isIshaFixed,
+            ishaFixedDuration: ishaFixedDuration
+        )
+
         let todayComponents = Calendar.current.dateComponents([.year, .month, .day], from: Date())
         
         if let prayerTimesToday = PrayerTimes(coordinates: coordinates, date: todayComponents, calculationParameters: params) {
@@ -485,40 +464,27 @@ class PrayerTimesViewModel: ObservableObject {
             
             guard let prayerTimesTomorrow = PrayerTimes(coordinates: coordinates, date: tomorrowComponents, calculationParameters: params) else { return }
             
-            // Calcul du milieu de la nuit : Maghrib + (Fajr demain - Maghrib) / 2
-            let nightDuration = prayerTimesTomorrow.fajr.timeIntervalSince(prayerTimesToday.maghrib)
-            let middleNight = prayerTimesToday.maghrib.addingTimeInterval(nightDuration / 2)
-            // 🌙 NOUVEAU : Calcul du dernier tiers de la nuit
-            // On prend le Fajr de demain et on recule d'un tiers de la nuit
-            let lastThird = prayerTimesTomorrow.fajr.addingTimeInterval(-(nightDuration / 3))
-            self.middleOfNight = middleNight
-            self.lastThirdOfNight = lastThird
-            
-            if now >= prayerTimesToday.fajr && now < prayerTimesToday.sunrise {
-                currentPrayerWindow = .fajr
-                currentWindowStart = prayerTimesToday.fajr
-                currentWindowEnd = prayerTimesToday.sunrise
-            } else if now >= prayerTimesToday.dhuhr && now < prayerTimesToday.asr {
-                currentPrayerWindow = .dhuhr
-                currentWindowStart = prayerTimesToday.dhuhr
-                currentWindowEnd = prayerTimesToday.asr
-            } else if now >= prayerTimesToday.asr && now < prayerTimesToday.maghrib {
-                currentPrayerWindow = .asr
-                currentWindowStart = prayerTimesToday.asr
-                currentWindowEnd = prayerTimesToday.maghrib
-            } else if now >= prayerTimesToday.maghrib && now < prayerTimesToday.isha {
-                currentPrayerWindow = .maghrib
-                currentWindowStart = prayerTimesToday.maghrib
-                currentWindowEnd = prayerTimesToday.isha
-            } else if now >= prayerTimesToday.isha && now < middleNight {
-                currentPrayerWindow = .isha
-                currentWindowStart = prayerTimesToday.isha
-                currentWindowEnd = middleNight
-            } else {
-                currentPrayerWindow = .none
-                currentWindowStart = nil
-                currentWindowEnd = nil
-            }
+            // Marqueurs de nuit + fenêtre courante — moteur pur testable.
+            let markers = PrayerCalculationEngine.nightMarkers(
+                maghrib: prayerTimesToday.maghrib,
+                fajrTomorrow: prayerTimesTomorrow.fajr
+            )
+            self.middleOfNight = markers.middleOfNight
+            self.lastThirdOfNight = markers.lastThirdOfNight
+
+            let win = PrayerCalculationEngine.currentWindow(
+                now: now,
+                fajr: prayerTimesToday.fajr,
+                sunrise: prayerTimesToday.sunrise,
+                dhuhr: prayerTimesToday.dhuhr,
+                asr: prayerTimesToday.asr,
+                maghrib: prayerTimesToday.maghrib,
+                isha: prayerTimesToday.isha,
+                middleOfNight: markers.middleOfNight
+            )
+            currentPrayerWindow = win.window
+            currentWindowStart = win.start
+            currentWindowEnd = win.end
         }
     }
 
