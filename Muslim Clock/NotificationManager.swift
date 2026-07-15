@@ -8,7 +8,26 @@ import UserNotifications
 
 class NotificationManager {
     static let shared = NotificationManager()
-    
+
+    // MARK: - Budget de notifications
+    //
+    // iOS ne conserve que 64 notifications locales EN ATTENTE par app (les plus
+    // proches) ; au-delà, il en supprime silencieusement. Le budget est donc
+    // partagé entre TOUS les modules : adhan + adhkar + quran + ʿilm + nouvelle lune.
+    //
+    // Allocation cible (≈ 49, marge sous 64) :
+    //   adhan 7 j × 5 = 35 · adhkar ~2 · quran ≤5 · ʿilm 1 · nouvelle lune 6.
+
+    /// Horizon de planification des adhan, en jours. Réduit de 14 → 7 pour ne pas
+    /// évincer les autres modules (l'app reprogramme à chaque passage au premier plan).
+    static let adhanHorizonDays = 7
+
+    /// Plafond dur de notifs adhan en file (marge au-dessus de 7 × 5 = 35).
+    private static let maxAdhanNotifications = 40
+
+    /// Nombre de nouvelles lunes programmées à l'avance.
+    static let newMoonMonths = 6
+
     // 1. Demande de permission (Appelé au lancement de l'app)
     func requestPermission() {
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { granted, error in
@@ -35,8 +54,8 @@ class NotificationManager {
                 .map { $0.identifier }
             center.removePendingNotificationRequests(withIdentifiers: idsToRemove)
 
-            // 56 slots max pour les prières (8 slots réservés aux nouvelles lunes)
-            let limit = min(names.count, 56)
+            // Plafond adhan : laisse des slots aux autres modules (cf. budget en tête).
+            let limit = min(names.count, Self.maxAdhanNotifications)
 
             let formatter = DateFormatter()
             formatter.timeStyle = .short

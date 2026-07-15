@@ -374,8 +374,8 @@ class PrayerTimesViewModel: ObservableObject {
             var allNames: [String] = []
             let calendar = Calendar.current
             
-            // Boucle sur les 14 prochains jours
-            for i in 0..<14 {
+            // Boucle sur l'horizon de planification (budget notifications iOS).
+            for i in 0..<NotificationManager.adhanHorizonDays {
                 if let date = calendar.date(byAdding: .day, value: i, to: Date()) {
                     let comps = calendar.dateComponents([.year, .month, .day], from: date)
 
