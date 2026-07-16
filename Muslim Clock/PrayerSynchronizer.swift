@@ -42,9 +42,10 @@ enum PrayerSynchronizer {
         asr: Date,
         maghrib: Date,
         isha: Date,
-        fajrTomorrow: Date?
+        fajrTomorrow: Date?,
+        defaults: UserDefaults? = UserDefaults(suiteName: AppGroup.identifier)
     ) {
-        let shared = UserDefaults(suiteName: AppGroup.identifier)
+        let shared = defaults
         shared?.set(fajr.timeIntervalSince1970, forKey: StorageKeys.prayerFajr)
         shared?.set(dhuhr.timeIntervalSince1970, forKey: StorageKeys.prayerDhuhr)
         shared?.set(asr.timeIntervalSince1970, forKey: StorageKeys.prayerAsr)
@@ -72,8 +73,12 @@ enum PrayerSynchronizer {
     /// Publie la position + le miroir des réglages dans l'App Group, envoie les
     /// réglages à la Watch, puis rafraîchit les widgets. Appelé même si le calcul
     /// des horaires du jour a échoué (comme l'implémentation d'origine).
-    static func publishSettings(location: CLLocation, settings: PrayerSyncSettings) {
-        let shared = UserDefaults(suiteName: AppGroup.identifier)
+    static func publishSettings(
+        location: CLLocation,
+        settings: PrayerSyncSettings,
+        defaults: UserDefaults? = UserDefaults(suiteName: AppGroup.identifier)
+    ) {
+        let shared = defaults
         shared?.set(location.coordinate.latitude, forKey: StorageKeys.savedLatitude)
         shared?.set(location.coordinate.longitude, forKey: StorageKeys.savedLongitude)
 
