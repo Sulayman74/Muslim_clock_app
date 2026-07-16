@@ -86,10 +86,18 @@ final class AppUpdateChecker: ObservableObject {
         if let region = Locale.current.region?.identifier.lowercased() {
             urlString += "&country=\(region)"
         }
+        // Cache-buster : le CDN d'Apple peut servir une réponse obsolète pendant
+        // plusieurs jours après une release. Une URL unique force un cache miss.
+        // Sans impact de charge : le throttle limite à 1 requête/jour/appareil.
+        urlString += "&nocache=\(Int(Date().timeIntervalSince1970))"
         guard let url = URL(string: urlString) else { return }
 
+        // Ceinture et bretelles : ignore aussi le cache local d'URLSession.
+        var request = URLRequest(url: url)
+        request.cachePolicy = .reloadIgnoringLocalAndRemoteCacheData
+
         do {
-            let (data, _) = try await URLSession.shared.data(from: url)
+            let (data, _) = try await URLSession.shared.data(for: request)
             guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
                   let results = json["results"] as? [[String: Any]] else { return }
 
