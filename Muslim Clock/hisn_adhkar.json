@@ -293,6 +293,33 @@
         "repeat": 1,
         "benefit": "Ce que disait le Prophète ﷺ en revenant d'un voyage.",
         "authenticity": "sahih"
+      },
+      {
+        "id": 11004,
+        "arabic": "كَانُوا إِذَا صَعِدُوا كَبَّرُوا، وَإِذَا نَزَلُوا سَبَّحُوا",
+        "text": "En montant une côte : « Allāhu akbar ». En descendant : « Subhān Allāh ». (Pratique du Prophète ﷺ et de ses compagnons en voyage.)",
+        "source": "Sahih al-Bukhari 2993",
+        "repeat": 1,
+        "benefit": "Adapter le rappel au relief : magnifier en montée, glorifier en descente.",
+        "authenticity": "sahih"
+      },
+      {
+        "id": 11005,
+        "arabic": "أَسْتَوْدِعُكُمُ اللَّهَ الَّذِي لَا تَضِيعُ وَدَائِعُهُ",
+        "text": "Je vous confie à Allah, dont les dépôts ne se perdent pas. (Ce que dit le voyageur à ceux qu'il quitte.)",
+        "source": "Ibn Mājah 2825 — Sahih (al-Albani)",
+        "repeat": 1,
+        "benefit": "Confier ses proches à la garde d'Allah avant de partir.",
+        "authenticity": "sahih"
+      },
+      {
+        "id": 11006,
+        "arabic": "أَسْتَوْدِعُ اللَّهَ دِينَكَ وَأَمَانَتَكَ وَخَوَاتِيمَ عَمَلِكَ",
+        "text": "Je confie à Allah ta religion, ce qui t'est confié et l'issue de tes actes. (Ce que dit le résident à celui qui part en voyage.)",
+        "source": "Abu Dawud 2600 / Tirmidhi 3443 — Sahih",
+        "repeat": 1,
+        "benefit": "Invocation d'adieu pour le voyageur.",
+        "authenticity": "sahih"
       }
     ]
   },
@@ -397,6 +424,91 @@
         "source": "Sahih Muslim 1742",
         "repeat": 1,
         "benefit": "Invocation du Prophète ﷺ contre les coalisés.",
+        "authenticity": "sahih"
+      }
+    ]
+  },
+  {
+    "id": "fasting",
+    "titleAr": "أذكار الصيام",
+    "titleFr": "Le jeûne",
+    "icon": "moon.circle.fill",
+    "moments": [
+      "fasting"
+    ],
+    "adhkar": [
+      {
+        "id": 15001,
+        "arabic": "ذَهَبَ الظَّمَأُ، وَابْتَلَّتِ الْعُرُوقُ، وَثَبَتَ الْأَجْرُ إِنْ شَاءَ اللَّهُ",
+        "text": "La soif est partie, les veines sont humectées et la récompense est acquise, si Allah le veut. (À la rupture du jeûne.)",
+        "source": "Abu Dawud 2357 — Hasan",
+        "repeat": 1,
+        "benefit": "Invocation authentique de la rupture du jeûne rapportée du Prophète ﷺ.",
+        "authenticity": "hasan"
+      },
+      {
+        "id": 15002,
+        "arabic": "إِنِّي صَائِمٌ، إِنِّي صَائِمٌ",
+        "text": "Je jeûne, je jeûne. (À dire si l'on est insulté ou provoqué pendant le jeûne, ou invité à manger.)",
+        "source": "Sahih al-Bukhari 1904 / Muslim 1151",
+        "repeat": 1,
+        "benefit": "Le jeûne est un bouclier ; on ne répond pas à la provocation.",
+        "authenticity": "sahih"
+      },
+      {
+        "id": 15003,
+        "arabic": "لِلصَّائِمِ عِنْدَ فِطْرِهِ دَعْوَةٌ لَا تُرَدُّ",
+        "text": "Le jeûneur, au moment de rompre, a une invocation qui n'est pas rejetée. (Profite de ce moment pour invoquer ce que tu veux de bien.)",
+        "source": "Ibn Mājah 1753",
+        "repeat": 1,
+        "benefit": "Moment d'exaucement — à confirmer avant diffusion (gradation discutée).",
+        "authenticity": "a_verifier"
+      }
+    ]
+  },
+  {
+    "id": "general",
+    "titleAr": "أذكار عامة",
+    "titleFr": "Invocations générales",
+    "icon": "sparkles",
+    "moments": [
+      "anytime"
+    ],
+    "adhkar": [
+      {
+        "id": 16001,
+        "arabic": "سُبْحَانَ اللَّهِ وَبِحَمْدِهِ، سُبْحَانَ اللَّهِ الْعَظِيمِ",
+        "text": "Gloire et louange à Allah, gloire à Allah l'Immense.",
+        "source": "Sahih al-Bukhari 6682 / Muslim 2694",
+        "repeat": 1,
+        "benefit": "Deux paroles légères sur la langue, lourdes dans la balance, aimées du Miséricordieux.",
+        "authenticity": "sahih"
+      },
+      {
+        "id": 16002,
+        "arabic": "لَا إِلَٰهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَىٰ كُلِّ شَيْءٍ قَدِيرٌ",
+        "text": "Il n'y a de divinité qu'Allah, Seul sans associé ; à Lui la royauté et la louange, et Il est capable de toute chose.",
+        "source": "Sahih al-Bukhari 3293 / Muslim 2691",
+        "repeat": 100,
+        "benefit": "Qui le dit 100 fois par jour a l'équivalent de l'affranchissement de dix esclaves, cent bonnes actions, cent péchés effacés, et une protection contre le diable ce jour-là.",
+        "authenticity": "sahih"
+      },
+      {
+        "id": 16003,
+        "arabic": "لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ",
+        "text": "Il n'y a de force ni de puissance qu'en Allah.",
+        "source": "Sahih al-Bukhari 6384 / Muslim 2704",
+        "repeat": 1,
+        "benefit": "Un des trésors du Paradis.",
+        "authenticity": "sahih"
+      },
+      {
+        "id": 16004,
+        "arabic": "سُبْحَانَ اللَّهِ وَبِحَمْدِهِ عَدَدَ خَلْقِهِ، وَرِضَا نَفْسِهِ، وَزِنَةَ عَرْشِهِ، وَمِدَادَ كَلِمَاتِهِ",
+        "text": "Gloire et louange à Allah, autant que Sa création, autant que Sa satisfaction, autant que le poids de Son Trône et l'encre de Ses paroles.",
+        "source": "Sahih Muslim 2726",
+        "repeat": 3,
+        "benefit": "Pèse plus que de longues heures de dhikr — enseigné par le Prophète ﷺ à Juwayriya.",
         "authenticity": "sahih"
       }
     ]
