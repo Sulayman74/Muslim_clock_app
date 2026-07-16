@@ -13,16 +13,16 @@ struct SettingsView: View {
     @EnvironmentObject var prayerVM: PrayerTimesViewModel
     @EnvironmentObject var updateChecker: AppUpdateChecker
     @AppStorage("appLanguage") private var appLanguage = "system"
-    @AppStorage("userCalculationMethod") private var selectedCalculationMethod = "UOIF (12°)"
-    @AppStorage("userMaghribOffset") private var maghribOffset = 0
-    @AppStorage("userIshaOffset") private var ishaOffset = 0
-    @AppStorage("userFajrOffset") private var fajrOffset = 0
-    @AppStorage("userDhuhrOffset") private var dhuhrOffset = 0
-    @AppStorage("userAsrOffset") private var asrOffset = 0
+    @AppStorage(StorageKeys.calculationMethod) private var selectedCalculationMethod = "UOIF (12°)"
+    @AppStorage(StorageKeys.maghribOffset) private var maghribOffset = 0
+    @AppStorage(StorageKeys.ishaOffset) private var ishaOffset = 0
+    @AppStorage(StorageKeys.fajrOffset) private var fajrOffset = 0
+    @AppStorage(StorageKeys.dhuhrOffset) private var dhuhrOffset = 0
+    @AppStorage(StorageKeys.asrOffset) private var asrOffset = 0
     
     // Réglages spécifiques Isha Fixe (très commun en Europe)
-    @AppStorage("isIshaFixed") private var isIshaFixed = true
-    @AppStorage("userIshaFixedDuration") private var ishaFixedDuration = 90
+    @AppStorage(StorageKeys.isIshaFixed) private var isIshaFixed = true
+    @AppStorage(StorageKeys.ishaFixedDuration) private var ishaFixedDuration = 90
     
     // 🕌 Infos Mosquée & Iqamah
     @AppStorage("mosqueName") private var mosqueName = ""
@@ -34,9 +34,9 @@ struct SettingsView: View {
     @AppStorage("iqamahIshaDelay") private var iqamahIshaDelay = 15
 
     // Jumu'ah (vendredi)
-    @AppStorage("jumuahEnabled") private var jumuahEnabled = false
-    @AppStorage("jumuahHour") private var jumuahHour = 13
-    @AppStorage("jumuahMinute") private var jumuahMinute = 0
+    @AppStorage(StorageKeys.jumuahEnabled) private var jumuahEnabled = false
+    @AppStorage(StorageKeys.jumuahHour) private var jumuahHour = 13
+    @AppStorage(StorageKeys.jumuahMinute) private var jumuahMinute = 0
 
     // ✨ État pour l'alerte de review
     @State private var showReviewAlert = false
@@ -526,14 +526,14 @@ struct MosqueSettingsView: View {
 
 // MARK: - VUE AJUSTEMENTS MANUELS (TEMKINE)
 struct ManualAdjustmentsView: View {
-    @AppStorage("userCalculationMethod") private var selectedCalculationMethod = "UOIF (12°)"
-    @AppStorage("userFajrOffset") private var fajrOffset = 0
-    @AppStorage("userDhuhrOffset") private var dhuhrOffset = 0
-    @AppStorage("userAsrOffset") private var asrOffset = 0
-    @AppStorage("userMaghribOffset") private var maghribOffset = 0
-    @AppStorage("userIshaOffset") private var ishaOffset = 0
-    @AppStorage("isIshaFixed") private var isIshaFixed = true
-    @AppStorage("userIshaFixedDuration") private var ishaFixedDuration = 90
+    @AppStorage(StorageKeys.calculationMethod) private var selectedCalculationMethod = "UOIF (12°)"
+    @AppStorage(StorageKeys.fajrOffset) private var fajrOffset = 0
+    @AppStorage(StorageKeys.dhuhrOffset) private var dhuhrOffset = 0
+    @AppStorage(StorageKeys.asrOffset) private var asrOffset = 0
+    @AppStorage(StorageKeys.maghribOffset) private var maghribOffset = 0
+    @AppStorage(StorageKeys.ishaOffset) private var ishaOffset = 0
+    @AppStorage(StorageKeys.isIshaFixed) private var isIshaFixed = true
+    @AppStorage(StorageKeys.ishaFixedDuration) private var ishaFixedDuration = 90
 
     let calculationMethods = ["UOIF (12°)", "Ligue Islamique (18°)", "ISNA (15°)", "Mosquée de Paris"]
 

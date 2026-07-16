@@ -16,15 +16,15 @@ struct SmartSetupView: View {
     @State private var analysisResult: String? = nil
     
     // Accès aux AppStorage – Calcul
-    @AppStorage("userCalculationMethod") private var savedMethod = "UOIF (12°)"
-    @AppStorage("userFajrOffset") private var savedFajrOffset = 0
-    @AppStorage("userMaghribOffset") private var savedMaghribOffset = 0
-    @AppStorage("isIshaFixed") private var isIshaFixed = true
-    @AppStorage("userIshaFixedDuration") private var savedIshaFixedDuration = 90
-    @AppStorage("userIshaOffset") private var savedIshaOffset = 0
+    @AppStorage(StorageKeys.calculationMethod) private var savedMethod = "UOIF (12°)"
+    @AppStorage(StorageKeys.fajrOffset) private var savedFajrOffset = 0
+    @AppStorage(StorageKeys.maghribOffset) private var savedMaghribOffset = 0
+    @AppStorage(StorageKeys.isIshaFixed) private var isIshaFixed = true
+    @AppStorage(StorageKeys.ishaFixedDuration) private var savedIshaFixedDuration = 90
+    @AppStorage(StorageKeys.ishaOffset) private var savedIshaOffset = 0
     @AppStorage("lastSmartSetupDate") private var lastSmartSetupDate: Double = 0
-    @AppStorage("userDhuhrOffset") private var savedDhuhrOffset = 0
-    @AppStorage("userAsrOffset") private var savedAsrOffset = 0
+    @AppStorage(StorageKeys.dhuhrOffset) private var savedDhuhrOffset = 0
+    @AppStorage(StorageKeys.asrOffset) private var savedAsrOffset = 0
     
     // Mosquée & Iqamah
     @AppStorage("mosqueName") private var savedMosqueName = ""
@@ -35,9 +35,9 @@ struct SmartSetupView: View {
     @AppStorage("iqamahIshaDelay") private var savedIqamahIsha = 15
 
     // Jumu'ah
-    @AppStorage("jumuahEnabled") private var jumuahEnabled = false
-    @AppStorage("jumuahHour") private var jumuahHour = 13
-    @AppStorage("jumuahMinute") private var jumuahMinute = 0
+    @AppStorage(StorageKeys.jumuahEnabled) private var jumuahEnabled = false
+    @AppStorage(StorageKeys.jumuahHour) private var jumuahHour = 13
+    @AppStorage(StorageKeys.jumuahMinute) private var jumuahMinute = 0
     @State private var inputJumuah: Date = {
         var comps = Calendar.current.dateComponents([.year, .month, .day], from: Date())
         comps.hour = 13; comps.minute = 0
