@@ -103,6 +103,9 @@ struct SettingsView: View {
                     // ── SECTION ADHKAR — RAPPELS POST-FAJR / POST-ASR ──
                     AdhkarReminderSettingsSection()
 
+                    // ── SECTION MODE VOYAGE (SAFAR) ──
+                    TravelModeSettingsSection()
+
                     // ── SECTION CONTRIBUTION — Tip jar StoreKit ──
                     // Mise en suspens pour la prochaine release : le code est prêt
                     // mais on attend la finalisation des infos bancaires côté App

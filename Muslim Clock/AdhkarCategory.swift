@@ -22,6 +22,7 @@ enum AdhkarMoment {
     static let qiyam = "qiyam"                  // dernier tiers de la nuit
     static let sleep = "sleep"                  // avant de dormir
     static let eating = "eating"                // repas
+    static let travel = "travel"                // voyage (auto-suggéré si mode voyage actif)
     // Sans déclencheur temporel (jamais auto-suggérés, accessibles via la liste) :
     // "toilet", "house", "anytime".
 }

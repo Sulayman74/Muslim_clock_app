@@ -30,13 +30,18 @@ enum AdhkarSuggestion {
     ///   - prayerDates: Fajr, Dhuhr, Asr, Maghrib, Isha (ordre indifférent).
     ///   - fajr: heure du Fajr — `nil` si indisponible.
     ///   - lastThirdOfNight: début du dernier tiers — `nil` si indisponible.
+    ///   - isTraveling: mode voyage actif → le moment `travel` devient pertinent.
     static func activeMoments(
         now: Date,
         prayerDates: [Date],
         fajr: Date?,
-        lastThirdOfNight: Date?
+        lastThirdOfNight: Date?,
+        isTraveling: Bool = false
     ) -> Set<String> {
         var moments: Set<String> = []
+
+        // Mode voyage : les invocations du voyageur passent en tête des suggestions.
+        if isTraveling { moments.insert(AdhkarMoment.travel) }
 
         for prayer in prayerDates {
             let delta = now.timeIntervalSince(prayer)
@@ -77,13 +82,15 @@ enum AdhkarSuggestion {
         now: Date,
         prayerDates: [Date],
         fajr: Date?,
-        lastThirdOfNight: Date?
+        lastThirdOfNight: Date?,
+        isTraveling: Bool = false
     ) -> [AdhkarCategory] {
         let active = activeMoments(
             now: now,
             prayerDates: prayerDates,
             fajr: fajr,
-            lastThirdOfNight: lastThirdOfNight
+            lastThirdOfNight: lastThirdOfNight,
+            isTraveling: isTraveling
         )
         guard !active.isEmpty else { return [] }
         return categories.filter { !Set($0.moments).isDisjoint(with: active) }

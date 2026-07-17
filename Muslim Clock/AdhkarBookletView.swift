@@ -15,6 +15,8 @@ struct AdhkarBookletView: View {
     var initialCategoryID: String? = nil
 
     @EnvironmentObject private var prayerVM: PrayerTimesViewModel
+    /// Intention voyage (source de vérité = toggle). @AppStorage → réactif, jamais de crash.
+    @AppStorage(TravelKeys.active) private var travelModeActive = false
 
     @State private var categories: [AdhkarCategory] = []
     @State private var isLoading = true
@@ -47,7 +49,8 @@ struct AdhkarBookletView: View {
             now: referenceDate,
             prayerDates: prayerVM.dailyPrayers.map(\.date),
             fajr: prayerVM.fajrDate,
-            lastThirdOfNight: prayerVM.lastThirdOfNight
+            lastThirdOfNight: prayerVM.lastThirdOfNight,
+            isTraveling: travelModeActive
         )
     }
 
@@ -302,6 +305,7 @@ struct AdhkarBookletButton: View {
 /// le livret directement sur cette catégorie (lecture immédiate + accès au livret).
 struct AdhkarMomentCard: View {
     @EnvironmentObject private var prayerVM: PrayerTimesViewModel
+    @AppStorage(TravelKeys.active) private var travelModeActive = false
     @State private var categories: [AdhkarCategory] = []
     @State private var showBooklet = false
     private let accent = adhkarBookletAccent
@@ -312,7 +316,8 @@ struct AdhkarMomentCard: View {
             now: Date(),
             prayerDates: prayerVM.dailyPrayers.map(\.date),
             fajr: prayerVM.fajrDate,
-            lastThirdOfNight: prayerVM.lastThirdOfNight
+            lastThirdOfNight: prayerVM.lastThirdOfNight,
+            isTraveling: travelModeActive
         ).first
     }
 

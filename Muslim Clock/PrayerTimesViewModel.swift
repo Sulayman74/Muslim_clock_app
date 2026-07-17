@@ -63,6 +63,10 @@ class PrayerTimesViewModel: ObservableObject {
     @Published var fajrDate: Date? = nil
     @Published var asrDate: Date? = nil
     
+    /// Store du mode voyage, alimenté par le sink de localisation ci-dessous.
+    /// `weak` : c'est MainView qui le possède (@State). Optionnel → le VM fonctionne sans.
+    weak var travelStore: TravelModeStore?
+
     // 1. LE GARDE-FOU
     var lastLocation: CLLocation?
     private var lastCalculationDate: Date? = nil
@@ -101,6 +105,7 @@ class PrayerTimesViewModel: ObservableObject {
             .sink { [weak self] newLocation in
                 self?.checkRelocation(for: newLocation)
                 self?.calculatePrayers(for: newLocation)
+                self?.travelStore?.update(with: newLocation)   // détection voyage, zéro nouvel abonnement
             }
             .store(in: &cancellables)
         

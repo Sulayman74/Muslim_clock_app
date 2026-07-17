@@ -197,6 +197,9 @@ struct MainView: View {
     @StateObject private var dailyContentService = DailyContentService()
     @ObservedObject private var networkMonitor = NetworkMonitor.shared
     @ObservedObject private var locationManager = SharedLocationManager.shared
+    /// Mode voyage (Safar) : intention (toggle) + observation GPS.
+    @State private var travel = TravelModeStore()
+    @AppStorage(TravelKeys.active) private var travelModeActive = false
     // Variables pour la détection du changement de saison
     @AppStorage("lastSmartSetupDate") private var lastSmartSetupDate: Double = 0
     @AppStorage("lastDSTState") private var lastDSTState: Bool = TimeZone.current.isDaylightSavingTime(for: Date())
@@ -289,7 +292,10 @@ struct MainView: View {
                 NavigationStack {
                     ZStack {
                         CosmicBackground(season: currentSeason)
-                        
+
+                        // Mode voyage actif → voile d'accent subtil sur l'accueil.
+                        TravelModeBackdrop()
+
                         ScrollView(.vertical, showsIndicators: false) {
                             VStack(spacing: 20) {
                                 // L'horloge
@@ -309,6 +315,13 @@ struct MainView: View {
 
                                 GPSRelocationIndicator()
                                     .padding(.top, -4)
+
+                                // Mode voyage : pastille si actif, sinon suggestion GPS non-intrusive.
+                                TravelModeHeader()
+
+                                // Facilités du voyageur (qasr / jamʿ / jeûne) — visible en mode voyage.
+                                TravelFiqhCard()
+                                    .padding(.top, 4)
 
                                 if locationManager.isAccessDenied {
                                     LocationDeniedBanner()
@@ -525,7 +538,10 @@ struct MainView: View {
         .environmentObject(weatherVM)
         .environmentObject(dailyContentService)
         .environmentObject(updateChecker)
+        .environment(travel)
         .task {
+            // Relie l'unique sink de localisation du VM au store voyage (une fois).
+            prayerVM.travelStore = travel
             if let loc = manager.userLocation {
                 await weatherVM.fetchWeather(for: loc)
             }

@@ -7,6 +7,11 @@
 
 import SwiftUI
 
+/// Accent du mode voyage (Safar) — indigo/violet « nuit du safar », distinct des
+/// 4 couleurs d'onglets (rouge/orange/teal/bleu) et en harmonie avec le fond cosmique.
+/// Token nommé (pas de couleur ad-hoc inline).
+let travelModeAccent = Color(red: 0.44, green: 0.38, blue: 0.82)
+
 /// ═══════════════════════════════════════════════════════════════
 /// DESIGN SYSTEM MUSLIM CLOCK
 /// Conforme aux standards iOS 18+ Liquid Glass
