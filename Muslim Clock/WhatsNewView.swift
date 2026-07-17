@@ -24,28 +24,22 @@ struct WhatsNewView: View {
     /// — ne pas le reformuler sans raison, ça orphelinerait les traductions en/ar.
     private let items: [WhatsNewItem] = [
         WhatsNewItem(
-            icon: "books.vertical.fill",
-            color: .purple,
-            title: String(localized: "Programme d'apprentissage ʿIlm"),
-            description: String(localized: "68 leçons pour étudier les Trois Fondements, les Quatre Règles et les 40 hadiths de Nawawi — arabe entièrement vocalisé, traduction française et notes d'authenticité.")
+            icon: "airplane",
+            color: travelModeAccent,
+            title: String(localized: "Mode voyage (Safar)"),
+            description: String(localized: "L'app détecte quand tu t'éloignes de chez toi et te propose d'activer le mode voyage — invocations du voyageur mises en avant et accent dédié. Rien n'est jamais activé à ta place : le voyage suit ton intention.")
         ),
         WhatsNewItem(
-            icon: "calendar.badge.checkmark",
-            color: .green,
-            title: String(localized: "Un plan à ton rythme"),
-            description: String(localized: "Choisis ton texte et ta cadence : l'app estime la durée du parcours et t'envoie un rappel quotidien avec ta prochaine leçon.")
-        ),
-        WhatsNewItem(
-            icon: "eye.slash.fill",
+            icon: "book.closed.fill",
             color: .indigo,
-            title: String(localized: "Mode Mémoriser"),
-            description: String(localized: "Le texte se voile pour t'entraîner à réciter de tête, et tu peux enregistrer ta récitation pour te réécouter et te corriger.")
+            title: String(localized: "Facilités du voyageur"),
+            description: String(localized: "Une fiche claire sur le raccourcissement (qasr), le regroupement (jamʿ) et le jeûne en voyage — chaque règle appuyée par ses preuves : Coran, Sunna authentique et paroles de savants.")
         ),
         WhatsNewItem(
-            icon: "square.stack.3d.up.fill",
-            color: .orange,
-            title: String(localized: "Révision espacée"),
-            description: String(localized: "Des flash cards recto/verso reviennent au bon moment (méthode Leitner) pour ancrer durablement ce que tu as appris.")
+            icon: "hands.and.sparkles.fill",
+            color: .green,
+            title: String(localized: "Nouvelles invocations authentiques"),
+            description: String(localized: "Le livret s'enrichit : invocations du voyage, du jeûne et invocations générales du quotidien, chacune avec sa source et son degré d'authenticité.")
         ),
     ]
 
