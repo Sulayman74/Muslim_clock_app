@@ -10,7 +10,7 @@
     "adhkar": [
       {
         "id": 1001,
-        "arabic": "الُ",
+        "arabic": "الْحَمْدُ لِلَّهِ الَّذِي أَحْيَانَا بَعْدَ مَا أَمَاتَنَا وَإِلَيْهِ النُّشُورُ",
         "text": "Louange à Allah qui nous a rendu la vie après nous avoir fait mourir, et c'est vers Lui qu'est la résurrection.",
         "source": "Sahih al-Bukhari 6312",
         "repeat": 1,
@@ -19,7 +19,7 @@
       },
       {
         "id": 1002,
-        "arabic": "لَا إِلَٰهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهَ إِلَّا بِاللَّهِ",
+        "arabic": "لَا إِلَٰهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَىٰ كُلِّ شَيْءٍ قَدِيرٌ، سُبْحَانَ اللَّهِ وَالْحَمْدُ لِلَّهِ وَلَا إِلَٰهَ إِلَّا اللَّهُ وَاللَّهُ أَكْبَرُ وَلَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ",
         "text": "Il n'y a de divinité qu'Allah, Seul, sans associé… Quiconque dit cela puis invoque, il est exaucé ; s'il fait ses ablutions et prie, sa prière est acceptée.",
         "source": "Sahih al-Bukhari 1154",
         "repeat": 1,
@@ -97,7 +97,7 @@
     "adhkar": [
       {
         "id": 4001,
-        "arabic": "يَقُولُ مِثْلَ مَا يَقُولُ الْمُؤَذِّنُ، إِلَّا فِي الْحَيْعَلَتَيْنِ",
+        "arabic": "يَقُولُ مِثْلَ مَا يَقُولُ الْمُؤَذِّنُ، إِلَّا فِي الْحَيْعَلَتَيْنِ فَيَقُولُ: لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ",
         "text": "Répéter après le muezzin, sauf pour « Hayya 'ala-s-salât » et « Hayya 'ala-l-falâh » où l'on dit : « Il n'y a de force ni de puissance qu'en Allah ».",
         "source": "Sahih al-Bukhari 611 / Muslim 385",
         "repeat": 1,
@@ -106,7 +106,7 @@
       },
       {
         "id": 4002,
-        "arabic": "اللَّهُمَّ رَبَّ هَٰذِهِ الدصَّلَاةِ الْقَائِمَةِ، آتِ مُحَمَّدًا الْوَسِيلَةَ وَالْفَضِيلَةَ، وَابْعَثْهُ مَقَامًا مْتَهُ",
+        "arabic": "اللَّهُمَّ رَبَّ هَٰذِهِ الدَّعْوَةِ التَّامَّةِ وَالصَّلَاةِ الْقَائِمَةِ، آتِ مُحَمَّدًا الْوَسِيلَةَ وَالْفَضِيلَةَ، وَابْعَثْهُ مَقَامًا مَحْمُودًا الَّذِي وَعَدْتَهُ",
         "text": "Ô Allah, Seigneur de cet appel parfait et de la prière établie, accorde à Muhammad al-wasîla et la faveur, et ressuscite-le en la station louée que Tu lui as promise. (Après l'adhan.)",
         "source": "Sahih al-Bukhari 614",
         "repeat": 1,
@@ -115,7 +115,7 @@
       },
       {
         "id": 4004,
-        "arabic": "وَأَنَا أَشْهَدُ أَنْ لَا إِلَٰهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، وَأَنَّ مُحَمَّدًا عَبْدُهُ وَرَسُولُهُ، رَضِيتَسُولًا، وَبِالْإِسْلَامِ دِينًا",
+        "arabic": "وَأَنَا أَشْهَدُ أَنْ لَا إِلَٰهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، وَأَنَّ مُحَمَّدًا عَبْدُهُ وَرَسُولُهُ، رَضِيتُ بِاللَّهِ رَبًّا وَبِمُحَمَّدٍ رَسُولًا وَبِالْإِسْلَامِ دِينًا",
         "text": "Et moi j'atteste qu'il n'y a de divinité qu'Allah, Seul sans associé, et que Muhammad est Son serviteur et Son messager. Je suis satisfait d'Allah comme Seigneur, de Muhammad comme messager, et de l'Islam comme religion. (À dire après la double attestation du muezzin.)",
         "source": "Sahih Muslim 386",
         "repeat": 1,
@@ -162,7 +162,7 @@
       },
       {
         "id": 5002,
-        "arabic": "اللَّهُمَّ قِنِي عبَادَكَ",
+        "arabic": "اللَّهُمَّ قِنِي عَذَابَكَ يَوْمَ تَبْعَثُ عِبَادَكَ",
         "text": "Ô Allah, préserve-moi de Ton châtiment le Jour où Tu ressusciteras Tes serviteurs. (À dire en posant la main droite sous la joue.)",
         "source": "Abu Dawud 5045 — Sahih",
         "repeat": 3,
@@ -182,7 +182,7 @@
     "adhkar": [
       {
         "id": 6001,
-        "arabic": "(بِسْمِ اللَّهِ) الل الْخُبْثِ وَالْخَبَائِثِ",
+        "arabic": "(بِسْمِ اللَّهِ) اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الْخُبْثِ وَالْخَبَائِثِ",
         "text": "(Au nom d'Allah). Ô Allah, je cherche refuge auprès de Toi contre les démons mâles et femelles. (Avant d'entrer)",
         "source": "Sahih al-Bukhari 142 / Muslim 375 (L'ajout du Bismillah : Sahih Al-Jami' 3611)",
         "repeat": 1,
@@ -249,7 +249,7 @@
       },
       {
         "id": 10002,
-        "arabic": "الْحَمْدُ لِلَّهِ الَّذِي أَطْعَمَنِي هَوْلٍ مِنِّي وَلَا قُوَّةٍ",
+        "arabic": "الْحَمْدُ لِلَّهِ الَّذِي أَطْعَمَنِي هَٰذَا وَرَزَقَنِيهِ مِنْ غَيْرِ حَوْلٍ مِنِّي وَلَا قُوَّةٍ",
         "text": "Louange à Allah qui m'a nourri de cela et me l'a accordé sans aucune force ni puissance de ma part.",
         "source": "Abu Dawud 4023 — Hasan",
         "repeat": 1,
@@ -269,7 +269,7 @@
     "adhkar": [
       {
         "id": 11001,
-        "arabic": "اللَّهُ أَكْبَرُ، اللَّهُ أَكْبَرُ، اللَّهُ أَكْبَرُ، سُبْحَانَ الَّذِي سَخَّرَ لَنَا هَٰذَا وَمَا كُنَّا لَهُ م عَنَّا بُعْدَهُ، اللَّهُمَّ أَنْتَ الصَّاحِبُ فِي السَّفَرِ، وَالْخَلِيفَةُ فِي الْأَهْلِ",
+        "arabic": "اللَّهُ أَكْبَرُ، اللَّهُ أَكْبَرُ، اللَّهُ أَكْبَرُ، سُبْحَانَ الَّذِي سَخَّرَ لَنَا هَٰذَا وَمَا كُنَّا لَهُ مُقْرِنِينَ، وَإِنَّا إِلَىٰ رَبِّنَا لَمُنْقَلِبُونَ، اللَّهُمَّ إِنَّا نَسْأَلُكَ فِي سَفَرِنَا هَٰذَا الْبِرَّ وَالتَّقْوَىٰ، وَمِنَ الْعَمَلِ مَا تَرْضَىٰ، اللَّهُمَّ هَوِّنْ عَلَيْنَا سَفَرَنَا هَٰذَا وَاطْوِ عَنَّا بُعْدَهُ، اللَّهُمَّ أَنْتَ الصَّاحِبُ فِي السَّفَرِ، وَالْخَلِيفَةُ فِي الْأَهْلِ",
         "text": "Allah est le plus grand (×3). Gloire à Celui qui a mis ceci à notre service, alors que nous n'étions pas capables de le dominer. C'est vers notre Seigneur que nous retournerons. Ô Allah, nous Te demandons dans notre voyage la piété, la crainte et les œuvres que Tu agrées. Ô Allah, facilite-nous ce voyage et raccourcis-en la distance. Ô Allah, Tu es le Compagnon dans le voyage et le Garant auprès de la famille. (En montant dans le véhicule.)",
         "source": "Sahih Muslim 1342",
         "repeat": 1,
@@ -334,7 +334,7 @@
     "adhkar": [
       {
         "id": 12001,
-        "arabic": "اللَّهُمَّ إِنِّي أَسْتَخِيرُكَ بِعِلْمِكَ، وَأَسْتَقْدِرُكَ بِقُديمِ، فَإِنَّكَ تَقْدِرُ وَلَا أَقْدِرُ، وَتَعتَ تَعْلَمُ أَنَّ هَٰذَا الْأَمْرَ خَيْرٌ لِي فِي درِي فَاقْدُرْهُ لِي وَيَسِّرْهُ لِي ثُمَّ بَارِكْ لِي فِيهِ، وَإِنْ كُنْتَ تَعْلَمُ أَنَّ هَٰذَا الْأَمْرَ شَرٌّ لِي فِي دهُ عَنِّي وَاصْرِفْنِي عَنْهُ، وَاقْدُرْ لِيِنِي بِهِ",
+        "arabic": "اللَّهُمَّ إِنِّي أَسْتَخِيرُكَ بِعِلْمِكَ، وَأَسْتَقْدِرُكَ بِقُدْرَتِكَ، وَأَسْأَلُكَ مِنْ فَضْلِكَ الْعَظِيمِ، فَإِنَّكَ تَقْدِرُ وَلَا أَقْدِرُ، وَتَعْلَمُ وَلَا أَعْلَمُ، وَأَنْتَ عَلَّامُ الْغُيُوبِ، اللَّهُمَّ إِنْ كُنْتَ تَعْلَمُ أَنَّ هَٰذَا الْأَمْرَ خَيْرٌ لِي فِي دِينِي وَمَعَاشِي وَعَاقِبَةِ أَمْرِي فَاقْدُرْهُ لِي وَيَسِّرْهُ لِي ثُمَّ بَارِكْ لِي فِيهِ، وَإِنْ كُنْتَ تَعْلَمُ أَنَّ هَٰذَا الْأَمْرَ شَرٌّ لِي فِي دِينِي وَمَعَاشِي وَعَاقِبَةِ أَمْرِي فَاصْرِفْهُ عَنِّي وَاصْرِفْنِي عَنْهُ، وَاقْدُرْ لِيَ الْخَيْرَ حَيْثُ كَانَ ثُمَّ أَرْضِنِي بِهِ",
         "text": "Ô Allah, je Te demande de m'assister par Ta science, je recherche la force par Ta puissance et je Te demande de Ta grâce immense. Car Tu es capable et je ne le suis pas, Tu sais et je ne sais pas, et Tu es le grand connaisseur de l'invisible. Ô Allah, si Tu sais que cette affaire est un bien pour moi dans ma religion, ma vie et l'issue de mes actes, décrète-la pour moi, facilite-la-moi puis bénis-la pour moi. Et si Tu sais qu'elle est un mal pour moi dans ma religion, ma vie et l'issue de mes actes, détourne-la de moi et détourne-moi d'elle, et décrète pour moi le bien où qu'il soit, puis fais que j'en sois satisfait. (Après 2 rak'ât surérogatoires, en nommant l'affaire.)",
         "source": "Sahih al-Bukhari 1162",
         "repeat": 1,
@@ -354,7 +354,7 @@
     "adhkar": [
       {
         "id": 13001,
-        "arabic": "اللَّهُمَّ إِنِّي أَسْأَلُكَ خَيْرلَتْ بِهِ، وَأَعُوذُ بِكَ مِنْ شَرِّهَا وَشَرِّ مَا فِيهَا وَشَرِّ مَا أُرْسِلَتْ بِهِ",
+        "arabic": "اللَّهُمَّ إِنِّي أَسْأَلُكَ خَيْرَهَا وَخَيْرَ مَا فِيهَا وَخَيْرَ مَا أُرْسِلَتْ بِهِ، وَأَعُوذُ بِكَ مِنْ شَرِّهَا وَشَرِّ مَا فِيهَا وَشَرِّ مَا أُرْسِلَتْ بِهِ",
         "text": "Ô Allah, je Te demande son bien, le bien qu'il contient et le bien pour lequel il a été envoyé ; et je cherche refuge auprès de Toi contre son mal, le mal qu'il contient et le mal pour lequel il a été envoyé. (Lors d'un vent fort.)",
         "source": "Sahih Muslim 899",
         "repeat": 1,
@@ -381,7 +381,7 @@
       },
       {
         "id": 13004,
-        "arabic": "سُبْحَانَ الَّذِي يُسَبِّحُ الرَّعْدِيفَتِهِ",
+        "arabic": "سُبْحَانَ الَّذِي يُسَبِّحُ الرَّعْدُ بِحَمْدِهِ وَالْمَلَائِكَةُ مِنْ خِيفَتِهِ",
         "text": "Gloire à Celui que le tonnerre glorifie par Sa louange, ainsi que les anges, par crainte de Lui.",
         "source": "Al-Muwatta de l'Imam Malik (2/992) — Authentique (Sahih) d'après 'Abdullah ibn Az-Zubayr.",
         "repeat": 1,
@@ -419,7 +419,7 @@
       },
       {
         "id": 14003,
-        "arabic": "اللَّهُمَّ مُنْزِلَ الْكِتَابِ، س اهْزِمْهُمْ وَزَلْزِلْهُمْ",
+        "arabic": "اللَّهُمَّ مُنْزِلَ الْكِتَابِ، سَرِيعَ الْحِسَابِ، اهْزِمِ الْأَحْزَابَ، اللَّهُمَّ اهْزِمْهُمْ وَزَلْزِلْهُمْ",
         "text": "Ô Allah, Toi qui as fait descendre le Livre, prompt à demander les comptes, mets en déroute les coalisés. Ô Allah, mets-les en déroute et ébranle-les.",
         "source": "Sahih Muslim 1742",
         "repeat": 1,
@@ -486,7 +486,7 @@
       },
       {
         "id": 16002,
-        "arabic": "لَا إِلَٰهَ إهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَىٰ كُلِّ شَيْءٍ قَدِيرٌ",
+        "arabic": "لَا إِلَٰهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَىٰ كُلِّ شَيْءٍ قَدِيرٌ",
         "text": "Il n'y a de divinité qu'Allah, Seul sans associé ; à Lui la royauté et la louange, et Il est capable de toute chose.",
         "source": "Sahih al-Bukhari 3293 / Muslim 2691",
         "repeat": 100,
