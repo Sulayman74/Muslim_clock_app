@@ -257,7 +257,6 @@ private struct TravelRulingSection: View {
                 .foregroundColor(.white)
                 .multilineTextAlignment(.trailing)
                 .frame(maxWidth: .infinity, alignment: .trailing)
-                .environment(\.layoutDirection, .rightToLeft)
 
             Text(dalil.translation)
                 .font(.footnote)
