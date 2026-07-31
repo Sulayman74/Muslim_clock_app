@@ -16,7 +16,7 @@ struct TravelDistanceTests {
     // Coordonnées de référence.
     private let paris     = CLLocationCoordinate2D(latitude: 48.8566, longitude: 2.3522)
     private let lyon      = CLLocationCoordinate2D(latitude: 45.7640, longitude: 4.8357)   // ~392 km
-    private let mecca     = CLLocationCoordinate2D(latitude: 21.4225, longitude: 39.8262)  // ~4340 km
+    private let mecca     = CLLocationCoordinate2D(latitude: 21.4225, longitude: 39.8262)  // ~4490 km
     private var parisDrift: CLLocationCoordinate2D {                                        // ~1.5 km
         CLLocationCoordinate2D(latitude: 48.8700, longitude: 2.3522)
     }
@@ -28,9 +28,11 @@ struct TravelDistanceTests {
         #expect(abs(km - 392) < 15)   // tolérance sphère vs ellipsoïde
     }
 
-    @Test func greatCircleParisMeccaIsAround4340km() {
+    @Test func greatCircleParisMeccaIsAround4490km() {
+        // Référence haversine (R = 6371 km) : ~4496 km. La sphère diffère de
+        // l'ellipsoïde de quelques km sur cette distance → tolérance 40 km.
         let km = TravelDistance.greatCircleMeters(paris, mecca) / 1000
-        #expect(abs(km - 4340) < 40)
+        #expect(abs(km - 4490) < 40)
     }
 
     @Test func greatCircleIsSymmetric() {
