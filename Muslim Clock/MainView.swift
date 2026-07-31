@@ -801,23 +801,17 @@ struct MainView: View {
     /// la sheet pour ne pas saturer un nouvel utilisateur ; on enregistre juste la version.
     private func checkWhatsNew() {
         let currentVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? ""
-        guard !currentVersion.isEmpty else { return }
 
-        if lastSeenAppVersion.isEmpty {
-            // Première install ou première fois avec ce système → ne pas embêter, juste mémoriser.
-            lastSeenAppVersion = currentVersion
-            return
-        }
-
-        switch currentVersion.compare(lastSeenAppVersion, options: .numeric) {
-        case .orderedDescending:
+        // Décision pure et testée (première install, vraie MAJ, downgrade TestFlight).
+        switch UpdateCheckMath.whatsNewAction(current: currentVersion, lastSeen: lastSeenAppVersion) {
+        case .show:
             // Vraie MAJ → sheet. `lastSeenAppVersion` est écrit au onDismiss pour ne
             // pas perdre le Quoi de neuf si la sheet n'est jamais affichée.
             showWhatsNew = true
-        case .orderedAscending:
-            // Downgrade (ex. TestFlight) : resync silencieux, pas de sheet.
+        case .recordOnly:
+            // Première install ou downgrade : mémoriser sans afficher.
             lastSeenAppVersion = currentVersion
-        case .orderedSame:
+        case .nothing:
             break
         }
     }

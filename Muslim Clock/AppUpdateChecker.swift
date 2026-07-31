@@ -51,8 +51,7 @@ final class AppUpdateChecker: ObservableObject {
               let current = currentVersion else { return }
 
         let dismissed = defaults.string(forKey: dismissedVersionKey)
-        guard persisted != dismissed,
-              persisted.compare(current, options: .numeric) == .orderedDescending else {
+        guard UpdateCheckMath.shouldShowBanner(latest: persisted, current: current, dismissed: dismissed) else {
             defaults.removeObject(forKey: availableVersionKey)
             defaults.removeObject(forKey: availableStoreURLKey)
             return
@@ -72,10 +71,9 @@ final class AppUpdateChecker: ObservableObject {
         let defaults = UserDefaults.standard
         let lastCheck = defaults.double(forKey: updateCheckDateKey)
         let now = Date().timeIntervalSince1970
-        let elapsed = now - lastCheck
 
-        // Une vérification par jour. `elapsed < 0` = horloge reculée → date invalide, on re-check.
-        guard lastCheck == 0 || elapsed >= 86_400 || elapsed < 0 else { return }
+        // Une vérification par jour (horloge reculée → re-check). Logique pure testée.
+        guard UpdateCheckMath.isCheckDue(lastCheck: lastCheck, now: now) else { return }
 
         guard let current = currentVersion,
               let bundleId = Bundle.main.bundleIdentifier else { return }
@@ -108,7 +106,7 @@ final class AppUpdateChecker: ObservableObject {
             guard let info = results.first,
                   let latest = info["version"] as? String else { return }
 
-            guard latest.compare(current, options: .numeric) == .orderedDescending else {
+            guard UpdateCheckMath.isNewer(latest: latest, current: current) else {
                 // À jour → purge un éventuel état persisté obsolète.
                 defaults.removeObject(forKey: availableVersionKey)
                 defaults.removeObject(forKey: availableStoreURLKey)
@@ -121,7 +119,11 @@ final class AppUpdateChecker: ObservableObject {
             defaults.set(trackURL, forKey: availableStoreURLKey)
 
             // Affiche la bannière uniquement si l'user ne l'a pas déjà ignorée
-            guard latest != defaults.string(forKey: dismissedVersionKey) else { return }
+            guard UpdateCheckMath.shouldShowBanner(
+                latest: latest,
+                current: current,
+                dismissed: defaults.string(forKey: dismissedVersionKey)
+            ) else { return }
 
             self.latestVersion = latest
             self.storeURL = trackURL.flatMap { URL(string: $0) }
