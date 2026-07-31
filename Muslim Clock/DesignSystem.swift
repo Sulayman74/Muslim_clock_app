@@ -12,6 +12,20 @@ import SwiftUI
 /// Token nommé (pas de couleur ad-hoc inline).
 let travelModeAccent = Color(red: 0.44, green: 0.38, blue: 0.82)
 
+/// Formate une durée de lecture audio en `m:ss` (ou `h:mm:ss` au-delà d'une heure).
+///
+/// Source unique du format de temps du lecteur (mini-player, plein écran, carte
+/// « Reprendre », playlist). Robuste aux valeurs non-finies ou négatives → `0:00`.
+func playbackTimeLabel(_ seconds: Double) -> String {
+    guard seconds.isFinite, seconds >= 0 else { return "0:00" }
+    let total = Int(seconds)
+    let h = total / 3600
+    let m = (total % 3600) / 60
+    let s = total % 60
+    if h > 0 { return String(format: "%d:%02d:%02d", h, m, s) }
+    return String(format: "%d:%02d", m, s)
+}
+
 /// ═══════════════════════════════════════════════════════════════
 /// DESIGN SYSTEM MUSLIM CLOCK
 /// Conforme aux standards iOS 18+ Liquid Glass

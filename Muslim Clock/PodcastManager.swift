@@ -57,6 +57,20 @@ class PodcastManager: NSObject, ObservableObject, XMLParserDelegate {
     @Published var podcastAuthor: String = ""
     @Published var podcastArtworkURL: URL? = nil
     @Published var seriesProgress: Double = 0.0
+
+    /// Cache mémoire des URLs d'épisodes déjà écoutés pour la série courante.
+    /// Source de vérité pour l'UI (lecture O(1)) ; persisté dans `playedKey`.
+    /// Chargé par `loadPlayedSet()`, purgé au changement de série.
+    @Published private(set) var playedURLs: Set<String> = []
+
+    /// Positions de reprise par épisode (`url absolute string → secondes`), pour
+    /// la série courante. Chaque épisode se souvient de où l'utilisateur s'est
+    /// arrêté (avant : un seul bookmark par série, écrasé au changement d'épisode).
+    @Published private(set) var resumePositions: [String: Double] = [:]
+
+    /// URL du dernier épisode écouté pour la série courante. Alimente la carte
+    /// « Reprendre » (couplé à `resumePositions` via `resumeTarget`).
+    @Published private(set) var lastPlayedURL: String? = nil
     
     // MARK: - Lecture
     @Published var isPlaying = false
@@ -107,6 +121,22 @@ class PodcastManager: NSObject, ObservableObject, XMLParserDelegate {
     
     private var playedKey: String { "played_\(currentSeriesID)" }
     private var resumeKey: String { "resume_\(currentSeriesID)" }
+    private var lastPlayedKey: String { "lastPlayed_\(currentSeriesID)" }
+
+    /// Cible de reprise pour la série courante (épisode + position), ou `nil` si
+    /// rien de significatif à reprendre. Calculée à partir de `lastPlayedURL`,
+    /// `resumePositions` et de la liste d'épisodes chargée.
+    var resumeTarget: (episode: PodcastEpisode, position: Double)? {
+        guard let target = PodcastMath.resumeTarget(lastPlayedURL: lastPlayedURL, positions: resumePositions),
+              let episode = episodes.first(where: { $0.audioURL.absoluteString == target.url })
+        else { return nil }
+        return (episode, target.position)
+    }
+
+    /// Position de reprise mémorisée pour un épisode donné (0 si aucune).
+    func positionFor(episode: PodcastEpisode) -> Double {
+        resumePositions[episode.audioURL.absoluteString] ?? 0
+    }
     
     // MARK: - Fermer le lecteur
         func stopAndClose() {
@@ -390,6 +420,8 @@ class PodcastManager: NSObject, ObservableObject, XMLParserDelegate {
                 print("[LoadSmart] -> Mode APPLE PODCAST (id: \(targetSeries.id))")
                 await fetchPodcast(appleID: targetSeries.id)
             }
+            loadPlayedSet()
+            loadResumeState()
             calculateProgress()
 
             // Pre-telechargement en fond des episodes non caches
@@ -418,6 +450,9 @@ class PodcastManager: NSObject, ObservableObject, XMLParserDelegate {
             let targetSeries = curatedSeriesList[index]
             self.episodes = []
             self.seriesProgress = 0.0
+            self.playedURLs = []
+            self.resumePositions = [:]
+            self.lastPlayedURL = nil
             self.podcastTitle = targetSeries.name
             self.podcastAuthor = targetSeries.author
             self.podcastArtworkURL = nil
@@ -430,26 +465,32 @@ class PodcastManager: NSObject, ObservableObject, XMLParserDelegate {
     // MARK: - PROGRESSION SCOPÉE PAR SÉRIE
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     
+    /// Charge (une fois par série) l'ensemble des épisodes lus depuis `playedKey`
+    /// dans le cache mémoire `playedURLs`. À appeler après le fetch des épisodes.
+    private func loadPlayedSet() {
+        playedURLs = Set(UserDefaults.standard.stringArray(forKey: playedKey) ?? [])
+    }
+
     func isEpisodePlayed(episode: PodcastEpisode) -> Bool {
-        let playedURLs = UserDefaults.standard.stringArray(forKey: playedKey) ?? []
-        return playedURLs.contains(episode.audioURL.absoluteString)
+        playedURLs.contains(episode.audioURL.absoluteString)
     }
     
     func markAsPlayed(episode: PodcastEpisode) {
-        var playedURLs = UserDefaults.standard.stringArray(forKey: playedKey) ?? []
         let urlString = episode.audioURL.absoluteString
-        if !playedURLs.contains(urlString) {
-            playedURLs.append(urlString)
-            UserDefaults.standard.set(playedURLs, forKey: playedKey)
-            print("✅ [Progression] Épisode marqué : \(episode.title)")
-            calculateProgress()
-        }
+        guard !playedURLs.contains(urlString) else { return }
+        playedURLs.insert(urlString)
+        UserDefaults.standard.set(Array(playedURLs), forKey: playedKey)
+        print("✅ [Progression] Épisode marqué : \(episode.title)")
+        calculateProgress()
     }
     
     private func calculateProgress() {
         guard !episodes.isEmpty else { return }
-        let playedCount = episodes.filter { isEpisodePlayed(episode: $0) }.count
-        self.seriesProgress = Double(playedCount) / Double(episodes.count)
+        self.seriesProgress = PodcastMath.seriesProgress(
+            playedURLs: playedURLs,
+            episodeURLs: episodes.map { $0.audioURL.absoluteString }
+        )
+        let playedCount = Int((seriesProgress * Double(episodes.count)).rounded())
         print("📊 [Progression] \(playedCount)/\(episodes.count) épisodes lus (\(Int(seriesProgress * 100))%)")
         
         // ✅ Si série terminée à 100%, on passe à la suivante
@@ -462,6 +503,7 @@ class PodcastManager: NSObject, ObservableObject, XMLParserDelegate {
     private func moveToNextSeries() {
         let oldPlayedKey = playedKey
         let oldResumeKey = resumeKey
+        let oldLastPlayedKey = lastPlayedKey
         
         // ✅ SAUVEGARDER LE NOM DE LA SÉRIE TERMINÉE
         self.completedSeriesName = podcastTitle
@@ -482,9 +524,13 @@ class PodcastManager: NSObject, ObservableObject, XMLParserDelegate {
         // ✅ NETTOYAGE : on purge les clés de l'ANCIENNE série
         UserDefaults.standard.removeObject(forKey: oldPlayedKey)
         UserDefaults.standard.removeObject(forKey: oldResumeKey)
-        print("🧹 [Storage] Purgé : \(oldPlayedKey) et \(oldResumeKey)")
+        UserDefaults.standard.removeObject(forKey: oldLastPlayedKey)
+        print("🧹 [Storage] Purgé : \(oldPlayedKey), \(oldResumeKey), \(oldLastPlayedKey)")
         
         self.episodes = []
+        self.playedURLs = []
+        self.resumePositions = [:]
+        self.lastPlayedURL = nil
         Task { await loadSmartPodcast() }
     }
     
@@ -492,59 +538,76 @@ class PodcastManager: NSObject, ObservableObject, XMLParserDelegate {
     // MARK: - SAUVEGARDE / REPRISE DE POSITION
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     
+    /// Charge (une fois par série) les positions de reprise + le dernier épisode
+    /// joué. Migre l'ancien format `ResumeBookmark` unique si présent, puis
+    /// réécrit au nouveau format. À appeler après le fetch des épisodes.
+    private func loadResumeState() {
+        resumePositions = PodcastMath.decodeResumePositions(from: UserDefaults.standard.data(forKey: resumeKey))
+        lastPlayedURL = UserDefaults.standard.string(forKey: lastPlayedKey)
+        // Migration : ancien bookmark unique → l'unique position devient le dernier joué.
+        if lastPlayedURL == nil, resumePositions.count == 1 {
+            lastPlayedURL = resumePositions.keys.first
+        }
+        persistResume()
+    }
+
+    /// Persiste positions + dernier épisode joué (format nouveau).
+    private func persistResume() {
+        if let data = PodcastMath.encodeResumePositions(resumePositions) {
+            UserDefaults.standard.set(data, forKey: resumeKey)
+        }
+        UserDefaults.standard.set(lastPlayedURL, forKey: lastPlayedKey)
+    }
+
     /// Sauvegarde la position courante (appelé toutes les ~10s pendant la lecture)
     private func savePlaybackPosition() {
         guard let id = currentlyPlayingID,
               let episode = episodes.first(where: { $0.id == id }),
               currentTime > 5 else { return } // Pas la peine de sauver si < 5s
-        
-        let bookmark = ResumeBookmark(
-            episodeURL: episode.audioURL.absoluteString,
-            position: currentTime,
-            episodeTitle: episode.title
-        )
-        
-        if let data = try? JSONEncoder().encode(bookmark) {
-            UserDefaults.standard.set(data, forKey: resumeKey)
-        }
+
+        let url = episode.audioURL.absoluteString
+        resumePositions[url] = currentTime
+        lastPlayedURL = url
+        persistResume()
     }
     
     /// Sauvegarde immédiate (appelé quand l'app passe en background ou pause)
     func savePlaybackPositionNow() {
         savePlaybackPosition()
     }
-    
-    /// Restaure la dernière position au lancement
-    private func restoreBookmarkIfNeeded() {
-        guard let data = UserDefaults.standard.data(forKey: resumeKey),
-              let bookmark = try? JSONDecoder().decode(ResumeBookmark.self, from: data),
-              let episode = episodes.first(where: { $0.audioURL.absoluteString == bookmark.episodeURL })
-        else { return }
-        
-        // On ne relance pas automatiquement la lecture — on prépare juste l'état
-        self.currentEpisodeTitle = bookmark.episodeTitle
-        self.currentTime = bookmark.position
-        self.currentlyPlayingID = episode.id
-        
-        print("📌 [Resume] Bookmark trouvé : \(bookmark.episodeTitle) à \(Int(bookmark.position))s")
+
+    /// Efface la position de reprise d'un épisode terminé (et le dernier joué si
+    /// c'était lui). Appelé quand un épisode arrive à sa fin.
+    private func clearResumePosition(for episode: PodcastEpisode) {
+        let url = episode.audioURL.absoluteString
+        resumePositions[url] = nil
+        if lastPlayedURL == url { lastPlayedURL = nil }
+        persistResume()
     }
     
-    /// Reprend la lecture depuis le bookmark (appele par l'UI quand l'utilisateur tape "Reprendre")
-    func resumeFromBookmark() {
-        guard let id = currentlyPlayingID,
-              let episode = episodes.first(where: { $0.id == id }) else { return }
-
-        let savedPosition = currentTime
-        print("[Resume] Reprise de \(episode.title) a \(Int(savedPosition))s")
+    /// Restaure l'état d'affichage de la dernière reprise au lancement.
+    /// Ne relance PAS la lecture — prépare juste l'UI (titre, position, épisode).
+    private func restoreBookmarkIfNeeded() {
+        guard let target = resumeTarget else { return }
+        self.currentEpisodeTitle = target.episode.title
+        self.currentTime = target.position
+        self.currentlyPlayingID = target.episode.id
+        print("📌 [Resume] Reprise disponible : \(target.episode.title) à \(Int(target.position))s")
+    }
+    
+    /// Reprend la lecture depuis la cible de reprise (appelé par l'UI « Reprendre »).
+    func resume() {
+        guard let target = resumeTarget else { return }
+        print("[Resume] Reprise de \(target.episode.title) a \(Int(target.position))s")
 
         // Forcer la reconstruction du player (il est probablement mort)
         cleanupObservers()
         player = nil
         currentlyPlayingID = nil
-        togglePlay(episode: episode)
+        togglePlay(episode: target.episode)
 
         // Seek une fois le buffer pret
-        seekWhenReady(to: savedPosition)
+        seekWhenReady(to: target.position)
     }
     
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -701,14 +764,12 @@ class PodcastManager: NSObject, ObservableObject, XMLParserDelegate {
             Task { @MainActor [weak self] in
                 guard let self else { return }
                 
-                // ✅ MARQUER L'ÉPISODE COMME TERMINÉ
+                // ✅ MARQUER L'ÉPISODE COMME TERMINÉ + effacer sa position de reprise
                 if let currentID = self.currentlyPlayingID,
                    let completedEpisode = self.episodes.first(where: { $0.id == currentID }) {
                     self.markAsPlayed(episode: completedEpisode)
+                    self.clearResumePosition(for: completedEpisode)
                 }
-                
-                // ✅ Épisode terminé → on supprime le bookmark
-                UserDefaults.standard.removeObject(forKey: self.resumeKey)
                 self.playNextEpisode()
             }
         }
@@ -798,8 +859,8 @@ class PodcastManager: NSObject, ObservableObject, XMLParserDelegate {
     func playNextEpisode() {
         guard let currentID = currentlyPlayingID,
               let currentIndex = episodes.firstIndex(where: { $0.id == currentID }),
-              currentIndex + 1 < episodes.count else { return }
-        togglePlay(episode: episodes[currentIndex + 1])
+              let next = PodcastMath.nextIndex(after: currentIndex, count: episodes.count) else { return }
+        togglePlay(episode: episodes[next])
     }
     
     func playPreviousEpisode() {
@@ -810,8 +871,8 @@ class PodcastManager: NSObject, ObservableObject, XMLParserDelegate {
         }
         guard let currentID = currentlyPlayingID,
               let currentIndex = episodes.firstIndex(where: { $0.id == currentID }),
-              currentIndex - 1 >= 0 else { return }
-        togglePlay(episode: episodes[currentIndex - 1])
+              let previous = PodcastMath.previousIndex(before: currentIndex, count: episodes.count) else { return }
+        togglePlay(episode: episodes[previous])
     }
     
     // MARK: - Nettoyage

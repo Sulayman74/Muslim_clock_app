@@ -147,6 +147,7 @@ struct FullPlayerView: View {
     @ObservedObject var manager: PodcastManager
     var tintColor: Color = .orange
     @Environment(\.dismiss) private var dismiss
+    @State private var showPlaylist = false
     
     var body: some View {
         VStack(spacing: 0) {
@@ -160,6 +161,14 @@ struct FullPlayerView: View {
                         .padding(10)
                 }
                 Spacer()
+                Button {
+                    showPlaylist = true
+                } label: {
+                    Image(systemName: "list.bullet")
+                        .font(.system(size: 20, weight: .semibold))
+                        .foregroundStyle(tintColor.opacity(0.7))
+                        .padding(10)
+                }
                 Button {
                     dismiss()
                     Task {
@@ -247,12 +256,12 @@ struct FullPlayerView: View {
                 .tint(tintColor)
                 
                 HStack {
-                    Text(verbatim: formatTime(manager.currentTime))
+                    Text(verbatim: playbackTimeLabel(manager.currentTime))
                         .font(.system(size: 12, weight: .medium, design: .monospaced))
                         .monospacedDigit()
                         .foregroundStyle(.secondary)
                     Spacer()
-                    Text(verbatim: "-\(formatTime(max(0, manager.duration - manager.currentTime)))")
+                    Text(verbatim: "-\(playbackTimeLabel(max(0, manager.duration - manager.currentTime)))")
                         .font(.system(size: 12, weight: .medium, design: .monospaced))
                         .monospacedDigit()
                         .foregroundStyle(.secondary)
@@ -282,7 +291,7 @@ struct FullPlayerView: View {
                             manager.togglePlay(episode: ep)
                         }
                     } else if manager.currentTime > 5 {
-                        manager.resumeFromBookmark()
+                        manager.resume()
                     } else {
                         if let id = manager.currentlyPlayingID,
                            let ep = manager.episodes.first(where: { $0.id == id }) {
@@ -335,18 +344,11 @@ struct FullPlayerView: View {
         // au changement du trigger. Pas besoin de wrapper les Buttons.
         .sensoryFeedback(.impact(weight: .light), trigger: manager.isPlaying)
         .sensoryFeedback(.selection, trigger: manager.playbackRate)
+        .sheet(isPresented: $showPlaylist) {
+            PlaylistView(manager: manager, tintColor: tintColor)
+        }
     }
 
-    private func formatTime(_ seconds: Double) -> String {
-        guard seconds.isFinite && seconds >= 0 else { return "0:00" }
-        let total = Int(seconds)
-        let h = total / 3600
-        let m = (total % 3600) / 60
-        let s = total % 60
-        if h > 0 { return String(format: "%d:%02d:%02d", h, m, s) }
-        return String(format: "%d:%02d", m, s)
-    }
-    
     private func rateLabel(_ rate: Float) -> String {
         if rate == 1.0 { return "1x" }
         if rate == 1.25 { return "1.25x" }

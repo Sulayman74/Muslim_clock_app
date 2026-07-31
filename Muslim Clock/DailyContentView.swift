@@ -256,7 +256,7 @@ struct FridaySalawatBanner: View {
                 .foregroundColor(.white)
 
             // Traduction
-            Text("O Allah, accorde Ta priere et Ton salut a notre Prophete Muhammad")
+            Text("Ô Allah, accorde Ta prière et Ton salut à notre Prophète Muhammad")
                 .font(.system(size: 13, design: .serif))
                 .italic()
                 .multilineTextAlignment(.center)
@@ -264,7 +264,7 @@ struct FridaySalawatBanner: View {
 
             // Hadith sur le merite
             VStack(spacing: 4) {
-                Text(verbatim: "« Multipliez la priere sur moi le jour du vendredi, car vos prieres me sont presentees. »")
+                Text(verbatim: "« Multipliez la prière sur moi le jour du vendredi, car vos prières me sont présentées. »")
                     .font(.system(size: 12, design: .serif))
                     .italic()
                     .multilineTextAlignment(.center)
@@ -277,8 +277,8 @@ struct FridaySalawatBanner: View {
 
             // Rappels du vendredi
             HStack(spacing: 16) {
-                FridayReminderChip(icon: "book.fill", text: "Sourate Al-Kahf")
-                FridayReminderChip(icon: "hands.sparkles.fill", text: "Heure exaucee")
+                FridayReminderChip(icon: "book.fill", text: String(localized: "Sourate Al-Kahf"))
+                FridayReminderChip(icon: "hands.sparkles.fill", text: String(localized: "Heure d'exaucement"))
             }
             .padding(.top, 4)
         }
@@ -434,6 +434,7 @@ struct PodcastCarouselView: View {
     @EnvironmentObject var podcastManager: PodcastManager
     private static let pageSize = 5
     @State private var visibleCount: Int = PodcastCarouselView.pageSize
+    @State private var showPlaylist = false
 
     private var visibleEpisodes: [PodcastEpisode] {
         Array(podcastManager.episodes.prefix(visibleCount))
@@ -530,7 +531,56 @@ struct PodcastCarouselView: View {
             }
             .padding(.horizontal, 20)
             .padding(.vertical, 16)
-            
+
+            // ── REPRENDRE (visible si une position de reprise existe, hors lecture active) ──
+            if let target = podcastManager.resumeTarget, !podcastManager.isPlaying {
+                Button {
+                    podcastManager.resume()
+                } label: {
+                    HStack(spacing: 12) {
+                        ZStack {
+                            Circle()
+                                .fill(Color.orange)
+                                .frame(width: 44, height: 44)
+                                .shadow(color: .orange.opacity(0.4), radius: 8, y: 4)
+                            Image(systemName: "play.fill")
+                                .font(.system(size: 18, weight: .bold))
+                                .foregroundColor(.white)
+                                .offset(x: 2)
+                        }
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Reprendre")
+                                .font(.system(size: 10, weight: .black, design: .rounded))
+                                .tracking(1.0)
+                                .foregroundStyle(.orange.gradient)
+                            Text(verbatim: target.episode.title)
+                                .font(.system(size: 15, weight: .semibold, design: .rounded))
+                                .foregroundColor(.white)
+                                .lineLimit(1)
+                                .truncationMode(.tail)
+                            Text(verbatim: "à \(playbackTimeLabel(target.position))")
+                                .font(.system(size: 12, weight: .medium, design: .monospaced))
+                                .monospacedDigit()
+                                .foregroundStyle(.white.opacity(0.6))
+                        }
+                        Spacer()
+                        Image(systemName: "arrow.counterclockwise")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundStyle(.orange.opacity(0.7))
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 12)
+                    .background(.ultraThinMaterial)
+                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 16, style: .continuous)
+                            .stroke(Color.orange.opacity(0.3), lineWidth: 1)
+                    )
+                }
+                .buttonStyle(.plain)
+                .padding(.horizontal, 20)
+            }
+
             // ── 2. PROGRESSION GLOWING ──
             VStack(alignment: .leading, spacing: 8) {
                 HStack(alignment: .lastTextBaseline) {
@@ -575,6 +625,25 @@ struct PodcastCarouselView: View {
             }
             .padding(.horizontal, 20)
             
+            // ── EN-TÊTE ÉPISODES + VOIR TOUT ──
+            HStack {
+                Text("Épisodes")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(.orange.gradient)
+                Spacer()
+                Button {
+                    showPlaylist = true
+                } label: {
+                    HStack(spacing: 3) {
+                        Text("Voir tout")
+                        Image(systemName: "list.bullet")
+                    }
+                    .font(.system(size: 12, weight: .semibold, design: .rounded))
+                    .foregroundStyle(.orange)
+                }
+            }
+            .padding(.horizontal, 20)
+
             // ── 3. CAROUSEL LIQUID GLASS ──
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 16) {
@@ -710,6 +779,9 @@ struct PodcastCarouselView: View {
         }
         .onChange(of: podcastManager.activeSeriesIndex) { _, _ in
             visibleCount = Self.pageSize
+        }
+        .sheet(isPresented: $showPlaylist) {
+            PlaylistView(manager: podcastManager, tintColor: .orange)
         }
     }
 }
