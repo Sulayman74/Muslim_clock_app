@@ -1400,6 +1400,9 @@
         }
       }
     },
+    "L'app détecte quand tu t'éloignes de chez toi et te propose d'activer le mode voyage — invocations du voyageur mises en avant et accent dédié. Rien n'est jamais activé à ta place : le voyage suit ton intention." : {
+
+    },
     "L'appareil n'a pas le statut du Mushaf papier. Les savants (Ibn Bâz, al-Fawzân, Commission Permanente — al-Lajna al-Dâ'ima) précisent :\n\n• Pas besoin de woudoû pour lire sur l'écran.\n• Exception : l'impureté majeure (janâba) — pas de lecture jusqu'au ghusl, sur tout support.\n• Le Mushaf papier reste préférable, mais la lecture sur écran faite avec attention reçoit la même récompense, in shâ Allah.\n• Aux toilettes : fermer l'affichage du Coran avant d'entrer.\n\nSources : Fatwas d'Ibn Bâz, al-Fawzân et de la Commission Permanente (al-Lajna al-Dâ'ima).\n\nTraduction française utilisée dans l'app : Muhammad Hamidullah (Complexe du Roi Fahd), via le dépôt open source quran-json." : {
 
     },
@@ -1503,6 +1506,9 @@
 
     },
     "Le cycle des 5 prières sur votre cadran." : {
+
+    },
+    "Le livret s'enrichit : invocations du voyage, du jeûne et invocations générales du quotidien, chacune avec sa source et son degré d'authenticité." : {
 
     },
     "Le mode voyage suit votre intention : vous l'activez vous-même. Le GPS ne fait que le suggérer au-delà de ~83 km de votre domicile." : {
@@ -1747,6 +1753,9 @@
     "Mode voyage" : {
 
     },
+    "Mode voyage (Safar)" : {
+
+    },
     "Moitié de la nuit" : {
       "localizations" : {
         "ar" : {
@@ -1802,6 +1811,9 @@
           }
         }
       }
+    },
+    "Nouvelles invocations authentiques" : {
+
     },
     "Ô Allah, accorde Ta prière et Ton salut à notre Prophète Muhammad" : {
       "localizations" : {
@@ -2777,6 +2789,9 @@
       }
     },
     "Une erreur est survenue" : {
+
+    },
+    "Une fiche claire sur le raccourcissement (qasr), le regroupement (jamʿ) et le jeûne en voyage — chaque règle appuyée par ses preuves : Coran, Sunna authentique et paroles de savants." : {
 
     },
     "Une page « Pourquoi pas de tracker de prière ? » explique le choix de ne pas gamifier la salât, conforme à la fatwa du Cheikh Ibn 'Uthaymîn (Majmû' al-Fatâwâ 16/111)." : {

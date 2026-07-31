@@ -24,6 +24,12 @@ struct WhatsNewView: View {
     /// — ne pas le reformuler sans raison, ça orphelinerait les traductions en/ar.
     private let items: [WhatsNewItem] = [
         WhatsNewItem(
+            icon: "airplane",
+            color: travelModeAccent,
+            title: String(localized: "Mode voyage (Safar)"),
+            description: String(localized: "L'app détecte quand tu t'éloignes de chez toi et te propose d'activer le mode voyage — invocations du voyageur mises en avant et accent dédié. Rien n'est jamais activé à ta place : le voyage suit ton intention.")
+        ),
+        WhatsNewItem(
             icon: "list.bullet.circle.fill",
             color: .orange,
             title: String(localized: "Playlist audio"),
@@ -40,6 +46,18 @@ struct WhatsNewView: View {
             color: .indigo,
             title: String(localized: "Jumu'ah, partout le vendredi"),
             description: String(localized: "Le vendredi, la prière du vendredi remplace Dhuhr sur l'écran principal, les widgets, l'écran verrouillé et l'Apple Watch. Et l'heure de ta mosquée s'applique dès que tu la modifies.")
+        ),
+        WhatsNewItem(
+            icon: "book.closed.fill",
+            color: .indigo,
+            title: String(localized: "Facilités du voyageur"),
+            description: String(localized: "Une fiche claire sur le raccourcissement (qasr), le regroupement (jamʿ) et le jeûne en voyage — chaque règle appuyée par ses preuves : Coran, Sunna authentique et paroles de savants.")
+        ),
+        WhatsNewItem(
+            icon: "hands.and.sparkles.fill",
+            color: .green,
+            title: String(localized: "Nouvelles invocations authentiques"),
+            description: String(localized: "Le livret s'enrichit : invocations du voyage, du jeûne et invocations générales du quotidien, chacune avec sa source et son degré d'authenticité.")
         ),
     ]
 
