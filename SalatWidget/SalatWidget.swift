@@ -19,6 +19,9 @@ struct SimpleEntry: TimelineEntry {
     let nextPrayerName: String
     let nextPrayerDate: Date?
     let hijriDateAr: String
+    /// Vendredi + Jumu'ah activée : les labels « Dhuhr » s'affichent « Jumu'ah ».
+    /// Les clés internes des dictionnaires restent « Dhuhr » (affichage uniquement).
+    var isFridayJumuah: Bool = false
 }
 
 enum WidgetUtils {
@@ -97,6 +100,7 @@ enum WidgetUtils {
         switch name {
         case "Fajr": return "FJR"
         case "Dhuhr": return "DHR"
+        case "Jumu'ah": return "JUM"
         case "Asr": return "ASR"
         case "Maghrib": return "MGH"
         case "Isha": return "ISH"
@@ -157,6 +161,13 @@ struct SalatProvider: TimelineProvider {
     func buildEntry(for date: Date) -> SimpleEntry {
         let t = readTimestamps()
 
+        // Jumu'ah : le vendredi, le label affiché pour Dhuhr devient « Jumu'ah »
+        // (même logique que la watch app et la complication ; l'heure publiée
+        // dans prayer_dhuhr est déjà l'heure Jumu'ah côté app iOS).
+        let isFriday = Calendar.current.component(.weekday, from: date) == 6
+        let jumuahEnabled = shared?.bool(forKey: "w_jumuahEnabled") ?? false
+        let isFridayJumuah = isFriday && jumuahEnabled
+
         var statuses: [String: PrayerStatus] = [
             "Fajr": .future, "Dhuhr": .future, "Asr": .future,
             "Maghrib": .future, "Isha": .future
@@ -193,13 +204,19 @@ struct SalatProvider: TimelineProvider {
             nextDate = t.tomorrowFajr
         }
 
+        // Nom affiché : « Jumu'ah » remplace « Dhuhr » le vendredi.
+        if nextName == "Dhuhr" && isFridayJumuah {
+            nextName = "Jumu'ah"
+        }
+
         return SimpleEntry(
             date: date,
             prayerStatuses: statuses,
             prayerTimes: times,
             nextPrayerName: nextName,
             nextPrayerDate: nextDate,
-            hijriDateAr: hijriArabic(for: date)
+            hijriDateAr: hijriArabic(for: date),
+            isFridayJumuah: isFridayJumuah
         )
     }
 
@@ -306,7 +323,7 @@ struct SalatProvider: TimelineProvider {
                     HomeWidgetDateHeader(date: entry.date)
                     HStack(alignment: .center, spacing: 12) {
                         MainPrayerSphere(name: "Fajr", status: entry.prayerStatuses["Fajr"] ?? .future)
-                        MainPrayerSphere(name: "Dhuhr", status: entry.prayerStatuses["Dhuhr"] ?? .future)
+                        MainPrayerSphere(name: entry.isFridayJumuah ? "Jumu'ah" : "Dhuhr", status: entry.prayerStatuses["Dhuhr"] ?? .future)
                         MainPrayerSphere(name: "Asr", status: entry.prayerStatuses["Asr"] ?? .future)
                         MainPrayerSphere(name: "Maghrib", status: entry.prayerStatuses["Maghrib"] ?? .future)
                         MainPrayerSphere(name: "Isha", status: entry.prayerStatuses["Isha"] ?? .future)
@@ -530,7 +547,10 @@ struct SalatProvider: TimelineProvider {
         let entry: SimpleEntry
 
         private let prayers = ["Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"]
-        private let shorts  = ["FJR",  "DHR",   "ASR", "MGH",     "ISH"]
+
+        private var shorts: [String] {
+            ["FJR", entry.isFridayJumuah ? "JUM" : "DHR", "ASR", "MGH", "ISH"]
+        }
 
         var body: some View {
             VStack(alignment: .leading, spacing: 5) {
