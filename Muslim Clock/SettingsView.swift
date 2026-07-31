@@ -508,11 +508,11 @@ struct MosqueSettingsView: View {
                         .foregroundColor(.white)
                     }
                 } header: {
-                    Text("Priere du Vendredi")
+                    Text("Prière du Vendredi")
                         .foregroundColor(.white.opacity(0.6))
                 } footer: {
                     if jumuahEnabled {
-                        Text("Le vendredi, l'horaire Dhuhr sera remplace par l'heure de la Jumu'ah de votre mosquee.")
+                        Text("Le vendredi, l'horaire Dhuhr sera remplacé par l'heure de la Jumu'ah de votre mosquée.")
                             .foregroundColor(.white.opacity(0.4))
                     }
                 }

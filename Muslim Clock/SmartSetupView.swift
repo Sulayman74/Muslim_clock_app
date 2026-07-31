@@ -99,7 +99,7 @@ struct SmartSetupView: View {
                         HStack(spacing: 10) {
                             Image(systemName: "building.columns.fill")
                                 .foregroundColor(.green)
-                            Text("Heure Jumu'ah personnalisee")
+                            Text("Heure Jumu'ah personnalisée")
                                 .foregroundColor(.white)
                         }
                     }
@@ -110,9 +110,9 @@ struct SmartSetupView: View {
                             .colorScheme(.dark)
                     }
                 } header: {
-                    Text("Priere du Vendredi")
+                    Text("Prière du Vendredi")
                 } footer: {
-                    Text("Le vendredi, Dhuhr sera remplace par l'heure de la Jumu'ah de votre mosquee.")
+                    Text("Le vendredi, Dhuhr sera remplacé par l'heure de la Jumu'ah de votre mosquée.")
                         .foregroundColor(.white.opacity(0.4))
                 }
                 .listRowBackground(Color.white.opacity(0.05))
@@ -146,6 +146,17 @@ struct SmartSetupView: View {
             .onAppear {
                 prefillForm()
             }
+            // Persistance immédiate de l'heure Jumu'ah : sans ça, le DatePicker
+            // n'écrit que dans le @State local `inputJumuah` et la valeur n'est
+            // sauvegardée QUE si l'utilisateur relance l'analyse magique — l'heure
+            // restait donc figée à l'ancienne valeur (bug « bloqué à 12h45 »).
+            .onChange(of: inputJumuah) { _, newValue in
+                saveJumuahTimeIfChanged(from: newValue)
+            }
+            .onChange(of: jumuahEnabled) { _, isOn in
+                if isOn { saveJumuahTimeIfChanged(from: inputJumuah) }
+                prayerVM.forceRecalculation()
+            }
         }
         .navigationTitle("Configuration Magique")
         .preferredColorScheme(.dark)
@@ -155,6 +166,19 @@ struct SmartSetupView: View {
         .sensoryFeedback(.success, trigger: analysisResult)
     }
     
+    /// Persiste l'heure Jumu'ah choisie et déclenche le recalcul des horaires.
+    /// Idempotent : ne fait rien si (heure, minute) n'ont pas changé — le
+    /// pré-remplissage de `prefillForm()` ne déclenche donc pas de recalcul.
+    private func saveJumuahTimeIfChanged(from date: Date) {
+        let comps = Calendar.current.dateComponents([.hour, .minute], from: date)
+        let newHour = comps.hour ?? 13
+        let newMinute = comps.minute ?? 0
+        guard newHour != jumuahHour || newMinute != jumuahMinute else { return }
+        jumuahHour = newHour
+        jumuahMinute = newMinute
+        prayerVM.forceRecalculation()
+    }
+
     // MARK: - 🧠 LE CERVEAU MATHÉMATIQUE
     private func runAnalysis() {
         guard let location = prayerVM.lastLocation else {
@@ -188,7 +212,7 @@ struct SmartSetupView: View {
             var detectedIshaOffset = 0
             
             // Si l'Isha est entre 60 et 120 minutes après le Maghrib, c'est presque toujours un lissage.
-            if ishaDifference >= 60 && ishaDifference <= 120 {
+            if SmartSetupMath.isFixedIsha(ishaDifference) {
                 detectedIshaFixed = true
                 detectedIshaDuration = ishaDifference
             }
@@ -200,34 +224,35 @@ struct SmartSetupView: View {
                 ("Ligue Islamique (18°)", 18.0)
             ]
             
-            var bestMethodName = "UOIF (12°)"
-            var bestFajrOffset = 0
-            var bestScore = Int.max
-            
+            // Offsets Fajr candidats par angle + offset Isha correspondant.
+            // Le choix du gagnant (scoring) est délégué à SmartSetupMath (pur, testé).
+            var candidates: [(name: String, offset: Int)] = []
+            var ishaOffsetByMethod: [String: Int] = [:]
+
             for (methodName, angle) in testAngles {
                 var testParams = CalculationMethod.other.params
                 testParams.fajrAngle = angle
                 testParams.ishaAngle = angle
-                
+
                 if let testTimes = PrayerTimes(coordinates: coords, date: dateComps, calculationParameters: testParams) {
-                    let fajrOffset = minutesBetween(calculated: testTimes.fajr, user: inputFajr)
-                    
-                    // SCORING : On cherche un offset le plus proche de 0 possible.
-                    // Les mosquées ont tendance à faire des offsets POSITIFS (ajouter des minutes).
-                    // On pénalise très lourdement les offsets négatifs (sauf -1 ou -2 qui sont des arrondis).
-                    let score = fajrOffset >= -2 ? fajrOffset : abs(fajrOffset) + 100
-                    
-                    if score < bestScore {
-                        bestScore = score
-                        bestMethodName = methodName
-                        bestFajrOffset = fajrOffset
-                    }
-                    
-                    // Si l'Isha n'est pas fixe, on calcule l'offset d'Isha pour cet angle gagnant
-                    if !detectedIshaFixed && score == bestScore {
-                        detectedIshaOffset = minutesBetween(calculated: testTimes.isha, user: inputIsha)
-                    }
+                    candidates.append((name: methodName, offset: minutesBetween(calculated: testTimes.fajr, user: inputFajr)))
+                    ishaOffsetByMethod[methodName] = minutesBetween(calculated: testTimes.isha, user: inputIsha)
                 }
+            }
+
+            guard !candidates.isEmpty else {
+                isAnalyzing = false
+                analysisResult = "Erreur de calcul astronomique."
+                return
+            }
+
+            let best = SmartSetupMath.bestAngle(candidates)
+            let bestMethodName = best.name
+            let bestFajrOffset = best.offset
+
+            // Si l'Isha n'est pas fixe, on prend l'offset d'Isha de l'angle gagnant
+            if !detectedIshaFixed {
+                detectedIshaOffset = ishaOffsetByMethod[bestMethodName] ?? 0
             }
             
             // 4️⃣ Application des résultats !
@@ -307,14 +332,14 @@ struct SmartSetupView: View {
         }
     }
     
-    // Helper : Compare seulement les heures et les minutes pour éviter les bugs de dates (jours différents)
+    /// Adaptateur Date → (heure, minute) vers `SmartSetupMath.minutesBetween`
+    /// (comparaison pure sur (h, m) avec repli minuit — testée unitairement).
     private func minutesBetween(calculated: Date, user: Date) -> Int {
         let calComps = Calendar.current.dateComponents([.hour, .minute], from: calculated)
         let userComps = Calendar.current.dateComponents([.hour, .minute], from: user)
-        
-        let calTotalMinutes = (calComps.hour ?? 0) * 60 + (calComps.minute ?? 0)
-        let userTotalMinutes = (userComps.hour ?? 0) * 60 + (userComps.minute ?? 0)
-        
-        return userTotalMinutes - calTotalMinutes
+        return SmartSetupMath.minutesBetween(
+            calc: (calComps.hour ?? 0, calComps.minute ?? 0),
+            user: (userComps.hour ?? 0, userComps.minute ?? 0)
+        )
     }
 }
