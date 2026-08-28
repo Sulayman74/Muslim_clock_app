@@ -26,6 +26,11 @@ struct DailyContentView: View {
             }
 
             // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            // FICHE MASBÛQ + JANÂZA (accès permanent)
+            // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            LatecomerFiqhAccessCard()
+
+            // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
             // CARTE CORAN
             // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
             VStack(alignment: .leading, spacing: 12) {

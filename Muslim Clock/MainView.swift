@@ -358,6 +358,11 @@ struct MainView: View {
                                             )
                                         }
                                         CurrentPrayerGaugeView()
+                                        // Rappel dédié dans la dernière heure avant Dhuhr/Jumu'ah.
+                                        DhuhrCountdownCard()
+                                        // Décompte Adhan → Iqamah : visible uniquement pendant
+                                        // la fenêtre (délais réglés dans « Ma mosquée »).
+                                        IqamahCountdownCard()
                                         // Carte du'a contextuelle pendant Ramadan (Iftar / Suhoor / général)
                                         if IslamicSeasonInfo.isRamadan() {
                                             RamadanDuaCardView()
