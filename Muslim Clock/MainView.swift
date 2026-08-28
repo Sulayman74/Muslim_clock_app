@@ -313,6 +313,9 @@ struct MainView: View {
                                 WidgetDateHeader(date: .now)
                                     .padding(.top, -8)
 
+                                // Fraîcheur des horaires (mise à jour à HH:mm / en cours).
+                                PrayerFreshnessLine()
+
                                 GPSRelocationIndicator()
                                     .padding(.top, -4)
 
@@ -395,7 +398,12 @@ struct MainView: View {
                             .containerRelativeFrame(.horizontal)
                         }
                         .refreshable {
-                            if let loc = manager.userLocation {
+                            // Va chercher un point GPS frais (rattrape un changement de
+                            // ville) → le VM recalcule les horaires automatiquement,
+                            // puis on rafraîchit la météo sur la position fraîche.
+                            await locationManager.refreshLocation()
+                            let loc = locationManager.currentLocation ?? manager.userLocation
+                            if let loc {
                                 await weatherVM.forceRefresh(for: loc)
                             }
                         }
@@ -534,6 +542,11 @@ struct MainView: View {
                 handleNotificationDeepLink()
                 handleControlDeepLink()
                 prayerVM.refreshLiveActivity()
+                // Va chercher un point GPS frais à chaque passage au premier plan :
+                // rattrape un changement de ville survenu app en arrière-plan. Le VM
+                // recalcule automatiquement à la livraison (le garde-fou évite tout
+                // recalcul inutile si on n'a pas bougé).
+                Task { await locationManager.refreshLocation() }
                 // Throttlé 24h + anti-réentrance interne (double-tir avec le .task au lancement).
                 Task { await updateChecker.checkForUpdate() }
             }

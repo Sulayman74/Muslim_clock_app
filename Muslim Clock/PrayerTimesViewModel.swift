@@ -58,6 +58,9 @@ class PrayerTimesViewModel: ObservableObject {
     @Published var sunriseTime: Date? = nil
     @Published var middleOfNight: Date? = nil
     @Published var hasMovedSignificantly: Bool = false
+    /// Instant du dernier recalcul effectif des horaires — alimente la ligne
+    /// « Horaires mis à jour à HH:mm » (fraîcheur visible pour l'utilisateur).
+    @Published private(set) var lastPrayerUpdate: Date? = nil
     @Published var lastThirdOfNight: Date? = nil
     /// Heures réelles du Fajr et du Asr, utilisées par AdhkarService pour délimiter les périodes
     @Published var fajrDate: Date? = nil
@@ -137,8 +140,7 @@ class PrayerTimesViewModel: ObservableObject {
                 calculationLocation = location
                 return
             }
-            let distance = calcLoc.distance(from: location)
-            if distance > 15000 { // 15 km
+            if LocationMath.isSignificantMove(from: calcLoc, to: location) {
                 self.hasMovedSignificantly = true
             }
         }
@@ -181,7 +183,7 @@ class PrayerTimesViewModel: ObservableObject {
 
         if let lastDate = lastCalculationDate {
                 let isSameDay = Calendar.current.isDate(now, inSameDayAs: lastDate)
-                let isSamePlace = (lastLocation?.distance(from: location) ?? .infinity) < 2000
+                let isSamePlace = LocationMath.isSamePlace(lastLocation, location)
                 let isSameTZ = lastCalculationTZOffset == currentTZOffset
 
                 if isSameDay && isSamePlace && isSameTZ && !self.dailyPrayers.isEmpty {
@@ -191,7 +193,7 @@ class PrayerTimesViewModel: ObservableObject {
 
         // LE GARDE-FOU ANTI-BOUCLE
         let isSameDay = Calendar.current.isDate(now, inSameDayAs: lastCalculationDate ?? Date.distantPast)
-        let isSamePlace = (lastLocation?.distance(from: location) ?? .infinity) < 2000
+        let isSamePlace = LocationMath.isSamePlace(lastLocation, location)
         let isSameTZ = lastCalculationTZOffset == currentTZOffset
 
         if isSameDay && isSamePlace && isSameTZ && !self.dailyPrayers.isEmpty {
@@ -201,6 +203,7 @@ class PrayerTimesViewModel: ObservableObject {
         self.lastLocation = location
         self.lastCalculationDate = now
         self.lastCalculationTZOffset = currentTZOffset
+        self.lastPrayerUpdate = now   // horaires réellement recalculés → fraîcheur à jour
         
         let coordinates = Coordinates(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
         

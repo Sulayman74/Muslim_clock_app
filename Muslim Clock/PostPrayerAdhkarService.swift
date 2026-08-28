@@ -511,19 +511,62 @@ struct PostPrayerAdhkarView: View {
     }
 }
 
+// MARK: - PrayerFreshnessLine
+/// Ligne discrète sous le header de date : « Horaires mis à jour à HH:mm », ou
+/// « Mise à jour de la position… » pendant un fix GPS. Lecture seule.
+struct PrayerFreshnessLine: View {
+    @EnvironmentObject var prayerVM: PrayerTimesViewModel
+    @ObservedObject var location = SharedLocationManager.shared
+
+    var body: some View {
+        Group {
+            if location.isRefreshingLocation {
+                HStack(spacing: 6) {
+                    ProgressView().controlSize(.mini).tint(.white.opacity(0.5))
+                    Text("Mise à jour de la position…")
+                }
+            } else if let updated = prayerVM.lastPrayerUpdate {
+                HStack(spacing: 5) {
+                    Image(systemName: "clock.arrow.circlepath")
+                        .font(.system(size: 10))
+                    Text("Horaires mis à jour à \(updated.formatted(date: .omitted, time: .shortened))")
+                }
+            }
+        }
+        .font(.caption2)
+        .foregroundStyle(.white.opacity(0.5))
+    }
+}
+
 // MARK: - GPSRelocationIndicator
 struct GPSRelocationIndicator: View {
     @EnvironmentObject var prayerVM: PrayerTimesViewModel
-    
+    @State private var isRefreshing = false
+
     var body: some View {
         if prayerVM.hasMovedSignificantly {
-            Button(action: {
-                withAnimation { prayerVM.relocateAndRecalculate() }
-            }) {
+            Button {
+                // Force d'abord un point GPS frais (sinon on recalculerait avec la
+                // position périmée), PUIS recalcule. Le bouton « fait tout » désormais.
+                Task {
+                    isRefreshing = true
+                    await SharedLocationManager.shared.refreshLocation()
+                    withAnimation { prayerVM.relocateAndRecalculate() }
+                    isRefreshing = false
+                }
+            } label: {
                 HStack(spacing: 6) {
-                    Image(systemName: "location.fill.viewfinder")
-                    Text("Recalculer position (> 15km)")
-                        .font(.caption.bold())
+                    if isRefreshing {
+                        ProgressView()
+                            .controlSize(.mini)
+                            .tint(.blue)
+                        Text("Mise à jour de la position…")
+                            .font(.caption.bold())
+                    } else {
+                        Image(systemName: "location.fill.viewfinder")
+                        Text("Recalculer position (> 15km)")
+                            .font(.caption.bold())
+                    }
                 }
                 .padding(.horizontal, 12)
                 .padding(.vertical, 8)
@@ -532,6 +575,7 @@ struct GPSRelocationIndicator: View {
                 .clipShape(Capsule())
                 .overlay(Capsule().stroke(Color.blue.opacity(0.5), lineWidth: 1))
             }
+            .disabled(isRefreshing)
             .transition(.scale.combined(with: .opacity))
         }
     }
