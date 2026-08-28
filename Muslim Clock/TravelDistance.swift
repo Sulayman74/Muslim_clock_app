@@ -14,7 +14,10 @@ import Foundation
 import CoreLocation
 
 /// Statut de voyage dérivé d'une position et d'une ancre domicile.
-enum TravelStatus: Equatable, Sendable {
+/// `nonisolated` : type valeur pur, comparable depuis n'importe quel contexte
+/// (sans ça, la conformance Equatable hérite de l'isolation MainActor par défaut
+/// et les `#expect(==)` des tests émettent un warning Swift 6).
+nonisolated enum TravelStatus: Equatable, Sendable {
     /// Pas encore d'ancre connue (premier lancement, avant le 1er fix).
     case unknown
     /// Dans le rayon de résidence.

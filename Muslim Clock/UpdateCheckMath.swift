@@ -44,7 +44,8 @@ enum UpdateCheckMath {
     // MARK: - Pop-up « Quoi de neuf »
 
     /// Décision au lancement pour la pop-up « Quoi de neuf ».
-    enum WhatsNewAction: Equatable {
+    /// `nonisolated` : comparable hors MainActor (tests, cf. TravelStatus).
+    nonisolated enum WhatsNewAction: Equatable {
         /// Vraie mise à jour → afficher la sheet (la version vue est écrite au dismiss).
         case show
         /// Première installation ou downgrade (TestFlight) → mémoriser la version
