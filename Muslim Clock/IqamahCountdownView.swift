@@ -93,7 +93,10 @@ struct IqamahCountdownCard: View {
     }
 
     var body: some View {
-        TimelineView(.periodic(from: .now, by: 1.0)) { context in
+        // Cadence 2 s : le décompte (Text(timerInterval:)) est auto-rafraîchi
+        // nativement ; ce tick ne sert qu'à la barre de progression et à
+        // l'apparition/disparition de la carte → 1 Hz inutile.
+        TimelineView(.periodic(from: .now, by: 2.0)) { context in
             let prayers = prayerVM.dailyPrayers.map { (name: $0.name, adhan: $0.date) }
             if let target = IqamahMath.iqamahTarget(prayers: prayers, delaysMinutes: delays, now: context.date) {
                 card(target: target, now: context.date)
