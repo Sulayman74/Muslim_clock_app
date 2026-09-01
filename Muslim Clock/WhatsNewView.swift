@@ -24,6 +24,18 @@ struct WhatsNewView: View {
     /// — ne pas le reformuler sans raison, ça orphelinerait les traductions en/ar.
     private let items: [WhatsNewItem] = [
         WhatsNewItem(
+            icon: "rectangle.grid.1x2.fill",
+            color: .teal,
+            title: String(localized: "Écrans réorganisés"),
+            description: String(localized: "L'essentiel d'abord : les 5 prières et le compte à rebours remontent en haut de l'écran, le verset et le hadith du jour ouvrent l'onglet Rappel. Les adhkar, la sunnah du moment et tes programmes restent à portée de main, juste en dessous.")
+        ),
+        WhatsNewItem(
+            icon: "battery.100percent.bolt",
+            color: .green,
+            title: String(localized: "Plus fluide, plus économe"),
+            description: String(localized: "L'affichage a été optimisé en profondeur : l'app consomme nettement moins de batterie, en particulier sur l'écran des prières et pendant l'écoute des cours.")
+        ),
+        WhatsNewItem(
             icon: "airplane",
             color: travelModeAccent,
             title: String(localized: "Mode voyage (Safar)"),
