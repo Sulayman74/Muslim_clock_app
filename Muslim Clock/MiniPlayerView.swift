@@ -363,48 +363,48 @@ struct FullPlayerView: View {
 
 struct AnimatedWaveformIcon: View {
     let isPlaying: Bool
-    
-    @State private var barHeights: [CGFloat] = [0.4, 0.7, 0.5, 0.8, 0.6]
-    
-    let timer = Timer.publish(every: 0.15, on: .main, in: .common).autoconnect()
-    
+
     var body: some View {
         ZStack {
             Circle()
                 .fill(Color.orange.opacity(isPlaying ? 0.2 : 0.1))
-            
-            HStack(spacing: 2) {
-                ForEach(0..<5, id: \.self) { index in
-                    RoundedRectangle(cornerRadius: 1.5)
-                        .fill(
-                            LinearGradient(
-                                colors: isPlaying 
-                                    ? [Color.orange, Color.orange.opacity(0.6)]
-                                    : [Color.white.opacity(0.5), Color.white.opacity(0.3)],
-                                startPoint: .top,
-                                endPoint: .bottom
+
+            // TimelineView paused hors lecture : l'ancien Timer.publish(0.15 s)
+            // réveillait le runloop ~7×/s même podcast en pause. Ici, zéro tick
+            // dès que isPlaying == false.
+            TimelineView(.animation(minimumInterval: 0.15, paused: !isPlaying)) { timeline in
+                let heights = barHeights(at: timeline.date)
+                HStack(spacing: 2) {
+                    ForEach(0..<5, id: \.self) { index in
+                        RoundedRectangle(cornerRadius: 1.5)
+                            .fill(
+                                LinearGradient(
+                                    colors: isPlaying
+                                        ? [Color.orange, Color.orange.opacity(0.6)]
+                                        : [Color.white.opacity(0.5), Color.white.opacity(0.3)],
+                                    startPoint: .top,
+                                    endPoint: .bottom
+                                )
                             )
-                        )
-                        .frame(width: 2.5, height: 16 * (isPlaying ? barHeights[index] : 0.3))
-                        .animation(
-                            isPlaying 
-                                ? .easeInOut(duration: 0.15)
-                                : .easeOut(duration: 0.3),
-                            value: barHeights[index]
-                        )
+                            .frame(width: 2.5, height: 16 * (isPlaying ? heights[index] : 0.3))
+                            .animation(.easeInOut(duration: 0.15), value: heights[index])
+                            // Retombée douce des barres au passage en pause.
+                            .animation(.easeOut(duration: 0.3), value: isPlaying)
+                    }
                 }
             }
         }
-        .onReceive(timer) { _ in
-            if isPlaying {
-                withAnimation {
-                    barHeights = (0..<5).map { _ in CGFloat.random(in: 0.3...1.0) }
-                }
-            } else {
-                withAnimation {
-                    barHeights = Array(repeating: 0.3, count: 5)
-                }
-            }
+    }
+
+    /// Hauteurs pseudo-aléatoires **déterministes** — fonction pure du temps
+    /// (hash sinusoïdal par pas de 0.15 s). Même rendu visuel qu'un random par
+    /// tick, sans @State ni Timer.
+    private func barHeights(at date: Date) -> [CGFloat] {
+        let step = floor(date.timeIntervalSinceReferenceDate / 0.15)
+        return (0..<5).map { index in
+            let raw = sin(step * 12.9898 + Double(index) * 78.233) * 43758.5453
+            let unit = raw - floor(raw) // fraction 0..<1 pseudo-aléatoire
+            return 0.3 + CGFloat(unit) * 0.7
         }
     }
 }

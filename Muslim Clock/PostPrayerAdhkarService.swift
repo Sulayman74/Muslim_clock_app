@@ -71,45 +71,58 @@ struct CurrentPrayerGaugeView: View {
                     }
                     .foregroundColor(.orange)
                     
-                    // Jauge et Timer
-                    TimelineView(.periodic(from: .now, by: 1.0)) { context in
+                    // Jauge et Timer — cadence adaptative : ~1 pt de barre par
+                    // tick (durée/350, typ. 10-15 s pour une fenêtre de 60-90 min)
+                    // au lieu de 1 Hz. L'interpolation .linear(cadence) garde le
+                    // mouvement continu ; le seuil rouge (85 %) bascule avec au
+                    // pire ≤ 1 cadence de retard — imperceptible sur une phase
+                    // rouge de plusieurs minutes. Le décompte texte est piloté
+                    // par le système (Text(timerInterval:) — zéro redraw).
+                    let cadence = Self.barCadence(start: start, end: end)
+                    TimelineView(.periodic(from: .now, by: cadence)) { context in
                         let now = context.date
                         let totalDuration = end.timeIntervalSince(start)
                         let elapsed = now.timeIntervalSince(start)
                         let progress = max(0.0, min(1.0, elapsed / totalDuration))
-                        let timeRemaining = max(0, end.timeIntervalSince(now))
-                        
+
                         let gaugeColor = progress > 0.85 ? Color.red : Color.orange
-                        
+
                         VStack(spacing: 12) {
                             // La barre plus épaisse
                             GeometryReader { geo in
                                 ZStack(alignment: .leading) {
                                     Capsule()
                                         .fill(Color.white.opacity(0.1))
-                                    
+
                                     Capsule()
                                         .fill(LinearGradient(colors: [gaugeColor.opacity(0.6), gaugeColor], startPoint: .leading, endPoint: .trailing))
                                         .frame(width: geo.size.width * CGFloat(progress))
-                                        .animation(.linear(duration: 1.0), value: progress)
+                                        .animation(.linear(duration: cadence), value: progress)
                                 }
                             }
                             .frame(height: 10)
-                            
+
                             // Textes sous la barre
                             HStack {
                                 Text("\(start.formatted(date: .omitted, time: .shortened)) → \(end.formatted(date: .omitted, time: .shortened))")
                                     .font(.subheadline)
                                     .foregroundColor(.white.opacity(0.7))
-                                
+
                                 Spacer()
-                                
-                                Text(timeString(from: timeRemaining))
+
+                                // min(now, end) : borne défensive — à l'échéance
+                                // exacte, un range inversé ferait planter.
+                                Text("-\(Text(timerInterval: min(now, end)...end, countsDown: true))")
                                     .font(.system(.body, design: .monospaced).bold())
+                                    .monospacedDigit()
                                     .foregroundColor(gaugeColor)
                             }
                         }
                     }
+                    // Re-crée le schedule si les horaires changent EN COURS de
+                    // fenêtre (recalcul DST/GPS/réglages) — un schedule .periodic
+                    // déjà démarré ne relit pas ses paramètres.
+                    .id(end)
                     
                     // Bouton Adhkar plus grand
                     Button(action: { showAdhkarSheet = true }) {
@@ -228,12 +241,10 @@ struct CurrentPrayerGaugeView: View {
         }
     }
     
-    private func timeString(from timeInterval: TimeInterval) -> String {
-        let h = Int(timeInterval) / 3600
-        let m = Int(timeInterval) / 60 % 60
-        let s = Int(timeInterval) % 60
-        if h > 0 { return String(format: "-%d:%02d:%02d", h, m, s) }
-        return String(format: "-%02d:%02d", m, s)
+    /// Cadence adaptative de la barre : ~1 pt de progression par tick sur une
+    /// barre d'environ 350 pt. Plancher 1 s (fenêtres très courtes).
+    static func barCadence(start: Date, end: Date) -> TimeInterval {
+        max(1.0, end.timeIntervalSince(start) / 350.0)
     }
 }
 
@@ -380,12 +391,11 @@ struct NextPrayerCountdownCard: View {
     /// Ancre de départ de la jauge (lever du soleil). `nil` ⇒ pas de jauge.
     let start: Date?
 
-    private func timeString(from timeInterval: TimeInterval) -> String {
-        let h = Int(timeInterval) / 3600
-        let m = Int(timeInterval) / 60 % 60
-        let s = Int(timeInterval) % 60
-        if h > 0 { return String(format: "-%d:%02d:%02d", h, m, s) }
-        return String(format: "-%02d:%02d", m, s)
+    /// Cadence adaptative : la période sunrise → Dhuhr dure ~6 h, 1 pt de barre
+    /// ≈ 60 s. Ticker à la seconde gaspillait ~59 redraws/60.
+    private var cadence: TimeInterval {
+        guard let start, target > start else { return 60 }
+        return CurrentPrayerGaugeView.barCadence(start: start, end: target)
     }
 
     var body: some View {
@@ -402,10 +412,9 @@ struct NextPrayerCountdownCard: View {
             }
             .foregroundColor(.green)
 
-            // Jauge + décompte live
-            TimelineView(.periodic(from: .now, by: 1.0)) { context in
+            // Jauge (cadence adaptative) + décompte piloté par le système.
+            TimelineView(.periodic(from: .now, by: cadence)) { context in
                 let now = context.date
-                let timeRemaining = max(0, target.timeIntervalSince(now))
 
                 VStack(spacing: 12) {
                     if let start, target > start {
@@ -420,7 +429,8 @@ struct NextPrayerCountdownCard: View {
                                 Capsule()
                                     .fill(LinearGradient(colors: [Color.green.opacity(0.6), Color.green], startPoint: .leading, endPoint: .trailing))
                                     .frame(width: geo.size.width * CGFloat(progress))
-                                    .animation(.linear(duration: 1.0), value: progress)
+                                    // Interpolation sur toute la cadence → mouvement continu.
+                                    .animation(.linear(duration: cadence), value: progress)
                             }
                         }
                         .frame(height: 10)
@@ -433,12 +443,18 @@ struct NextPrayerCountdownCard: View {
                                 .foregroundColor(.white.opacity(0.7))
                         }
                         Spacer()
-                        Text(timeString(from: timeRemaining))
+                        // Décompte système (zéro redraw). min(now, target) : borne
+                        // défensive contre un range inversé à l'échéance exacte.
+                        Text("-\(Text(timerInterval: min(now, target)...target, countsDown: true))")
                             .font(.system(.body, design: .monospaced).bold())
+                            .monospacedDigit()
                             .foregroundColor(.green)
                     }
                 }
             }
+            // Re-crée le schedule si la cible change (recalcul GPS/DST/réglages)
+            // pendant que la carte est visible.
+            .id(target)
         }
         .padding(24)
         .glassCard(tint: .green)

@@ -296,8 +296,10 @@ struct MainView: View {
     /// posée (fiche fiqh voyage, salawat vendredi) vivent en zone secondaire.
     @ViewBuilder
     private var salatHeaderBlock: some View {
-        // L'horloge
-        TimelineView(.periodic(from: .now, by: 1.0)) { context in
+        // L'horloge — .everyMinute : elle n'affiche que HH:mm, un tick par
+        // seconde gaspillait 59 redraws/60. Le schedule tire pile à la frontière
+        // de minute et rattrape immédiatement au retour de background.
+        TimelineView(.everyMinute) { context in
             Text(context.date.formatted(.dateTime.hour().minute()))
                 .font(.system(size: 65, weight: .semibold, design: .monospaced))
                 .monospacedDigit()

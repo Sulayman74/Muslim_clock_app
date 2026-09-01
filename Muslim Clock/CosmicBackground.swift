@@ -14,7 +14,11 @@ import SwiftUI
 
 struct CosmicBackground: View {
     let season: IslamicSeasonInfo
-    
+
+    /// Reduce Motion : ciel figé (une seule frame d'étoiles/poussière, pas
+    /// d'étoiles filantes) — zéro tick d'animation.
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
     private var meshColors: [Color] {
         switch season.seasonKey {
         case "ramadan":
@@ -81,25 +85,30 @@ struct CosmicBackground: View {
             )
             .ignoresSafeArea()
             
-            // Couche 2 : Étoiles fixes scintillantes
-            FixedStarsLayer(starColor: starColor)
+            // Couche 2 : étoiles fixes + poussière — UN SEUL canvas à 10 Hz.
+            // (Avant : 2 TimelineView à 15 + 20 Hz. Les contenus oscillent à
+            // ≤ 0,4 Hz : 10 Hz reste 12× au-dessus de Nyquist, indiscernable.)
+            StarfieldLayer(starColor: starColor, paused: reduceMotion)
                 .ignoresSafeArea()
-            
-            // Couche 3 : Poussière cosmique flottante
-            CosmicDustLayer(dustColor: starColor)
-                .ignoresSafeArea()
-                .opacity(0.6)
-            
-            // Couche 4 : Étoiles filantes
-            ShootingStarsLayer(trailColor: starColor)
-                .ignoresSafeArea()
-                .opacity(0.8)
+
+            // Couche 3 : étoiles filantes — 30 Hz nécessaires pour la fluidité
+            // de la traînée (~400 pt/s), mais actives ~10 % du temps seulement.
+            // Masquées sous Reduce Motion (une traînée figée serait étrange).
+            if !reduceMotion {
+                ShootingStarsLayer(trailColor: starColor)
+                    .ignoresSafeArea()
+                    .opacity(0.8)
+            }
         }
     }
 }
 
 // MARK: - ═══════════════════════════════════════════════════
-// COUCHE 1 : ÉTOILES FIXES SCINTILLANTES
+// COUCHE 1+2 FUSIONNÉES : ÉTOILES FIXES + POUSSIÈRE COSMIQUE
+// Un seul TimelineView (10 Hz) + un seul Canvas au lieu de deux
+// (15 + 20 Hz). Les deux couches sont des fonctions pures du temps
+// oscillant à ≤ 0,4 Hz — 10 Hz reste largement au-dessus de Nyquist.
+// Mêmes seeds (42 / 777) → ciel strictement identique.
 // ═══════════════════════════════════════════════════════════
 
 private struct FixedStarData {
@@ -107,9 +116,21 @@ private struct FixedStarData {
     let baseOpacity, flickerSpeed, flickerPhase: Double
 }
 
-struct FixedStarsLayer: View {
+private struct DustParticle {
+    let startX, startY: CGFloat
+    let driftX, driftY: CGFloat     // Direction de dérive
+    let speed: Double               // Vitesse (cycle en secondes)
+    let radius: CGFloat
+    let baseOpacity: Double
+    let phase: Double               // Décalage temporel
+}
+
+struct StarfieldLayer: View {
     let starColor: Color
-    
+    /// `true` (Reduce Motion) : le schedule est en pause — le Canvas rend une
+    /// seule frame (ciel statique), zéro tick ensuite.
+    var paused: Bool = false
+
     private let stars: [FixedStarData] = {
         var rng = CosmicRNG(seed: 42)
         return (0..<70).map { _ in
@@ -123,50 +144,7 @@ struct FixedStarsLayer: View {
             )
         }
     }()
-    
-    var body: some View {
-        TimelineView(.animation(minimumInterval: 1.0 / 15.0)) { timeline in
-            Canvas { context, size in
-                let time = timeline.date.timeIntervalSinceReferenceDate
-                for star in stars {
-                    let flicker = sin(time * star.flickerSpeed + star.flickerPhase)
-                    let opacity = max(0.1, min(1.0, star.baseOpacity + flicker * 0.25))
-                    let rect = CGRect(x: star.x * size.width - star.radius,
-                                      y: star.y * size.height - star.radius,
-                                      width: star.radius * 2, height: star.radius * 2)
-                    context.opacity = opacity
-                    context.fill(Path(ellipseIn: rect), with: .color(starColor))
-                    
-                    if star.radius > 1.0 {
-                        let halo = CGRect(x: star.x * size.width - star.radius * 2.5,
-                                          y: star.y * size.height - star.radius * 2.5,
-                                          width: star.radius * 5, height: star.radius * 5)
-                        context.opacity = opacity * 0.12
-                        context.fill(Path(ellipseIn: halo), with: .color(starColor))
-                    }
-                }
-            }
-        }
-    }
-}
 
-// MARK: - ═══════════════════════════════════════════════════
-// COUCHE 2 : POUSSIÈRE COSMIQUE FLOTTANTE
-// Particules lentes qui dérivent dans des directions variées
-// ═══════════════════════════════════════════════════════════
-
-private struct DustParticle {
-    let startX, startY: CGFloat
-    let driftX, driftY: CGFloat     // Direction de dérive
-    let speed: Double               // Vitesse (cycle en secondes)
-    let radius: CGFloat
-    let baseOpacity: Double
-    let phase: Double               // Décalage temporel
-}
-
-struct CosmicDustLayer: View {
-    let dustColor: Color
-    
     private let particles: [DustParticle] = {
         var rng = CosmicRNG(seed: 777)
         return (0..<25).map { _ in
@@ -182,36 +160,57 @@ struct CosmicDustLayer: View {
             )
         }
     }()
-    
+
     var body: some View {
-        TimelineView(.animation(minimumInterval: 1.0 / 20.0)) { timeline in
+        TimelineView(.animation(minimumInterval: 1.0 / 10.0, paused: paused)) { timeline in
             Canvas { context, size in
                 let time = timeline.date.timeIntervalSinceReferenceDate
-                
+
+                // ── Étoiles fixes scintillantes ──
+                for star in stars {
+                    let flicker = sin(time * star.flickerSpeed + star.flickerPhase)
+                    let opacity = max(0.1, min(1.0, star.baseOpacity + flicker * 0.25))
+                    let rect = CGRect(x: star.x * size.width - star.radius,
+                                      y: star.y * size.height - star.radius,
+                                      width: star.radius * 2, height: star.radius * 2)
+                    context.opacity = opacity
+                    context.fill(Path(ellipseIn: rect), with: .color(starColor))
+
+                    if star.radius > 1.0 {
+                        let halo = CGRect(x: star.x * size.width - star.radius * 2.5,
+                                          y: star.y * size.height - star.radius * 2.5,
+                                          width: star.radius * 5, height: star.radius * 5)
+                        context.opacity = opacity * 0.12
+                        context.fill(Path(ellipseIn: halo), with: .color(starColor))
+                    }
+                }
+
+                // ── Poussière cosmique flottante ──
+                // L'ancien `.opacity(0.6)` de couche est intégré aux opacités.
                 for p in particles {
                     let t = (time + p.phase).truncatingRemainder(dividingBy: p.speed) / p.speed
-                    
+
                     // Mouvement sinusoïdal doux (aller-retour)
                     let xOffset = sin(t * .pi * 2) * p.driftX
                     let yOffset = cos(t * .pi * 2) * p.driftY
-                    
+
                     let x = ((p.startX + xOffset).truncatingRemainder(dividingBy: 1.0) + 1.0).truncatingRemainder(dividingBy: 1.0) * size.width
                     let y = ((p.startY + yOffset).truncatingRemainder(dividingBy: 1.0) + 1.0).truncatingRemainder(dividingBy: 1.0) * size.height
-                    
+
                     // Pulsation douce
                     let pulse = sin(time * 0.8 + p.phase) * 0.15
-                    let opacity = max(0.05, p.baseOpacity + pulse)
-                    
+                    let opacity = max(0.05, p.baseOpacity + pulse) * 0.6
+
                     // Particule avec halo doux
                     let haloRect = CGRect(x: x - p.radius * 3, y: y - p.radius * 3,
                                           width: p.radius * 6, height: p.radius * 6)
                     context.opacity = opacity * 0.3
-                    context.fill(Path(ellipseIn: haloRect), with: .color(dustColor))
-                    
+                    context.fill(Path(ellipseIn: haloRect), with: .color(starColor))
+
                     let coreRect = CGRect(x: x - p.radius, y: y - p.radius,
                                           width: p.radius * 2, height: p.radius * 2)
                     context.opacity = opacity
-                    context.fill(Path(ellipseIn: coreRect), with: .color(dustColor))
+                    context.fill(Path(ellipseIn: coreRect), with: .color(starColor))
                 }
             }
         }
