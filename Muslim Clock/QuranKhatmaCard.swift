@@ -133,12 +133,7 @@ struct QuranKhatmaCard: View {
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 14)
-        .background(.ultraThinMaterial)
-        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
-        .overlay(
-            RoundedRectangle(cornerRadius: 18, style: .continuous)
-                .stroke(Color.teal.opacity(0.2), lineWidth: 1)
-        )
+        .glassCardSecondary(cornerRadius: 18, tint: .teal, fallback: GlassFallback.warm)
     }
 
     private func activeState(plan: QuranPlan, progress: QuranPlanProgress) -> some View {
@@ -192,12 +187,7 @@ struct QuranKhatmaCard: View {
         .padding(.horizontal, 16)
         .padding(.vertical, 14)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(.ultraThinMaterial)
-        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
-        .overlay(
-            RoundedRectangle(cornerRadius: 18, style: .continuous)
-                .stroke(Color.teal.opacity(0.25), lineWidth: 1)
-        )
+        .glassCardSecondary(cornerRadius: 18, tint: .teal, fallback: GlassFallback.warm)
     }
 
     // Ton bienveillant : pas de rouge sur le retard, pas de "tu es en retard".

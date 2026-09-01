@@ -249,12 +249,7 @@ struct LatecomerFiqhAccessCard: View {
                     .foregroundStyle(.white.opacity(0.4))
             }
             .padding(14)
-            .background(.ultraThinMaterial)
-            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-            .overlay(
-                RoundedRectangle(cornerRadius: 16, style: .continuous)
-                    .stroke(Color.green.opacity(0.18), lineWidth: 1)
-            )
+            .glassCardSecondary(cornerRadius: 16, tint: .green, fallback: GlassFallback.warm)
         }
         .buttonStyle(.plain)
         .sheet(isPresented: $showFiche) {

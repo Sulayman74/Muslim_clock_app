@@ -11,12 +11,34 @@ struct DailyContentView: View {
     @State private var showAyahArabic = true
     @State private var showHadithArabic = true
     
+    /// Toggle DEBUG partagé avec MainView : force le vendredi pour tester la
+    /// bannière Salawat sans attendre le jour réel. Sans effet en Release.
+    @AppStorage("debugForceFriday") private var debugForceFriday = false
+
     private var isFriday: Bool {
-        Calendar.current.component(.weekday, from: Date()) == 6
+        #if DEBUG
+        if debugForceFriday { return true }
+        #endif
+        return Calendar.current.component(.weekday, from: Date()) == 6
     }
 
+    // Écran Rappel en 2 zones (cf. PLAN_UX_RAPPEL_ZONES.md) : prioritaire
+    // « le rappel du jour » (salawat vendredi, verset, hadith, reprendre le
+    // cours) puis secondaire « mes programmes » (Khatma, ʿIlm, podcast, fiche
+    // masbûq). VStack eager obligatoire : les deep links Khatma/ʿIlm reposent
+    // sur le onAppear des cartes.
     var body: some View {
-        VStack(spacing: 20) {
+        VStack(spacing: ZoneSpacing.interZone) {
+            rappelPriorityZone
+            rappelSecondaryZone
+        }
+    }
+
+    // MARK: - Zone prioritaire « le rappel du jour »
+
+    @ViewBuilder
+    private var rappelPriorityZone: some View {
+        VStack(spacing: ZoneSpacing.intraZonePrimary) {
 
             // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
             // BANNIERE VENDREDI — Salawat
@@ -25,15 +47,51 @@ struct DailyContentView: View {
                 FridaySalawatBanner()
             }
 
-            // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-            // FICHE MASBÛQ + JANÂZA (accès permanent)
-            // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-            LatecomerFiqhAccessCard()
+            // Le skeleton de chargement ne couvre QUE le contenu du jour
+            // (verset + hadith) — jamais les cartes de programmes.
+            Group {
+                verseCard
+                hadithCard
+            }
+            .redacted(reason: service.isLoading ? .placeholder : [])
+            .animation(.smooth(duration: 0.4), value: service.isLoading)
 
-            // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-            // CARTE CORAN
-            // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-            VStack(alignment: .leading, spacing: 12) {
+            // Reprendre le cours audio — l'action quotidienne n°1 des auditeurs,
+            // extraite du carrousel podcast (n'occupe rien sans position sauvée).
+            ResumeListeningRow()
+        }
+    }
+
+    // MARK: - Zone secondaire « mes programmes »
+
+    @ViewBuilder
+    private var rappelSecondaryZone: some View {
+        VStack(alignment: .leading, spacing: ZoneSpacing.intraZoneSecondary) {
+            ZoneSectionHeader(
+                titleFr: "Mes programmes",
+                titleAr: "بَرَامِجِي",
+                accent: .orange
+            )
+            .padding(.bottom, ZoneSpacing.sectionHeaderBottom)
+
+            // KHATMA — programme de lecture du Quran (module QuranPlan)
+            QuranKhatmaCard()
+
+            // PROGRAMME ʿILM — apprentissage des mutūn (module Ilm)
+            IlmProgramCard()
+
+            // CARTE AUDIO / PODCAST (exploration — la reprise vit en zone 1)
+            PodcastCarouselView()
+
+            // FICHE MASBÛQ + JANÂZA — référence, descendue en fin d'écran
+            LatecomerFiqhAccessCard()
+        }
+    }
+
+    // MARK: - Carte Verset
+
+    private var verseCard: some View {
+        VStack(alignment: .leading, spacing: 12) {
                 HStack(spacing: 6) {
                     Image(systemName: "book.fill")
                         .font(.system(size: 14))
@@ -134,16 +192,15 @@ struct DailyContentView: View {
                     .foregroundColor(.secondary)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
-            .padding()
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .background(.regularMaterial)
-            .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous)) // ✅ iOS 18 standard
-            .shadow(color: .black.opacity(0.1), radius: 8, y: 4) // Ombre subtile
-            
-            // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-            // CARTE HADITH
-            // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-            VStack(alignment: .leading, spacing: 12) {
+        .padding()
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .glassCard(tint: .indigo)
+    }
+
+    // MARK: - Carte Hadith
+
+    private var hadithCard: some View {
+        VStack(alignment: .leading, spacing: 12) {
                 HStack(spacing: 6) {
                     Image(systemName: "quote.opening")
                     Text("Hadith du moment")
@@ -211,32 +268,62 @@ struct DailyContentView: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
-            .padding()
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .background(.regularMaterial)
-            .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous)) // ✅ iOS 18 standard
-            .shadow(color: .black.opacity(0.1), radius: 8, y: 4) // Ombre subtile
+        .padding()
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .glassCard(tint: .teal)
+    }
+}
+
+// MARK: - Reprendre le cours (zone prioritaire du tab Rappel)
+
+/// Rangée « Reprendre » extraite de `PodcastCarouselView` : visible uniquement
+/// si une position de reprise existe et qu'aucune lecture n'est active — même
+/// condition qu'avant l'extraction, seule la position à l'écran change.
+struct ResumeListeningRow: View {
+    @EnvironmentObject var podcastManager: PodcastManager
+
+    var body: some View {
+        if let target = podcastManager.resumeTarget, !podcastManager.isPlaying {
+            Button {
+                podcastManager.resume()
+            } label: {
+                HStack(spacing: 12) {
+                    ZStack {
+                        Circle()
+                            .fill(Color.orange)
+                            .frame(width: 44, height: 44)
+                            .shadow(color: .orange.opacity(0.4), radius: 8, y: 4)
+                        Image(systemName: "play.fill")
+                            .font(.system(size: 18, weight: .bold))
+                            .foregroundColor(.white)
+                            .offset(x: 2)
+                    }
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Reprendre")
+                            .font(.system(size: 10, weight: .black, design: .rounded))
+                            .tracking(1.0)
+                            .foregroundStyle(.orange.gradient)
+                        Text(verbatim: target.episode.title)
+                            .font(.system(size: 15, weight: .semibold, design: .rounded))
+                            .foregroundColor(.white)
+                            .lineLimit(1)
+                            .truncationMode(.tail)
+                        Text(verbatim: "à \(playbackTimeLabel(target.position))")
+                            .font(.system(size: 12, weight: .medium, design: .monospaced))
+                            .monospacedDigit()
+                            .foregroundStyle(.white.opacity(0.6))
+                    }
+                    Spacer()
+                    Image(systemName: "arrow.counterclockwise")
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundStyle(.orange.opacity(0.7))
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 12)
+                .glassCard(cornerRadius: 16, tint: .orange)
+            }
+            .buttonStyle(.plain)
         }
-        .redacted(reason: service.isLoading ? .placeholder : [])
-        .animation(.smooth(duration: 0.4), value: service.isLoading)
-
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        // KHATMA — programme de lecture du Quran (module QuranPlan)
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        QuranKhatmaCard()
-            .padding(.top, 10)
-
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        // PROGRAMME ʿILM — apprentissage des mutūn (module Ilm)
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        IlmProgramCard()
-            .padding(.top, 10)
-
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        // CARTE AUDIO / PODCAST
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        PodcastCarouselView()
-            .padding(.top, 10)
     }
 }
 
@@ -537,54 +624,8 @@ struct PodcastCarouselView: View {
             .padding(.horizontal, 20)
             .padding(.vertical, 16)
 
-            // ── REPRENDRE (visible si une position de reprise existe, hors lecture active) ──
-            if let target = podcastManager.resumeTarget, !podcastManager.isPlaying {
-                Button {
-                    podcastManager.resume()
-                } label: {
-                    HStack(spacing: 12) {
-                        ZStack {
-                            Circle()
-                                .fill(Color.orange)
-                                .frame(width: 44, height: 44)
-                                .shadow(color: .orange.opacity(0.4), radius: 8, y: 4)
-                            Image(systemName: "play.fill")
-                                .font(.system(size: 18, weight: .bold))
-                                .foregroundColor(.white)
-                                .offset(x: 2)
-                        }
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text("Reprendre")
-                                .font(.system(size: 10, weight: .black, design: .rounded))
-                                .tracking(1.0)
-                                .foregroundStyle(.orange.gradient)
-                            Text(verbatim: target.episode.title)
-                                .font(.system(size: 15, weight: .semibold, design: .rounded))
-                                .foregroundColor(.white)
-                                .lineLimit(1)
-                                .truncationMode(.tail)
-                            Text(verbatim: "à \(playbackTimeLabel(target.position))")
-                                .font(.system(size: 12, weight: .medium, design: .monospaced))
-                                .monospacedDigit()
-                                .foregroundStyle(.white.opacity(0.6))
-                        }
-                        Spacer()
-                        Image(systemName: "arrow.counterclockwise")
-                            .font(.system(size: 16, weight: .semibold))
-                            .foregroundStyle(.orange.opacity(0.7))
-                    }
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 12)
-                    .background(.ultraThinMaterial)
-                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 16, style: .continuous)
-                            .stroke(Color.orange.opacity(0.3), lineWidth: 1)
-                    )
-                }
-                .buttonStyle(.plain)
-                .padding(.horizontal, 20)
-            }
+            // (La rangée « Reprendre » vit désormais en zone prioritaire du tab
+            // Rappel — cf. ResumeListeningRow.)
 
             // ── 2. PROGRESSION GLOWING ──
             VStack(alignment: .leading, spacing: 8) {

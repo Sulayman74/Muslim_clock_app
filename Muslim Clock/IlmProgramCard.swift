@@ -88,12 +88,7 @@ struct IlmProgramCard: View {
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 14)
-        .background(.ultraThinMaterial)
-        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
-        .overlay(
-            RoundedRectangle(cornerRadius: 18, style: .continuous)
-                .stroke(Color.purple.opacity(0.2), lineWidth: 1)
-        )
+        .glassCardSecondary(cornerRadius: 18, tint: .purple, fallback: GlassFallback.warm)
     }
 
     private func activeState(summary: IlmProgressSummary) -> some View {
@@ -154,12 +149,7 @@ struct IlmProgramCard: View {
         .padding(.horizontal, 16)
         .padding(.vertical, 14)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(.ultraThinMaterial)
-        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
-        .overlay(
-            RoundedRectangle(cornerRadius: 18, style: .continuous)
-                .stroke(Color.purple.opacity(0.25), lineWidth: 1)
-        )
+        .glassCardSecondary(cornerRadius: 18, tint: .purple, fallback: GlassFallback.warm)
     }
 
     // Ton bienveillant : pas de rouge, phrasé positif (même règle que la Khatma).

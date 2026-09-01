@@ -334,7 +334,7 @@ struct MainView: View {
     /// décomptes contextuels, et LES 5 PRIÈRES (remontées au-dessus du fold).
     @ViewBuilder
     private var salatPriorityZone: some View {
-        VStack(spacing: SalatSpacing.intraZonePrimary) {
+        VStack(spacing: ZoneSpacing.intraZonePrimary) {
             VStack(spacing: 10) {
                 HStack {
                     WeatherMiniWidget(location: manager.userLocation)
@@ -367,13 +367,13 @@ struct MainView: View {
     /// en cours, rappel coranique, fiche voyage, salawat vendredi, lune.
     @ViewBuilder
     private var salatSecondaryZone: some View {
-        VStack(alignment: .leading, spacing: SalatSpacing.intraZoneSecondary) {
-            SalatSectionHeader(
+        VStack(alignment: .leading, spacing: ZoneSpacing.intraZoneSecondary) {
+            ZoneSectionHeader(
                 titleFr: "Pour aller plus loin",
                 titleAr: "لِلاسْتِزَادَة",
                 accent: salatStateTint
             )
-            .padding(.bottom, SalatSpacing.sectionHeaderBottom)
+            .padding(.bottom, ZoneSpacing.sectionHeaderBottom)
 
             AdhkarMomentCard()
 
@@ -433,7 +433,7 @@ struct MainView: View {
                             // pour la lisibilité ET le type-checker.
                             VStack(spacing: 20) {
                                 salatHeaderBlock
-                                VStack(spacing: SalatSpacing.interZone) {
+                                VStack(spacing: ZoneSpacing.interZone) {
                                     salatPriorityZone
                                     salatSecondaryZone
                                 }
@@ -479,7 +479,6 @@ struct MainView: View {
                                 DailyContentView()
                             }
                             .padding(.horizontal, 16)
-                            .padding(.top, 20)
                         }
                         .refreshable {
                             await dailyContentService.fetchDailyContent()

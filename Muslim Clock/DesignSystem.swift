@@ -55,14 +55,17 @@ extension View {
         }
     }
 
-    /// Surface **secondaire** (zone « Pour aller plus loin » de l'onglet Salat).
+    /// Surface **secondaire** (zones « pour aller plus loin » des onglets).
     ///
     /// Un cran de verre en dessous de `glassCard` : `.clear` + teinte 0.08 — la
-    /// carte recule optiquement et laisse voir les étoiles. Réutilise la grammaire
+    /// carte recule optiquement et laisse voir le fond. Réutilise la grammaire
     /// existante (`.regular` = contenu, `.clear` = discret). Fallback opaque quand
-    /// « Réduire la transparence » est actif.
-    func glassCardSecondary(cornerRadius: CGFloat = CornerRadius.card, tint: Color? = nil) -> some View {
-        modifier(GlassCardSecondary(cornerRadius: cornerRadius, tint: tint))
+    /// « Réduire la transparence » est actif — couleur adaptée au fond de l'onglet
+    /// via `GlassFallback` (cosmique par défaut, `warm` pour le tab Rappel).
+    func glassCardSecondary(cornerRadius: CGFloat = CornerRadius.card,
+                            tint: Color? = nil,
+                            fallback: Color = GlassFallback.cosmic) -> some View {
+        modifier(GlassCardSecondary(cornerRadius: cornerRadius, tint: tint, fallback: fallback))
     }
 
     // MARK: - CARDS (20pt corner radius)
@@ -142,19 +145,29 @@ extension View {
     }
 }
 
+/// Couleurs de fallback « Réduire la transparence » par fond d'onglet.
+/// Le verre échantillonne le backdrop ; le fallback opaque, lui, doit être
+/// choisi à la main pour rester cohérent avec le fond de chaque tab.
+enum GlassFallback {
+    /// Mesh cosmique (tabs Salat / Qibla).
+    static let cosmic = Color(red: 0.07, green: 0.07, blue: 0.14)
+    /// Gradient chaud brun du tab Rappel (point médian, légèrement éclairci).
+    static let warm = Color(red: 0.16, green: 0.09, blue: 0.06)
+}
+
 /// Implémentation de `glassCardSecondary` — ViewModifier pour accéder à
 /// l'environnement d'accessibilité (fond plein si Réduire la transparence).
 struct GlassCardSecondary: ViewModifier {
     @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
     let cornerRadius: CGFloat
     let tint: Color?
+    let fallback: Color
 
     func body(content: Content) -> some View {
         let shape = RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
         if reduceTransparency {
-            // Fond opaque harmonisé avec le mesh cosmique « default ».
             content.background(
-                shape.fill(Color(red: 0.07, green: 0.07, blue: 0.14))
+                shape.fill(fallback)
                     .overlay(shape.fill((tint ?? .clear).opacity(0.14)))
                     .overlay(shape.stroke(.white.opacity(0.10), lineWidth: 1))
             )
@@ -170,7 +183,7 @@ struct GlassCardSecondary: ViewModifier {
 /// ESPACEMENT DE L'ÉCRAN SALAT (échelle sémantique)
 /// ═══════════════════════════════════════════════════════════════
 
-enum SalatSpacing {
+enum ZoneSpacing {
     /// Entre cartes de la zone prioritaire.
     static let intraZonePrimary: CGFloat = 16
     /// Entre cartes de la zone secondaire (densité légèrement plus compacte).
@@ -199,7 +212,7 @@ enum PrayerStateTint {
 /// Seuil visuel entre la zone prioritaire (glance) et la zone d'enrichissement.
 /// Trait-capsule teinté par l'état de la prière (fil conducteur entre les zones),
 /// titre FR uppercase discret, écho arabe décoratif à droite.
-struct SalatSectionHeader: View {
+struct ZoneSectionHeader: View {
     let titleFr: LocalizedStringKey
     let titleAr: String
     /// Couleur d'état de la prière (orange en cours / vert prochaine / indigo nuit).
