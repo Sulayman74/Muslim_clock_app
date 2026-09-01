@@ -103,7 +103,9 @@ final class RamadanDuaService {
     ///   - maghrib: Heure du Maghrib aujourd'hui.
     ///   - isha: Heure d'Isha aujourd'hui.
     ///   - fajr: Heure de Fajr aujourd'hui (ou demain selon contexte).
-    static func currentWindow(
+    // nonisolated : fonction pure (l'accès UserDefaults DEBUG est thread-safe),
+    // appelable depuis les tests et tout contexte sans sauter sur le MainActor.
+    nonisolated static func currentWindow(
         now: Date = .now,
         maghrib: Date?,
         isha: Date?,

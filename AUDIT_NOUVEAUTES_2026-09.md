@@ -107,17 +107,19 @@ UpdateCheck, etc.
   Quoi de neuf extrait dans `markWhatsNewSeen()`.
 
 ### 🟠 À durcir
-| Fichier | Problème |
-|---------|----------|
-| `QuranPlanViewModel.swift` (~l.100) | `try? context.save()` — un échec SwiftData perd silencieusement les pages lues du jour |
-| `QuranRecorder.swift` (~l.151) | Fallback de durée peut produire un M4A de durée 0 (race rare au stop) |
-| `SmartSetupMath.swift:48` | `precondition(!items.isEmpty)` plante en Release si liste vide — vérifier les call sites |
+| Fichier | Problème | État |
+|---------|----------|------|
+| `QuranPlanViewModel.swift` | `try? context.save()` — échec SwiftData silencieux | ✅ Corrigé (01/09) : do/catch + flag `saveFailed` + alert dans `QuranTrackerView` |
+| `SmartSetupMath.swift:48` | `precondition(!items.isEmpty)` | ✅ Vérifié (01/09) : call site unique gardé par `guard !candidates.isEmpty` (SmartSetupView.swift:243) — sûr |
+| `QuranRecorder.swift` (~l.151) | Fallback de durée peut produire un M4A de durée 0 (race rare au stop) | ⏳ Ouvert (edge case rare, non bloquant) |
 
 ### 🟡 Couverture de tests manquante
-- `RamadanDuaService.currentWindow()` : fenêtre Suhoor avec wrap minuit non prouvée.
-- `LatecomerFiqh` : 183 lignes de contenu religieux de référence sans validation —
+- ✅ `RamadanDuaService.currentWindow()` : couvert (01/09) — `RamadanDuaWindowTests.swift`,
+  10 tests (bornes Iftar, Suhoor wrap minuit, borne Fajr exclue, priorité Iftar, nils).
+  `currentWindow` passé `nonisolated` (fonction pure) pour être testable hors MainActor.
+- ⏳ `LatecomerFiqh` : 183 lignes de contenu religieux de référence sans validation —
   relecture manuelle recommandée (Coran 4:101, ordre des rakʿas).
-- Aucun test d'intégration SwiftData / schedulers de notifications.
+- ⏳ Aucun test d'intégration SwiftData / schedulers de notifications.
 
 ### ℹ️ Points d'attention avant release
 1. Réactiver les donations (retirer les 2 `#if DEBUG` dans `SettingsView`) quand

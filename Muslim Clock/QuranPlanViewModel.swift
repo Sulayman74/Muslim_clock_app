@@ -28,6 +28,11 @@ final class QuranPlanViewModel {
     /// Streak courant (jours consécutifs objectif atteint).
     var streak: Int = 0
 
+    /// Passe à `true` quand la sauvegarde SwiftData du journal échoue.
+    /// Consommé par QuranTrackerView (alert) — évite la perte silencieuse
+    /// des pages du jour. Reset par le binding de l'alert à sa fermeture.
+    var saveFailed: Bool = false
+
     init() {
         self.plan = QuranPlanStorage.load()
     }
@@ -97,7 +102,14 @@ final class QuranPlanViewModel {
             )
             context.insert(entry)
         }
-        try? context.save()
+        do {
+            try context.save()
+        } catch {
+            // Un échec silencieux = pages du jour perdues sans que l'utilisateur
+            // le sache. On le signale (alert dans QuranTrackerView) et on logge.
+            saveFailed = true
+            print("⚠️ [QuranPlan] Échec de sauvegarde du journal : \(error.localizedDescription)")
+        }
     }
 
     /// Crédite automatiquement UNE page terminée pendant la lecture, si et seulement si

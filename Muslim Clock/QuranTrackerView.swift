@@ -74,6 +74,13 @@ struct QuranTrackerView: View {
         .preferredColorScheme(.dark)
         .onAppear { vm.refresh(entries: entries) }
         .onChange(of: entries) { _, newValue in vm.refresh(entries: newValue) }
+        // Échec de sauvegarde SwiftData (logPages / autoLogPage) : on prévient
+        // au lieu de perdre silencieusement les pages du jour.
+        .alert("Enregistrement impossible", isPresented: $vm.saveFailed) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text("Tes pages n'ont pas pu être sauvegardées. Réessaie, et relance l'app si le problème persiste.")
+        }
     }
 
     // MARK: - Empty state
