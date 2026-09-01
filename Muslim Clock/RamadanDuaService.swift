@@ -43,7 +43,9 @@ struct RamadanDua: Codable, Identifiable {
 // MARK: - Contexte temporel
 
 /// Fenêtre temporelle déterminant quelle catégorie de du'a afficher.
-enum RamadanDuaWindow {
+/// nonisolated : la conformance Equatable synthétisée doit être utilisable
+/// hors MainActor (tests + currentWindow nonisolated) — même idiome que TravelStatus.
+nonisolated enum RamadanDuaWindow: Equatable {
     case iftar
     case suhoor
     case general

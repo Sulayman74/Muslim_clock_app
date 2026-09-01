@@ -146,9 +146,13 @@ final class QuranRecorder: NSObject {
     /// ou la limite de durée), on ne fait rien — évite la double transition d'état.
     func stop() {
         guard case .recording = state, let recorder, recorder.isRecording else { return }
+        // Mesurer AVANT stop() : une fois arrêté, AVAudioRecorder renvoie
+        // currentTime = 0 et on retombait toujours sur le fallback horloge
+        // (durée 0 possible si recordingStartedAt était déjà nil-out).
+        let measured = recorder.currentTime
         recorder.stop()
         stopTick()
-        let duration = recorder.currentTime > 0 ? recorder.currentTime : (recordingStartedAt.map { Date().timeIntervalSince($0) } ?? 0)
+        let duration = measured > 0 ? measured : (recordingStartedAt.map { Date().timeIntervalSince($0) } ?? 0)
         lastRecordedDuration = duration
         if let url = lastRecordedURL {
             state = .recorded(url: url, duration: duration)

@@ -111,7 +111,7 @@ UpdateCheck, etc.
 |---------|----------|------|
 | `QuranPlanViewModel.swift` | `try? context.save()` — échec SwiftData silencieux | ✅ Corrigé (01/09) : do/catch + flag `saveFailed` + alert dans `QuranTrackerView` |
 | `SmartSetupMath.swift:48` | `precondition(!items.isEmpty)` | ✅ Vérifié (01/09) : call site unique gardé par `guard !candidates.isEmpty` (SmartSetupView.swift:243) — sûr |
-| `QuranRecorder.swift` (~l.151) | Fallback de durée peut produire un M4A de durée 0 (race rare au stop) | ⏳ Ouvert (edge case rare, non bloquant) |
+| `QuranRecorder.swift` | Fallback de durée pouvait produire un M4A de durée 0 (race rare au stop) | ✅ Corrigé (01/09) : `currentTime` lu AVANT `recorder.stop()` (après l'arrêt il renvoie 0), fallback horloge conservé en ceinture-bretelles |
 
 ### 🟡 Couverture de tests manquante
 - ✅ `RamadanDuaService.currentWindow()` : couvert (01/09) — `RamadanDuaWindowTests.swift`,
