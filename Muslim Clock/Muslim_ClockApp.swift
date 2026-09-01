@@ -74,6 +74,14 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
             UserDefaults.standard.set(true, forKey: "pendingOpenQuranTracker")
             NotificationCenter.default.post(name: .quranReadingTapped, object: nil)
 
+        // Notif rappel ʿIlm → tab Rappel + sheet IlmTrackerView
+        case "ilm_program":
+            NotificationDeepLink.store(.ilmTracker)
+            // Flag dédié consommé par IlmProgramCard à son mount (la card vit
+            // dans le tab 1, monté paresseusement par TabView).
+            UserDefaults.standard.set(true, forKey: "pendingOpenIlmTracker")
+            NotificationCenter.default.post(name: .ilmReminderTapped, object: nil)
+
         // Notif rappel Adhkar (matin/soir) → sheet AdhkarView au bon timing
         case "adhkar_reminder":
             if let timing = userInfo["timing"] as? String {
@@ -99,6 +107,10 @@ extension Notification.Name {
     /// Émise quand l'utilisateur tape une notif de rappel Quran. MainView switche
     /// vers la tab Rappel ; QuranKhatmaCard ouvre la sheet Tracker.
     static let quranReadingTapped = Notification.Name("QuranReadingTapped")
+
+    /// Émise quand l'utilisateur tape la notif de rappel quotidien ʿIlm. MainView
+    /// switche vers la tab Rappel ; IlmProgramCard ouvre la sheet Tracker.
+    static let ilmReminderTapped = Notification.Name("IlmReminderTapped")
 
     /// Émise quand l'utilisateur tape une notif de rappel Adhkar (matin ou soir).
     /// `userInfo["timing"]` contient "morning" ou "evening". MainView ouvre la sheet

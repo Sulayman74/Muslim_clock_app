@@ -11,6 +11,9 @@ import SwiftUI
 struct IlmProgramCard: View {
     @State private var vm = IlmViewModel()
     @State private var showTracker = false
+    /// Flag posé par AppDelegate quand l'utilisateur tape la notif de rappel ʿIlm.
+    /// Permet l'ouverture auto de la sheet même quand la card vient juste de monter.
+    @AppStorage("pendingOpenIlmTracker") private var pendingOpenIlmTracker: Bool = false
 
     var body: some View {
         Button { showTracker = true } label: {
@@ -25,6 +28,20 @@ struct IlmProgramCard: View {
             vm.refresh()
             // Idempotent : maintient le rappel quotidien aligné sur le plan courant.
             vm.rescheduleReminder()
+            consumePendingDeepLink()
+        }
+        // Tap notif ʿIlm reçu pendant que la card est montée → ouverture immédiate
+        .onReceive(NotificationCenter.default.publisher(for: .ilmReminderTapped)) { _ in
+            showTracker = true
+            pendingOpenIlmTracker = false
+        }
+    }
+
+    /// Si l'AppDelegate a posé le flag avant que la card soit montée, on l'honore au mount.
+    private func consumePendingDeepLink() {
+        if pendingOpenIlmTracker {
+            showTracker = true
+            pendingOpenIlmTracker = false
         }
     }
 

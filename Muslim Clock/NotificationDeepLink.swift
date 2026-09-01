@@ -14,6 +14,7 @@ import Foundation
 enum NotificationDeepLink: String {
     case adhan
     case quranTracker = "quran_tracker"
+    case ilmTracker = "ilm_tracker"
     case adhkarMorning = "adhkar_morning"
     case adhkarEvening = "adhkar_evening"
 

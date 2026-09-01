@@ -283,8 +283,9 @@ struct MainView: View {
             }
         }
     var body: some View {
-            
-            TabView(selection: $selectedTab) {
+            // Chaîne coupée en deux instructions (`let` + `return`) : le body était
+            // devenu trop long pour être type-checké en une seule expression.
+            let content = TabView(selection: $selectedTab) {
                 
                 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
                 // ONGLET 1 : SALAT
@@ -527,6 +528,8 @@ struct MainView: View {
         }
         .animation(.spring(response: 0.4, dampingFraction: 0.8), value: updateChecker.updateAvailable)
         .animation(.spring(response: 0.4, dampingFraction: 0.8), value: networkMonitor.isConnected)
+
+        return content
         .onChange(of: scenePhase, initial: false) {
             if scenePhase == .background || scenePhase == .inactive {
                 podcastManager.savePlaybackPositionNow()
@@ -611,12 +614,7 @@ struct MainView: View {
                         .presentationBackground(.ultraThinMaterial)
                         .presentationCornerRadius(30)
                 }
-                .sheet(isPresented: $showWhatsNew, onDismiss: {
-                    // Écrit ici (et pas dans checkWhatsNew) : si la sheet n'a jamais
-                    // été affichée (app tuée avant), le Quoi de neuf reviendra.
-                    let currentVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? ""
-                    if !currentVersion.isEmpty { lastSeenAppVersion = currentVersion }
-                }) {
+                .sheet(isPresented: $showWhatsNew, onDismiss: markWhatsNewSeen) {
                     WhatsNewView()
                         .presentationDetents([.large])
                         .presentationCornerRadius(30)
@@ -672,6 +670,11 @@ struct MainView: View {
                 }
                 // Notif Quran tapée → switch automatique vers tab Rappel (où la card vit).
                 .onReceive(NotificationCenter.default.publisher(for: .quranReadingTapped)) { _ in
+                    NotificationDeepLink.clear()
+                    selectedTab = 1
+                }
+                // Notif ʿIlm tapée → switch automatique vers tab Rappel (où la card vit).
+                .onReceive(NotificationCenter.default.publisher(for: .ilmReminderTapped)) { _ in
                     NotificationDeepLink.clear()
                     selectedTab = 1
                 }
@@ -731,6 +734,14 @@ struct MainView: View {
         )
     }
 
+    /// Marque le Quoi de neuf comme vu, à la fermeture de la sheet.
+    /// Écrit ici (et pas dans checkWhatsNew) : si la sheet n'a jamais
+    /// été affichée (app tuée avant), le Quoi de neuf reviendra.
+    private func markWhatsNewSeen() {
+        let currentVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? ""
+        if !currentVersion.isEmpty { lastSeenAppVersion = currentVersion }
+    }
+
     /// Consomme la route posée par `AppDelegate.didReceive` au tap d'une notification.
     ///
     /// Couvre le cold start : le post NotificationCenter du delegate est perdu si
@@ -752,6 +763,10 @@ struct MainView: View {
         case .quranTracker:
             // Le switch de tab monte DailyContentView → QuranKhatmaCard, qui
             // consomme `pendingOpenQuranTracker` à son onAppear et ouvre la sheet.
+            selectedTab = 1
+        case .ilmTracker:
+            // Même mécanique : IlmProgramCard consomme `pendingOpenIlmTracker`
+            // à son onAppear et ouvre la sheet.
             selectedTab = 1
         case .adhkarMorning:
             adhkarSheetForcedTiming = .morning
