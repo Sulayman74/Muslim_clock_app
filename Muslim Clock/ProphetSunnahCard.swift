@@ -204,6 +204,12 @@ enum ProphetSunnahProvider {
 struct ProphetSunnahCardView: View {
     let sunnah: ProphetSunnah
 
+    /// Contexte de la prière courante — capsule dans l'en-tête qui explicite
+    /// POURQUOI cette sunnah est affichée (fil conducteur avec la zone prioritaire).
+    /// `nil` ⇒ pas de capsule (rétro-compatible).
+    var contextPrayerName: String? = nil
+    var isPrayerInWindow: Bool = false
+
     @State private var showArabic: Bool = false
     /// Carte d'enrichissement repliée par défaut pour alléger la densité de
     /// l'écran Salat. L'utilisateur déplie au tap sur l'en-tête.
@@ -235,6 +241,19 @@ struct ProphetSunnahCardView: View {
                     }
 
                     Spacer()
+
+                    // Capsule contextuelle : relie la sunnah à la prière courante
+                    // (même sémantique couleur que la zone prioritaire).
+                    if let contextPrayerName {
+                        let tint = isPrayerInWindow ? PrayerStateTint.now : PrayerStateTint.upcoming
+                        Text(isPrayerInWindow ? "\(contextPrayerName) · en cours" : "avant \(contextPrayerName)")
+                            .font(.system(size: 10, weight: .bold, design: .rounded))
+                            .foregroundStyle(tint)
+                            .lineLimit(1)
+                            .padding(.horizontal, 7)
+                            .padding(.vertical, 2)
+                            .glassEffect(.clear.tint(tint.opacity(0.20)), in: Capsule())
+                    }
 
                     Image(systemName: "chevron.down")
                         .font(.system(size: 12, weight: .semibold))
@@ -320,6 +339,6 @@ struct ProphetSunnahCardView: View {
             }
         }
         .padding(16)
-        .glassCard(tint: sunnah.accentColor)
+        .glassCardSecondary(tint: sunnah.accentColor)
     }
 }

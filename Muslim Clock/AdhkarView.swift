@@ -590,6 +590,9 @@ struct DhikrCardView: View {
 // ═══════════════════════════════════════════════════════════
 
 struct AdhkarQuickAccessButton: View {
+    /// Variante compacte (demi-largeur, zone secondaire de l'écran Salat) :
+    /// icône + libellé FR une ligne, verre secondaire.
+    var compact: Bool = false
     @State private var showAdhkarSheet = false
     @EnvironmentObject var prayerVM: PrayerTimesViewModel
 
@@ -602,36 +605,53 @@ struct AdhkarQuickAccessButton: View {
         let hour = Calendar.current.component(.hour, from: now)
         return (hour >= 4 && hour < 15) ? .morning : .evening
     }
-    
+
     var body: some View {
         Button {
             showAdhkarSheet = true
         } label: {
-            HStack(spacing: 12) {
-                Image(systemName: timing.icon)
-                    .font(.system(size: 22))
-                    .symbolRenderingMode(.palette)
-                    .foregroundStyle(timing.accentColor, .white.opacity(0.6))
-                
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(timing.label)
-                        .font(.system(size: 15, weight: .bold))
-                        .foregroundColor(.white)
-                        .environment(\.layoutDirection, .rightToLeft)
+            if compact {
+                HStack(spacing: 8) {
+                    Image(systemName: timing.icon)
+                        .font(.system(size: 18))
+                        .symbolRenderingMode(.palette)
+                        .foregroundStyle(timing.accentColor, .white.opacity(0.6))
                     Text(timing.labelFr)
-                        .font(.system(size: 11, weight: .medium, design: .rounded))
-                        .foregroundColor(.white.opacity(0.6))
+                        .font(.system(size: 12, weight: .bold, design: .rounded))
+                        .foregroundColor(.white)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.75)
                 }
-                
-                Spacer()
-                
-                Image(systemName: "chevron.right")
-                    .font(.system(size: 14, weight: .semibold))
-                    .foregroundColor(.white.opacity(0.3))
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 14)
+                .glassCardSecondary(cornerRadius: 18, tint: timing.accentColor)
+            } else {
+                HStack(spacing: 12) {
+                    Image(systemName: timing.icon)
+                        .font(.system(size: 22))
+                        .symbolRenderingMode(.palette)
+                        .foregroundStyle(timing.accentColor, .white.opacity(0.6))
+
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(timing.label)
+                            .font(.system(size: 15, weight: .bold))
+                            .foregroundColor(.white)
+                            .environment(\.layoutDirection, .rightToLeft)
+                        Text(timing.labelFr)
+                            .font(.system(size: 11, weight: .medium, design: .rounded))
+                            .foregroundColor(.white.opacity(0.6))
+                    }
+
+                    Spacer()
+
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundColor(.white.opacity(0.3))
+                }
+                .padding(.horizontal, 20)
+                .padding(.vertical, 14)
+                .glassEffect(.regular.tint(timing.accentColor.opacity(0.10)), in: RoundedRectangle(cornerRadius: 18))
             }
-            .padding(.horizontal, 20)
-            .padding(.vertical, 14)
-            .glassEffect(.regular.tint(timing.accentColor.opacity(0.10)), in: RoundedRectangle(cornerRadius: 18))
         }
         .sensoryFeedback(.impact(weight: .light), trigger: showAdhkarSheet)
         .sheet(isPresented: $showAdhkarSheet) {

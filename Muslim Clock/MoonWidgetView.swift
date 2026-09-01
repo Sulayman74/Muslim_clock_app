@@ -219,7 +219,7 @@ struct MoonWidgetView: View {
         .padding(16)
         // Teinte ambre pendant les Jours Blancs (jeûne recommandé) — porte le
         // signal auparavant véhiculé par la bordure orange.
-        .glassCard(tint: today.isWhiteDays ? .orange : nil)
+        .glassCardSecondary(tint: today.isWhiteDays ? .orange : nil)
     }
 }
 

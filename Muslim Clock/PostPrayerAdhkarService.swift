@@ -47,55 +47,7 @@ class PostPrayerAdhkarService: ObservableObject {
 struct CurrentPrayerGaugeView: View {
     @EnvironmentObject var prayerVM: PrayerTimesViewModel
     @State private var showAdhkarSheet = false
-    
-    // ✨ RAPPELS SPIRITUELS POUR LE TEMPS D'ATTENTE
-    private struct SpiritualReminder: Identifiable {
-        let id = UUID()
-        let arabic: String
-        let french: String
-        let source: String
-        let color: Color
-        let icon: String
-    }
-    
-    private var currentReminder: SpiritualReminder {
-        let reminders = [
-            SpiritualReminder(
-                arabic: "إِنَّ الصَّلَاةَ كَانَتْ عَلَى الْمُؤْمِنِينَ كِتَابًا مَّوْقُوتًا",
-                french: "La Salât demeure, pour les croyants, une prescription, à des temps déterminés.",
-                source: "Sourate An-Nisa (4:103)",
-                color: .teal,
-                icon: "book.closed.fill"
-            ),
-            SpiritualReminder(
-                arabic: "حَافِظُوا عَلَى الصَّلَوَاتِ وَالصَّلَاةِ الْوُسْطَىٰ",
-                french: "Soyez assidus aux Salâts, et surtout la Salât médiane.",
-                source: "Sourate Al-Baqara (2:238)",
-                color: .indigo,
-                icon: "moon.stars.fill"
-            ),
-            SpiritualReminder(
-                arabic: "قَدْ أَفْلَحَ الْمُؤْمِنُونَ ۝ الَّذِينَ هُمْ فِي صَلَاتِهِمْ خَاشِعُونَ",
-                french: "Bienheureux sont certes les croyants, ceux qui sont humbles dans leur Salât.",
-                source: "Sourate Al-Mu'minun (23:1-2)",
-                color: .purple,
-                icon: "hands.sparkles.fill"
-            ),
-            SpiritualReminder(
-                arabic: "وَاسْتَعِينُوا بِالصَّبْرِ وَالصَّلَاةِ",
-                french: "Cherchez secours dans l'endurance et la Salât.",
-                source: "Sourate Al-Baqara (2:45)",
-                color: .green,
-                icon: "heart.fill"
-            )
-        ]
-        
-        // Rotation basée sur l'heure actuelle pour éviter de toujours voir le même
-        let hour = Calendar.current.component(.hour, from: Date())
-        let index = hour % reminders.count
-        return reminders[index]
-    }
-    
+
     var body: some View {
         VStack(spacing: 0) {
             if prayerVM.currentPrayerWindow != .none,
@@ -247,9 +199,12 @@ struct CurrentPrayerGaugeView: View {
 
             } else {
                 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-                // 3a. CARTE : COMPTE À REBOURS
-                //     Période sans fenêtre de prière active (après le lever du
-                //     soleil, en attendant Dhuhr). Décompte vers la prochaine Salât.
+                // 3. CARTE : COMPTE À REBOURS
+                //    Période sans fenêtre de prière active (après le lever du
+                //    soleil, en attendant Dhuhr). Décompte vers la prochaine Salât.
+                //    Le rappel coranique a été extrait en `SpiritualReminderCard`
+                //    (zone secondaire de l'écran Salat) — il n'a plus rien à faire
+                //    dans le hero prioritaire.
                 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
                 if let target = prayerVM.nextPrayerDate {
                     NextPrayerCountdownCard(
@@ -258,84 +213,7 @@ struct CurrentPrayerGaugeView: View {
                         prayerTime: prayerVM.nextPrayerTime,
                         start: prayerVM.sunriseTime
                     )
-                    .padding(.bottom, 20)
                 }
-
-                // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-                // 3b. CARTE : RAPPEL CORANIQUE (Rotation intelligente)
-                // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-                let reminder = currentReminder
-
-                VStack(alignment: .leading, spacing: 16) {
-                    // En-tête avec icône et badge "Rappel"
-                    HStack(spacing: 10) {
-                        ZStack {
-                            Circle()
-                                .fill(reminder.color.opacity(0.2))
-                                .frame(width: 40, height: 40)
-                            
-                            Image(systemName: reminder.icon)
-                                .font(.title3)
-                                .foregroundColor(reminder.color)
-                                .symbolEffect(.pulse.byLayer, options: .repeating.speed(0.5))
-                        }
-                        
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text("Rappel")
-                                .font(.caption.weight(.semibold))
-                                .foregroundColor(reminder.color.opacity(0.8))
-                            
-                            Text("En attendant la prochaine Salât")
-                                .font(.caption2)
-                                .foregroundColor(.white.opacity(0.5))
-                        }
-                        
-                        Spacer()
-                        
-                        // Petit bouton pour partager
-                        ShareLink(item: "\(reminder.arabic)\n\n\(reminder.french)\n\n— \(reminder.source)") {
-                            Image(systemName: "square.and.arrow.up")
-                                .font(.system(size: 14))
-                                .foregroundColor(reminder.color.opacity(0.7))
-                        }
-                    }
-                    
-                    Divider()
-                        .background(Color.white.opacity(0.1))
-                    
-                    // Verset en arabe
-                    Text(reminder.arabic)
-                        .font(.system(size: 19, weight: .medium))
-                        .multilineTextAlignment(.center)
-                        .frame(maxWidth: .infinity)
-                        .lineSpacing(8)
-                        .foregroundColor(.white)
-                    
-                    // Traduction
-                    Text("« \(reminder.french) »")
-                        .font(.system(size: 14, design: .serif))
-                        .italic()
-                        .foregroundColor(.white.opacity(0.8))
-                        .lineSpacing(4)
-                        .fixedSize(horizontal: false, vertical: true)
-                    
-                    // Source avec design amélioré
-                    HStack {
-                        Spacer()
-                        
-                        Text("— \(reminder.source)")
-                            .font(.system(size: 11, weight: .medium, design: .rounded))
-                            .foregroundColor(reminder.color)
-                            .padding(.horizontal, 10)
-                            .padding(.vertical, 4)
-                            .background(reminder.color.opacity(0.15))
-                            .clipShape(Capsule())
-                    }
-                }
-                .padding(20)
-                .glassCard(tint: reminder.color)
-                // Animation d'apparition
-                .transition(.scale.combined(with: .opacity))
             }
         }
         // Force la reconstruction propre du VStack au changement de fenêtre de prière —
@@ -356,6 +234,135 @@ struct CurrentPrayerGaugeView: View {
         let s = Int(timeInterval) % 60
         if h > 0 { return String(format: "-%d:%02d:%02d", h, m, s) }
         return String(format: "-%02d:%02d", m, s)
+    }
+}
+
+// MARK: - SpiritualReminderCard
+
+/// Rappel coranique rotatif (rotation par heure). Extrait de `CurrentPrayerGaugeView`
+/// (branche « compte à rebours ») : c'est du contenu d'enrichissement, il vit
+/// désormais dans la zone secondaire de l'écran Salat — toujours visible.
+struct SpiritualReminderCard: View {
+
+    private struct SpiritualReminder: Identifiable {
+        let id = UUID()
+        let arabic: String
+        let french: String
+        let source: String
+        let color: Color
+        let icon: String
+    }
+
+    private var currentReminder: SpiritualReminder {
+        let reminders = [
+            SpiritualReminder(
+                arabic: "إِنَّ الصَّلَاةَ كَانَتْ عَلَى الْمُؤْمِنِينَ كِتَابًا مَّوْقُوتًا",
+                french: "La Salât demeure, pour les croyants, une prescription, à des temps déterminés.",
+                source: "Sourate An-Nisa (4:103)",
+                color: .teal,
+                icon: "book.closed.fill"
+            ),
+            SpiritualReminder(
+                arabic: "حَافِظُوا عَلَى الصَّلَوَاتِ وَالصَّلَاةِ الْوُسْطَىٰ",
+                french: "Soyez assidus aux Salâts, et surtout la Salât médiane.",
+                source: "Sourate Al-Baqara (2:238)",
+                color: .indigo,
+                icon: "moon.stars.fill"
+            ),
+            SpiritualReminder(
+                arabic: "قَدْ أَفْلَحَ الْمُؤْمِنُونَ ۝ الَّذِينَ هُمْ فِي صَلَاتِهِمْ خَاشِعُونَ",
+                french: "Bienheureux sont certes les croyants, ceux qui sont humbles dans leur Salât.",
+                source: "Sourate Al-Mu'minun (23:1-2)",
+                color: .purple,
+                icon: "hands.sparkles.fill"
+            ),
+            SpiritualReminder(
+                arabic: "وَاسْتَعِينُوا بِالصَّبْرِ وَالصَّلَاةِ",
+                french: "Cherchez secours dans l'endurance et la Salât.",
+                source: "Sourate Al-Baqara (2:45)",
+                color: .green,
+                icon: "heart.fill"
+            )
+        ]
+
+        // Rotation basée sur l'heure actuelle pour éviter de toujours voir le même
+        let hour = Calendar.current.component(.hour, from: Date())
+        let index = hour % reminders.count
+        return reminders[index]
+    }
+
+    var body: some View {
+        let reminder = currentReminder
+
+        VStack(alignment: .leading, spacing: 16) {
+            // En-tête avec icône et badge "Rappel"
+            HStack(spacing: 10) {
+                ZStack {
+                    Circle()
+                        .fill(reminder.color.opacity(0.2))
+                        .frame(width: 40, height: 40)
+
+                    Image(systemName: reminder.icon)
+                        .font(.title3)
+                        .foregroundColor(reminder.color)
+                        .symbolEffect(.pulse.byLayer, options: .repeating.speed(0.5))
+                }
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Rappel")
+                        .font(.caption.weight(.semibold))
+                        .foregroundColor(reminder.color.opacity(0.8))
+
+                    Text("Méditation du moment")
+                        .font(.caption2)
+                        .foregroundColor(.white.opacity(0.5))
+                }
+
+                Spacer()
+
+                // Petit bouton pour partager
+                ShareLink(item: "\(reminder.arabic)\n\n\(reminder.french)\n\n— \(reminder.source)") {
+                    Image(systemName: "square.and.arrow.up")
+                        .font(.system(size: 14))
+                        .foregroundColor(reminder.color.opacity(0.7))
+                }
+            }
+
+            Divider()
+                .background(Color.white.opacity(0.1))
+
+            // Verset en arabe
+            Text(reminder.arabic)
+                .font(.system(size: 19, weight: .medium))
+                .multilineTextAlignment(.center)
+                .frame(maxWidth: .infinity)
+                .lineSpacing(8)
+                .foregroundColor(.white)
+                .environment(\.layoutDirection, .rightToLeft)
+
+            // Traduction
+            Text("« \(reminder.french) »")
+                .font(.system(size: 14, design: .serif))
+                .italic()
+                .foregroundColor(.white.opacity(0.8))
+                .lineSpacing(4)
+                .fixedSize(horizontal: false, vertical: true)
+
+            // Source avec design amélioré
+            HStack {
+                Spacer()
+
+                Text("— \(reminder.source)")
+                    .font(.system(size: 11, weight: .medium, design: .rounded))
+                    .foregroundColor(reminder.color)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 4)
+                    .background(reminder.color.opacity(0.15))
+                    .clipShape(Capsule())
+            }
+        }
+        .padding(20)
+        .glassCardSecondary(tint: reminder.color)
     }
 }
 

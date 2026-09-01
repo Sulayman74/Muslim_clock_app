@@ -256,6 +256,8 @@ private struct CategoryRow: View {
 /// Point d'entrée du livret depuis l'écran principal. Ouvre `AdhkarBookletView`
 /// en sheet, en transmettant `PrayerTimesViewModel` pour la suggestion contextuelle.
 struct AdhkarBookletButton: View {
+    /// Variante compacte (demi-largeur, zone secondaire de l'écran Salat).
+    var compact: Bool = false
     @EnvironmentObject private var prayerVM: PrayerTimesViewModel
     @State private var show = false
     private let accent = adhkarBookletAccent
@@ -264,29 +266,45 @@ struct AdhkarBookletButton: View {
         Button {
             show = true
         } label: {
-            HStack(spacing: 12) {
-                Image(systemName: "book.closed.fill")
-                    .font(.system(size: 22))
-                    .foregroundStyle(accent)
-
-                VStack(alignment: .leading, spacing: 2) {
+            if compact {
+                HStack(spacing: 8) {
+                    Image(systemName: "book.closed.fill")
+                        .font(.system(size: 18))
+                        .foregroundStyle(accent)
                     Text("Livret d'invocations")
-                        .font(.system(size: 15, weight: .bold, design: .rounded))
+                        .font(.system(size: 12, weight: .bold, design: .rounded))
                         .foregroundStyle(.white)
-                    Text("Selon la situation — sources authentifiées")
-                        .font(.system(size: 11, weight: .medium, design: .rounded))
-                        .foregroundStyle(.white.opacity(0.6))
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.75)
                 }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 14)
+                .glassCardSecondary(cornerRadius: 18, tint: accent)
+            } else {
+                HStack(spacing: 12) {
+                    Image(systemName: "book.closed.fill")
+                        .font(.system(size: 22))
+                        .foregroundStyle(accent)
 
-                Spacer()
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Livret d'invocations")
+                            .font(.system(size: 15, weight: .bold, design: .rounded))
+                            .foregroundStyle(.white)
+                        Text("Selon la situation — sources authentifiées")
+                            .font(.system(size: 11, weight: .medium, design: .rounded))
+                            .foregroundStyle(.white.opacity(0.6))
+                    }
 
-                Image(systemName: "chevron.right")
-                    .font(.system(size: 14, weight: .semibold))
-                    .foregroundStyle(.white.opacity(0.3))
+                    Spacer()
+
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundStyle(.white.opacity(0.3))
+                }
+                .padding(.horizontal, 20)
+                .padding(.vertical, 14)
+                .glassCard(tint: accent)
             }
-            .padding(.horizontal, 20)
-            .padding(.vertical, 14)
-            .glassCard(tint: accent)
         }
         .sensoryFeedback(.impact(weight: .light), trigger: show)
         .sheet(isPresented: $show) {
@@ -371,7 +389,7 @@ struct AdhkarMomentCard: View {
                 }
             }
             .padding(16)
-            .glassCard(tint: accent)
+            .glassCardSecondary(tint: accent)
         }
         .buttonStyle(.plain)
         .sensoryFeedback(.impact(weight: .light), trigger: showBooklet)

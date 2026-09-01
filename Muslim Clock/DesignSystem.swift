@@ -55,6 +55,16 @@ extension View {
         }
     }
 
+    /// Surface **secondaire** (zone « Pour aller plus loin » de l'onglet Salat).
+    ///
+    /// Un cran de verre en dessous de `glassCard` : `.clear` + teinte 0.08 — la
+    /// carte recule optiquement et laisse voir les étoiles. Réutilise la grammaire
+    /// existante (`.regular` = contenu, `.clear` = discret). Fallback opaque quand
+    /// « Réduire la transparence » est actif.
+    func glassCardSecondary(cornerRadius: CGFloat = CornerRadius.card, tint: Color? = nil) -> some View {
+        modifier(GlassCardSecondary(cornerRadius: cornerRadius, tint: tint))
+    }
+
     // MARK: - CARDS (20pt corner radius)
 
     /// Carte standard (widgets, contenu principal)
@@ -129,6 +139,94 @@ extension View {
                 RoundedRectangle(cornerRadius: 8, style: .continuous)
                     .stroke(color.opacity(0.3), lineWidth: 0.5)
             )
+    }
+}
+
+/// Implémentation de `glassCardSecondary` — ViewModifier pour accéder à
+/// l'environnement d'accessibilité (fond plein si Réduire la transparence).
+struct GlassCardSecondary: ViewModifier {
+    @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+    let cornerRadius: CGFloat
+    let tint: Color?
+
+    func body(content: Content) -> some View {
+        let shape = RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+        if reduceTransparency {
+            // Fond opaque harmonisé avec le mesh cosmique « default ».
+            content.background(
+                shape.fill(Color(red: 0.07, green: 0.07, blue: 0.14))
+                    .overlay(shape.fill((tint ?? .clear).opacity(0.14)))
+                    .overlay(shape.stroke(.white.opacity(0.10), lineWidth: 1))
+            )
+        } else if let tint {
+            content.glassEffect(.clear.tint(tint.opacity(0.08)), in: shape)
+        } else {
+            content.glassEffect(.clear, in: shape)
+        }
+    }
+}
+
+/// ═══════════════════════════════════════════════════════════════
+/// ESPACEMENT DE L'ÉCRAN SALAT (échelle sémantique)
+/// ═══════════════════════════════════════════════════════════════
+
+enum SalatSpacing {
+    /// Entre cartes de la zone prioritaire.
+    static let intraZonePrimary: CGFloat = 16
+    /// Entre cartes de la zone secondaire (densité légèrement plus compacte).
+    static let intraZoneSecondary: CGFloat = 12
+    /// Seuil entre les deux zones.
+    static let interZone: CGFloat = 36
+    /// L'en-tête de section colle légèrement à sa zone.
+    static let sectionHeaderBottom: CGFloat = 4
+}
+
+/// ═══════════════════════════════════════════════════════════════
+/// ÉTAT DE PRIÈRE — source unique des couleurs sémantiques
+/// (orange = en cours, vert = prochaine, indigo = nuit/qiyam)
+/// ═══════════════════════════════════════════════════════════════
+
+enum PrayerStateTint {
+    static let now: Color = .orange
+    static let upcoming: Color = .green
+    static let night: Color = .indigo
+}
+
+/// ═══════════════════════════════════════════════════════════════
+/// EN-TÊTE DE SECTION (onglet Salat, zone secondaire)
+/// ═══════════════════════════════════════════════════════════════
+
+/// Seuil visuel entre la zone prioritaire (glance) et la zone d'enrichissement.
+/// Trait-capsule teinté par l'état de la prière (fil conducteur entre les zones),
+/// titre FR uppercase discret, écho arabe décoratif à droite.
+struct SalatSectionHeader: View {
+    let titleFr: LocalizedStringKey
+    let titleAr: String
+    /// Couleur d'état de la prière (orange en cours / vert prochaine / indigo nuit).
+    var accent: Color = PrayerStateTint.upcoming
+    @ScaledMetric(relativeTo: .footnote) private var barWidth: CGFloat = 20
+
+    var body: some View {
+        HStack(spacing: 8) {
+            Capsule()
+                .fill(accent.opacity(0.9))
+                .frame(width: barWidth, height: 2)
+            Text(titleFr)
+                .font(.footnote.weight(.semibold))
+                .textCase(.uppercase)
+                .kerning(1.2)
+                .foregroundStyle(.white.opacity(0.55))
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
+            Spacer()
+            Text(verbatim: titleAr)
+                .font(.footnote.weight(.medium))
+                .foregroundStyle(.white.opacity(0.35))
+                .environment(\.layoutDirection, .rightToLeft)
+        }
+        .padding(.horizontal, 4)
+        .accessibilityElement(children: .combine)
+        .accessibilityAddTraits(.isHeader)
     }
 }
 

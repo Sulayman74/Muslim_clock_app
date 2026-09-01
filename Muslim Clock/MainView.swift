@@ -282,6 +282,134 @@ struct MainView: View {
             default: return .white
             }
         }
+    // MARK: - Écran Salat : zones (cf. PLAN_UX_SALAT_ZONES.md)
+
+    /// Couleur d'état de la prière — fil conducteur visuel entre les deux zones.
+    private var salatStateTint: Color {
+        if prayerVM.currentPrayerWindow != .none { return PrayerStateTint.now }
+        if prayerVM.nextPrayerName == "Fajr" { return PrayerStateTint.night }
+        return PrayerStateTint.upcoming
+    }
+
+    /// Chapeau : horloge, dates, et bannières BLOQUANTES uniquement (GPS,
+    /// relocalisation, pastille voyage, saison). Les éléments de consultation
+    /// posée (fiche fiqh voyage, salawat vendredi) vivent en zone secondaire.
+    @ViewBuilder
+    private var salatHeaderBlock: some View {
+        // L'horloge
+        TimelineView(.periodic(from: .now, by: 1.0)) { context in
+            Text(context.date.formatted(.dateTime.hour().minute()))
+                .font(.system(size: 65, weight: .semibold, design: .monospaced))
+                .monospacedDigit()
+                .minimumScaleFactor(0.5)
+                .lineLimit(1)
+                .padding(.top, 20)
+                .foregroundColor(.white)
+                .accessibilityLabel(Text("Il est \(context.date.formatted(date: .omitted, time: .shortened))"))
+        }
+
+        // ✅ DATE HEADER — juste sous l'horloge
+        WidgetDateHeader(date: .now)
+            .padding(.top, -8)
+
+        // Fraîcheur des horaires (mise à jour à HH:mm / en cours).
+        PrayerFreshnessLine()
+
+        GPSRelocationIndicator()
+            .padding(.top, -4)
+
+        // Mode voyage : pastille si actif, sinon suggestion GPS non-intrusive.
+        TravelModeHeader()
+
+        if locationManager.isAccessDenied {
+            LocationDeniedBanner()
+                .padding(.top, 4)
+        }
+
+        SeasonBannerView(season: currentSeason)
+            .padding(.top, -6)
+    }
+
+    /// Zone prioritaire — « le glance 3 secondes » : météo + prochaine prière,
+    /// décomptes contextuels, et LES 5 PRIÈRES (remontées au-dessus du fold).
+    @ViewBuilder
+    private var salatPriorityZone: some View {
+        VStack(spacing: SalatSpacing.intraZonePrimary) {
+            VStack(spacing: 10) {
+                HStack {
+                    WeatherMiniWidget(location: manager.userLocation)
+                    NextPrayerWidget()
+                }
+                // Ville + attribution Apple Weather (App Review 5.2.5)
+                // Capsule adaptable : gère les noms de ville longs.
+                WeatherCityAttributionRow(
+                    cityName: manager.cityName,
+                    attribution: weatherVM.attribution
+                )
+            }
+            CurrentPrayerGaugeView()
+            // Rappel dédié dans la dernière heure avant Dhuhr/Jumu'ah.
+            DhuhrCountdownCard()
+            // Décompte Adhan → Iqamah : visible uniquement pendant
+            // la fenêtre (délais réglés dans « Ma mosquée »).
+            IqamahCountdownCard()
+            // Les 5 prières du jour — l'info n°1, fin de la zone prioritaire.
+            PrayerListView()
+            // Carte du'a contextuelle pendant Ramadan (Iftar / Suhoor / général) —
+            // urgence temporelle, reste en zone 1 mais après la liste.
+            if IslamicSeasonInfo.isRamadan() {
+                RamadanDuaCardView()
+            }
+        }
+    }
+
+    /// Zone secondaire — « pour aller plus loin » : adhkar, sunnah de la prière
+    /// en cours, rappel coranique, fiche voyage, salawat vendredi, lune.
+    @ViewBuilder
+    private var salatSecondaryZone: some View {
+        VStack(alignment: .leading, spacing: SalatSpacing.intraZoneSecondary) {
+            SalatSectionHeader(
+                titleFr: "Pour aller plus loin",
+                titleAr: "لِلاسْتِزَادَة",
+                accent: salatStateTint
+            )
+            .padding(.bottom, SalatSpacing.sectionHeaderBottom)
+
+            AdhkarMomentCard()
+
+            // Deux portes d'entrée Adhkar côte à côte (même famille).
+            HStack(spacing: 12) {
+                AdhkarQuickAccessButton(compact: true)
+                AdhkarBookletButton(compact: true)
+            }
+
+            // RawatibCardView retirée : ProphetSunnahCardView couvre déjà
+            // les Rawatib via son champ `sunnahRecommendation` (doublon).
+            ProphetSunnahCardView(
+                sunnah: ProphetSunnahProvider.current(
+                    prayerName: prayerContextForCards,
+                    season: currentSeason,
+                    isFriday: isCurrentlyFriday
+                ),
+                contextPrayerName: prayerContextForCards,
+                isPrayerInWindow: prayerVM.currentPrayerWindow != .none
+            )
+
+            // Rappel coranique rotatif (extrait du hero — enrichissement).
+            SpiritualReminderCard()
+
+            // Facilités du voyageur (qasr / jamʿ / jeûne) — visible en mode voyage.
+            TravelFiqhCard()
+
+            // Rappel Salawat le vendredi (compact) — respecte debugForceFriday.
+            if isCurrentlyFriday {
+                FridaySalawatMiniReminder()
+            }
+
+            MoonWidgetView(date: .now)
+        }
+    }
+
     var body: some View {
             // Chaîne coupée en deux instructions (`let` + `return`) : le body était
             // devenu trop long pour être type-checké en une seule expression.
@@ -298,100 +426,16 @@ struct MainView: View {
                         TravelModeBackdrop()
 
                         ScrollView(.vertical, showsIndicators: false) {
+                            // Écran Salat en 2 zones (cf. PLAN_UX_SALAT_ZONES.md) :
+                            // prioritaire (« glance 3 s » : horloge, météo, décomptes,
+                            // les 5 prières) puis secondaire (« pour aller plus loin » :
+                            // adhkar, sunnah, rappel coranique, lune). Sous-vues séparées
+                            // pour la lisibilité ET le type-checker.
                             VStack(spacing: 20) {
-                                // L'horloge
-                                TimelineView(.periodic(from: .now, by: 1.0)) { context in
-                                    Text(context.date.formatted(.dateTime.hour().minute()))
-                                        .font(.system(size: 65, weight: .semibold, design: .monospaced))
-                                        .monospacedDigit()
-                                        .minimumScaleFactor(0.5)
-                                        .lineLimit(1)
-                                        .padding(.top, 20)
-                                        .foregroundColor(.white)
-                                }
-
-                                // ✅ DATE HEADER — juste sous l'horloge
-                                WidgetDateHeader(date: .now)
-                                    .padding(.top, -8)
-
-                                // Fraîcheur des horaires (mise à jour à HH:mm / en cours).
-                                PrayerFreshnessLine()
-
-                                GPSRelocationIndicator()
-                                    .padding(.top, -4)
-
-                                // Mode voyage : pastille si actif, sinon suggestion GPS non-intrusive.
-                                TravelModeHeader()
-
-                                // Facilités du voyageur (qasr / jamʿ / jeûne) — visible en mode voyage.
-                                TravelFiqhCard()
-                                    .padding(.top, 4)
-
-                                if locationManager.isAccessDenied {
-                                    LocationDeniedBanner()
-                                        .padding(.top, 4)
-                                }
-
-                                SeasonBannerView(season: currentSeason)
-                                    .padding(.top, -6)
-
-                                // Rappel Salawat le vendredi (compact)
-                                if Calendar.current.component(.weekday, from: Date()) == 6 {
-                                    FridaySalawatMiniReminder()
-                                        .padding(.top, -6)
-                                }
-
-                                // Hiérarchie en 3 niveaux : le décompte / prochaine prière
-                                // (hero) respire au-dessus du fold ; l'enrichissement
-                                // spirituel (Sunnah, Lune) passe en dessous. Respiration
-                                // inter-niveaux (28) > intra-niveau (16).
-                                VStack(spacing: 28) {
-
-                                    // ── HERO : météo + prochaine prière + décompte ──
-                                    VStack(spacing: 16) {
-                                        VStack(spacing: 10) {
-                                            HStack {
-                                                WeatherMiniWidget(location: manager.userLocation)
-                                                NextPrayerWidget()
-                                            }
-                                            // Ville + attribution Apple Weather (App Review 5.2.5)
-                                            // Capsule adaptable : gère les noms de ville longs.
-                                            WeatherCityAttributionRow(
-                                                cityName: manager.cityName,
-                                                attribution: weatherVM.attribution
-                                            )
-                                        }
-                                        CurrentPrayerGaugeView()
-                                        // Rappel dédié dans la dernière heure avant Dhuhr/Jumu'ah.
-                                        DhuhrCountdownCard()
-                                        // Décompte Adhan → Iqamah : visible uniquement pendant
-                                        // la fenêtre (délais réglés dans « Ma mosquée »).
-                                        IqamahCountdownCard()
-                                        // Carte du'a contextuelle pendant Ramadan (Iftar / Suhoor / général)
-                                        if IslamicSeasonInfo.isRamadan() {
-                                            RamadanDuaCardView()
-                                        }
-                                    }
-
-                                    // ── ACTIF : la prière du moment ──
-                                    VStack(spacing: 16) {
-                                        PrayerListView()
-                                        AdhkarMomentCard()
-                                        AdhkarQuickAccessButton()
-                                        AdhkarBookletButton()
-                                    }
-
-                                    // ── ENRICHISSEMENT : contenu spirituel (cartes repliables) ──
-                                    VStack(spacing: 16) {
-                                        // RawatibCardView retirée : ProphetSunnahCardView couvre déjà
-                                        // les Rawatib via son champ `sunnahRecommendation` (doublon).
-                                        ProphetSunnahCardView(sunnah: ProphetSunnahProvider.current(
-                                            prayerName: prayerContextForCards,
-                                            season: currentSeason,
-                                            isFriday: isCurrentlyFriday
-                                        ))
-                                        MoonWidgetView(date: .now)
-                                    }
+                                salatHeaderBlock
+                                VStack(spacing: SalatSpacing.interZone) {
+                                    salatPriorityZone
+                                    salatSecondaryZone
                                 }
                             }
                             .frame(maxWidth: .infinity)
