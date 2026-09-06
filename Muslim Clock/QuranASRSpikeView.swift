@@ -39,6 +39,9 @@ struct QuranASRSpikeView: View {
     @State private var task: SFSpeechRecognitionTask?
     @State private var stoppedAt: Date?
 
+    /// Compteur d'essais — pour corréler les logs console avec les récitations.
+    @State private var trialCount = 0
+
     var body: some View {
         Form {
             Section("1 · Probe du device") {
@@ -140,8 +143,9 @@ struct QuranASRSpikeView: View {
         if let fr = SFSpeechRecognizer(locale: Locale(identifier: "fr-FR")) {
             lines.append("fr-FR (réf.) → dispo=\(fr.isAvailable ? "OUI" : "non") onDevice=\(fr.supportsOnDeviceRecognition ? "OUI" : "NON")")
         }
-        lines.append("Verdict : onDevice ar = NON ⇒ SFSpeech éliminé (règle on-device only).")
+        lines.append("Rappel règle : onDevice ar = NON ⇒ SFSpeech éliminé (on-device only).")
         probeReport = lines.joined(separator: "\n")
+        print("🎤 [SpikeASR] PROBE\n\(probeReport)")
     }
 
     // MARK: - Écoute
@@ -263,6 +267,20 @@ struct QuranASRSpikeView: View {
         }
         status = "Terminé — \(found.count) candidat(s)"
         teardownAudio()
+
+        // Bloc de mesure structuré — à copier depuis la console Xcode pour
+        // remplir le tableau GO/NO-GO du protocole.
+        trialCount += 1
+        let top = found
+            .map { "\($0.ref.sura):\($0.ref.ayah) score=\(String(format: "%.2f", $0.score)) ×\($0.occurrences.count)" }
+            .joined(separator: "  |  ")
+        print("""
+        🎤 [SpikeASR] ═══ essai #\(trialCount) ═══
+        🎤 [SpikeASR] mode: \(forceOnDevice ? "ON-DEVICE forcé" : "serveur autorisé")
+        🎤 [SpikeASR] transcript: \(transcript)
+        🎤 [SpikeASR] latence: \(latencyMS.map { "\($0) ms" } ?? "n/a")  ·  confiant: \(isConfident ? "OUI" : "non")
+        🎤 [SpikeASR] top\(found.count): \(top.isEmpty ? "AUCUN" : top)
+        """)
     }
 }
 #endif
