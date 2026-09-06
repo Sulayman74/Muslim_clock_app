@@ -54,6 +54,36 @@ requête (tapée ou dictée) passent par le MÊME normaliseur (invariant testé)
 Aucune permission, aucun réseau, aucun risque ASR. C'est une feature complète :
 « retrouve n'importe quel verset en tapant quelques mots ».
 
+### Phase 2 — RÉSULTATS DU SPIKE (6-7 sept. 2026) : ✅ **GO — SFSpeech on-device**
+
+Mesures réelles (iPhone 14, 25 essais mesurables, récitation naturelle,
+harnais DEBUG « Spike ASR Coran ») :
+
+| Métrique | Seuil GO | Mesuré |
+|----------|----------|--------|
+| Top-1 | ≥ 60 % | **92 %** (23/25) |
+| Top-3 | ≥ 70 % | **96 %** (24/25) |
+| Faux positifs confiants | ≤ 10 % | **0 %** |
+| Latence | ≤ 5 s | **~40 ms** médiane (900 ms au 1ᵉʳ essai — warmup) |
+
+Le pronostic « SFSpeech arabe probablement serveur-only » est DÉMENTI :
+`ar-SA` est disponible ET on-device sur iPhone 14. **Whisper-Coran
+(tarteel-ai, Apache 2.0, ~100 Mo) passe en réserve documentée** — plus
+nécessaire.
+
+Faits marquants : transcript massacré par l'ASR (3:18 « بالقشطة ») →
+quand même identifié à 0.81 (trigrammes) ; mutashabihat 2:210/6:158/16:33 →
+bon verset en tête + non-confiant (prudence exacte) ; refrain Ar-Rahman →
+×31 occurrences groupées.
+
+Modes d'échec identifiés (backlog produit) :
+1. **Versets courts enchaînés** (Falaq 1-4, Masad 1-2…) : les versets récités
+   occupent les rangs 1-2 mais à scores faibles → fix : indexer des fenêtres
+   bi-versets (V2 du matcher).
+2. Fragment de 3 mots + mot rare déformé (essai 26, seul vrai échec) :
+   avoué non-confiant, le retry a réussi — couvert par l'UX top-3/réessayer.
+3. Warmup ~900 ms au premier usage → prewarm du recognizer à l'ouverture.
+
 ### Phase 2 — La saisie vocale (spike GO/NO-GO, PUIS intégration)
 Spike 3-5 j (code jetable) sur les DEUX moteurs, **on-device only** :
 - `SFSpeechRecognizer` ar + `requiresOnDeviceRecognition = true` (support
