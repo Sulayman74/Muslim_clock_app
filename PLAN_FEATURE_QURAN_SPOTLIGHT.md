@@ -56,15 +56,22 @@ Aucune permission, aucun réseau, aucun risque ASR. C'est une feature complète 
 
 ### Phase 2 — RÉSULTATS DU SPIKE (6-7 sept. 2026) : ✅ **GO — SFSpeech on-device**
 
-Mesures réelles (iPhone 14, 25 essais mesurables, récitation naturelle,
-harnais DEBUG « Spike ASR Coran ») :
+Mesures réelles (iPhone 14, 33 essais mesurables sur 3 batchs, récitation
+naturelle, harnais DEBUG « Spike ASR Coran ») — métriques stables entre
+batchs (92 → 91 % top-1) :
 
 | Métrique | Seuil GO | Mesuré |
 |----------|----------|--------|
-| Top-1 | ≥ 60 % | **92 %** (23/25) |
-| Top-3 | ≥ 70 % | **96 %** (24/25) |
+| Top-1 | ≥ 60 % | **91 %** (30/33) |
+| Top-3 | ≥ 70 % | **94 %** (31/33) |
 | Faux positifs confiants | ≤ 10 % | **0 %** |
 | Latence | ≤ 5 s | **~40 ms** médiane (900 ms au 1ᵉʳ essai — warmup) |
+
+Robustesse démontrée : 18:10 identifié (0.74, confiant) avec « الفتية »
+transcrit… « فيديو » ; 21:87 identifié avec « ذا النون » → « هذا ن ».
+Les 3 échecs/33 sont TOUS le même pattern : versets courts enchaînés + mot
+distinctif (porteur d'IDF) déformé — couverts par le fix fenêtres bi-versets,
+et toujours avoués non-confiants (le retry sur verset isolé réussit).
 
 Le pronostic « SFSpeech arabe probablement serveur-only » est DÉMENTI :
 `ar-SA` est disponible ET on-device sur iPhone 14. **Whisper-Coran
