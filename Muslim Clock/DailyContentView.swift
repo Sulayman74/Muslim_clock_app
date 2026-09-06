@@ -83,7 +83,21 @@ struct DailyContentView: View {
             // CARTE AUDIO / PODCAST (exploration — la reprise vit en zone 1)
             PodcastCarouselView()
 
-            // FICHE MASBÛQ + JANÂZA — référence, descendue en fin d'écran
+            // ── Sous-section « Références » : outils de consultation, distincts
+            // des programmes (assainit la taxonomie — la fiche masbûq était un
+            // intrus dans « Mes programmes »).
+            ZoneSectionHeader(
+                titleFr: "Références",
+                titleAr: "مَرَاجِع",
+                accent: .orange
+            )
+            .padding(.top, ZoneSpacing.interZone - ZoneSpacing.intraZoneSecondary)
+            .padding(.bottom, ZoneSpacing.sectionHeaderBottom)
+
+            // SPOTLIGHT DU CORAN — recherche plein-texte des 6 236 versets
+            QuranVerseSearchRow()
+
+            // FICHE MASBÛQ + JANÂZA — référence de consultation
             LatecomerFiqhAccessCard()
         }
     }

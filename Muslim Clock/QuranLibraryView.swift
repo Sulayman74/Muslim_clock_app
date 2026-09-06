@@ -9,14 +9,28 @@
 
 import SwiftUI
 
+/// Route de navigation d'un résultat de recherche plein-texte vers le lecteur.
+private struct VerseSearchRoute: Hashable {
+    let chapter: QuranChapterIndex
+    let ayah: Int
+}
+
 struct QuranLibraryView: View {
+    /// `true` : ouvre directement le champ de recherche (clavier actif) —
+    /// utilisé par la rangée « Rechercher un verset » du tab Rappel.
+    var searchActivated: Bool = false
+
     @Environment(\.dismiss) private var dismiss
     @StateObject private var loader = QuranLibraryLoader.shared
 
     @State private var chapters: [QuranChapterIndex] = []
     @State private var searchText: String = ""
+    @State private var searchPresented: Bool = false
     @State private var loadError: String?
     @State private var isLoading = false
+
+    /// Résultats de la recherche plein-texte (Spotlight du Coran).
+    @State private var verseMatches: [QuranVerseMatch] = []
 
     var body: some View {
         NavigationStack {
@@ -37,10 +51,51 @@ struct QuranLibraryView: View {
                     Button("Fermer") { dismiss() }
                 }
             }
-            .searchable(text: $searchText, prompt: "Rechercher une sourate…")
+            .searchable(text: $searchText, isPresented: $searchPresented,
+                        prompt: "Sourate, ou mots d'un verset…")
         }
         .preferredColorScheme(.dark)
-        .task { await loadIfNeeded() }
+        .task {
+            if searchActivated { searchPresented = true }
+            await loadIfNeeded()
+            // Pré-chauffe l'index de recherche plein-texte avant la 1re frappe.
+            QuranSearchCorpusLoader.shared.prewarm()
+        }
+        .task(id: searchText) {
+            // Micro-debounce : évite un match par caractère pendant la frappe.
+            try? await Task.sleep(nanoseconds: 200_000_000)
+            guard !Task.isCancelled else { return }
+            await runVerseSearch()
+        }
+    }
+
+    // MARK: - Recherche plein-texte (versets)
+
+    private var arabicTokenCount: Int {
+        QuranSearchNormalizer.tokens(searchText).count
+    }
+
+    private func runVerseSearch() async {
+        let query = searchText
+        guard QuranSearchNormalizer.tokens(query).count >= QuranVerseIndex.minimumQueryTokens,
+              let index = await QuranSearchCorpusLoader.shared.loadIndex() else {
+            verseMatches = []
+            return
+        }
+        let matches = index.match(query: query)
+        // La requête a pu changer pendant le chargement de l'index.
+        if query == searchText { verseMatches = matches }
+    }
+
+    /// Résout la sourate d'un résultat : index réseau si chargé, sinon fallback
+    /// offline construit depuis les métadonnées du corpus bundlé (suffisant
+    /// pour ouvrir le lecteur — le type mecquois/médinois n'y est pas affiché).
+    private func chapterIndex(for sura: Int) -> QuranChapterIndex? {
+        if let found = chapters.first(where: { $0.id == sura }) { return found }
+        guard let meta = QuranSearchCorpusLoader.shared.suraMeta[sura] else { return nil }
+        return QuranChapterIndex(id: sura, name: meta.arabicName,
+                                 transliteration: meta.englishName, translation: nil,
+                                 type: "", totalVerses: meta.verseCount, link: nil)
     }
 
     // MARK: - States
@@ -93,15 +148,73 @@ struct QuranLibraryView: View {
     }
 
     private var chaptersList: some View {
-        List(filteredChapters) { chapter in
-            NavigationLink(value: chapter) {
-                ChapterRow(chapter: chapter)
+        List {
+            // ── Résultats plein-texte (Spotlight du Coran) ──
+            if !verseMatches.isEmpty {
+                Section {
+                    ForEach(verseMatches) { match in
+                        verseResultRows(match)
+                    }
+                } header: {
+                    Text("Versets")
+                        .foregroundStyle(.teal)
+                }
+                .listRowBackground(Color.white.opacity(0.05))
+            } else if (1..<QuranVerseIndex.minimumQueryTokens).contains(arabicTokenCount) {
+                Section {
+                    Label("Tape au moins 3 mots du verset", systemImage: "text.magnifyingglass")
+                        .font(.caption)
+                        .foregroundStyle(.white.opacity(0.6))
+                }
+                .listRowBackground(Color.white.opacity(0.05))
             }
-            .listRowBackground(Color.white.opacity(0.05))
+
+            // ── Sourates ──
+            Section {
+                ForEach(filteredChapters) { chapter in
+                    NavigationLink(value: chapter) {
+                        ChapterRow(chapter: chapter)
+                    }
+                    .listRowBackground(Color.white.opacity(0.05))
+                }
+            }
         }
         .scrollContentBackground(.hidden)
         .navigationDestination(for: QuranChapterIndex.self) { chapter in
             QuranChapterDetailView(chapterIndex: chapter)
+        }
+        .navigationDestination(for: VerseSearchRoute.self) { route in
+            QuranChapterDetailView(chapterIndex: route.chapter, scrollToAyah: route.ayah)
+        }
+    }
+
+    /// Ligne(s) d'un résultat : le verset représentant + les autres occurrences
+    /// repliées dans un DisclosureGroup (refrain d'Ar-Rahman ×31…).
+    @ViewBuilder
+    private func verseResultRows(_ match: QuranVerseMatch) -> some View {
+        if let chapter = chapterIndex(for: match.ref.sura) {
+            NavigationLink(value: VerseSearchRoute(chapter: chapter, ayah: match.ref.ayah)) {
+                VerseMatchRow(match: match, chapter: chapter)
+            }
+            if match.occurrences.count > 1 {
+                DisclosureGroup {
+                    ForEach(match.occurrences.dropFirst(), id: \.self) { occ in
+                        if let occChapter = chapterIndex(for: occ.sura) {
+                            NavigationLink(value: VerseSearchRoute(chapter: occChapter, ayah: occ.ayah)) {
+                                Text("\(occChapter.transliteration) · verset \(occ.ayah)")
+                                    .font(.system(size: 13, weight: .medium, design: .rounded))
+                                    .foregroundStyle(.white.opacity(0.75))
+                                    .monospacedDigit()
+                            }
+                        }
+                    }
+                } label: {
+                    Text("\(match.occurrences.count - 1) autres occurrences")
+                        .font(.system(size: 12, weight: .semibold, design: .rounded))
+                        .foregroundStyle(.teal.opacity(0.85))
+                        .monospacedDigit()
+                }
+            }
         }
     }
 
@@ -120,6 +233,100 @@ struct QuranLibraryView: View {
             loadError = "Vérifie ta connexion réseau, puis réessaie."
         }
         isLoading = false
+    }
+}
+
+// MARK: - Rangée d'accès (tab Rappel, section « Références »)
+
+/// Point d'entrée direct du Spotlight du Coran : ouvre la bibliothèque avec le
+/// champ de recherche actif (1 tap au lieu de 3). En Phase 2, le micro de
+/// recherche vocale vivra dans la même barre — cette entrée le portera aussi.
+struct QuranVerseSearchRow: View {
+    @State private var showSearch = false
+
+    var body: some View {
+        Button {
+            showSearch = true
+        } label: {
+            HStack(spacing: 12) {
+                ZStack {
+                    Circle()
+                        .fill(Color.teal.opacity(0.18))
+                        .frame(width: 44, height: 44)
+                    Image(systemName: "text.magnifyingglass")
+                        .font(.title3)
+                        .foregroundStyle(.teal)
+                }
+                VStack(alignment: .leading, spacing: 3) {
+                    Text("Rechercher un verset")
+                        .font(.system(size: 15, weight: .bold))
+                        .foregroundColor(.white)
+                    Text("Sourate, ou mots d'un verset")
+                        .font(.caption)
+                        .foregroundStyle(.white.opacity(0.65))
+                }
+                Spacer()
+                Image(systemName: "chevron.right")
+                    .font(.caption.bold())
+                    .foregroundStyle(.white.opacity(0.4))
+            }
+            .padding(14)
+            .glassCardSecondary(cornerRadius: 16, tint: .teal, fallback: GlassFallback.warm)
+        }
+        .buttonStyle(.plain)
+        .sensoryFeedback(.impact(weight: .light), trigger: showSearch)
+        .sheet(isPresented: $showSearch) {
+            QuranLibraryView(searchActivated: true)
+        }
+    }
+}
+
+// MARK: - Ligne de résultat verset
+
+private struct VerseMatchRow: View {
+    let match: QuranVerseMatch
+    let chapter: QuranChapterIndex
+
+    var body: some View {
+        HStack(spacing: 12) {
+            ZStack {
+                Circle()
+                    .fill(LinearGradient(
+                        colors: [.teal.opacity(0.35), .teal.opacity(0.1)],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ))
+                    .frame(width: 36, height: 36)
+                Image(systemName: "text.book.closed.fill")
+                    .font(.system(size: 14))
+                    .foregroundStyle(.teal)
+            }
+
+            VStack(alignment: .leading, spacing: 4) {
+                HStack(spacing: 6) {
+                    Text("\(chapter.transliteration) · verset \(match.ref.ayah)")
+                        .font(.system(size: 13, weight: .bold, design: .rounded))
+                        .foregroundColor(.white)
+                        .monospacedDigit()
+                    if match.occurrences.count > 1 {
+                        Text(verbatim: "×\(match.occurrences.count)")
+                            .font(.system(size: 10, weight: .bold, design: .rounded))
+                            .foregroundStyle(.teal)
+                            .chipStyle(color: .teal)
+                    }
+                }
+                // Extrait imla'i vocalisé — RTL explicite (protocole anti-wiggle : le
+                // contenu est stable par ligne, pas d'animation implicite).
+                Text(verbatim: match.displayText)
+                    .font(.system(size: 17))
+                    .foregroundStyle(.white.opacity(0.9))
+                    .lineLimit(2)
+                    .multilineTextAlignment(.trailing)
+                    .frame(maxWidth: .infinity, alignment: .trailing)
+                    .environment(\.layoutDirection, .rightToLeft)
+            }
+        }
+        .padding(.vertical, 4)
     }
 }
 
