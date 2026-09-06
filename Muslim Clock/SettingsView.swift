@@ -952,6 +952,14 @@ private struct DebugPanelSection: View {
 
     var body: some View {
         Section {
+            // ── SPIKE ASR CORAN (Phase 2 Spotlight — mesure GO/NO-GO) ──
+            NavigationLink {
+                QuranASRSpikeView()
+            } label: {
+                Label("Spike ASR Coran (reconnaissance vocale)", systemImage: "waveform.badge.magnifyingglass")
+                    .foregroundStyle(.teal)
+            }
+
             // ── SAISON ISLAMIQUE ──
             Picker("Saison islamique", selection: Binding(
                 get: { selectedScenarioID },
