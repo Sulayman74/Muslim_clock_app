@@ -58,7 +58,10 @@ struct IlmLessonView: View {
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))
             }
-            .navigationTitle(lesson.title)
+            // Titre de leçon DANS la page (pleine largeur, multi-lignes) : en
+            // navigationTitle inline il était tronqué entre les 4 boutons de
+            // toolbar. La barre porte le nom du parcours (court, stable).
+            .navigationTitle(track.title)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
@@ -132,6 +135,7 @@ struct IlmLessonView: View {
         ScrollView {
             VStack(spacing: 16) {
                 modePicker
+                lessonTitle(lesson)
                 positionCapsule(position)
                 arabicCard(lesson)
                 translationSection(lesson)
@@ -157,6 +161,17 @@ struct IlmLessonView: View {
         .pickerStyle(.segmented)
         .padding(.top, 8)
         .onChange(of: isMemorizing) { _, _ in isRevealed = false }
+    }
+
+    /// Titre complet de la leçon — dans la page, jamais tronqué (multi-lignes).
+    private func lessonTitle(_ lesson: IlmLesson) -> some View {
+        Text(verbatim: lesson.title)
+            .font(.system(size: 20, weight: .bold, design: .rounded))
+            .foregroundColor(theme.textPrimary)
+            .multilineTextAlignment(.center)
+            .fixedSize(horizontal: false, vertical: true)
+            .frame(maxWidth: .infinity)
+            .padding(.top, 2)
     }
 
     /// « 3 / 12 » — position dans le parcours (ancrage spatial de la mémorisation).
