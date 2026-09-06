@@ -14,7 +14,7 @@
         "text": "Louange à Allah qui nous a rendu la vie après nous avoir fait mourir, et c'est vers Lui qu'est la résurrection.",
         "source": "Sahih al-Bukhari 6312",
         "repeat": 1,
-        "benefit": "Invocation du Prophète ﷺ au réveil.",
+        "benefit": "Invocation prophétique essentielle au réveil marquant le retour de l'âme.",
         "authenticity": "sahih"
       },
       {
@@ -23,150 +23,47 @@
         "text": "Il n'y a de divinité qu'Allah, Seul, sans associé… Quiconque dit cela puis invoque, il est exaucé ; s'il fait ses ablutions et prie, sa prière est acceptée.",
         "source": "Sahih al-Bukhari 1154",
         "repeat": 1,
-        "benefit": "Celui qui se réveille la nuit et dit cela puis invoque est exaucé.",
+        "benefit": "Celui qui se réveille en sursaut la nuit et prononce ces paroles verra ses invocations exaucées.",
         "authenticity": "sahih"
+      },
+      {
+        "id": 1003,
+        "arabic": "الْحَمْدُ لِلَّهِ الَّذِي عَافَانِي فِي جَسَدِي، وَرَدَّ عَلَيَّ رُوحِي، وَأَذِنَ لِي بِذِكْرِهِ",
+        "text": "Louange à Allah qui m'a accordé la santé dans mon corps, m'a rendu mon âme et m'a permis de L'évoquer. (Au réveil)",
+        "source": "Jami` at-Tirmidhi 3401 — Hasan (Al-Albani)",
+        "repeat": 1,
+        "benefit": "Gratitude pour le réveil en pleine santé et le don d'une nouvelle journée pour adorer Allah.",
+        "authenticity": "hasan"
       }
     ]
   },
   {
-    "id": "wudu",
-    "titleAr": "أذكار الوضوء",
-    "titleFr": "Les ablutions",
-    "icon": "drop.fill",
+    "id": "clothes",
+    "titleAr": "أذكار اللباس",
+    "titleFr": "L'habillement",
+    "icon": "tshirt.fill",
     "moments": [
-      "wudu"
+      "clothes",
+      "wake",
+      "anytime"
     ],
     "adhkar": [
       {
-        "id": 2001,
-        "arabic": "بِسْمِ اللَّهِ",
-        "text": "Au nom d'Allah. (À dire avant de commencer les ablutions.)",
-        "source": "Abu Dawud 101 — Hasan",
+        "id": 8001,
+        "arabic": "الْحَمْدُ لِلَّهِ الَّذِي كَسَانِي هَٰذَا الثَّوْبَ وَرَزَقَنِيهِ مِنْ غَيْرِ حَوْلٍ مِنِّي وَلَا قُوَّةٍ",
+        "text": "Louange à Allah qui m'a vêtu de cet habit et me l'a accordé sans aucune force ni puissance de ma part. (En mettant un vêtement)",
+        "source": "Sunan Abi Dawud 4023 / Sahih al-Jami' 6086 — Hasan (Al-Albani)",
         "repeat": 1,
-        "benefit": "Point de wudû' pour qui ne mentionne pas le nom d'Allah dessus.",
+        "benefit": "Ses péchés passés lui sont pardonnés.",
         "authenticity": "hasan"
       },
       {
-        "id": 2002,
-        "arabic": "أَشْهَدُ أَنْ لَا إِلَٰهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، وَأَشْهَدُ أَنَّ مُحَمَّدًا عَبْدُهُ وَرَسُولُهُ",
-        "text": "J'atteste qu'il n'y a de divinité qu'Allah, Seul, sans associé, et j'atteste que Muhammad est Son serviteur et Son messager. (Après les ablutions.)",
-        "source": "Sahih Muslim 234",
+        "id": 8002,
+        "arabic": "بِسْمِ اللَّهِ",
+        "text": "Au nom d'Allah. (En retirant ses vêtements)",
+        "source": "Jami` at-Tirmidhi 606 / Sahih al-Jami' 3610 — Sahih (Al-Albani)",
         "repeat": 1,
-        "benefit": "Les huit portes du Paradis lui sont ouvertes, il y entre par celle qu'il veut.",
-        "authenticity": "sahih"
-      }
-    ]
-  },
-  {
-    "id": "mosque",
-    "titleAr": "أذكار دخول وخروج المسجد",
-    "titleFr": "Entrée & sortie de la mosquée",
-    "icon": "building.columns.fill",
-    "moments": [
-      "mosque"
-    ],
-    "adhkar": [
-      {
-        "id": 3001,
-        "arabic": "اللَّهُمَّ افْتَحْ لِي أَبْوَابَ رَحْمَتِكَ",
-        "text": "Ô Allah, ouvre-moi les portes de Ta miséricorde. (En entrant dans la mosquée, après avoir salué le Prophète ﷺ.)",
-        "source": "Sahih Muslim 713",
-        "repeat": 1,
-        "benefit": "Invocation de l'entrée à la mosquée.",
-        "authenticity": "sahih"
-      },
-      {
-        "id": 3002,
-        "arabic": "اللَّهُمَّ إِنِّي أَسْأَلُكَ مِنْ فَضْلِكَ",
-        "text": "Ô Allah, je Te demande de Ta grâce. (En sortant de la mosquée.)",
-        "source": "Sahih Muslim 713",
-        "repeat": 1,
-        "benefit": "Invocation de la sortie de la mosquée.",
-        "authenticity": "sahih"
-      }
-    ]
-  },
-  {
-    "id": "adhan_response",
-    "titleAr": "أذكار إجابة المؤذن",
-    "titleFr": "Réponse à l'appel à la prière",
-    "icon": "megaphone.fill",
-    "moments": [
-      "adhan_response"
-    ],
-    "adhkar": [
-      {
-        "id": 4001,
-        "arabic": "يَقُولُ مِثْلَ مَا يَقُولُ الْمُؤَذِّنُ، إِلَّا فِي الْحَيْعَلَتَيْنِ فَيَقُولُ: لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ",
-        "text": "Répéter après le muezzin, sauf pour « Hayya 'ala-s-salât » et « Hayya 'ala-l-falâh » où l'on dit : « Il n'y a de force ni de puissance qu'en Allah ».",
-        "source": "Sahih al-Bukhari 611 / Muslim 385",
-        "repeat": 1,
-        "benefit": "Celui qui répond ainsi du fond du cœur entre au Paradis.",
-        "authenticity": "sahih"
-      },
-      {
-        "id": 4002,
-        "arabic": "اللَّهُمَّ رَبَّ هَٰذِهِ الدَّعْوَةِ التَّامَّةِ وَالصَّلَاةِ الْقَائِمَةِ، آتِ مُحَمَّدًا الْوَسِيلَةَ وَالْفَضِيلَةَ، وَابْعَثْهُ مَقَامًا مَحْمُودًا الَّذِي وَعَدْتَهُ",
-        "text": "Ô Allah, Seigneur de cet appel parfait et de la prière établie, accorde à Muhammad al-wasîla et la faveur, et ressuscite-le en la station louée que Tu lui as promise. (Après l'adhan.)",
-        "source": "Sahih al-Bukhari 614",
-        "repeat": 1,
-        "benefit": "Mon intercession lui est due au Jour de la Résurrection.",
-        "authenticity": "sahih"
-      },
-      {
-        "id": 4004,
-        "arabic": "وَأَنَا أَشْهَدُ أَنْ لَا إِلَٰهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، وَأَنَّ مُحَمَّدًا عَبْدُهُ وَرَسُولُهُ، رَضِيتُ بِاللَّهِ رَبًّا وَبِمُحَمَّدٍ رَسُولًا وَبِالْإِسْلَامِ دِينًا",
-        "text": "Et moi j'atteste qu'il n'y a de divinité qu'Allah, Seul sans associé, et que Muhammad est Son serviteur et Son messager. Je suis satisfait d'Allah comme Seigneur, de Muhammad comme messager, et de l'Islam comme religion. (À dire après la double attestation du muezzin.)",
-        "source": "Sahih Muslim 386",
-        "repeat": 1,
-        "benefit": "Celui qui le dit en entendant le muezzin, ses péchés lui sont pardonnés.",
-        "authenticity": "sahih"
-      },
-      {
-        "id": 4005,
-        "arabic": "ثُمَّ صَلُّوا عَلَيَّ… (يُصَلِّي عَلَى النَّبِيِّ ﷺ بَعْدَ إِجَابَةِ الْمُؤَذِّنِ)",
-        "text": "Priez ensuite sur moi (la formule de la prière sur le Prophète ﷺ, ex. la formule ibrâhîmiyya), avant de demander pour lui al-wasîla.",
-        "source": "Sahih Muslim 384",
-        "repeat": 1,
-        "benefit": "« Quiconque prie sur moi une fois, Allah prie sur lui dix fois. » — puis demandez al-wasîla.",
-        "authenticity": "sahih"
-      },
-      {
-        "id": 4003,
-        "arabic": "الدُّعَاءُ بَيْنَ الْأَذَانِ وَالْإِقَامَةِ لَا يُرَدُّ، فَادْعُوا",
-        "text": "L'invocation entre l'adhan et l'iqâma n'est pas rejetée : invoquez. (Demandez à Allah ce que vous souhaitez de bien.)",
-        "source": "Abu Dawud 521 — Sahih",
-        "repeat": 1,
-        "benefit": "Moment d'exaucement à ne pas négliger.",
-        "authenticity": "sahih"
-      }
-    ]
-  },
-  {
-    "id": "sleep",
-    "titleAr": "أذكار النوم",
-    "titleFr": "Avant de dormir",
-    "icon": "moon.zzz.fill",
-    "moments": [
-      "sleep"
-    ],
-    "adhkar": [
-      {
-        "id": 5001,
-        "arabic": "بِاسْمِكَ اللَّهُمَّ أَمُوتُ وَأَحْيَا",
-        "text": "En Ton nom, ô Allah, je meurs et je vis. (Au moment de se coucher.)",
-        "source": "Sahih al-Bukhari 6324",
-        "repeat": 1,
-        "benefit": "Invocation du Prophète ﷺ avant de dormir.",
-        "authenticity": "sahih"
-      },
-      {
-        "id": 5002,
-        "arabic": "اللَّهُمَّ قِنِي عَذَابَكَ يَوْمَ تَبْعَثُ عِبَادَكَ",
-        "text": "Ô Allah, préserve-moi de Ton châtiment le Jour où Tu ressusciteras Tes serviteurs. (À dire en posant la main droite sous la joue.)",
-        "source": "Abu Dawud 5045 — Sahih",
-        "repeat": 3,
-        "benefit": "Le Prophète ﷺ le répétait trois fois avant de dormir.",
+        "benefit": "Forme un voile protecteur entre les yeux des djinns et la nudité des enfants d'Adam.",
         "authenticity": "sahih"
       }
     ]
@@ -184,18 +81,56 @@
         "id": 6001,
         "arabic": "(بِسْمِ اللَّهِ) اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الْخُبْثِ وَالْخَبَائِثِ",
         "text": "(Au nom d'Allah). Ô Allah, je cherche refuge auprès de Toi contre les démons mâles et femelles. (Avant d'entrer)",
-        "source": "Sahih al-Bukhari 142 / Muslim 375 (L'ajout du Bismillah : Sahih Al-Jami' 3611)",
+        "source": "Sahih al-Bukhari 142 / Sahih Muslim 375 (Ajout du Bismillah : Sahih al-Jami' 3611)",
         "repeat": 1,
-        "benefit": "Prononcer \"Bismillah\" forme un voile entre les yeux des djinns et la nudité des enfants d'Adam.",
+        "benefit": "Prononcer « Bismillah » forme une barrière empêchant les djinns de voir la nudité.",
         "authenticity": "sahih"
       },
       {
         "id": 6002,
         "arabic": "غُفْرَانَكَ",
-        "text": "Ton pardon, [ô Allah]. (En sortant)",
-        "source": "Abu Dawud 30 — Sahih",
+        "text": "Je Te demande Ton pardon, [ô Allah]. (En sortant)",
+        "source": "Sunan Abi Dawud 30 / Jami` at-Tirmidhi 7 — Sahih (Al-Albani)",
         "repeat": 1,
-        "benefit": "Demande de pardon au Seigneur à la sortie des lieux d'aisance.",
+        "benefit": "Demande de pardon pour l'interruption du rappel divin pendant l'état d'impureté.",
+        "authenticity": "sahih"
+      }
+    ]
+  },
+  {
+    "id": "wudu",
+    "titleAr": "أذكار الوضوء",
+    "titleFr": "Les ablutions",
+    "icon": "drop.fill",
+    "moments": [
+      "wudu"
+    ],
+    "adhkar": [
+      {
+        "id": 2001,
+        "arabic": "بِسْمِ اللَّهِ",
+        "text": "Au nom d'Allah. (À dire obligatoirement au début des ablutions)",
+        "source": "Sunan Abi Dawud 101 / Sunan Ibn Majah 399 — Hasan (Al-Albani)",
+        "repeat": 1,
+        "benefit": "Point de wudû' complet pour qui ne mentionne pas le nom d'Allah dessus.",
+        "authenticity": "hasan"
+      },
+      {
+        "id": 2002,
+        "arabic": "أَشْهَدُ أَنْ لَا إِلَٰهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، وَأَشْهَدُ أَنَّ مُحَمَّدًا عَبْدُهُ وَرَسُولُهُ",
+        "text": "J'atteste qu'il n'y a de divinité digne d'adoration qu'Allah, Seul, sans associé, et j'atteste que Muhammad est Son serviteur et Son messager. (Après les ablutions)",
+        "source": "Sahih Muslim 234",
+        "repeat": 1,
+        "benefit": "Les huit portes du Paradis lui sont ouvertes, il y entre par celle qu'il désire.",
+        "authenticity": "sahih"
+      },
+      {
+        "id": 2003,
+        "arabic": "اللَّهُمَّ اجْعَلْنِي مِنَ التَّوَّابِينَ، وَاجْعَلْنِي مِنَ الْمُتَطَهِّرِينَ",
+        "text": "Ô Allah, place-moi parmi les repentants et place-moi parmi ceux qui se purifient. (Après les ablutions)",
+        "source": "Jami` at-Tirmidhi 55 — Sahih (Al-Albani)",
+        "repeat": 1,
+        "benefit": "Allie la purification intérieure du cœur (repentir) à la purification extérieure du corps.",
         "authenticity": "sahih"
       }
     ]
@@ -213,18 +148,187 @@
         "id": 7001,
         "arabic": "بِسْمِ اللَّهِ تَوَكَّلْتُ عَلَى اللَّهِ، وَلَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ",
         "text": "Au nom d'Allah, je place ma confiance en Allah. Il n'y a de force ni de puissance qu'en Allah. (En sortant de chez soi)",
-        "source": "Abu Dawud 5095 — Sahih",
+        "source": "Sunan Abi Dawud 5095 / Jami` at-Tirmidhi 3426 — Sahih",
         "repeat": 1,
-        "benefit": "On lui dit : « Tu es guidé, on t'a suffi et tu es protégé », et le diable s'écarte de lui.",
+        "benefit": "Les anges lui disent : « Tu es guidé, préservé et protégé », et le diable s'écarte de lui.",
         "authenticity": "sahih"
       },
       {
         "id": 7002,
         "arabic": "بِسْمِ اللَّهِ",
-        "text": "Au nom d'Allah. (À dire en entrant chez soi, puis on salue les gens de la maison).",
+        "text": "Au nom d'Allah. (En franchissant le pas de sa porte, puis saluer les siens)",
         "source": "Sahih Muslim 2018",
         "repeat": 1,
-        "benefit": "Lorsqu'on mentionne Allah en entrant, le diable dit à ses troupes : « Vous n'avez ici ni endroit où passer la nuit ni de quoi dîner ».",
+        "benefit": "Le diable dit alors à ses troupes : « Vous n'avez ici ni gîte pour la nuit ni dîner ».",
+        "authenticity": "sahih"
+      },
+      {
+        "id": 7003,
+        "arabic": "اللَّهُمَّ إِنِّي أَسْأَلُكَ خَيْرَ الْمَوْلِجِ وَخَيْرَ الْمَخْرَجِ، بِسْمِ اللَّهِ وَلَجْنَا، وَبِسْمِ اللَّهِ خَرَجْنَا، وَعَلَى اللَّهِ رَبِّنَا تَوَكَّلْنَا",
+        "text": "Ô Allah, je Te demande la meilleure entrée et la meilleure sortie. Au nom d'Allah nous entrons, au nom d'Allah nous sortons, et en Allah notre Seigneur nous plaçons notre confiance. (Puis saluer les gens de la maison)",
+        "source": "Sunan Abi Dawud 5096 — Sahih (Al-Kalim At-Tayyib)",
+        "repeat": 1,
+        "benefit": "Attire la baraka et la concorde divine dans le foyer.",
+        "authenticity": "hasan"
+      }
+    ]
+  },
+  {
+    "id": "mosque",
+    "titleAr": "أذكار المسجد",
+    "titleFr": "La mosquée",
+    "icon": "building.columns.fill",
+    "moments": [
+      "mosque"
+    ],
+    "adhkar": [
+      {
+        "id": 3003,
+        "arabic": "اللَّهُمَّ اجْعَلْ فِي قَلْبِي نُورًا، وَفِي لِسَانِي نُورًا، وَفِي سَمْعِي نُورًا، وَفِي بَصَرِي نُورًا، وَمِنْ فَوْقِي نُورًا، وَمِنْ تَحْتِي نُورًا، وَعَنْ يَمِينِي نُورًا، وَعَنْ شِمَالِي نُورًا، وَمِنْ أَمَامِي نُورًا، وَمِنْ خَلْفِي نُورًا، وَاجْعَلْ فِي نَفْسِي نُورًا، وَأَعْظِمْ لِي نُورًا",
+        "text": "Ô Allah, mets dans mon cœur de la lumière, sur ma langue de la lumière, dans mon ouïe de la lumière, dans ma vue de la lumière, au-dessus de moi de la lumière, au-dessous de moi de la lumière, à ma droite de la lumière, à ma gauche de la lumière, devant moi de la lumière, derrière moi de la lumière, et amplifie pour moi cette lumière. (En marchant vers la mosquée)",
+        "source": "Sahih al-Bukhari 6316 / Sahih Muslim 763",
+        "repeat": 1,
+        "benefit": "Illumination complète de l'être et des sens vers l'accomplissement de la prière.",
+        "authenticity": "sahih"
+      },
+      {
+        "id": 3004,
+        "arabic": "أَعُوذُ بِاللَّهِ الْعَظِيمِ، وَبِوَجْهِهِ الْكَرِيمِ، وَسُلْطَانِهِ الْقَدِيمِ، مِنَ الشَّيْطَانِ الرَّجِيمِ",
+        "text": "Je cherche refuge auprès d'Allah l'Immense, auprès de Son noble Visage et de Son autorité primordiale, contre Satan le banni. (En entrant dans la mosquée)",
+        "source": "Sunan Abi Dawud 466 — Sahih (Al-Albani)",
+        "repeat": 1,
+        "benefit": "Le diable s'écrie : « Il est préservé de moi pour le restant de la journée ! »",
+        "authenticity": "sahih"
+      },
+      {
+        "id": 3001,
+        "arabic": "اللَّهُمَّ افْتَحْ لِي أَبْوَابَ رَحْمَتِكَ",
+        "text": "Ô Allah, ouvre-moi les portes de Ta miséricorde. (En entrant du pied droit, après la prière sur le Prophète ﷺ)",
+        "source": "Sahih Muslim 713",
+        "repeat": 1,
+        "benefit": "Demande de miséricorde divine dans Sa demeure sacrée.",
+        "authenticity": "sahih"
+      },
+      {
+        "id": 3002,
+        "arabic": "اللَّهُمَّ إِنِّي أَسْأَلُكَ مِنْ فَضْلِكَ",
+        "text": "Ô Allah, je Te demande de Ta grâce. (En sortant du pied gauche)",
+        "source": "Sahih Muslim 713",
+        "repeat": 1,
+        "benefit": "Demande de subsistance licite et de bienfaits à la sortie de la mosquée.",
+        "authenticity": "sahih"
+      }
+    ]
+  },
+  {
+    "id": "adhan_response",
+    "titleAr": "أذكار إجابة المؤذن",
+    "titleFr": "Réponse à l'appel à la prière",
+    "icon": "megaphone.fill",
+    "moments": [
+      "adhan_response"
+    ],
+    "adhkar": [
+      {
+        "id": 4001,
+        "arabic": "يَقُولُ مِثْلَ مَا يَقُولُ الْمُؤَذِّنُ، إِلَّا فِي الْحَيْعَلَتَيْنِ فَيَقُولُ: لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ",
+        "text": "Répéter après le muezzin phrase par phrase, sauf pour « Hayya 'ala-s-salât » et « Hayya 'ala-l-falâh » où l'on dit : « Lâ hawla wa lâ quwwata illâ billâh ».",
+        "source": "Sahih al-Bukhari 611 / Sahih Muslim 385",
+        "repeat": 1,
+        "benefit": "Celui qui répond avec ferveur et sincérité entrera au Paradis.",
+        "authenticity": "sahih"
+      },
+      {
+        "id": 4004,
+        "arabic": "وَأَنَا أَشْهَدُ أَنْ لَا إِلَٰهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، وَأَنَّ مُحَمَّدًا عَبْدُهُ وَرَسُولُهُ، رَضِيتُ بِاللَّهِ رَبًّا وَبِمُحَمَّدٍ رَسُولًا وَبِالْإِسْلَامِ دِينًا",
+        "text": "Et moi j'atteste qu'il n'y a de divinité digne d'adoration qu'Allah, Seul sans associé, et que Muhammad est Son serviteur et Son messager. Je suis satisfait d'Allah comme Seigneur, de Muhammad comme messager, et de l'Islam comme religion. (Après la double attestation du muezzin)",
+        "source": "Sahih Muslim 386",
+        "repeat": 1,
+        "benefit": "Ses péchés antérieurs lui sont entièrement pardonnés.",
+        "authenticity": "sahih"
+      },
+      {
+        "id": 4005,
+        "arabic": "ثُمَّ صَلُّوا عَلَيَّ… (يُصَلِّي عَلَى النَّبِيِّ ﷺ بِالصَّلَاةِ الإِبْرَاهِيمِيَّةِ)",
+        "text": "Priez ensuite sur le Prophète ﷺ (notamment par la prière ibrahimiyya) dès la fin de l'appel.",
+        "source": "Sahih Muslim 384",
+        "repeat": 1,
+        "benefit": "« Quiconque prie sur moi une fois, Allah prie sur lui dix fois. »",
+        "authenticity": "sahih"
+      },
+      {
+        "id": 4002,
+        "arabic": "اللَّهُمَّ رَبَّ هَٰذِهِ الدَّعْوَةِ التَّامَّةِ وَالصَّلَاةِ الْقَائِمَةِ، آتِ مُحَمَّدًا الْوَسِيلَةَ وَالْفَضِيلَةَ، وَابْعَثْهُ مَقَامًا مَحْمُودًا الَّذِي وَعَدْتَهُ",
+        "text": "Ô Allah, Seigneur de cet appel parfait et de la prière établie, accorde à Muhammad al-wasîla (le plus haut degré du Paradis) et la faveur, et ressuscite-le à la station louée que Tu lui as promise.",
+        "source": "Sahih al-Bukhari 614",
+        "repeat": 1,
+        "benefit": "L'intercession du Prophète ﷺ lui est acquise au Jour de la Résurrection.",
+        "authenticity": "sahih"
+      },
+      {
+        "id": 4003,
+        "arabic": "الدُّعَاءُ بَيْنَ الْأَذَانِ وَالْإِقَامَةِ لَا يُرَدُّ، فَادْعُوا",
+        "text": "L'invocation entre l'adhan et l'iqâma n'est jamais rejetée : profitez de cet instant pour demander vos besoins à Allah.",
+        "source": "Sunan Abi Dawud 521 / Jami` at-Tirmidhi 212 — Sahih (Al-Albani)",
+        "repeat": 1,
+        "benefit": "Moment privilégié d'exaucement garanti par la Sounnah.",
+        "authenticity": "sahih"
+      }
+    ]
+  },
+  {
+    "id": "post_prayer",
+    "titleAr": "أذكار ما بعد الصلاة المفروضة",
+    "titleFr": "Après la prière obligatoire",
+    "icon": "hands.sparkles.fill",
+    "moments": [
+      "post_prayer",
+      "anytime"
+    ],
+    "adhkar": [
+      {
+        "id": 9001,
+        "arabic": "أَسْتَغْفِرُ اللَّهَ (ثَلَاثًا)، اللَّهُمَّ أَنْتَ السَّلَامُ وَمِنْكَ السَّلَامُ، تَبَارَكْتَ يَا ذَا الْجَلَالِ وَالإِكْرَامِ",
+        "text": "Je demande pardon à Allah (3 fois). Ô Allah ! Tu es la Paix et de Toi vient la Paix. Béni sois-Tu, Ô Possesseur de majesté et de noblesse. (Directement après le Taslîm)",
+        "source": "Sahih Muslim 591",
+        "repeat": 1,
+        "benefit": "Sounnah établie du Messager d'Allah ﷺ immédiatement après la salutation finale.",
+        "authenticity": "sahih"
+      },
+      {
+        "id": 9002,
+        "arabic": "لَا إِلَٰهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَىٰ كُلِّ شَيْءٍ قَدِيرٌ، اللَّهُمَّ لَا مَانِعَ لِمَا أَعْطَيْتَ، وَلَا مُعْطِيَ لِمَا مَنَعْتَ، وَلَا يَنْفَعُ ذَا الْجَدِّ مِنْكَ الْجَدُّ",
+        "text": "Il n'y a de divinité digne d'adoration qu'Allah, Seul sans associé. À Lui la royauté et la louange, et Il est Omnipotent. Ô Allah, nul ne peut retenir ce que Tu as accordé, nul ne peut donner ce que Tu as retenu, et la fortune d'un nanti ne lui est d'aucune utilité auprès de Toi.",
+        "source": "Sahih al-Bukhari 844 / Sahih Muslim 593",
+        "repeat": 1,
+        "benefit": "Attestation d'Unicité totale et de soumission à la souveraineté d'Allah.",
+        "authenticity": "sahih"
+      },
+      {
+        "id": 9003,
+        "arabic": "سُبْحَانَ اللَّهِ (٣٣)، وَالْحَمْدُ لِلَّهِ (٣٣)، وَاللَّهُ أَكْبَرُ (٣٣)، ثُمَّ تَمَامَ الْمِائَةِ: لَا إِلَٰهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَىٰ كُلِّ شَيْءٍ قَدِيرٌ",
+        "text": "Gloire à Allah (33 fois), Louange à Allah (33 fois), Allah est le Plus Grand (33 fois), puis pour compléter à cent : « Il n'y a de divinité qu'Allah, Seul sans associé, à Lui la royauté et la louange, et Il est Tout-Puissant ».",
+        "source": "Sahih Muslim 597",
+        "repeat": 1,
+        "benefit": "Ses péchés sont pardonnés, fussent-ils aussi abondants que l'écume de la mer.",
+        "authenticity": "sahih"
+      },
+      {
+        "id": 9004,
+        "arabic": "اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ ۚ لَا تَأْخُذُهُ سِنَةٌ وَلَا نَوْمٌ ۚ لَهُ مَا فِي السَّمَاوَاتِ وَمَا فِي الْأَرْضِ ۚ مَنْ ذَا الَّذِي يَشْفَعُ عِنْدَهُ إِلَّا بِإِذْنِهِ ۚ يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ ۚ وَلَا يُحِيطُونَ بِشَيْءٍ مِنْ عِلْمِهِ إِلَّا بِمَا شَاءَ ۚ وَسِعَ كُرْسِيُّهُ السَّمَاوَاتِ وَالْأَرْضَ ۚ وَلَا يَئُودُهُ حِفْظُهُمَا ۚ وَهُوَ الْعَلِيُّ الْعَظِيمُ",
+        "text": "Récitation du verset du Trône (Âyat al-Kursî — Coran 2:255) après chaque prière obligatoire.",
+        "source": "Sunan An-Nasa'i (Al-Kubra 9848) — Sahih (Ibn Hajar / Al-Albani dans Sahih al-Jami' 6464)",
+        "repeat": 1,
+        "benefit": "« Quiconque récite Âyat al-Kursî après chaque prière obligatoire, rien ne l'empêchera d'entrer au Paradis sinon la mort. »",
+        "authenticity": "coran"
+      },
+      {
+        "id": 9005,
+        "arabic": "اللَّهُمَّ أَعِنِّي عَلَى ذِكْرِكَ، وَشُكْرِكَ، وَحُسْنِ عِبَادَتِكَ",
+        "text": "Ô Allah ! Aide-moi à T'évoquer, à Te remercier et à parfaire mon adoration envers Toi. (À la fin de chaque prière)",
+        "source": "Sunan Abi Dawud 1522 — Sahih (Al-Albani)",
+        "repeat": 1,
+        "benefit": "Recommandé personnellement par le Prophète ﷺ à Mu'âdh ibn Jabal par amour pour lui.",
         "authenticity": "sahih"
       }
     ]
@@ -241,189 +345,37 @@
       {
         "id": 10001,
         "arabic": "بِسْمِ اللَّهِ (وإذا نسي في أوله قال): بِسْمِ اللَّهِ فِي أَوَّلِهِ وَآخِرِهِ",
-        "text": "Au nom d'Allah. (S'il oublie au début, qu'il dise au cours du repas) : Au nom d'Allah au début et à la fin.",
-        "source": "Abu Dawud 3767 — Sahih",
+        "text": "Au nom d'Allah. (En cas d'oubli au début, dire au cours du repas) : « Bismillâhi fî awwalihi wa âkhirih ».",
+        "source": "Sunan Abi Dawud 3767 / Jami` at-Tirmidhi 1858 — Sahih",
         "repeat": 1,
-        "benefit": "Empêche le diable de partager la nourriture.",
+        "benefit": "Empêche Satan de partager et de souiller la nourriture.",
         "authenticity": "sahih"
       },
       {
         "id": 10002,
         "arabic": "الْحَمْدُ لِلَّهِ الَّذِي أَطْعَمَنِي هَٰذَا وَرَزَقَنِيهِ مِنْ غَيْرِ حَوْلٍ مِنِّي وَلَا قُوَّةٍ",
-        "text": "Louange à Allah qui m'a nourri de cela et me l'a accordé sans aucune force ni puissance de ma part.",
-        "source": "Abu Dawud 4023 — Hasan",
+        "text": "Louange à Allah qui m'a nourri de ceci et me l'a octroyé sans aucune force ni puissance de ma part. (Après avoir mangé)",
+        "source": "Sunan Abi Dawud 4023 / Jami` at-Tirmidhi 3458 — Hasan (Al-Albani)",
         "repeat": 1,
-        "benefit": "Ses péchés passés lui sont pardonnés.",
+        "benefit": "Tous ses péchés antérieurs lui sont effacés.",
         "authenticity": "hasan"
-      }
-    ]
-  },
-  {
-    "id": "travel",
-    "titleAr": "أذكار السفر",
-    "titleFr": "Le voyage",
-    "icon": "airplane",
-    "moments": [
-      "travel"
-    ],
-    "adhkar": [
+      },
       {
-        "id": 11001,
-        "arabic": "اللَّهُ أَكْبَرُ، اللَّهُ أَكْبَرُ، اللَّهُ أَكْبَرُ، سُبْحَانَ الَّذِي سَخَّرَ لَنَا هَٰذَا وَمَا كُنَّا لَهُ مُقْرِنِينَ، وَإِنَّا إِلَىٰ رَبِّنَا لَمُنْقَلِبُونَ، اللَّهُمَّ إِنَّا نَسْأَلُكَ فِي سَفَرِنَا هَٰذَا الْبِرَّ وَالتَّقْوَىٰ، وَمِنَ الْعَمَلِ مَا تَرْضَىٰ، اللَّهُمَّ هَوِّنْ عَلَيْنَا سَفَرَنَا هَٰذَا وَاطْوِ عَنَّا بُعْدَهُ، اللَّهُمَّ أَنْتَ الصَّاحِبُ فِي السَّفَرِ، وَالْخَلِيفَةُ فِي الْأَهْلِ",
-        "text": "Allah est le plus grand (×3). Gloire à Celui qui a mis ceci à notre service, alors que nous n'étions pas capables de le dominer. C'est vers notre Seigneur que nous retournerons. Ô Allah, nous Te demandons dans notre voyage la piété, la crainte et les œuvres que Tu agrées. Ô Allah, facilite-nous ce voyage et raccourcis-en la distance. Ô Allah, Tu es le Compagnon dans le voyage et le Garant auprès de la famille. (En montant dans le véhicule.)",
-        "source": "Sahih Muslim 1342",
+        "id": 10003,
+        "arabic": "اللَّهُمَّ بَارِكْ لَهُمْ فِيمَا رَزَقْتَهُمْ، وَاغْفِرْ لَهُمْ وَارْحَمْهُمْ",
+        "text": "Ô Allah, bénis pour eux ce dont Tu les as pourvus, pardonne-leur et fais-leur miséricorde. (Invocation pour l'hôte après avoir été invité)",
+        "source": "Sahih Muslim 2042",
         "repeat": 1,
-        "benefit": "Invocation du départ en voyage rapportée du Prophète ﷺ.",
+        "benefit": "Bénédiction et prière de miséricorde transmises à la personne qui nous a nourri.",
         "authenticity": "sahih"
       },
       {
-        "id": 11002,
-        "arabic": "أَعُوذُ بِكَلِمَاتِ اللَّهِ التَّامَّاتِ مِنْ شَرِّ مَا خَلَقَ",
-        "text": "Je cherche refuge dans les paroles parfaites d'Allah contre le mal de ce qu'Il a créé. (Lors d'une halte, en s'arrêtant dans un lieu.)",
-        "source": "Sahih Muslim 2708",
+        "id": 10004,
+        "arabic": "أَفْطَرَ عِنْدَكُمُ الصَّائِمُونَ، وَأَكَلَ طَعَامَكُمُ الْأَبْرَارُ، وَصَلَّتْ عَلَيْكُمُ الْمَلَائِكَةُ",
+        "text": "Que les jeûneurs rompent auprès de vous, que les pieux mangent de vos mets, et que les anges prient sur vous. (Après avoir rompu son jeûne chez autrui)",
+        "source": "Sunan Abi Dawud 3854 — Sahih (Al-Albani)",
         "repeat": 1,
-        "benefit": "Celui qui s'arrête quelque part et dit cela, rien ne lui nuira jusqu'à ce qu'il reparte.",
-        "authenticity": "sahih"
-      },
-      {
-        "id": 11003,
-        "arabic": "آيِبُونَ تَائِبُونَ عَابِدُونَ لِرَبِّنَا حَامِدُونَ",
-        "text": "Nous revenons, repentants, adorateurs, louant notre Seigneur. (Au retour de voyage, après avoir répété le takbîr trois fois.)",
-        "source": "Sahih al-Bukhari 1797 / Muslim 1344",
-        "repeat": 1,
-        "benefit": "Ce que disait le Prophète ﷺ en revenant d'un voyage.",
-        "authenticity": "sahih"
-      },
-      {
-        "id": 11004,
-        "arabic": "كَانُوا إِذَا صَعِدُوا كَبَّرُوا، وَإِذَا نَزَلُوا سَبَّحُوا",
-        "text": "En montant une côte : « Allāhu akbar ». En descendant : « Subhān Allāh ». (Pratique du Prophète ﷺ et de ses compagnons en voyage.)",
-        "source": "Sahih al-Bukhari 2993",
-        "repeat": 1,
-        "benefit": "Adapter le rappel au relief : magnifier en montée, glorifier en descente.",
-        "authenticity": "sahih"
-      },
-      {
-        "id": 11005,
-        "arabic": "أَسْتَوْدِعُكُمُ اللَّهَ الَّذِي لَا تَضِيعُ وَدَائِعُهُ",
-        "text": "Je vous confie à Allah, dont les dépôts ne se perdent pas. (Ce que dit le voyageur à ceux qu'il quitte.)",
-        "source": "Ibn Mājah 2825 — Sahih (al-Albani)",
-        "repeat": 1,
-        "benefit": "Confier ses proches à la garde d'Allah avant de partir.",
-        "authenticity": "sahih"
-      },
-      {
-        "id": 11006,
-        "arabic": "أَسْتَوْدِعُ اللَّهَ دِينَكَ وَأَمَانَتَكَ وَخَوَاتِيمَ عَمَلِكَ",
-        "text": "Je confie à Allah ta religion, ce qui t'est confié et l'issue de tes actes. (Ce que dit le résident à celui qui part en voyage.)",
-        "source": "Abu Dawud 2600 / Tirmidhi 3443 — Sahih",
-        "repeat": 1,
-        "benefit": "Invocation d'adieu pour le voyageur.",
-        "authenticity": "sahih"
-      }
-    ]
-  },
-  {
-    "id": "istikhara",
-    "titleAr": "دعاء الاستخارة",
-    "titleFr": "Prière de consultation (Istikhâra)",
-    "icon": "signpost.right.fill",
-    "moments": [
-      "istikhara"
-    ],
-    "adhkar": [
-      {
-        "id": 12001,
-        "arabic": "اللَّهُمَّ إِنِّي أَسْتَخِيرُكَ بِعِلْمِكَ، وَأَسْتَقْدِرُكَ بِقُدْرَتِكَ، وَأَسْأَلُكَ مِنْ فَضْلِكَ الْعَظِيمِ، فَإِنَّكَ تَقْدِرُ وَلَا أَقْدِرُ، وَتَعْلَمُ وَلَا أَعْلَمُ، وَأَنْتَ عَلَّامُ الْغُيُوبِ، اللَّهُمَّ إِنْ كُنْتَ تَعْلَمُ أَنَّ هَٰذَا الْأَمْرَ خَيْرٌ لِي فِي دِينِي وَمَعَاشِي وَعَاقِبَةِ أَمْرِي فَاقْدُرْهُ لِي وَيَسِّرْهُ لِي ثُمَّ بَارِكْ لِي فِيهِ، وَإِنْ كُنْتَ تَعْلَمُ أَنَّ هَٰذَا الْأَمْرَ شَرٌّ لِي فِي دِينِي وَمَعَاشِي وَعَاقِبَةِ أَمْرِي فَاصْرِفْهُ عَنِّي وَاصْرِفْنِي عَنْهُ، وَاقْدُرْ لِيَ الْخَيْرَ حَيْثُ كَانَ ثُمَّ أَرْضِنِي بِهِ",
-        "text": "Ô Allah, je Te demande de m'assister par Ta science, je recherche la force par Ta puissance et je Te demande de Ta grâce immense. Car Tu es capable et je ne le suis pas, Tu sais et je ne sais pas, et Tu es le grand connaisseur de l'invisible. Ô Allah, si Tu sais que cette affaire est un bien pour moi dans ma religion, ma vie et l'issue de mes actes, décrète-la pour moi, facilite-la-moi puis bénis-la pour moi. Et si Tu sais qu'elle est un mal pour moi dans ma religion, ma vie et l'issue de mes actes, détourne-la de moi et détourne-moi d'elle, et décrète pour moi le bien où qu'il soit, puis fais que j'en sois satisfait. (Après 2 rak'ât surérogatoires, en nommant l'affaire.)",
-        "source": "Sahih al-Bukhari 1162",
-        "repeat": 1,
-        "benefit": "Le Prophète ﷺ nous enseignait l'istikhâra dans toute affaire, comme il nous enseignait une sourate du Coran.",
-        "authenticity": "sahih"
-      }
-    ]
-  },
-  {
-    "id": "storm",
-    "titleAr": "أذكار الريح والمطر والرعد",
-    "titleFr": "Vent, pluie & orage",
-    "icon": "cloud.bolt.rain.fill",
-    "moments": [
-      "storm"
-    ],
-    "adhkar": [
-      {
-        "id": 13001,
-        "arabic": "اللَّهُمَّ إِنِّي أَسْأَلُكَ خَيْرَهَا وَخَيْرَ مَا فِيهَا وَخَيْرَ مَا أُرْسِلَتْ بِهِ، وَأَعُوذُ بِكَ مِنْ شَرِّهَا وَشَرِّ مَا فِيهَا وَشَرِّ مَا أُرْسِلَتْ بِهِ",
-        "text": "Ô Allah, je Te demande son bien, le bien qu'il contient et le bien pour lequel il a été envoyé ; et je cherche refuge auprès de Toi contre son mal, le mal qu'il contient et le mal pour lequel il a été envoyé. (Lors d'un vent fort.)",
-        "source": "Sahih Muslim 899",
-        "repeat": 1,
-        "benefit": "Invocation du Prophète ﷺ lorsque le vent soufflait fort.",
-        "authenticity": "sahih"
-      },
-      {
-        "id": 13002,
-        "arabic": "اللَّهُمَّ صَيِّبًا نَافِعًا",
-        "text": "Ô Allah, [fais que ce soit] une pluie bienfaisante. (Pendant la pluie.)",
-        "source": "Sahih al-Bukhari 1032",
-        "repeat": 1,
-        "benefit": "Ce que disait le Prophète ﷺ quand il pleuvait.",
-        "authenticity": "sahih"
-      },
-      {
-        "id": 13003,
-        "arabic": "مُطِرْنَا بِفَضْلِ اللَّهِ وَرَحْمَتِهِ",
-        "text": "Nous avons reçu la pluie par la grâce d'Allah et Sa miséricorde. (Après la pluie.)",
-        "source": "Sahih al-Bukhari 846 / Muslim 71",
-        "repeat": 1,
-        "benefit": "Reconnaître que la pluie vient de la grâce d'Allah (et non des astres).",
-        "authenticity": "sahih"
-      },
-      {
-        "id": 13004,
-        "arabic": "سُبْحَانَ الَّذِي يُسَبِّحُ الرَّعْدُ بِحَمْدِهِ وَالْمَلَائِكَةُ مِنْ خِيفَتِهِ",
-        "text": "Gloire à Celui que le tonnerre glorifie par Sa louange, ainsi que les anges, par crainte de Lui.",
-        "source": "Al-Muwatta de l'Imam Malik (2/992) — Authentique (Sahih) d'après 'Abdullah ibn Az-Zubayr.",
-        "repeat": 1,
-        "benefit": "À prononcer en entendant le tonnerre. Validé par les savants comme invocation authentique (Hisn al-Muslim).",
-        "authenticity": "sahih"
-      }
-    ]
-  },
-  {
-    "id": "fear",
-    "titleAr": "دعاء الخوف من العدو",
-    "titleFr": "Peur d'un ennemi",
-    "icon": "shield.lefthalf.filled",
-    "moments": [
-      "fear"
-    ],
-    "adhkar": [
-      {
-        "id": 14001,
-        "arabic": "اللَّهُمَّ إِنَّا نَجْعَلُكَ فِي نُحُورِهِمْ، وَنَعُوذُ بِكَ مِنْ شُرُورِهِمْ",
-        "text": "Ô Allah, nous Te plaçons face à eux et nous cherchons refuge auprès de Toi contre leurs maux. (Face à un ennemi ou un groupe que l'on craint.)",
-        "source": "Abu Dawud 1537 — Sahih",
-        "repeat": 1,
-        "benefit": "Ce que disait le Prophète ﷺ quand il craignait un groupe.",
-        "authenticity": "sahih"
-      },
-      {
-        "id": 14002,
-        "arabic": "حَسْبُنَا اللَّهُ وَنِعْمَ الْوَكِيلُ",
-        "text": "Allah nous suffit et Il est le meilleur Garant.",
-        "source": "Sahih al-Bukhari 4563",
-        "repeat": 1,
-        "benefit": "Parole d'Ibrahim jeté au feu, et des croyants — cf. Coran 3:173.",
-        "authenticity": "sahih"
-      },
-      {
-        "id": 14003,
-        "arabic": "اللَّهُمَّ مُنْزِلَ الْكِتَابِ، سَرِيعَ الْحِسَابِ، اهْزِمِ الْأَحْزَابَ، اللَّهُمَّ اهْزِمْهُمْ وَزَلْزِلْهُمْ",
-        "text": "Ô Allah, Toi qui as fait descendre le Livre, prompt à demander les comptes, mets en déroute les coalisés. Ô Allah, mets-les en déroute et ébranle-les.",
-        "source": "Sahih Muslim 1742",
-        "repeat": 1,
-        "benefit": "Invocation du Prophète ﷺ contre les coalisés.",
+        "benefit": "Invocation prophétique apportant l'intercession bienveillante des anges sur la maison.",
         "authenticity": "sahih"
       }
     ]
@@ -440,36 +392,376 @@
       {
         "id": 15001,
         "arabic": "ذَهَبَ الظَّمَأُ، وَابْتَلَّتِ الْعُرُوقُ، وَثَبَتَ الْأَجْرُ إِنْ شَاءَ اللَّهُ",
-        "text": "La soif est partie, les veines sont humectées et la récompense est acquise, si Allah le veut. (À la rupture du jeûne.)",
-        "source": "Abu Dawud 2357 — Hasan",
+        "text": "La soif est étanchée, les veines sont humectées et la récompense est assurée, si Allah le veut. (À la rupture du jeûne)",
+        "source": "Sunan Abi Dawud 2357 — Hasan (Al-Albani)",
         "repeat": 1,
-        "benefit": "Invocation authentique de la rupture du jeûne rapportée du Prophète ﷺ.",
+        "benefit": "L'invocation authentique établie du Messager d'Allah ﷺ au moment de l'Iftar.",
         "authenticity": "hasan"
       },
       {
         "id": 15002,
         "arabic": "إِنِّي صَائِمٌ، إِنِّي صَائِمٌ",
-        "text": "Je jeûne, je jeûne. (À dire si l'on est insulté ou provoqué pendant le jeûne, ou invité à manger.)",
-        "source": "Sahih al-Bukhari 1904 / Muslim 1151",
+        "text": "Je jeûne, je jeûne. (À prononcer en cas de provocation, d'insulte ou de dispute pendant le jeûne)",
+        "source": "Sahih al-Bukhari 1904 / Sahih Muslim 1151",
         "repeat": 1,
-        "benefit": "Le jeûne est un bouclier ; on ne répond pas à la provocation.",
+        "benefit": "Le jeûne est un bouclier contre les péchés ; le croyant refuse la discorde.",
         "authenticity": "sahih"
       },
       {
         "id": 15003,
-        "arabic": "ثَلَاثَةٌ لَا تُرَدُّ دَعْوَتُهُمْ: الصَّائِمُ حِينَ يُفْطِرُ...",
-        "text": "Il y a trois personnes dont l'invocation n'est pas rejetée : le jeûneur lorsqu'il rompt son jeûne (ou jusqu'à ce qu'il rompe)...",
-        "source": "Sunan At-Tirmidhi 2526 — Authentifié par Al-Albani.",
+        "arabic": "ثَلَاثَةٌ لَا تُرَدُّ دَعْوَتُهُمْ: الصَّائِمُ حِينَ يُفْطِرُ، وَالإِمَامُ الْعَادِلُ، وَدَعْوَةُ الْمَظْلُومِ",
+        "text": "Trois personnes ne voient point leur invocation repoussée : le jeûneur lorsqu'il rompt son jeûne, le gouverneur juste, et l'invocation de l'opprimé.",
+        "source": "Jami` at-Tirmidhi 2526 — Sahih (Al-Albani)",
         "repeat": 1,
-        "benefit": "Moment d'exaucement. Profite des instants précédant la rupture du jeûne pour invoquer Allah avec ferveur.",
+        "benefit": "Moment majeur d'exaucement : multiplier les invocations sincères à l'approche du Maghrib.",
+        "authenticity": "sahih"
+      }
+    ]
+  },
+  {
+    "id": "distress",
+    "titleAr": "أذكار الكرب والهم والحزن",
+    "titleFr": "Souci, tristesse & angoisse",
+    "icon": "heart.fill",
+    "moments": [
+      "distress",
+      "anytime"
+    ],
+    "adhkar": [
+      {
+        "id": 17001,
+        "arabic": "لَا إِلَٰهَ إِلَّا اللَّهُ الْعَظِيمُ الْحَلِيمُ، لَا إِلَٰهَ إِلَّا اللَّهُ رَبُّ الْعَرْشِ الْعَظِيمِ، لَا إِلَٰهَ إِلَّا اللَّهُ رَبُّ السَّمَاوَاتِ وَرَبُّ الْأَرْضِ وَرَبُّ الْعَرْشِ الْكَرِيمِ",
+        "text": "Il n'y a de divinité digne d'adoration qu'Allah, l'Immense, le Magnanime. Il n'y a de divinité qu'Allah, Seigneur de l'immense Trône. Il n'y a de divinité qu'Allah, Seigneur des cieux, Seigneur de la terre et Seigneur du noble Trône. (Invocation de l'épreuve et du Karb)",
+        "source": "Sahih al-Bukhari 6346 / Sahih Muslim 2730",
+        "repeat": 1,
+        "benefit": "Ce que récitait le Prophète ﷺ lors des situations d'extrême angoisse ou d'oppression.",
+        "authenticity": "sahih"
+      },
+      {
+        "id": 17002,
+        "arabic": "اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الْهَمِّ وَالْحَزَنِ، وَالْعَجْزِ وَالْكَسَلِ، وَالْبُخْلِ وَالْجُبْنِ، وَضَلَعِ الدَّيْنِ وَغَلَبَةِ الرِّجَالِ",
+        "text": "Ô Allah ! Je cherche refuge auprès de Toi contre les soucis et la tristesse, l'impuissance et la paresse, l'avarice et la lâcheté, le poids des dettes et la domination des hommes.",
+        "source": "Sahih al-Bukhari 2893",
+        "repeat": 1,
+        "benefit": "Délivre l'esprit de l'abattement moral, des blocages matériels et de la soumission aux créatures.",
+        "authenticity": "sahih"
+      },
+      {
+        "id": 17003,
+        "arabic": "لَا إِلَٰهَ إِلَّا أَنْتَ سُبْحَانَكَ إِنِّي كُنْتُ مِنَ الظَّالِمِينَ",
+        "text": "Pas de divinité digne d'adoration en dehors de Toi ! Pureté à Toi ! J'étais certes parmi les injustes. (Invocation de Yûnus dans le ventre du poisson)",
+        "source": "Jami` at-Tirmidhi 3505 — Sahih (Al-Albani)",
+        "repeat": 1,
+        "benefit": "« Aucun serviteur musulman ne formule cette invocation pour un souci sans qu'Allah ne le dissipe. »",
+        "authenticity": "sahih"
+      },
+      {
+        "id": 17004,
+        "arabic": "يَا حَيُّ يَا قَيُّومُ بِرَحْمَتِكَ أَسْتَغِيثُ، أَصْلِحْ لِي شَأْنِي كُلَّهُ، وَلَا تَكِلْنِي إِلَى نَفْسِي طَرْفَةَ عَيْنٍ",
+        "text": "Ô Vivant, Ô Toi qui subsistes par Toi-même, par Ta miséricorde j'implore Ton secours. Réforme l'ensemble de mes affaires et ne me livre pas à moi-même le temps d'un battement de cils.",
+        "source": "Sunan An-Nasa'i (Al-Kubra 10330) / Sahih at-Targhib 661 — Sahih (Al-Albani)",
+        "repeat": 1,
+        "benefit": "Remise absolue de son âme au Créateur pour dénouer toute situation complexe.",
+        "authenticity": "sahih"
+      }
+    ]
+  },
+  {
+    "id": "sick",
+    "titleAr": "أذكار عيادة المريض والرقى",
+    "titleFr": "Visite du malade & Roqya",
+    "icon": "cross.case.fill",
+    "moments": [
+      "sick",
+      "anytime"
+    ],
+    "adhkar": [
+      {
+        "id": 18001,
+        "arabic": "أَسْأَلُ اللَّهَ الْعَظِيمَ رَبَّ الْعَرْشِ الْعَظِيمِ أَنْ يَشْفِيَكَ",
+        "text": "Je demande à Allah l'Immense, Seigneur de l'immense Trône, de te guérir. (À répéter 7 fois auprès du malade)",
+        "source": "Sunan Abi Dawud 3106 / Jami` at-Tirmidhi 2083 — Sahih (Al-Albani)",
+        "repeat": 7,
+        "benefit": "Quiconque visite un malade et récite ceci 7 fois, Allah lui accorde la guérison tant que son heure n'est pas venue.",
+        "authenticity": "sahih"
+      },
+      {
+        "id": 18002,
+        "arabic": "اللَّهُمَّ رَبَّ النَّاسِ، أَذْهِبِ الْبَاسَ، اشْفِ أَنْتَ الشَّافِي، لَا شِفَاءَ إِلَّا شِفَاؤُكَ، شِفَاءً لَا يُغَادِرُ سَقَمًا",
+        "text": "Ô Allah, Seigneur des hommes, dissipe le mal. Guéris, car Tu es le Guérisseur. Nulle guérison si ce n'est Ta guérison, une guérison qui ne laisse subsister aucun mal. (Roqya prophétique)",
+        "source": "Sahih al-Bukhari 5742 / Sahih Muslim 2191",
+        "repeat": 1,
+        "benefit": "La formule maîtresse d'exorcisme légiféré récitée par le Prophète ﷺ en posant sa main droite.",
+        "authenticity": "sahih"
+      },
+      {
+        "id": 18003,
+        "arabic": "ضَعْ يَدَكَ عَلَى الَّذِي يَأْلَمُ مِنْ جَسَدِكَ وَقُلْ: بِسْمِ اللَّهِ (ثَلَاثًا)، وَقُلْ (سَبْعَ مَرَّاتٍ): أَعُوذُ بِاللَّهِ وَقُدْرَتِهِ مِنْ شَرِّ مَا أَجِدُ وَأُحَاذِرُ",
+        "text": "Pose ta main sur l'endroit douloureux et dis : « Bismillāh » (3 fois), puis dis (7 fois) : « Je cherche refuge auprès d'Allah et par Sa toute-puissance contre le mal que j'éprouve et que je redoute ».",
+        "source": "Sahih Muslim 2202",
+        "repeat": 7,
+        "benefit": "Remède prophétique direct contre les douleurs physiques et les tourments corporels.",
+        "authenticity": "sahih"
+      },
+      {
+        "id": 18004,
+        "arabic": "لَا بَأْسَ طَهُورٌ إِنْ شَاءَ اللَّهُ",
+        "text": "Pas de mal, que ce soit une purification de tes péchés, si Allah le veut. (En entrant chez le malade)",
+        "source": "Sahih al-Bukhari 3616",
+        "repeat": 1,
+        "benefit": "Parole d'apaisement rappelant que la maladie expie les fautes du croyant.",
+        "authenticity": "sahih"
+      }
+    ]
+  },
+  {
+    "id": "travel",
+    "titleAr": "أذكار السفر",
+    "titleFr": "Le voyage",
+    "icon": "airplane",
+    "moments": [
+      "travel"
+    ],
+    "adhkar": [
+      {
+        "id": 11001,
+        "arabic": "اللَّهُ أَكْبَرُ، اللَّهُ أَكْبَرُ، اللَّهُ أَكْبَرُ، سُبْحَانَ الَّذِي سَخَّرَ لَنَا هَٰذَا وَمَا كُنَّا لَهُ مُقْرِنِينَ، وَإِنَّا إِلَىٰ رَبِّنَا لَمُنْقَلِبُونَ، اللَّهُمَّ إِنَّا نَسْأَلُكَ فِي سَفَرِنَا هَٰذَا الْبِرَّ وَالتَّقْوَىٰ، وَمِنَ الْعَمَلِ مَا تَرْضَىٰ، اللَّهُمَّ هَوِّنْ عَلَيْنَا سَفَرَنَا هَٰذَا وَاطْوِ عَنَّا بُعْدَهُ، اللَّهُمَّ أَنْتَ الصَّاحِبُ فِي السَّفَرِ، وَالْخَلِيفَةُ فِي الْأَهْلِ",
+        "text": "Allah est le plus grand (×3). Gloire à Celui qui a mis ceci à notre service... Ô Allah, nous Te demandons dans ce voyage la piété, la vertu et les œuvres que Tu agrées. Ô Allah, facilite ce voyage et raccourcis-en la distance. Tu es le Compagnon de route et le Gardien de la famille.",
+        "source": "Sahih Muslim 1342",
+        "repeat": 1,
+        "benefit": "Invocation majeure au départ assurant la garde d'Allah sur soi et sa famille.",
+        "authenticity": "sahih"
+      },
+      {
+        "id": 11002,
+        "arabic": "أَعُوذُ بِكَلِمَاتِ اللَّهِ التَّامَّاتِ مِنْ شَرِّ مَا خَلَقَ",
+        "text": "Je cherche refuge auprès des paroles parfaites d'Allah contre le mal de ce qu'Il a créé. (Lors d'une halte ou escale)",
+        "source": "Sahih Muslim 2708",
+        "repeat": 1,
+        "benefit": "Rien ne pourra lui nuire dans ce lieu jusqu'à ce qu'il en reparte.",
+        "authenticity": "sahih"
+      },
+      {
+        "id": 11003,
+        "arabic": "آيِبُونَ تَائِبُونَ عَابِدُونَ لِرَبِّنَا حَامِدُونَ",
+        "text": "Nous revenons, repentants, adorateurs, louant notre Seigneur. (Au retour de voyage, après avoir répété le takbîr trois fois)",
+        "source": "Sahih al-Bukhari 1797 / Sahih Muslim 1344",
+        "repeat": 1,
+        "benefit": "Reconnaissance et retour vers Allah lors du retour au foyer.",
+        "authenticity": "sahih"
+      },
+      {
+        "id": 11004,
+        "arabic": "كَانُوا إِذَا صَعِدُوا كَبَّرُوا، وَإِذَا نَزَلُوا سَبَّحُوا",
+        "text": "En montant une pente : « Allāhu akbar » (Allah est plus grand que tout). En descendant : « Subhān Allāh » (Gloire et pureté à Allah).",
+        "source": "Sahih al-Bukhari 2993",
+        "repeat": 1,
+        "benefit": "Harmoniser son dhikr avec le relief et les circonstances du parcours.",
+        "authenticity": "sahih"
+      },
+      {
+        "id": 11005,
+        "arabic": "أَسْتَوْدِعُكُمُ اللَّهَ الَّذِي لَا تَضِيعُ وَدَائِعُهُ",
+        "text": "Je vous confie à Allah, dont les dépôts ne se perdent jamais. (Ce que dit le voyageur à ses proches)",
+        "source": "Sunan Ibn Majah 2825 — Sahih (Al-Albani)",
+        "repeat": 1,
+        "benefit": "Place les siens sous le dépôt inviolable d'Allah.",
+        "authenticity": "sahih"
+      },
+      {
+        "id": 11006,
+        "arabic": "أَسْتَوْدِعُ اللَّهَ دِينَكَ وَأَمَانَتَكَ وَخَوَاتِيمَ عَمَلِكَ",
+        "text": "Je confie à Allah ta religion, ce qui t'est confié et l'aboutissement de tes œuvres. (Ce que dit le résident au voyageur)",
+        "source": "Sunan Abi Dawud 2600 / Jami` at-Tirmidhi 3443 — Sahih",
+        "repeat": 1,
+        "benefit": "Prière pour la préservation de la foi et de l'intégrité durant l'éloignement.",
+        "authenticity": "sahih"
+      }
+    ]
+  },
+  {
+    "id": "istikhara",
+    "titleAr": "دعاء الاستخارة",
+    "titleFr": "Prière de consultation (Istikhâra)",
+    "icon": "signpost.right.fill",
+    "moments": [
+      "istikhara"
+    ],
+    "adhkar": [
+      {
+        "id": 12001,
+        "arabic": "اللَّهُمَّ إِنِّي أَسْتَخِيرُكَ بِعِلْمِكَ، وَأَسْتَقْدِرُكَ بِقُدْرَتِكَ، وَأَسْأَلُكَ مِنْ فَضْلِكَ الْعَظِيمِ، فَإِنَّكَ تَقْدِرُ وَلَا أَقْدِرُ، وَتَعْلَمُ وَلَا أَعْلَمُ، وَأَنْتَ عَلَّامُ الْغُيُوبِ، اللَّهُمَّ إِنْ كُنْتَ تَعْلَمُ أَنَّ هَٰذَا الْأَمْرَ خَيْرٌ لِي فِي دِينِي وَمَعَاشِي وَعَاقِبَةِ أَمْرِي فَاقْدُرْهُ لِي وَيَسِّرْهُ لِي ثُمَّ بَارِكْ لِي فِيهِ، وَإِنْ كُنْتَ تَعْلَمُ أَنَّ هَٰذَا الْأَمْرَ شَرٌّ لِي فِي دِينِي وَمَعَاشِي وَعَاقِبَةِ أَمْرِي فَاصْرِفْهُ عَنِّي وَاصْرِفْنِي عَنْهُ، وَاقْدُرْ لِيَ الْخَيْرَ حَيْثُ كَانَ ثُمَّ أَرْضِنِي بِهِ",
+        "text": "Ô Allah, je Te consulte par Ta science, je prends puissance de Ta puissance et je Te sollicite de Ta grâce infinie... (À réciter après deux unités de prière sans obligation, en nommant l'affaire)",
+        "source": "Sahih al-Bukhari 1162",
+        "repeat": 1,
+        "benefit": "Enseigné par le Prophète ﷺ pour toute décision de vie comme une sourate du Coran.",
+        "authenticity": "sahih"
+      }
+    ]
+  },
+  {
+    "id": "storm",
+    "titleAr": "أذكار الريح والمطر والرعد",
+    "titleFr": "Vent, pluie & orage",
+    "icon": "cloud.bolt.rain.fill",
+    "moments": [
+      "storm"
+    ],
+    "adhkar": [
+      {
+        "id": 13001,
+        "arabic": "اللَّهُمَّ إِنِّي أَسْأَلُكَ خَيْرَهَا وَخَيْرَ مَا فِيهَا وَخَيْرَ مَا أُرْسِلَتْ بِهِ، وَأَعُوذُ بِكَ مِنْ شَرِّهَا وَشَرِّ مَا فِيهَا وَشَرِّ مَا أُرْسِلَتْ بِهِ",
+        "text": "Ô Allah, je Te demande son bien, le bien qu'il recèle et le bien pour lequel il est envoyé ; et je me réfugie auprès de Toi contre son mal... (En cas de vent violent)",
+        "source": "Sahih Muslim 899",
+        "repeat": 1,
+        "benefit": "Protection contre les tempêtes dévastatrices et recherche des bienfaits du vent.",
+        "authenticity": "sahih"
+      },
+      {
+        "id": 13002,
+        "arabic": "اللَّهُمَّ صَيِّبًا نَافِعًا",
+        "text": "Ô Allah, fais que ce soit une pluie abondante et bénéfique ! (Lorsque la pluie tombe)",
+        "source": "Sahih al-Bukhari 1032",
+        "repeat": 1,
+        "benefit": "Demande de pluie vivifiante sans inondation ni ravage.",
+        "authenticity": "sahih"
+      },
+      {
+        "id": 13003,
+        "arabic": "مُطِرْنَا بِفَضْلِ اللَّهِ وَرَحْمَتِهِ",
+        "text": "Nous avons reçu la pluie par la grâce d'Allah et Sa miséricorde. (Après la pluie)",
+        "source": "Sahih al-Bukhari 846 / Sahih Muslim 71",
+        "repeat": 1,
+        "benefit": "Affirmation du Tawhid : la pluie provient d'Allah et non de la position des étoiles.",
+        "authenticity": "sahih"
+      },
+      {
+        "id": 13004,
+        "arabic": "سُبْحَانَ الَّذِي يُسَبِّحُ الرَّعْدُ بِحَمْدِهِ وَالْمَلَائِكَةُ مِنْ خِيفَتِهِ",
+        "text": "Gloire à Celui que le tonnerre glorifie par Sa louange, tout comme les anges, par crainte de Sa grandeur.",
+        "source": "Al-Muwatta de l'Imam Malik (2/992) — Sahih Mawquf (Al-Albani dans Sahih al-Kalim)",
+        "repeat": 1,
+        "benefit": "À prononcer à l'écoute du tonnerre en signe de soumission à la puissance d'Allah.",
+        "authenticity": "sahih"
+      }
+    ]
+  },
+  {
+    "id": "fear",
+    "titleAr": "دعاء الخوف من العدو",
+    "titleFr": "Peur d'un ennemi",
+    "icon": "shield.lefthalf.filled",
+    "moments": [
+      "fear"
+    ],
+    "adhkar": [
+      {
+        "id": 14001,
+        "arabic": "اللَّهُمَّ إِنَّا نَجْعَلُكَ فِي نُحُورِهِمْ، وَنَعُوذُ بِكَ مِنْ شُرُورِهِمْ",
+        "text": "Ô Allah, nous Te plaçons face à eux pour briser leur élan et nous cherchons refuge auprès de Toi contre leurs méfaits.",
+        "source": "Sunan Abi Dawud 1537 / Sunan An-Nasa'i (Al-Kubra) — Sahih (Al-Albani)",
+        "repeat": 1,
+        "benefit": "Invoqué par le Prophète ﷺ face à une menace ou un adversaire redoutable.",
+        "authenticity": "sahih"
+      },
+      {
+        "id": 14002,
+        "arabic": "حَسْبُنَا اللَّهُ وَنِعْمَ الْوَكِيلُ",
+        "text": "Allah nous suffit, et quel excellent Protecteur et Garant !",
+        "source": "Sahih al-Bukhari 4563",
+        "repeat": 1,
+        "benefit": "Parole d'Ibrâhîm dans le brasier et des compagnons face aux armées liguées.",
+        "authenticity": "sahih"
+      },
+      {
+        "id": 14003,
+        "arabic": "اللَّهُمَّ مُنْزِلَ الْكِتَابِ، سَرِيعَ الْحِسَابِ، اهْزِمِ الْأَحْزَابَ، اللَّهُمَّ اهْزِمْهُمْ وَزَلْزِلْهُمْ",
+        "text": "Ô Allah, Toi qui as révélé le Livre, prompt dans les comptes, défais les coalisés. Ô Allah, anéantis-les et ébranle-les !",
+        "source": "Sahih Muslim 1742",
+        "repeat": 1,
+        "benefit": "Invocation prophétique pour repousser les oppresseurs coalisés.",
+        "authenticity": "sahih"
+      }
+    ]
+  },
+  {
+    "id": "sleep",
+    "titleAr": "أذكار النوم",
+    "titleFr": "Avant de dormir",
+    "icon": "moon.zzz.fill",
+    "moments": [
+      "sleep"
+    ],
+    "adhkar": [
+      {
+        "id": 5003,
+        "arabic": "اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ ۚ لَا تَأْخُذُهُ سِنَةٌ وَلَا نَوْمٌ ۚ لَهُ مَا فِي السَّمَاوَاتِ وَمَا فِي الْأَرْضِ ۚ مَنْ ذَا الَّذِي يَشْفَعُ عِنْدَهُ إِلَّا بِإِذْنِهِ ۚ يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ ۚ وَلَا يُحِيطُونَ بِشَيْءٍ مِنْ عِلْمِهِ إِلَّا بِمَا شَاءَ ۚ وَسِعَ كُرْسِيُّهُ السَّمَاوَاتِ وَالْأَرْضَ ۚ وَلَا يَئُودُهُ حِفْظُهُمَا ۚ وَهُوَ الْعَلِيُّ الْعَظِيمُ",
+        "text": "Âyat al-Kursî (Verset du Trône — Coran 2:255). (À réciter au lit avant de s'endormir)",
+        "source": "Sahih al-Bukhari 2311",
+        "repeat": 1,
+        "benefit": "Un ange gardien d'Allah veille sur toi et aucun diable ne s'approche de toi jusqu'au matin.",
+        "authenticity": "coran"
+      },
+      {
+        "id": 5004,
+        "arabic": "آمَنَ الرَّسُولُ بِمَا أُنْزِلَ إِلَيْهِ مِنْ رَبِّهِ وَالْمُؤْمِنُونَ ۚ كُلٌّ آمَنَ بِاللَّهِ وَمَلَائِكَتِهِ وَكُتُبِهِ وَرُسُلِهِ لَا نُفَرِّقُ بَيْنَ أَحَدٍ مِنْ رُسُلِهِ ۚ وَقَالُوا سَمِعْنَا وَأَطَعْنَا ۖ غُفْرَانَكَ رَبَّنَا وَإِلَيْكَ الْمَصِيرُ ۝ لَا يُكَلِّفُ اللَّهُ نَفْسًا إِلَّا وُسْعَهَا ۚ لَهَا مَا كَسَبَتْ وَعَلَيْهَا مَا اكْتَسَبَتْ ۚ رَبَّنَا لَا تُؤَاخِذْنَا إِنْ نَسِينَا أَوْ أَخْطَأْنَا ۚ رَبَّنَا وَلَا تَحْمِلْ عَلَيْنَا إِصْرًا كَمَا حَمَلْتَهُ عَلَى الَّذِينَ مِنْ قَبْلِنَا ۚ رَبَّنَا وَلَا تُحَمِّلْنَا مَا لَا طَاقَةَ لَنَا بِهِ ۖ وَاعْفُ عَنَّا وَاغْفِرْ لَنَا وَارْحَمْنَا ۚ أَنْتَ مَوْلَانَا فَانْصُرْنَا عَلَى الْقَوْمِ الْكَافِرِينَ",
+        "text": "Les deux derniers versets de la sourate Al-Baqarah (2:285-286). (À réciter chaque nuit)",
+        "source": "Sahih al-Bukhari 5009 / Sahih Muslim 808",
+        "repeat": 1,
+        "benefit": "« Quiconque les récite la nuit, elles lui suffisent (comme bouclier contre tout mal). »",
+        "authenticity": "coran"
+      },
+      {
+        "id": 5005,
+        "arabic": "يَجْمَعُ كَفَّيْهِ ثُمَّ يَنْفُثُ فِيهِمَا فَيَقْرَأُ: ﴿قُلْ هُوَ اللَّهُ أَحَدٌ﴾ وَ﴿قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ﴾ وَ﴿قُلْ أَعُوذُ بِرَبِّ النَّاسِ﴾، ثُمَّ يَمْسَحُ بِهِمَا مَا اسْتَطَاعَ مِنْ جَسَدِهِ، يَبْدَأُ بِهِمَا عَلَى رَأْسِهِ وَوَجْهِهِ وَمَا أَقْبَلَ مِنْ جَسَدِهِ (ثَلَاثَ مَرَّاتٍ)",
+        "text": "Joindre ses mains, y souffler légèrement, réciter les 3 sourates protectrices (Al-Ikhlâs, Al-Falaq, An-Nâs) et passer ses mains sur son corps en partant de la tête et du visage. Répéter cela trois fois.",
+        "source": "Sahih al-Bukhari 5017",
+        "repeat": 3,
+        "benefit": "Bouclier prophétique quotidien contre le mauvais œil, les djinns et les cauchemars.",
+        "authenticity": "sahih"
+      },
+      {
+        "id": 5006,
+        "arabic": "سُبْحَانَ اللَّهِ (٣٣)، وَالْحَمْدُ لِلَّهِ (٣٣)، وَاللَّهُ أَكْبَرُ (٣٤)",
+        "text": "Dire : « Subhānallāh » (33 fois), « Al-hamdulillāh » (33 fois), « Allāhu Akbar » (34 fois) en se mettant au lit.",
+        "source": "Sahih al-Bukhari 3705 / Sahih Muslim 2727",
+        "repeat": 1,
+        "benefit": "Enseigné par le Prophète ﷺ à Fatima et Ali : procure plus de force et de vigueur qu'un serviteur.",
+        "authenticity": "sahih"
+      },
+      {
+        "id": 5001,
+        "arabic": "بِاسْمِكَ اللَّهُمَّ أَمُوتُ وَأَحْيَا",
+        "text": "En Ton nom, ô Allah, je meurs et je vis. (Au moment de poser sa tête pour s'endormir)",
+        "source": "Sahih al-Bukhari 6324",
+        "repeat": 1,
+        "benefit": "Confier sa vie et sa mort à Allah au moment du sommeil.",
+        "authenticity": "sahih"
+      },
+      {
+        "id": 5002,
+        "arabic": "اللَّهُمَّ قِنِي عَذَابَكَ يَوْمَ تَبْعَثُ عِبَادَكَ",
+        "text": "Ô Allah, préserve-moi de Ton châtiment le Jour où Tu ressusciteras Tes serviteurs. (La main droite sous la joue)",
+        "source": "Sunan Abi Dawud 5045 — Sahih (Al-Albani)",
+        "repeat": 3,
+        "benefit": "Répété 3 fois par le Prophète ﷺ avant de s'endormir sur le flanc droit.",
+        "authenticity": "sahih"
+      },
+      {
+        "id": 5007,
+        "arabic": "اللَّهُمَّ أَسْلَمْتُ نَفْسِي إِلَيْكَ، وَفَوَّضْتُ أَمْرِي إِلَيْكَ، وَوَجَّهْتُ وَجْهِي إِلَيْكَ، وَأَلْجَأْتُ ظَهْرِي إِلَيْكَ، رَغْبَةً وَرَهْبَةً إِلَيْكَ، لَا مَلْجَأَ وَلَا مَنْجَا مِنْكَ إِلَّا إِلَيْكَ، آمَنْتُ بِكِتَابِكَ الَّذِي أَنْزَلْتَ، وَبِنَبِيِّكَ الَّذِي أَرْسَلْتَ",
+        "text": "Ô Allah ! Je Te soumets mon âme, je Te confie mes affaires, je tourne mon visage vers Toi et je m'appuie sur Toi, par espoir et par crainte de Toi. Il n'y a de refuge ni de salut contre Toi qu'auprès de Toi. Je crois en Ton Livre que Tu as révélé et en Ton Prophète que Tu as envoyé.",
+        "source": "Sahih al-Bukhari 247 / Sahih Muslim 2710",
+        "repeat": 1,
+        "benefit": "Si tu meurs pendant cette nuit, tu mourras sur la nature originelle (Al-Fitra).",
         "authenticity": "sahih"
       }
     ]
   },
   {
     "id": "general",
-    "titleAr": "أذكار عامة",
-    "titleFr": "Invocations générales",
+    "titleAr": "أذكار عامة واستغفار",
+    "titleFr": "Invocations générales & Istighfâr",
     "icon": "sparkles",
     "moments": [
       "anytime"
@@ -478,37 +770,37 @@
       {
         "id": 16001,
         "arabic": "سُبْحَانَ اللَّهِ وَبِحَمْدِهِ، سُبْحَانَ اللَّهِ الْعَظِيمِ",
-        "text": "Gloire et louange à Allah, gloire à Allah l'Immense.",
-        "source": "Sahih al-Bukhari 6682 / Muslim 2694",
+        "text": "Gloire et pureté à Allah ainsi que Sa louange, Gloire et pureté à Allah l'Immense.",
+        "source": "Sahih al-Bukhari 6682 / Sahih Muslim 2694",
         "repeat": 1,
-        "benefit": "Deux paroles légères sur la langue, lourdes dans la balance, aimées du Miséricordieux.",
+        "benefit": "Deux paroles légères sur la langue, lourdes sur la balance, bien-aimées du Miséricordieux.",
         "authenticity": "sahih"
       },
       {
         "id": 16002,
         "arabic": "لَا إِلَٰهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَىٰ كُلِّ شَيْءٍ قَدِيرٌ",
-        "text": "Il n'y a de divinité qu'Allah, Seul sans associé ; à Lui la royauté et la louange, et Il est capable de toute chose.",
-        "source": "Sahih al-Bukhari 3293 / Muslim 2691",
+        "text": "Il n'y a de divinité digne d'adoration qu'Allah, Seul sans associé ; à Lui la royauté et la louange, et Il est Tout-Puissant.",
+        "source": "Sahih al-Bukhari 3293 / Sahih Muslim 2691",
         "repeat": 100,
-        "benefit": "Qui le dit 100 fois par jour a l'équivalent de l'affranchissement de dix esclaves, cent bonnes actions, cent péchés effacés, et une protection contre le diable ce jour-là.",
+        "benefit": "Équivaut à l'affranchissement de 10 esclaves, accorde 100 bonnes actions, efface 100 péchés et protège de Satan toute la journée.",
         "authenticity": "sahih"
       },
       {
         "id": 16003,
         "arabic": "لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ",
-        "text": "Il n'y a de force ni de puissance qu'en Allah.",
-        "source": "Sahih al-Bukhari 6384 / Muslim 2704",
+        "text": "Il n'y a de puissance ni de force qu'en Allah.",
+        "source": "Sahih al-Bukhari 6384 / Sahih Muslim 2704",
         "repeat": 1,
-        "benefit": "Un des trésors du Paradis.",
+        "benefit": "Un des trésors précieux du Paradis sous le Trône divin.",
         "authenticity": "sahih"
       },
       {
         "id": 16004,
         "arabic": "سُبْحَانَ اللَّهِ وَبِحَمْدِهِ عَدَدَ خَلْقِهِ، وَرِضَا نَفْسِهِ، وَزِنَةَ عَرْشِهِ، وَمِدَادَ كَلِمَاتِهِ",
-        "text": "Gloire et louange à Allah, autant que Sa création, autant que Sa satisfaction, autant que le poids de Son Trône et l'encre de Ses paroles.",
+        "text": "Gloire et louange à Allah, au nombre de Ses créatures, selon Sa satisfaction, au poids de Son Trône et à la mesure de l'encre de Ses paroles.",
         "source": "Sahih Muslim 2726",
         "repeat": 3,
-        "benefit": "Pèse plus que de longues heures de dhikr — enseigné par le Prophète ﷺ à Juwayriya.",
+        "benefit": "Pèse plus lourd dans la balance que de longues heures continues de dhikr.",
         "authenticity": "sahih"
       }
     ]
