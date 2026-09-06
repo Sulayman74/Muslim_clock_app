@@ -1310,5 +1310,133 @@
     "theme": "Joie et Célébration",
     "season": "aid",
     "authenticity": "sahih"
+  },
+  {
+    "text": "« L'Islam est bâti sur cinq piliers : l'attestation qu'il n'y a de divinité digne d'adoration qu'Allah et que Muhammad est Son Messager, l'accomplissement de la prière, l'acquittement de la Zakat, le pèlerinage à la Maison sacrée et le jeûne de Ramadan. »",
+    "arabic": "بُنِيَ الإِسْلامُ عَلَى خَمْسٍ: شَهَادَةِ أَنْ لا إِلَهَ إِلا اللَّهُ وَأَنَّ مُحَمَّدًا رَسُولُ اللَّهِ، وَإِقَامِ الصَّلاةِ، وَإِيتَاءِ الزَّكَاةِ، وَالْحَجِّ، وَصَوْمِ رَمَضَانَ",
+    "source": "Sahih Bukhari 8 / Sahih Muslim 16",
+    "theme": "Fondement — Les 5 Piliers",
+    "season": "general",
+    "authenticity": "sahih"
+  },
+  {
+    "text": "« Le droit d'Allah sur Ses serviteurs est qu'ils L'adorent sans rien Lui associer, et le droit des serviteurs sur Allah est qu'Il ne châtie point celui qui ne Lui associe rien. »",
+    "arabic": "حَقُّ اللَّهِ عَلَى الْعِبَادِ أَنْ يَعْبُدُوهُ وَلَا يُشْرِكُوا بِهِ شَيْئًا، وَحَقُّ الْعِبَادِ عَلَى اللَّهِ أَنْ لَا يُعَذِّبَ مَنْ لَا يُشْرِكُ بِهِ شَيْئًا",
+    "source": "Sahih Bukhari 2856 / Sahih Muslim 30",
+    "theme": "Chahada — Droit d'Allah et Tawhid",
+    "season": "general",
+    "authenticity": "sahih"
+  },
+  {
+    "text": "« Celui dont la dernière parole ici-bas est \"Il n'y a de divinité digne d'adoration qu'Allah\" entrera au Paradis. »",
+    "arabic": "مَنْ كَانَ آخِرُ كَلَامِهِ لَا إِلَهَ إِلَّا اللَّهُ دَخَلَ الْجَنَّةَ",
+    "source": "Sunan Abi Dawud 3116 (Authentifié par Al-Albani)",
+    "theme": "Chahada — Mérite de l'Attestation",
+    "season": "general",
+    "authenticity": "sahih"
+  },
+  {
+    "text": "« Que pensez-vous s'il y avait un fleuve devant la porte de l'un d'entre vous dans lequel il se laverait cinq fois par jour : resterait-il une impureté sur lui ? Ils dirent : \"Il ne resterait aucune impureté.\" Il dit : \"C'est l'exemple des cinq prières par lesquelles Allah efface les péchés.\" »",
+    "arabic": "أَرَأَيْتُمْ لَوْ أَنَّ نَهَرًا بِبَابِ أَحَدِكُمْ يَغْتَسِلُ مِنْهُ كُلَّ يَوْمٍ خَمْسَ مَرَّاتٍ، هَلْ يَبْقَى مِنْ دَرَنِهِ شَيْءٌ؟ قَالُوا: لَا يَبْقَى مِنْ دَرَنِهِ شَيْءٌ، قَالَ: فَذَلِكَ مَثَلُ الصَّلَوَاتِ الْخَمْسِ يَمْحُو اللَّهُ بِهِنَّ الْخَطَايَا",
+    "source": "Sahih Bukhari 528 / Sahih Muslim 667",
+    "theme": "Prière — Purification des péchés",
+    "season": "general",
+    "authenticity": "sahih"
+  },
+  {
+    "text": "« J'ai demandé au Prophète (ﷺ) : \"Quelle est l'œuvre la plus aimée d'Allah ?\" Il répondit : \"La prière accomplie en son temps prescrit.\" »",
+    "arabic": "سَأَلْتُ النَّبِيَّ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ: أَيُّ الْعَمَلِ أَحَبُّ إِلَى اللَّهِ؟ قَالَ: الصَّلَاةُ عَلَى وَقْتِهَا",
+    "source": "Sahih Bukhari 527 / Sahih Muslim 85",
+    "theme": "Prière — Accomplissement à l'heure",
+    "season": "general",
+    "authenticity": "sahih"
+  },
+  {
+    "text": "« La purification est la moitié de la foi, et la prière est une lumière, l'aumône est une preuve, la patience est un éclat et le Coran est un argument pour ou contre toi. »",
+    "arabic": "الطُّهُورُ شَطْرُ الْإِيمَانِ، وَالصَّلَاةُ نُورٌ، وَالصَّدَقَةُ بُرْهَانٌ، وَالصَّبْرُ ضِيَاءٌ، وَالْقُرْآنُ حُجَّةٌ لَكَ أَوْ عَلَيْكَ",
+    "source": "Sahih Muslim 223",
+    "theme": "Prière — Lumière du croyant",
+    "season": "general",
+    "authenticity": "sahih"
+  },
+  {
+    "text": "« Informe-les qu'Allah leur a prescrit une aumône (Zakat) prélevée sur leurs biens, prise auprès de leurs riches et reversée à leurs pauvres. »",
+    "arabic": "فَأَعْلِمْهُمْ أَنَّ اللَّهَ افْتَرَضَ عَلَيْهِمْ صَدَقَةً فِي أَمْوَالِهِمْ تُؤْخَذُ مِنْ أَغْنِيَائِهِمْ وَتُرَدُّ عَلَى فُقَرَائِهِمْ",
+    "source": "Sahih Bukhari 1395 / Sahih Muslim 19",
+    "theme": "Zakat — Obligation et Solidarité",
+    "season": "general",
+    "authenticity": "sahih"
+  },
+  {
+    "text": "« Jamais une aumône n'a diminué un bien ; Allah n'ajoute au serviteur qui pardonne que de la noblesse, et nul ne se montre humble pour Allah sans qu'Allah ne l'élève. »",
+    "arabic": "مَا نَقَصَتْ صَدَقَةٌ مِنْ مَالٍ، وَمَا زَادَ اللَّهُ عَبْدًا بِعَفْوٍ إِلَّا عِزًّا، وَمَا تَوَاضَعَ أَحَدٌ لِلَّهِ إِلَّا رَفَعَهُ اللَّهُ",
+    "source": "Sahih Muslim 2588",
+    "theme": "Zakat — Bénédiction des biens",
+    "season": "general",
+    "authenticity": "sahih"
+  },
+  {
+    "text": "« Préservez-vous du Feu de l'Enfer, ne serait-ce qu'avec la moitié d'une datte (donnée en aumône). »",
+    "arabic": "اتَّقُوا النَّارَ وَلَوْ بِشِقِّ تَمْرَةٍ",
+    "source": "Sahih Bukhari 1417 / Sahih Muslim 1016",
+    "theme": "Zakat — Bouclier contre l'Enfer",
+    "season": "general",
+    "authenticity": "sahih"
+  },
+  {
+    "text": "« Le Messager d'Allah (ﷺ) a imposé la Zakat al-Fitr comme purification pour le jeûneur contre les paroles futiles et indécentes, et comme nourriture pour les pauvres. »",
+    "arabic": "فَرَضَ رَسُولُ اللَّهِ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ زَكَاةَ الْفِطْرِ طُهْرَةً لِلصَّائِمِ مِنَ اللَّغْوِ وَالرَّفَثِ وَطُعْمَةً لِلْمَسَاكِينِ",
+    "source": "Sunan Abi Dawud 1609 (Authentifié par Al-Albani)",
+    "theme": "Zakat — Zakat al-Fitr",
+    "season": "ramadan",
+    "authenticity": "hasan"
+  },
+  {
+    "text": "« Toute bonne action des fils d'Adam est décuplée jusqu'à sept cents fois. Allah a dit : \"Sauf le jeûne, car il est voué à Moi et c'est Moi qui le récompense.\" »",
+    "arabic": "كُلُّ عَمَلِ ابْنِ آدَمَ يُضَاعَفُ الْحَسَنَةُ عَشْرُ أَمْثَالِهَا إِلَى سَبْعِمِائَةِ ضِعْفٍ، قَالَ اللَّهُ عَزَّ وَجَلَّ: إِلَّا الصَّوْمَ فَإِنَّهُ لِي وَأَنَا أَجْزِي بِهِ",
+    "source": "Sahih Muslim 1151",
+    "theme": "Jeûne — Hadith Qudsi",
+    "season": "general",
+    "authenticity": "sahih"
+  },
+  {
+    "text": "« Il y a dans le Paradis une porte appelée Ar-Rayyan par laquelle seuls les jeûneurs entreront le Jour de la Résurrection ; nul autre qu'eux n'y pénétrera. »",
+    "arabic": "إِنَّ فِي الْجَنَّةِ بَابًا يُقَالُ لَهُ الرَّيَّانُ يَدْخُلُ مِنْهُ الصَّائِمُونَ يَوْمَ الْقِيَامَةِ لَا يَدْخُلُ مِنْهُ أَحَدٌ غَيْرُهُمْ",
+    "source": "Sahih Bukhari 1896 / Sahih Muslim 1152",
+    "theme": "Jeûne — Porte Ar-Rayyan",
+    "season": "general",
+    "authenticity": "sahih"
+  },
+  {
+    "text": "« Quiconque n'a pas formulé l'intention de jeûner avant l'aube (Fajr), son jeûne n'est point valide. »",
+    "arabic": "مَنْ لَمْ يُجْمِعِ الصِّيَامَ قَبْلَ الْفَجْرِ فَلَا صِيَامَ لَهُ",
+    "source": "Sunan Abi Dawud 2454 / Sunan At-Tirmidhi 730 (Authentifié par Al-Albani)",
+    "theme": "Jeûne — Obligation de l'intention",
+    "season": "general",
+    "authenticity": "sahih"
+  },
+  {
+    "text": "« \"Ô gens ! Allah vous a certes prescrit le Hajj, accomplissez-le donc.\" Un homme demanda : \"Est-ce chaque année ?\" Il répondit : \"Si j'avais dit oui, cela serait devenu obligatoire et vous n'auriez pas pu l'assumer.\" »",
+    "arabic": "أَيُّهَا النَّاسُ قَدْ فَرَضَ اللَّهُ عَلَيْكُمُ الْحَجَّ فَحُجُّوا. فَقَالَ رَجُلٌ: أَكُلَّ عَامٍ يَا رَسُولَ اللَّهِ؟ فَقَالَ: لَوْ قُلْتُ نَعَمْ لَوَجَبَتْ وَلَمَا اسْتَطَعْتُمْ",
+    "source": "Sahih Muslim 1337",
+    "theme": "Hajj — Obligation et Capacité",
+    "season": "hajj",
+    "authenticity": "sahih"
+  },
+  {
+    "text": "« Me voici, ô Allah, me voici. Me voici, Tu n'as aucun associé, me voici. Certes, la louange, les bienfaits et la royauté T'appartiennent, Tu n'as point d'associé. »",
+    "arabic": "لَبَّيْكَ اللَّهُمَّ لَبَّيْكَ، لَبَّيْكَ لَا شَرِيكَ لَكَ لَبَّيْكَ، إِنَّ الْحَمْدَ وَالنِّعْمَةَ لَكَ وَالْمُلْكَ، لَا شَرِيكَ لَكَ",
+    "source": "Sahih Bukhari 1549 / Sahih Muslim 1184",
+    "theme": "Hajj — La Talbiyah",
+    "season": "hajj",
+    "authenticity": "sahih"
+  },
+  {
+    "text": "« Alternez entre le grand pèlerinage (Hajj) et le petit pèlerinage ('Umrah), car ils éliminent la pauvreté et les péchés comme le soufflet de forge élimine les scories du fer, de l'or et de l'argent. »",
+    "arabic": "تَابِعُوا بَيْنَ الْحَجِّ وَالْعُمْرَةِ، فَإِنَّهُمَا يَنْفِيَانِ الْفَقْرَ وَالذُّنُوبَ كَمَا يَنْفِي الْكِيرُ خَبَثَ الْحَدِيدِ وَالذَّهَبِ وَالْفِضَّةِ",
+    "source": "Sunan At-Tirmidhi 810 / Sunan An-Nasa'i 2631 (Authentifié par Al-Albani)",
+    "theme": "Hajj — Mérites conjoints",
+    "season": "general",
+    "authenticity": "sahih"
   }
 ]
