@@ -139,6 +139,7 @@ struct IlmProgramCard: View {
             HStack {
                 Text("\(summary.completedLessons) / \(summary.totalLessons) leçons")
                     .font(.system(size: 12, weight: .semibold, design: .rounded))
+                    .monospacedDigit()
                     .foregroundColor(.white.opacity(0.85))
                 Spacer()
                 Text(balanceLabel(summary.balance))

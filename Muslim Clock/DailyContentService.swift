@@ -125,13 +125,17 @@ class DailyContentService: ObservableObject {
     func fetchRandomQuranVerse() async {
         self.isFetchingQuran = true
         let randomAyahNumber = Int.random(in: 1...6236)
-        self.dailyAyahAudioURL = URL(string: "https://cdn.islamic.network/quran/audio/128/ar.alafasy/\(randomAyahNumber).mp3")
-        
+
         async let frenchFetch = fetchAyah(number: randomAyahNumber, edition: "fr.hamidullah")
         async let arabicFetch = fetchAyah(number: randomAyahNumber, edition: "quran-uthmani")
-        
+
         let (frenchResult, arabicResult) = await (frenchFetch, arabicFetch)
-        
+
+        // Publiée APRÈS les fetches, dans la même transaction que le texte :
+        // sinon un tap play pendant le chargement jouait l'audio du NOUVEAU
+        // verset alors que l'ANCIEN était encore affiché.
+        self.dailyAyahAudioURL = URL(string: "https://cdn.islamic.network/quran/audio/128/ar.alafasy/\(randomAyahNumber).mp3")
+
         if let french = frenchResult {
             self.dailyAyah = french.data.text
             let surahName = french.data.surah.name ?? french.data.surah.englishName

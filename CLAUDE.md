@@ -95,6 +95,28 @@ Une `View.body` contient **uniquement** du layout + bindings. Calculs, formats, 
 - Imports : groupés en haut (SwiftUI, Foundation, puis frameworks Apple, puis SPM).
 - Séparation logique : marquer les sections avec `// MARK: -`.
 
+### Protocole anti-wiggle (layout shifts)
+Toute vue affichant du contenu dynamique respecte ces règles :
+1. **Contenu async qui change de hauteur** (verset, hadith, cartes chargées du
+   réseau) → animer explicitement la transaction de contenu :
+   `.animation(.smooth(0.35), value: leContenu)` sur la carte +
+   `.contentTransition(.opacity)` sur les textes. Sans ça : snap sec dont
+   l'amplitude dépend du contenu (cf. fix wiggle verset, DailyContentView).
+2. **Compteurs/chiffres qui fluctuent** (`X / Y pages`, %, décomptes) →
+   `.monospacedDigit()` systématique.
+3. **Toggle FR/AR** → ZStack des 2 textes superposés, toggle par opacité,
+   animation keyée sur le toggle UNIQUEMENT ; bouton avec `minWidth` fixe.
+4. **Vue conditionnelle au milieu d'un scroll** (carte qui apparaît/disparaît)
+   → `.transition(.opacity.combined(with: .move(edge: .top)))` + `.animation`
+   keyée sur la condition, posées sur un conteneur qui survit (Group).
+5. **Zone à contenu variable** → `frame(minHeight:)` plancher (pas de hauteur
+   fixe : le contenu long doit pouvoir pousser).
+6. **Cartes Liquid Glass qui resize** → `.geometryGroup()` après `glassCard`
+   (la carte bouge comme un bloc, verre et enfants synchrones).
+7. **Jamais** d'`.animation(value:)` accidentelle sur une valeur réseau — si on
+   anime du contenu async, c'est un choix explicite et commenté.
+8. **AsyncImage** → toujours un frame fixe ou un espace réservé (Color.clear).
+
 ## Workflow
 
 ### Avant modification

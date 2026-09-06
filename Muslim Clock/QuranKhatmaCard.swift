@@ -177,6 +177,7 @@ struct QuranKhatmaCard: View {
             HStack {
                 Text("\(progress.pagesReadActual) / \(progress.totalPages) pages")
                     .font(.system(size: 12, weight: .semibold, design: .rounded))
+                    .monospacedDigit()
                     .foregroundColor(.white.opacity(0.85))
                 Spacer()
                 Text(balanceLabel(progress.balance))

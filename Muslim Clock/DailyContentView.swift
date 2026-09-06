@@ -133,8 +133,10 @@ struct DailyContentView: View {
                             .font(.system(size: 14, weight: .bold))
                             .foregroundColor(.white.opacity(0.8))
                             .rotationEffect(Angle(degrees: service.isFetchingQuran ? 360 : 0))
+                            // nil (pas .default) à l'arrêt : 360° ≡ 0° visuellement,
+                            // le snap est invisible — .default rembobinait l'icône.
                             .animation(
-                                service.isFetchingQuran ? Animation.linear(duration: 1).repeatForever(autoreverses: false) : .default,
+                                service.isFetchingQuran ? Animation.linear(duration: 1).repeatForever(autoreverses: false) : nil,
                                 value: service.isFetchingQuran
                             )
                     }
@@ -174,6 +176,7 @@ struct DailyContentView: View {
                         .frame(maxWidth: .infinity)
                         .lineSpacing(10)
                         .fixedSize(horizontal: false, vertical: true)
+                        .contentTransition(.opacity)
                         .opacity(showAyahArabic ? 1 : 0)
 
                     Text(verbatim: service.dailyAyah)
@@ -182,9 +185,12 @@ struct DailyContentView: View {
                         .multilineTextAlignment(.leading)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .fixedSize(horizontal: false, vertical: true)
+                        .contentTransition(.opacity)
                         .opacity(showAyahArabic ? 0 : 1)
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
+                // minHeight : plancher ~2 lignes d'arabe (QW5 de l'audit UI/UX) —
+                // absorbe le skeleton et les deltas des versets très courts.
+                .frame(maxWidth: .infinity, minHeight: 90, alignment: .topLeading)
                 .animation(.smooth(duration: 0.3), value: showAyahArabic)
 
                 Text(verbatim: "— \(service.dailyAyahSource)")
@@ -195,6 +201,14 @@ struct DailyContentView: View {
         .padding()
         .frame(maxWidth: .infinity, alignment: .leading)
         .glassCard(tint: .indigo)
+        // La carte resize comme un bloc rigide (enfants + verre synchrones).
+        .geometryGroup()
+        // LE fix du wiggle : au changement de VERSET (contenu async), la carte
+        // changeait de hauteur sans aucune animation — snap sec dont l'amplitude
+        // dépendait du verset (longueur, Basmala, harakât hautes). Le toggle
+        // FR/AR, lui, était déjà animé. Ici on anime la transaction de contenu :
+        // resize fluide + crossfade des textes (contentTransition ci-dessus).
+        .animation(.smooth(duration: 0.35), value: service.dailyAyahArabic)
     }
 
     // MARK: - Carte Hadith
@@ -239,6 +253,7 @@ struct DailyContentView: View {
                         .frame(maxWidth: .infinity)
                         .lineSpacing(10)
                         .fixedSize(horizontal: false, vertical: true)
+                        .contentTransition(.opacity)
                         .opacity(showHadithArabic ? 1 : 0)
 
                     Text(verbatim: service.dailyHadith)
@@ -247,9 +262,11 @@ struct DailyContentView: View {
                         .multilineTextAlignment(.leading)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .fixedSize(horizontal: false, vertical: true)
+                        .contentTransition(.opacity)
                         .opacity(showHadithArabic ? 0 : 1)
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
+                // Plancher ~2 lignes d'arabe — cf. carte Verset.
+                .frame(maxWidth: .infinity, minHeight: 90, alignment: .topLeading)
                 .animation(.smooth(duration: 0.3), value: showHadithArabic)
 
                 HStack(spacing: 6) {
@@ -271,6 +288,10 @@ struct DailyContentView: View {
         .padding()
         .frame(maxWidth: .infinity, alignment: .leading)
         .glassCard(tint: .teal)
+        .geometryGroup()
+        // Anime le swap skeleton → hadith réel (chargement initial et
+        // pull-to-refresh) — même fix que la carte Verset.
+        .animation(.smooth(duration: 0.35), value: service.dailyHadithArabic)
     }
 }
 
@@ -283,8 +304,21 @@ struct ResumeListeningRow: View {
     @EnvironmentObject var podcastManager: PodcastManager
 
     var body: some View {
-        if let target = podcastManager.resumeTarget, !podcastManager.isPlaying {
-            Button {
+        // Le Group survit quand la rangée est absente : les .animation posées
+        // dessus animent l'insertion/retrait (sinon ~68 pt apparaissent d'un
+        // coup au milieu du scroll quand la lecture se termine).
+        Group {
+            if let target = podcastManager.resumeTarget, !podcastManager.isPlaying {
+                row(target: target)
+                    .transition(.opacity.combined(with: .move(edge: .top)))
+            }
+        }
+        .animation(.smooth(duration: 0.3), value: podcastManager.isPlaying)
+        .animation(.smooth(duration: 0.3), value: podcastManager.resumeTarget?.episode.id)
+    }
+
+    private func row(target: (episode: PodcastEpisode, position: Double)) -> some View {
+        Button {
                 podcastManager.resume()
             } label: {
                 HStack(spacing: 12) {
@@ -321,9 +355,8 @@ struct ResumeListeningRow: View {
                 .padding(.horizontal, 16)
                 .padding(.vertical, 12)
                 .glassCard(cornerRadius: 16, tint: .orange)
-            }
-            .buttonStyle(.plain)
         }
+        .buttonStyle(.plain)
     }
 }
 
