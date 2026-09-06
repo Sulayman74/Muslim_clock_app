@@ -138,21 +138,28 @@ struct DailyContentView: View {
                     }
 
                     // 🔄 BOUTON RAFRAÎCHIR
+                    // ProgressView pendant le fetch (pattern du bouton play
+                    // ci-dessus) : le duo rotationEffect + repeatForever est un
+                    // piège connu — un `nil` dans .animation(value:) n'interrompt
+                    // pas un repeatForever en vol (spin infini), et `.default`
+                    // rembobinait l'icône. Frame fixe : swap sans wiggle.
                     Button {
                         Task {
                             await service.fetchRandomQuranVerse()
                         }
                     } label: {
-                        Image(systemName: "arrow.triangle.2.circlepath")
-                            .font(.system(size: 14, weight: .bold))
-                            .foregroundColor(.white.opacity(0.8))
-                            .rotationEffect(Angle(degrees: service.isFetchingQuran ? 360 : 0))
-                            // nil (pas .default) à l'arrêt : 360° ≡ 0° visuellement,
-                            // le snap est invisible — .default rembobinait l'icône.
-                            .animation(
-                                service.isFetchingQuran ? Animation.linear(duration: 1).repeatForever(autoreverses: false) : nil,
-                                value: service.isFetchingQuran
-                            )
+                        Group {
+                            if service.isFetchingQuran {
+                                ProgressView()
+                                    .controlSize(.small)
+                                    .tint(.white.opacity(0.8))
+                            } else {
+                                Image(systemName: "arrow.triangle.2.circlepath")
+                                    .font(.system(size: 14, weight: .bold))
+                                    .foregroundColor(.white.opacity(0.8))
+                            }
+                        }
+                        .frame(width: 24, height: 24)
                     }
                     .disabled(service.isFetchingQuran)
 

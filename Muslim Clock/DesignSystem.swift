@@ -244,6 +244,104 @@ struct ZoneSectionHeader: View {
 }
 
 /// ═══════════════════════════════════════════════════════════════
+/// THÈME DE LECTURE (lecteur Coran + lecteur ʿIlm)
+/// ═══════════════════════════════════════════════════════════════
+
+/// Fond de lecture — surfaces unies et statiques, pensées pour la lecture
+/// prolongée : contraste élevé mais non maximal (pas de blanc/noir purs, évite
+/// la halation), aucune animation sous le texte pour garder les diacritiques
+/// nets. Préférence PARTAGÉE entre les lecteurs (clé `"quranReadingTheme"`,
+/// conservée pour ne pas perdre la persistance existante) : le confort de
+/// lecture est global, l'identité de module reste portée par l'accent
+/// (teal = Coran, purple = ʿIlm).
+enum ReadingTheme: String, CaseIterable, Identifiable {
+    /// Papier crème, texte brun foncé — confort de jour, évoque le mushaf imprimé.
+    case sepia
+    /// Gris très sombre, texte blanc cassé — confort du soir. Défaut (comportement historique).
+    case dark
+
+    var id: String { rawValue }
+
+    var label: String {
+        switch self {
+        case .sepia: String(localized: "Sépia")
+        case .dark: String(localized: "Sombre")
+        }
+    }
+
+    var icon: String {
+        switch self {
+        case .sepia: "sun.max"
+        case .dark: "moon"
+        }
+    }
+
+    /// Schéma imposé à la vue pour que barre de navigation, menus et matériaux suivent le fond.
+    var colorScheme: ColorScheme {
+        switch self {
+        case .sepia: .light
+        case .dark: .dark
+        }
+    }
+
+    var background: Color {
+        switch self {
+        case .sepia: Color(red: 0.98, green: 0.95, blue: 0.89)
+        case .dark: Color(red: 0.09, green: 0.10, blue: 0.11)
+        }
+    }
+
+    var cardBackground: Color {
+        switch self {
+        case .sepia: Color(red: 1.0, green: 0.99, blue: 0.96)
+        case .dark: Color.white.opacity(0.06)
+        }
+    }
+
+    var cardStroke: Color {
+        switch self {
+        case .sepia: sepiaInk.opacity(0.14)
+        case .dark: Color.white.opacity(0.06)
+        }
+    }
+
+    /// Texte principal (arabe, titres).
+    var textPrimary: Color {
+        switch self {
+        case .sepia: sepiaInk
+        case .dark: Color.white.opacity(0.87)
+        }
+    }
+
+    /// Texte secondaire (traduction, translittération).
+    var textSecondary: Color {
+        switch self {
+        case .sepia: sepiaInk.opacity(0.65)
+        case .dark: Color.white.opacity(0.6)
+        }
+    }
+
+    /// Métadonnées discrètes (compteurs, fins de section, séparateurs de titre).
+    var textTertiary: Color {
+        switch self {
+        case .sepia: sepiaInk.opacity(0.45)
+        case .dark: Color.white.opacity(0.4)
+        }
+    }
+
+    /// Filets et pistes de progression.
+    var divider: Color {
+        switch self {
+        case .sepia: sepiaInk.opacity(0.12)
+        case .dark: Color.white.opacity(0.08)
+        }
+    }
+
+    /// Encre brun foncé du thème sépia (#3E2F1C).
+    private var sepiaInk: Color { Color(red: 0.24, green: 0.18, blue: 0.11) }
+}
+
+/// ═══════════════════════════════════════════════════════════════
 /// CORNER RADIUS CONSTANTS
 /// ═══════════════════════════════════════════════════════════════
 
