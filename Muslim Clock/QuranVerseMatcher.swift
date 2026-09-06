@@ -66,6 +66,11 @@ nonisolated struct QuranVerseIndex: Sendable {
         let tokenSet: Set<String>
         /// Hashes FNV-1a des trigrammes de caractères, triés (recherche binaire).
         let trigrams: [UInt32]
+        /// Non-nil ⇒ entrée « fenêtre bi-versets » (rep = 1er verset, ceci = 2ᵉ).
+        /// Couvre la récitation de versets courts enchaînés (spike : 3 échecs/33,
+        /// tous ce pattern) — le containment contre un verset isolé s'effondre
+        /// quand la requête en chevauche plusieurs.
+        let pairSecondRef: QuranVerseRef?
 
         /// Recherche binaire dans le tableau trié — évite un Set par verset
         /// (l'index complet tient en ~3 Mo au lieu de ~20).
@@ -84,6 +89,8 @@ nonisolated struct QuranVerseIndex: Sendable {
     /// mot normalisé → indices dans `verses`.
     private let postings: [String: [Int32]]
     private let totalUniqueVerses: Int
+    /// ref → indice de son entrée verset-seul (filtre anti-redondance des paires).
+    private let singleIndexByRef: [QuranVerseRef: Int32]
 
     // MARK: Construction
 
@@ -107,6 +114,8 @@ nonisolated struct QuranVerseIndex: Sendable {
         built.reserveCapacity(order.count)
         var postings: [String: [Int32]] = [:]
 
+        var singleIndexByRef: [QuranVerseRef: Int32] = [:]
+
         for key in order {
             let entry = byText[key]! // clé issue de `order` — présente par construction
             let refs = entry.refs.sorted()
@@ -115,18 +124,45 @@ nonisolated struct QuranVerseIndex: Sendable {
             for word in Set(tokens) {
                 postings[word, default: []].append(index)
             }
+            for ref in refs { singleIndexByRef[ref] = index }
             built.append(UniqueVerse(
                 rep: refs[0],
                 occurrences: refs,
                 displayText: entry.display,
                 tokenSet: Set(tokens),
-                trigrams: Self.trigramHashes(of: key).sorted()
+                trigrams: Self.trigramHashes(of: key).sorted(),
+                pairSecondRef: nil
+            ))
+        }
+
+        // ── Fenêtres bi-versets : paires consécutives d'une même sourate ──
+        // (l'input arrive dans l'ordre du Mushaf). Une paire n'apparaîtra dans
+        // les résultats que si elle bat nettement ses deux membres (cf. match()).
+        for i in 0..<(input.count - 1) {
+            let (refA, textA) = input[i]
+            let (refB, textB) = input[i + 1]
+            guard refA.sura == refB.sura, refB.ayah == refA.ayah + 1 else { continue }
+            let key = QuranSearchNormalizer.normalize(textA + " " + textB)
+            guard !key.isEmpty else { continue }
+            let tokens = key.split(separator: " ").map(String.init)
+            let index = Int32(built.count)
+            for word in Set(tokens) {
+                postings[word, default: []].append(index)
+            }
+            built.append(UniqueVerse(
+                rep: refA,
+                occurrences: [refA],
+                displayText: textA + " ۝ " + textB,
+                tokenSet: Set(tokens),
+                trigrams: Self.trigramHashes(of: key).sorted(),
+                pairSecondRef: refB
             ))
         }
 
         self.verses = built
         self.postings = postings
         self.totalUniqueVerses = built.count
+        self.singleIndexByRef = singleIndexByRef
     }
 
     // MARK: Recherche
@@ -165,11 +201,13 @@ nonisolated struct QuranVerseIndex: Sendable {
         let candidateIndices: [Int32]
         if accumulator.isEmpty {
             // Aucun mot exact (tout est mal orthographié) → scan complet aux
-            // trigrammes. ~6 200 intersections de sets : < 50 ms, cas rare.
+            // trigrammes. ~12 000 recherches binaires : < 50 ms, cas rare.
             candidateIndices = Array(Int32(0)..<Int32(totalUniqueVerses))
         } else {
+            // 80 (et non 50) : les paires bi-versets concourent avec les versets
+            // seuls pour les places de candidats.
             candidateIndices = accumulator.sorted { $0.value > $1.value }
-                .prefix(50).map(\.key)
+                .prefix(80).map(\.key)
         }
 
         // ── Étage 2 : containment de trigrammes ──
@@ -177,26 +215,53 @@ nonisolated struct QuranVerseIndex: Sendable {
         let queryTrigrams = Set(Self.trigramHashes(of: queryKey))
         guard !queryTrigrams.isEmpty else { return [] }
 
-        var results: [QuranVerseMatch] = []
-        for i in candidateIndices {
-            let verse = verses[Int(i)]
+        func containment(_ index: Int32) -> Double {
+            let verse = verses[Int(index)]
             var hit = 0
             for t in queryTrigrams where verse.containsTrigram(t) { hit += 1 }
-            let score = Double(hit) / Double(queryTrigrams.count)
+            return Double(hit) / Double(queryTrigrams.count)
+        }
+
+        var bestByRef: [QuranVerseRef: QuranVerseMatch] = [:]
+        for i in candidateIndices {
+            let verse = verses[Int(i)]
+            let score = containment(i)
             guard score >= Self.minimumScore else { continue }
+
+            // Filtre anti-redondance des paires : une fenêtre bi-versets n'est
+            // retenue que si elle bat NETTEMENT ses deux membres — sinon elle
+            // ne fait que refléter un verset déjà bien classé, et son ancre
+            // pourrait masquer le bon verset (paire X-1/X quand on a récité X).
+            if let second = verse.pairSecondRef {
+                let bestMember = max(
+                    singleIndexByRef[verse.rep].map(containment) ?? 0,
+                    singleIndexByRef[second].map(containment) ?? 0
+                )
+                guard score > bestMember + 0.05 else { continue }
+            }
+
             let matchedWords = tokens.filter { verse.tokenSet.contains($0) }.count
-            results.append(QuranVerseMatch(
+            let match = QuranVerseMatch(
                 ref: verse.rep,
                 displayText: verse.displayText,
                 score: score,
                 matchedWordCount: matchedWords,
                 occurrences: verse.occurrences
-            ))
+            )
+            // Collapse par ancre : si le verset seul ET une paire ancrée dessus
+            // survivent, on garde le mieux scoré.
+            if let existing = bestByRef[match.ref] {
+                if (match.score, Double(match.matchedWordCount)) > (existing.score, Double(existing.matchedWordCount)) {
+                    bestByRef[match.ref] = match
+                }
+            } else {
+                bestByRef[match.ref] = match
+            }
         }
 
         // Ex æquo (une phrase présente dans plusieurs versets, ex. « الحمد لله
         // رب العالمين » ×6) : ordre du Mushaf — la Fatiha avant Az-Zumar.
-        return results
+        return bestByRef.values
             .sorted {
                 if $0.score != $1.score { return $0.score > $1.score }
                 if $0.matchedWordCount != $1.matchedWordCount { return $0.matchedWordCount > $1.matchedWordCount }

@@ -24,8 +24,13 @@ struct QuranVerseMatcherTests {
         (QuranVerseRef(sura: 55, ayah: 13), "فَبِأَيِّ آلَاءِ رَبِّكُمَا تُكَذِّبَانِ"),
         (QuranVerseRef(sura: 55, ayah: 16), "فَبِأَيِّ آلَاءِ رَبِّكُمَا تُكَذِّبَانِ"),
         (QuranVerseRef(sura: 55, ayah: 18), "فَبِأَيِّ آلَاءِ رَبِّكُمَا تُكَذِّبَانِ"),
+        (QuranVerseRef(sura: 93, ayah: 3), "مَا وَدَّعَكَ رَبُّكَ وَمَا قَلَىٰ"),
+        (QuranVerseRef(sura: 93, ayah: 4), "وَلَلْآخِرَةُ خَيْرٌ لَكَ مِنَ الْأُولَىٰ"),
         (QuranVerseRef(sura: 112, ayah: 1), "قُلْ هُوَ اللَّهُ أَحَدٌ"),
         (QuranVerseRef(sura: 112, ayah: 2), "اللَّهُ الصَّمَدُ"),
+        (QuranVerseRef(sura: 113, ayah: 1), "قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ"),
+        (QuranVerseRef(sura: 113, ayah: 2), "مِنْ شَرِّ مَا خَلَقَ"),
+        (QuranVerseRef(sura: 113, ayah: 3), "وَمِنْ شَرِّ غَاسِقٍ إِذَا وَقَبَ"),
     ]
 
     private let index = QuranVerseIndex(verses: fixture)
@@ -85,6 +90,30 @@ struct QuranVerseMatcherTests {
     @Test func basmalaPrefixIsIgnored() {
         let matches = index.match(query: "بسم الله الرحمن الرحيم قل هو الله احد")
         #expect(matches.first?.ref == QuranVerseRef(sura: 112, ayah: 1))
+    }
+
+    // MARK: - Fenêtres bi-versets (versets courts enchaînés — 3 échecs/33 du spike)
+
+    @Test func chainedShortVersesMatchFirstVerse() {
+        // Falaq 1+2 récités d'une traite : contre chaque verset isolé le
+        // containment s'effondre ; la fenêtre bi-versets doit remonter 113:1.
+        let matches = index.match(query: "قل أعوذ برب الفلق من شر ما خلق")
+        #expect(matches.first?.ref == QuranVerseRef(sura: 113, ayah: 1))
+        #expect((matches.first?.score ?? 0) > 0.85)
+    }
+
+    @Test func duhaChainMatchesFirstVerse() {
+        // Ad-Duha 3+4 — l'échec n°35 du spike, rejoué.
+        let matches = index.match(query: "ما ودعك ربك وما قلى وللآخرة خير لك من الأولى")
+        #expect(matches.first?.ref == QuranVerseRef(sura: 93, ayah: 3))
+    }
+
+    @Test func singleVerseNotShadowedByPair() {
+        // Réciter 113:2 seul : la paire (113:1, 113:2) contient aussi toute la
+        // requête — le filtre anti-redondance doit laisser 113:2 en tête,
+        // pas l'ancre 113:1 de la paire.
+        let matches = index.match(query: "من شر ما خلق")
+        #expect(matches.first?.ref == QuranVerseRef(sura: 113, ayah: 2))
     }
 
     // MARK: - Garde-fous

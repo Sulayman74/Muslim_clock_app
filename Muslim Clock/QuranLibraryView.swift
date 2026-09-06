@@ -32,6 +32,9 @@ struct QuranLibraryView: View {
     /// Résultats de la recherche plein-texte (Spotlight du Coran).
     @State private var verseMatches: [QuranVerseMatch] = []
 
+    /// Saisie vocale (Phase 2) — le transcript remplit le champ de recherche.
+    @State private var voice = QuranVerseIdentifier()
+
     var body: some View {
         NavigationStack {
             ZStack {
@@ -50,9 +53,42 @@ struct QuranLibraryView: View {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Fermer") { dismiss() }
                 }
+                // Micro Spotlight — visible uniquement si la reco arabe
+                // ON-DEVICE existe sur ce device (jamais de mode serveur).
+                if QuranVerseIdentifier.isSupported {
+                    ToolbarItem(placement: .primaryAction) {
+                        Button {
+                            if voice.state == .listening {
+                                voice.stop()
+                            } else {
+                                searchPresented = true
+                                Task { await voice.start() }
+                            }
+                        } label: {
+                            Image(systemName: voice.state == .listening
+                                  ? "waveform.badge.mic"
+                                  : "mic.fill")
+                                .foregroundStyle(voice.state == .listening ? .red : .teal)
+                        }
+                        .accessibilityLabel(Text(voice.state == .listening
+                                                 ? "Arrêter l'écoute"
+                                                 : "Réciter un verset pour le chercher"))
+                    }
+                }
             }
             .searchable(text: $searchText, isPresented: $searchPresented,
                         prompt: "Sourate, ou mots d'un verset…")
+            // HUD d'écoute — hors flux (overlay), transitions explicites,
+            // conteneur survivant : protocole anti-wiggle.
+            .overlay(alignment: .bottom) {
+                Group {
+                    if voice.state == .listening {
+                        listeningHUD
+                            .transition(.move(edge: .bottom).combined(with: .opacity))
+                    }
+                }
+                .animation(.smooth(duration: 0.3), value: voice.state)
+            }
         }
         .preferredColorScheme(.dark)
         .task {
@@ -67,6 +103,69 @@ struct QuranLibraryView: View {
             guard !Task.isCancelled else { return }
             await runVerseSearch()
         }
+        // Le transcript vocal remplit le champ — visible et ÉDITABLE (filet de
+        // sécurité du cadrage Spotlight : une reco imparfaite se corrige au
+        // clavier au lieu d'échouer). Le pipeline de recherche existant matche.
+        .onChange(of: voice.transcript) { _, newValue in
+            guard !newValue.isEmpty else { return }
+            searchText = newValue
+        }
+        .onDisappear { voice.stop() }
+        // Refus micro/reconnaissance → explication + lien Réglages.
+        .alert("Autorisation nécessaire", isPresented: deniedBinding) {
+            Button("Ouvrir Réglages") {
+                if let url = URL(string: UIApplication.openSettingsURLString) {
+                    UIApplication.shared.open(url)
+                }
+                voice.acknowledgeDenied()
+            }
+            Button("Plus tard", role: .cancel) { voice.acknowledgeDenied() }
+        } message: {
+            Text(deniedMessage)
+        }
+    }
+
+    // MARK: - Saisie vocale
+
+    private var listeningHUD: some View {
+        HStack(spacing: 12) {
+            Image(systemName: "waveform")
+                .font(.title3)
+                .foregroundStyle(.teal)
+                .symbolEffect(.variableColor.iterative, isActive: true)
+            Text("Récite, je t'écoute…")
+                .font(.system(size: 14, weight: .semibold, design: .rounded))
+                .foregroundColor(.white)
+            Spacer()
+            Button {
+                voice.stop()
+            } label: {
+                Image(systemName: "stop.circle.fill")
+                    .font(.system(size: 28))
+                    .foregroundStyle(.red)
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
+        .frame(minHeight: 56) // plancher anti-wiggle
+        .glassCard(cornerRadius: 18, tint: .teal)
+        .geometryGroup()
+        .padding(.horizontal, 16)
+        .padding(.bottom, 10)
+    }
+
+    private var deniedBinding: Binding<Bool> {
+        Binding(
+            get: { if case .denied = voice.state { return true } else { return false } },
+            set: { if !$0 { voice.acknowledgeDenied() } }
+        )
+    }
+
+    private var deniedMessage: String {
+        if case .denied(let kind) = voice.state, kind == .speech {
+            return String(localized: "Autorise la reconnaissance vocale pour chercher un verset en le récitant. Tout est traité sur ton appareil, rien n'est envoyé.")
+        }
+        return String(localized: "Autorise le micro pour chercher un verset en le récitant. Tout est traité sur ton appareil, rien n'est envoyé.")
     }
 
     // MARK: - Recherche plein-texte (versets)
