@@ -70,6 +70,18 @@
           }
         }
       }
+    },
+    "NSSpeechRecognitionUsageDescription" : {
+      "comment" : "Privacy - Speech Recognition Usage Description",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Pour reconnaître le verset que tu récites et l'ouvrir dans le Coran."
+          }
+        }
+      }
     }
   },
   "version" : "1.0"
