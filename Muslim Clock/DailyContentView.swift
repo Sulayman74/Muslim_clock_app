@@ -99,6 +99,9 @@ struct DailyContentView: View {
 
             // FICHE MASBÛQ + JANÂZA — référence de consultation
             LatecomerFiqhAccessCard()
+
+            // FICHE ABLUTIONS — wudû' pas à pas, ghusl et adab du vendredi
+            WuduFiqhAccessCard()
         }
     }
 

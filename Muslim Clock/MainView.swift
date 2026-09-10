@@ -377,6 +377,10 @@ struct MainView: View {
             )
             .padding(.bottom, ZoneSpacing.sectionHeaderBottom)
 
+            // Se préparer à la prière (wudû'/ghusl) — fenêtre pré-prière.
+            // La préparation précède la récitation (AdhkarMomentCard).
+            WuduMomentCard()
+
             AdhkarMomentCard()
 
             // Deux portes d'entrée Adhkar côte à côte (même famille).

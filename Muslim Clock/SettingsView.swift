@@ -889,6 +889,10 @@ private struct DebugPanelSection: View {
     /// Aucun effet en Release.
     @AppStorage("debugForceFriday") private var debugForceFriday: Bool = false
 
+    /// Force la fenêtre de la carte « Se préparer à la prière » (wudû'/ghusl)
+    /// pour la tester sans attendre l'approche réelle. Aucun effet en Release.
+    @AppStorage("debugForceWuduWindow") private var debugForceWuduWindow: Bool = false
+
     /// Force la fenêtre temporelle du module Ramadan pour tester la carte du'a
     /// (iftar / suhoor / general) sans attendre l'heure réelle. "" = auto.
     /// Aucun effet en Release.
@@ -992,6 +996,17 @@ private struct DebugPanelSection: View {
                 }
             }
             .foregroundStyle(debugForceFriday ? .orange : .primary)
+
+            // ── FORCE FENÊTRE ABLUTIONS (carte wudû'/ghusl pré-prière) ──
+            Toggle(isOn: $debugForceWuduWindow) {
+                VStack(alignment: .leading, spacing: 1) {
+                    Text("Forcer fenêtre ablutions")
+                    Text("Affiche la carte « Se préparer à la prière » comme si la prochaine était dans 45 min (wudû', ou ghusl si Vendredi forcé).")
+                        .font(.caption2)
+                        .foregroundStyle(.white.opacity(0.5))
+                }
+            }
+            .foregroundStyle(debugForceWuduWindow ? .orange : .primary)
 
             // ── FORCE FENÊTRE RAMADAN (carte du'a Iftar / Suhoor / général) ──
             Picker("Fenêtre Ramadan (carte du'a)", selection: $debugRamadanWindow) {

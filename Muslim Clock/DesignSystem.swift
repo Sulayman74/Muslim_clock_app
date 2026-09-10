@@ -12,6 +12,11 @@ import SwiftUI
 /// Token nommé (pas de couleur ad-hoc inline).
 let travelModeAccent = Color(red: 0.44, green: 0.38, blue: 0.82)
 
+/// Accent du domaine « pureté » (wudû'/ghusl) — bleu d'eau claire, distinct du
+/// teal Coran (plus vert), de l'adhkarBookletAccent (teal grisé) et du bleu
+/// système du tab Réglages (plus saturé). Token nommé (pas de couleur ad-hoc).
+let wuduAccent = Color(red: 0.38, green: 0.65, blue: 0.92)
+
 /// Formate une durée de lecture audio en `m:ss` (ou `h:mm:ss` au-delà d'une heure).
 ///
 /// Source unique du format de temps du lecteur (mini-player, plein écran, carte
