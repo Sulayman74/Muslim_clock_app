@@ -74,6 +74,11 @@ struct QuranChapterDetailView: View {
     /// tout en créditant l'auto-scroll au rythme par défaut (~50 s/page).
     private static let minimumPageDwell: TimeInterval = 20
 
+    /// Hauteur du detent mini-bar de la sheet d'enregistrement — DOIT rester
+    /// synchronisée avec `.height(220)` dans QuranRecorderView (presentationDetents).
+    /// Sert à réserver la zone couverte par la sheet dans le scroll du lecteur.
+    private static let recorderMiniBarHeight: CGFloat = 220
+
     // MARK: - Auto-scroll
     /// Lecture automatique active : un timer avance vers le verset suivant à intervalle régulier.
     @State private var isAutoScrolling: Bool = false
@@ -219,6 +224,20 @@ struct QuranChapterDetailView: View {
                         if isAutoScrolling { stopAutoScroll() }
                     }
                 )
+                // Réserve l'espace couvert par la sheet d'enregistrement (detent
+                // mini-bar .height(220), presentationBackgroundInteraction actif) :
+                // sans ça, le DERNIER verset est clampé sous la sheet — illisible
+                // pendant la récitation/réécoute. safeAreaInset (et non padding ou
+                // contentMargins) : les ancres de scrollTo du karaoké tiennent
+                // compte de la safe area → .center centre dans la zone VISIBLE.
+                .safeAreaInset(edge: .bottom, spacing: 0) {
+                    Color.clear
+                        .frame(height: showRecorder ? Self.recorderMiniBarHeight : 0)
+                        // Anti-wiggle : hauteur animée explicitement, keyée sur le
+                        // toggle UNIQUEMENT — synchrone avec l'animation de la sheet.
+                        .animation(.smooth(duration: 0.35), value: showRecorder)
+                        .allowsHitTesting(false)
+                }
 
                 // HUD auto-scroll en bas
                 autoScrollHUD(chapter: chapter, proxy: proxy)

@@ -78,9 +78,11 @@ struct QuranLibraryView: View {
             }
             .searchable(text: $searchText, isPresented: $searchPresented,
                         prompt: "Sourate, ou mots d'un verset…")
-            // HUD d'écoute — hors flux (overlay), transitions explicites,
-            // conteneur survivant : protocole anti-wiggle.
-            .overlay(alignment: .bottom) {
+            // HUD d'écoute — en safeAreaInset (PAS en overlay) : la List
+            // rétrécit son viewport, les derniers résultats restent visibles
+            // et tapables pendant l'écoute. Transitions explicites + conteneur
+            // survivant : protocole anti-wiggle.
+            .safeAreaInset(edge: .bottom, spacing: 0) {
                 Group {
                     if voice.state == .listening {
                         listeningHUD

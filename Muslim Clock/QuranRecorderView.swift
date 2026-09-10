@@ -49,6 +49,8 @@ struct QuranRecorderView: View {
             .padding(.horizontal, 24)
             .padding(.vertical, 14)
         }
+        // ⚠️ .height(220) est répliqué dans QuranChapterDetailView.recorderMiniBarHeight
+        // (réserve de safe area du lecteur) — garder les deux valeurs synchronisées.
         .presentationDetents([.height(220), .medium, .large], selection: $detent)
         .presentationBackgroundInteraction(.enabled(upThrough: .medium))
         .presentationContentInteraction(.scrolls)
