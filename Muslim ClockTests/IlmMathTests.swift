@@ -108,4 +108,22 @@ struct IlmMathTests {
     @Test func weekStreakZeroWithNoCompletions() {
         #expect(IlmMath.weekStreak(completionDates: [], lessonsPerWeekGoal: 3, now: .now) == 0)
     }
+
+    // MARK: estimatedMinutes
+
+    @Test func estimatedMinutesFloorsAtTwo() {
+        // 5 mots → bien moins d'une minute de lecture → plancher 2 min.
+        #expect(IlmMath.estimatedMinutes(arabicText: "قل هو الله أحد الصمد") == 2)
+    }
+
+    @Test func estimatedMinutesScalesWithWordCount() {
+        // 90 mots / 18 mots·min = 5 min.
+        let text = Array(repeating: "كلمة", count: 90).joined(separator: " ")
+        #expect(IlmMath.estimatedMinutes(arabicText: text) == 5)
+    }
+
+    @Test func estimatedMinutesCapsAtTen() {
+        let text = Array(repeating: "كلمة", count: 400).joined(separator: " ")
+        #expect(IlmMath.estimatedMinutes(arabicText: text) == 10)
+    }
 }

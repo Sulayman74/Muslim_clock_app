@@ -167,4 +167,15 @@ enum IlmMath {
         }
         return streak
     }
+
+    /// Durée d'étude estimée d'une leçon, en minutes.
+    ///
+    /// Base : ~18 mots arabes/minute effectifs (lecture lente d'un matn +
+    /// rappel de mémorisation), bornée à [2, 10] — une estimation d'ordre de
+    /// grandeur pour décider « ai-je le temps ? », pas un chronomètre.
+    static func estimatedMinutes(arabicText: String) -> Int {
+        let words = arabicText.split(separator: " ").count
+        let minutes = Int((Double(words) / 18.0).rounded(.up))
+        return min(10, max(2, minutes))
+    }
 }

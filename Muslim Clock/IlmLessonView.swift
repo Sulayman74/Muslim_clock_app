@@ -2,14 +2,17 @@
 //  IlmLessonView.swift
 //  Muslim Clock — module Programme ʿIlm
 //
-//  Détail d'une leçon : arabe en grand (support de mémorisation) + traduction FR.
-//  Mode « Mémoriser » : arabe ET traduction voilés (blur), révélation au toucher —
-//  la vérification après rappel porte sur les mots et le sens.
+//  « Page de matn imprimé » (concours de design, spec A gagnante) : la leçon
+//  comme une page de livre — masthead typographique (kicker, titre serif,
+//  folio, ornement), corps en AmiriQuran pleine page SANS cartes, note de bas
+//  de page, barre de pied (mode + chevrons) façon Apple Books.
 //
-//  Parité lecteur Coran (PLAN_UX_ILM_LECTEUR.md) : thème sépia/sombre partagé
-//  (`ReadingTheme`, fond statique — diacritiques nets), toggle traduction
-//  persisté, pagination par leçon (une leçon = une page = une unité de rappel),
-//  enregistreur en capsule HUD (lire le matn PENDANT la réécoute).
+//  La toolbar est MUETTE (titre vide) : un titre de leçon fait jusqu'à 63
+//  caractères, aucune barre inline ne peut le porter entre les boutons — il
+//  vit dans la page et tourne avec elle, comme dans un livre.
+//
+//  Mode « Mémoriser » : arabe ET traduction voilés (blur — hauteur constante,
+//  anti-wiggle par construction), révélation au toucher.
 //
 
 import SwiftUI
@@ -37,19 +40,20 @@ struct IlmLessonView: View {
     /// Traduction affichée en mode Lire (en Mémoriser, elle suit le voile).
     @AppStorage("ilmShowTranslation") private var showTranslation = true
 
+    /// Hauteur de la barre de pied (mode + chevrons) — fixe, anti-wiggle.
+    private static let bottomBarHeight: CGFloat = 52
+
     private var lesson: IlmLesson { track.lessons[index] }
     private var theme: ReadingTheme { readingTheme }
 
     var body: some View {
         NavigationStack {
             ZStack {
-                // Fond statique du thème (remplace le cosmique animé : lecture
-                // prolongée = diacritiques nets, cf. rationale du lecteur Coran).
+                // Fond statique du thème (lecture prolongée = diacritiques nets).
                 theme.background
                     .ignoresSafeArea()
 
-                // Pagination : une leçon = une page = une unité de rappel
-                // (ancrage spatial). Chaque page a son propre scroll.
+                // Pagination : une leçon = une page = une unité de rappel.
                 TabView(selection: $index) {
                     ForEach(track.lessons.indices, id: \.self) { i in
                         lessonPage(track.lessons[i], position: i)
@@ -58,27 +62,17 @@ struct IlmLessonView: View {
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))
             }
-            // Titre de leçon DANS la page (pleine largeur, multi-lignes) : en
-            // navigationTitle inline il était tronqué entre les 4 boutons de
-            // toolbar. La barre porte le nom du parcours (court, stable).
-            .navigationTitle(track.title)
+            // Barre muette : le titre vit dans la page (masthead) — plus jamais
+            // de troncature entre les boutons.
+            .navigationTitle("")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Fermer") { dismiss() }
                 }
-                ToolbarItemGroup(placement: .primaryAction) {
-                    // Chevrons conservés (accessibilité : VoiceOver, grands textes).
-                    Button { goTo(index - 1) } label: {
-                        Image(systemName: "chevron.left")
-                    }
-                    .disabled(index == 0)
-                    Button { goTo(index + 1) } label: {
-                        Image(systemName: "chevron.right")
-                    }
-                    .disabled(index == track.lessons.count - 1)
-
-                    // Réglages de lecture (pattern du lecteur Coran).
+                // Réglages de lecture. Les chevrons ont déménagé dans la barre
+                // de pied (cibles 44 pt, toujours visibles — accessibilité).
+                ToolbarItem(placement: .primaryAction) {
                     Menu {
                         Toggle(isOn: $showTranslation.animation(.smooth(duration: 0.3))) {
                             Label("Traduction française", systemImage: "text.book.closed")
@@ -93,9 +87,13 @@ struct IlmLessonView: View {
                     }
                 }
             }
-            // Capsule d'enregistrement HORS FLUX (mode Mémoriser) : reste visible
-            // pendant qu'on lit le matn en se réécoutant — une barre dans le
-            // scroll partirait hors écran sur un matn long.
+            // Barre de pied : UNE instance, hors TabView (elle ne swipe pas —
+            // c'est du chrome). safeAreaInset → les scrolls des pages s'insettent
+            // automatiquement.
+            .safeAreaInset(edge: .bottom, spacing: 0) {
+                bottomBar
+            }
+            // Capsule d'enregistrement (mode Mémoriser), au-dessus de la barre.
             .overlay(alignment: .bottom) {
                 Group {
                     if isMemorizing {
@@ -120,6 +118,9 @@ struct IlmLessonView: View {
             recorder.discard()
             isRevealed = false
         }
+        // Pagination accessible EN COMPLÉMENT des chevrons (cherry-pick spec B).
+        .accessibilityAction(named: Text("Leçon suivante")) { goTo(index + 1) }
+        .accessibilityAction(named: Text("Leçon précédente")) { goTo(index - 1) }
     }
 
     private func goTo(_ newIndex: Int) {
@@ -133,90 +134,133 @@ struct IlmLessonView: View {
 
     private func lessonPage(_ lesson: IlmLesson, position: Int) -> some View {
         ScrollView {
-            VStack(spacing: 16) {
-                modePicker
-                lessonTitle(lesson)
-                positionCapsule(position)
-                arabicCard(lesson)
-                translationSection(lesson)
+            VStack(spacing: 0) {
+                masthead(lesson, position: position)
+                studyBlock(lesson)
                 if let note = lesson.note, !note.isEmpty {
-                    noteCard(note)
+                    footnote(note)
                 }
                 completeButton(lesson)
+                    .padding(.top, 32)
             }
-            .padding(.horizontal, 16)
-            // Constant quel que soit le mode (anti-wiggle) : réserve la place
-            // de la capsule HUD.
-            .padding(.bottom, 110)
+            // Marges de page « livre » (24) — la réserve basse ne couvre que la
+            // capsule HUD (états playback/erreur inclus) : la barre de pied est
+            // absorbée nativement par le safeAreaInset.
+            .padding(.horizontal, 24)
+            .padding(.bottom, 150)
         }
     }
 
-    // MARK: - Mode d'étude
+    // MARK: - Masthead (kicker · titre · folio · ornement)
 
-    private var modePicker: some View {
-        Picker("Mode", selection: $isMemorizing.animation(.smooth(duration: 0.3))) {
-            Text("Lire").tag(false)
-            Text("Mémoriser").tag(true)
-        }
-        .pickerStyle(.segmented)
-        .padding(.top, 8)
-        .onChange(of: isMemorizing) { _, _ in isRevealed = false }
-    }
-
-    /// Titre complet de la leçon — dans la page, jamais tronqué (multi-lignes).
-    private func lessonTitle(_ lesson: IlmLesson) -> some View {
-        Text(verbatim: lesson.title)
-            .font(.system(size: 20, weight: .bold, design: .rounded))
-            .foregroundColor(theme.textPrimary)
-            .multilineTextAlignment(.center)
-            .fixedSize(horizontal: false, vertical: true)
-            .frame(maxWidth: .infinity)
-            .padding(.top, 2)
-    }
-
-    /// « 3 / 12 » — position dans le parcours (ancrage spatial de la mémorisation).
-    private func positionCapsule(_ position: Int) -> some View {
-        Text(verbatim: "\(position + 1) / \(track.lessons.count)")
-            .font(.system(size: 12, weight: .semibold, design: .rounded))
-            .monospacedDigit()
+    private func masthead(_ lesson: IlmLesson, position: Int) -> some View {
+        VStack(spacing: 10) {
+            // Kicker : parcours en arabe + français, discret.
+            HStack(spacing: 6) {
+                Text(verbatim: track.titleArabic)
+                    .font(.system(size: 12, weight: .medium))
+                Text(verbatim: "·")
+                Text(verbatim: track.title.uppercased())
+                    .font(.system(size: 11, weight: .semibold))
+                    .kerning(1.5)
+            }
             .foregroundColor(theme.textTertiary)
-            .padding(.horizontal, 10)
-            .padding(.vertical, 4)
-            .background(theme.cardBackground)
-            .clipShape(Capsule())
-            .overlay(Capsule().stroke(theme.cardStroke, lineWidth: 1))
+            .lineLimit(1)
+            .minimumScaleFactor(0.7)
+
+            // Titre complet — serif, multi-lignes, jamais tronqué. Point
+            // d'ancrage VoiceOver de la page (la barre étant muette).
+            Text(verbatim: lesson.title)
+                .font(.system(size: 26, weight: .semibold, design: .serif))
+                .foregroundColor(theme.textPrimary)
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
+                .accessibilityAddTraits(.isHeader)
+
+            // Folio : position + durée estimée (cherry-pick spec B).
+            Text(verbatim: "Leçon \(position + 1) sur \(track.lessons.count) · ~\(IlmMath.estimatedMinutes(arabicText: lesson.arabic)) min")
+                .font(.system(size: 12, weight: .medium, design: .serif))
+                .italic()
+                .monospacedDigit()
+                .foregroundColor(theme.textTertiary)
+
+            ornament
+                .padding(.vertical, 8)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.top, 20)
+        .padding(.bottom, 10)
     }
 
-    // MARK: - Texte arabe
+    /// Filet ─── ◆ ─── , signature « page de livre ».
+    private var ornament: some View {
+        HStack(spacing: 10) {
+            Rectangle().fill(theme.divider).frame(width: 48, height: 1)
+            Image(systemName: "diamond.fill")
+                .font(.system(size: 6))
+                .foregroundStyle(.purple.opacity(0.4))
+            Rectangle().fill(theme.divider).frame(width: 48, height: 1)
+        }
+    }
 
-    private func arabicCard(_ lesson: IlmLesson) -> some View {
-        VStack(alignment: .trailing, spacing: 10) {
-            // Aligné à droite (norme typographique arabe). Pas d'override layoutDirection :
-            // la direction RTL vient du contenu lui-même, et `.trailing` dans un contexte
-            // RTL inverserait visuellement l'alignement.
+    /// Variante courte pour la transition arabe → traduction.
+    private var shortOrnament: some View {
+        HStack(spacing: 8) {
+            Rectangle().fill(theme.divider).frame(width: 32, height: 1)
+            Image(systemName: "diamond.fill")
+                .font(.system(size: 5))
+                .foregroundStyle(.purple.opacity(0.35))
+            Rectangle().fill(theme.divider).frame(width: 32, height: 1)
+        }
+        .frame(maxWidth: .infinity)
+    }
+
+    // MARK: - Corps de page (arabe · source · traduction) — sans cartes
+
+    private func studyBlock(_ lesson: IlmLesson) -> some View {
+        VStack(alignment: .leading, spacing: 0) {
+            // Matn — même police que le mushaf du lecteur Coran (parité).
+            // Aligné à droite ; pas d'override layoutDirection : la direction
+            // RTL vient du contenu, `.trailing` dans un contexte RTL inverserait.
             Text(verbatim: lesson.arabic)
-                .font(.system(size: 24, weight: .medium))
-                .lineSpacing(12)
+                .font(.custom("AmiriQuran-Regular", size: 25))
+                .lineSpacing(14)
                 .foregroundColor(theme.textPrimary)
                 .multilineTextAlignment(.trailing)
                 .frame(maxWidth: .infinity, alignment: .trailing)
                 .fixedSize(horizontal: false, vertical: true)
                 .blur(radius: isMemorizing && !isRevealed ? 7 : 0)
+                .padding(.top, 4)
 
             if let source = lesson.source, !source.isEmpty {
                 Text(verbatim: "— \(source)")
-                    .font(.caption)
-                    .foregroundColor(.purple.opacity(0.9))
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .font(.system(size: 13, design: .serif))
+                    .italic()
+                    .foregroundColor(.purple.opacity(0.85))
+                    .padding(.top, 6)
             }
+
+            // Traduction : en Lire selon le toggle ; en Mémoriser toujours
+            // présente mais voilée avec l'arabe (le blur garde la hauteur —
+            // anti-wiggle). Le filet appartient au groupe : ils (dis)paraissent
+            // ensemble.
+            Group {
+                if isMemorizing || showTranslation {
+                    VStack(alignment: .leading, spacing: 0) {
+                        shortOrnament
+                            .padding(.vertical, 20)
+                        Text(verbatim: lesson.text)
+                            .font(.system(size: 16, design: .serif))
+                            .lineSpacing(7)
+                            .foregroundColor(theme.textSecondary)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .blur(radius: isMemorizing && !isRevealed ? 7 : 0)
+                    }
+                    .transition(.opacity.combined(with: .move(edge: .top)))
+                }
+            }
+            .animation(.smooth(duration: 0.3), value: showTranslation)
         }
-        .padding(18)
-        .background(theme.cardBackground)
-        .clipShape(RoundedRectangle(cornerRadius: CornerRadius.card, style: .continuous))
-        .overlay(
-            RoundedRectangle(cornerRadius: CornerRadius.card, style: .continuous)
-                .stroke(Color.purple.opacity(0.25), lineWidth: 1)
-        )
         .overlay {
             if isMemorizing && !isRevealed {
                 VStack(spacing: 6) {
@@ -235,62 +279,65 @@ struct IlmLessonView: View {
         }
     }
 
-    // MARK: - Traduction
-
-    /// Mode Lire : selon le toggle persisté. Mode Mémoriser : toujours présente
-    /// mais VOILÉE avec l'arabe (même tap de révélation) — la vérification après
-    /// rappel porte sur les mots ET le sens ; le blur garde la hauteur constante
-    /// (anti-wiggle par construction).
-    @ViewBuilder
-    private func translationSection(_ lesson: IlmLesson) -> some View {
-        Group {
-            if isMemorizing || showTranslation {
-                translationCard(lesson)
-                    .blur(radius: isMemorizing && !isRevealed ? 7 : 0)
-                    .transition(.opacity.combined(with: .move(edge: .top)))
+    /// Note = note de bas de page (hairline + ※), plus de carte.
+    private func footnote(_ note: String) -> some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Rectangle().fill(theme.divider).frame(height: 1)
+            HStack(alignment: .top, spacing: 8) {
+                Text(verbatim: "※")
+                    .font(.system(size: 12))
+                Text(verbatim: note)
+                    .font(.system(size: 12))
+                    .lineSpacing(4)
+                    .fixedSize(horizontal: false, vertical: true)
             }
+            .foregroundColor(theme.textTertiary)
         }
-        .animation(.smooth(duration: 0.3), value: showTranslation)
+        .padding(.top, 28)
     }
 
-    private func translationCard(_ lesson: IlmLesson) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack(spacing: 6) {
-                Image(systemName: "text.book.closed.fill").foregroundStyle(.purple)
-                Text("Traduction")
-                    .font(.caption.bold())
-                    .foregroundColor(.purple)
-            }
-            Text(verbatim: lesson.text)
-                .font(.system(size: 15))
-                .lineSpacing(5)
-                .foregroundColor(theme.textSecondary)
-                .fixedSize(horizontal: false, vertical: true)
-        }
-        .padding(16)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(theme.cardBackground)
-        .clipShape(RoundedRectangle(cornerRadius: CornerRadius.card, style: .continuous))
-        .overlay(
-            RoundedRectangle(cornerRadius: CornerRadius.card, style: .continuous)
-                .stroke(theme.cardStroke, lineWidth: 1)
-        )
-    }
+    // MARK: - Barre de pied (mode + chevrons)
 
-    private func noteCard(_ note: String) -> some View {
-        HStack(alignment: .top, spacing: 8) {
-            Image(systemName: "info.circle.fill")
-                .foregroundStyle(.orange.opacity(0.85))
-                .font(.footnote)
-            Text(verbatim: note)
-                .font(.caption)
-                .foregroundColor(theme.textSecondary)
-                .fixedSize(horizontal: false, vertical: true)
+    private var bottomBar: some View {
+        HStack {
+            Button { goTo(index - 1) } label: {
+                Image(systemName: "chevron.left")
+                    .font(.system(size: 16, weight: .semibold))
+                    .frame(width: 44, height: 44)
+                    .contentShape(Rectangle())
+            }
+            .disabled(index == 0)
+            .accessibilityLabel(Text("Leçon précédente"))
+
+            Spacer()
+
+            Picker("Mode", selection: $isMemorizing.animation(.smooth(duration: 0.3))) {
+                Text("Lire").tag(false)
+                Text("Mémoriser").tag(true)
+            }
+            .pickerStyle(.segmented)
+            // Largeur bornée : la barre ne reflow jamais (anti-wiggle).
+            .frame(maxWidth: 200)
+            .onChange(of: isMemorizing) { _, _ in isRevealed = false }
+
+            Spacer()
+
+            Button { goTo(index + 1) } label: {
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 16, weight: .semibold))
+                    .frame(width: 44, height: 44)
+                    .contentShape(Rectangle())
+            }
+            .disabled(index == track.lessons.count - 1)
+            .accessibilityLabel(Text("Leçon suivante"))
         }
-        .padding(12)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(theme.cardBackground)
-        .clipShape(RoundedRectangle(cornerRadius: CornerRadius.badge, style: .continuous))
+        .padding(.horizontal, 12)
+        .frame(height: Self.bottomBarHeight)
+        .frame(maxWidth: .infinity)
+        .background(.ultraThinMaterial, ignoresSafeAreaEdges: .bottom)
+        .overlay(alignment: .top) {
+            theme.divider.frame(height: 1)
+        }
     }
 
     // MARK: - Enregistrement de récitation (capsule HUD)
@@ -427,7 +474,8 @@ struct IlmLessonView: View {
         .geometryGroup()
         .animation(.smooth(duration: 0.25), value: recorder.state)
         .padding(.horizontal, 16)
-        .padding(.bottom, 10)
+        // Flotte AU-DESSUS de la barre de pied.
+        .padding(.bottom, Self.bottomBarHeight + 10)
         .accessibilityHint(Text("Récite de mémoire, puis réécoute-toi en lisant le texte pour te corriger."))
     }
 
@@ -460,16 +508,16 @@ struct IlmLessonView: View {
             .foregroundColor(.white)
             .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
         }
-        .padding(.top, 4)
     }
 
-    /// Célébration brève, puis passage auto à la leçon suivante s'il en reste une.
+    /// Célébration brève (teaser de la suivante — cherry-pick spec B), puis
+    /// passage auto à la leçon suivante s'il en reste une.
     private func celebrateThenAdvance() {
         withAnimation(.spring(response: 0.45, dampingFraction: 0.7)) {
             showCelebration = true
         }
         Task { @MainActor in
-            try? await Task.sleep(for: .seconds(1.2))
+            try? await Task.sleep(for: .seconds(1.6))
             withAnimation(.smooth(duration: 0.3)) { showCelebration = false }
             if index < track.lessons.count - 1 {
                 goTo(index + 1)
@@ -489,8 +537,25 @@ struct IlmLessonView: View {
             Text("Leçon acquise")
                 .font(.system(size: 14, weight: .semibold, design: .rounded))
                 .foregroundColor(theme.textSecondary)
+
+            if index < track.lessons.count - 1 {
+                Text("Suivante : \(track.lessons[index + 1].title)")
+                    .font(.caption)
+                    .foregroundColor(theme.textSecondary)
+                    .lineLimit(2)
+                    .multilineTextAlignment(.center)
+            } else {
+                Text(verbatim: "Parcours terminé — الحمد لله")
+                    .font(.caption.bold())
+                    .foregroundColor(.green.opacity(0.9))
+            }
+            // Rend visible le système de révision espacée (Leitner) déjà bâti.
+            Text("Cette leçon rejoint tes révisions espacées")
+                .font(.caption2)
+                .foregroundColor(theme.textTertiary)
         }
         .padding(28)
+        .frame(maxWidth: 320)
         .background(.ultraThinMaterial)
         .clipShape(RoundedRectangle(cornerRadius: CornerRadius.modal, style: .continuous))
         .shadow(color: .purple.opacity(0.3), radius: 24)
