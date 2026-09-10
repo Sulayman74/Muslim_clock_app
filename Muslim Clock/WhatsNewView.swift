@@ -24,52 +24,34 @@ struct WhatsNewView: View {
     /// — ne pas le reformuler sans raison, ça orphelinerait les traductions en/ar.
     private let items: [WhatsNewItem] = [
         WhatsNewItem(
-            icon: "rectangle.grid.1x2.fill",
-            color: .teal,
-            title: String(localized: "Écrans réorganisés"),
-            description: String(localized: "L'essentiel d'abord : les 5 prières et le compte à rebours remontent en haut de l'écran, le verset et le hadith du jour ouvrent l'onglet Rappel. Les adhkar, la sunnah du moment et tes programmes restent à portée de main, juste en dessous.")
+            icon: "waveform.and.magnifyingglass",
+            color: .cyan,
+            title: String(localized: "Spotlight du Coran"),
+            description: String(localized: "Tape ou récite un passage au micro : l'app retrouve la sourate, le verset et toutes ses occurrences dans le Coran. La reconnaissance vocale se fait entièrement sur ton appareil — rien ne quitte ton téléphone.")
         ),
         WhatsNewItem(
-            icon: "battery.100percent.bolt",
-            color: .green,
-            title: String(localized: "Plus fluide, plus économe"),
-            description: String(localized: "L'affichage a été optimisé en profondeur : l'app consomme nettement moins de batterie, en particulier sur l'écran des prières et pendant l'écoute des cours.")
+            icon: "drop.fill",
+            color: wuduAccent,
+            title: String(localized: "Les ablutions, au bon moment"),
+            description: String(localized: "À l'approche de chaque prière, une carte te rappelle le wudû' pas à pas avec ses preuves. Le vendredi : le ghusl et les bienséances de la Jumu'ah. La fiche complète t'attend dans les Références de l'onglet Rappel.")
         ),
         WhatsNewItem(
-            icon: "airplane",
-            color: travelModeAccent,
-            title: String(localized: "Mode voyage (Safar)"),
-            description: String(localized: "L'app détecte quand tu t'éloignes de chez toi et te propose d'activer le mode voyage — invocations du voyageur mises en avant et accent dédié. Rien n'est jamais activé à ta place : le voyage suit ton intention.")
-        ),
-        WhatsNewItem(
-            icon: "list.bullet.circle.fill",
+            icon: "book.pages",
             color: .orange,
-            title: String(localized: "Playlist audio"),
-            description: String(localized: "Parcours tous les épisodes de la série dans une liste claire : recherche (français et arabe), épisode en cours mis en avant, et accès direct depuis le lecteur avec « Voir tout ».")
+            title: String(localized: "Une vraie page de révision"),
+            description: String(localized: "Le lecteur des cours de science fait peau neuve : mise en page sobre comme un matn imprimé, thème sépia ou sombre, traduction, navigation page par page et enregistrement pour te réécouter.")
         ),
         WhatsNewItem(
-            icon: "memories",
+            icon: "mic.fill",
             color: .green,
-            title: String(localized: "Reprends où tu t'étais arrêté"),
-            description: String(localized: "Chaque épisode garde désormais sa position d'écoute. Une carte « Reprendre » t'attend en tête de section pour relancer la lecture exactement là où tu l'avais laissée.")
+            title: String(localized: "Récitation plus confortable"),
+            description: String(localized: "Pendant l'enregistrement de ta lecture du Coran, le dernier verset n'est plus caché par le lecteur : la page laisse toujours la place à ce que tu récites.")
         ),
         WhatsNewItem(
-            icon: "building.columns.fill",
-            color: .indigo,
-            title: String(localized: "Jumu'ah, partout le vendredi"),
-            description: String(localized: "Le vendredi, la prière du vendredi remplace Dhuhr sur l'écran principal, les widgets, l'écran verrouillé et l'Apple Watch. Et l'heure de ta mosquée s'applique dès que tu la modifies.")
-        ),
-        WhatsNewItem(
-            icon: "book.closed.fill",
-            color: .indigo,
-            title: String(localized: "Facilités du voyageur"),
-            description: String(localized: "Une fiche claire sur le raccourcissement (qasr), le regroupement (jamʿ) et le jeûne en voyage — chaque règle appuyée par ses preuves : Coran, Sunna authentique et paroles de savants.")
-        ),
-        WhatsNewItem(
-            icon: "hands.and.sparkles.fill",
-            color: .green,
-            title: String(localized: "Nouvelles invocations authentiques"),
-            description: String(localized: "Le livret s'enrichit : invocations du voyage, du jeûne et invocations générales du quotidien, chacune avec sa source et son degré d'authenticité.")
+            icon: "sparkles",
+            color: .teal,
+            title: String(localized: "Affichage plus stable"),
+            description: String(localized: "Fini les petits sursauts d'interface : le verset du jour, les compteurs et les cartes s'affichent et se mettent à jour en douceur, partout dans l'app.")
         ),
     ]
 
