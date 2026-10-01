@@ -44,13 +44,37 @@ nonisolated enum PrayerWindow: String, Sendable {
 
 nonisolated enum PrayerCalculationEngine {
 
+    // MARK: - Méthodes
+
+    /// Les trois méthodes « classiques » proposées à l'utilisateur, avec leur
+    /// angle Fajr. Source unique pour les pickers (Réglages, Ajustements) et
+    /// pour les candidats de la Configuration Magique.
+    static let classicMethods: [(name: String, fajrAngle: Double)] = [
+        ("UOIF (12°)", 12),
+        ("ISNA (15°)", 15),
+        ("Ligue Islamique (18°)", 18),
+    ]
+
+    static var classicMethodNames: [String] { classicMethods.map(\.name) }
+
+    /// Méthode par défaut de l'app (usage majoritaire en France).
+    static let defaultMethod = "UOIF (12°)"
+
+    /// Ramène une valeur stockée à une méthode classique. « Mosquée de Paris »
+    /// (ancien préréglage 18°/18°, retiré des pickers) devient Ligue Islamique ;
+    /// toute valeur inconnue retombe sur Ligue Islamique comme avant.
+    static func normalizedMethod(_ method: String) -> String {
+        classicMethodNames.contains(method) ? method : "Ligue Islamique (18°)"
+    }
+
     // MARK: - Paramètres Adhan
 
     /// Construit les `CalculationParameters` Adhan à partir de la méthode choisie
     /// et des offsets utilisateur (temkine). Madhab Shafi fixé (Asr).
     ///
-    /// Méthodes reconnues : "UOIF (12°)", "ISNA (15°)", "Mosquée de Paris",
-    /// et par défaut "Ligue Islamique (18°)".
+    /// Méthodes reconnues : "UOIF (12°)", "ISNA (15°)", "Ligue Islamique (18°)".
+    /// Toute autre valeur (dont l'ancien « Mosquée de Paris ») est normalisée via
+    /// `normalizedMethod` → Ligue Islamique.
     static func parameters(
         method: String,
         fajrOffset: Int,
@@ -62,17 +86,13 @@ nonisolated enum PrayerCalculationEngine {
         ishaFixedDuration: Int
     ) -> CalculationParameters {
         var params: CalculationParameters
-        switch method {
+        switch normalizedMethod(method) {
         case "UOIF (12°)":
             params = CalculationMethod.muslimWorldLeague.params
             params.fajrAngle = 12
             params.ishaAngle = 12
         case "ISNA (15°)":
             params = CalculationMethod.northAmerica.params
-        case "Mosquée de Paris":
-            params = CalculationMethod.muslimWorldLeague.params
-            params.fajrAngle = 18
-            params.ishaAngle = 18
         default: // "Ligue Islamique (18°)"
             params = CalculationMethod.muslimWorldLeague.params
         }

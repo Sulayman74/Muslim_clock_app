@@ -252,4 +252,72 @@ struct SmartSetupDecisionMathTests {
         ])
         #expect(all.count == 2)
     }
+
+    // MARK: Phase 2 — scoring conjoint, préférence régionale, décision Isha
+
+    @Test func jointScoreAddsIshaOnlyWhenInformative() {
+        #expect(SmartSetupMath.jointScore(fajrOffset: 3, ishaOffset: 2) == 5)
+        #expect(SmartSetupMath.jointScore(fajrOffset: 3, ishaOffset: nil) == 3)
+        // Isha négative franche pénalisée comme Fajr.
+        #expect(SmartSetupMath.jointScore(fajrOffset: 0, ishaOffset: -10) == 110)
+    }
+
+    @Test func bestMethodBreaksTiesWithRegionalPreference() {
+        let scored: [(name: String, score: Int, isReliable: Bool)] = [
+            (name: "UOIF (12°)", score: 2, isReliable: true),
+            (name: "ISNA (15°)", score: 1, isReliable: true),
+            (name: "Ligue Islamique (18°)", score: 9, isReliable: true)
+        ]
+        // 12° et 15° sont ex æquo (écart < tolérance) : en France, 12° l'emporte.
+        let france = SmartSetupMath.preferenceOrder(latitude: 48.8566, longitude: 2.3522)
+        #expect(SmartSetupMath.bestMethod(scored, preferenceOrder: france) == "UOIF (12°)")
+        // Ailleurs (Casablanca), l'ordre neutre départage vers 15°.
+        let elsewhere = SmartSetupMath.preferenceOrder(latitude: 33.57, longitude: -7.59)
+        #expect(SmartSetupMath.bestMethod(scored, preferenceOrder: elsewhere) == "ISNA (15°)")
+    }
+
+    @Test func bestMethodIgnoresUnreachableAnglesAndClearWinners() {
+        let scored: [(name: String, score: Int, isReliable: Bool)] = [
+            (name: "UOIF (12°)", score: 14, isReliable: true),
+            (name: "ISNA (15°)", score: 2, isReliable: true),
+            (name: "Ligue Islamique (18°)", score: 0, isReliable: false)   // été : artificiel
+        ]
+        let france = SmartSetupMath.preferenceOrder(latitude: 48.8566, longitude: 2.3522)
+        // 18° écarté ; 15° gagne nettement (14 − 2 > tolérance) malgré la préférence 12°.
+        #expect(SmartSetupMath.bestMethod(scored, preferenceOrder: france) == "ISNA (15°)")
+    }
+
+    @Test func metropolitanFranceBoundingBox() {
+        #expect(SmartSetupMath.isInMetropolitanFrance(latitude: 48.8566, longitude: 2.3522))   // Paris
+        #expect(SmartSetupMath.isInMetropolitanFrance(latitude: 43.30, longitude: 5.37))       // Marseille
+        #expect(SmartSetupMath.isInMetropolitanFrance(latitude: 50.63, longitude: 3.06))       // Lille
+        #expect(SmartSetupMath.isInMetropolitanFrance(latitude: 51.51, longitude: -0.13) == false) // Londres
+        #expect(SmartSetupMath.isInMetropolitanFrance(latitude: 33.57, longitude: -7.59) == false) // Casablanca
+    }
+
+    @Test func ishaModePrefersAstronomicalWhenAngleMatches() {
+        // Hiver : écart 88 min « ressemble » à un lissage, mais l'angle colle à +2 → astronomique.
+        let winter = SmartSetupMath.ishaMode(maghribToIsha: 88, astronomicalOffset: 2)
+        #expect(winter.mode == .astronomical(offset: 2))
+        #expect(winter.isUncertain == false)
+    }
+
+    @Test func ishaModeDetectsRoundFixedInterval() {
+        let fixed = SmartSetupMath.ishaMode(maghribToIsha: 90, astronomicalOffset: -25)
+        #expect(fixed.mode == .fixed(duration: 90))
+        #expect(fixed.isUncertain == false)
+    }
+
+    @Test func ishaModeFlagsUncertainOddInterval() {
+        let odd = SmartSetupMath.ishaMode(maghribToIsha: 93, astronomicalOffset: -20)
+        #expect(odd.mode == .fixed(duration: 95))
+        #expect(odd.isUncertain)
+    }
+
+    @Test func ishaModeOutsideFixedRangeIsAstronomicalAndBounded() {
+        let short = SmartSetupMath.ishaMode(maghribToIsha: 45, astronomicalOffset: 4)
+        #expect(short.mode == .astronomical(offset: 4))
+        let long = SmartSetupMath.ishaMode(maghribToIsha: 150, astronomicalOffset: 40)
+        #expect(long.mode == .astronomical(offset: SmartSetupMath.ishaOffsetRange.upperBound))
+    }
 }

@@ -3,26 +3,25 @@
 //  Muslim Clock
 //
 //  Fonctions pures de la décision « Configuration Magique » (Smart Setup) :
-//  écart en minutes, détection Isha fixe, scoring d'angle Fajr, faisabilité
-//  d'un angle crépusculaire, bornes de plausibilité des offsets.
+//  écart en minutes, décision Isha (fixe / astronomique), scoring conjoint
+//  Fajr + Isha, préférence régionale, faisabilité d'un angle, bornes de
+//  plausibilité des offsets.
 //
-//  Extraites de `SmartSetupView.runAnalysis()` pour être testables sans
-//  Calendar/@AppStorage/Adhan — même pattern que `IlmMath`/`PodcastMath`.
+//  Testables sans Calendar/@AppStorage/Adhan — même pattern que `IlmMath`.
+//  Le calcul astronomique lui-même vit dans `SmartSetupAnalyzer`.
 //
 
 import Foundation
 
-enum SmartSetupMath {
+nonisolated enum SmartSetupMath {
 
     // MARK: - Méthodes candidates
 
     /// Les trois méthodes « classiques » testées par l'analyse, avec leur angle
-    /// Fajr/Isha. Les noms sont ceux de `PrayerCalculationEngine.parameters`.
-    static let candidateMethods: [(name: String, angle: Double)] = [
-        ("UOIF (12°)", 12),
-        ("ISNA (15°)", 15),
-        ("Ligue Islamique (18°)", 18),
-    ]
+    /// Fajr. Même source que les pickers (`PrayerCalculationEngine.classicMethods`).
+    static var candidateMethods: [(name: String, angle: Double)] {
+        PrayerCalculationEngine.classicMethods.map { (name: $0.name, angle: $0.fajrAngle) }
+    }
 
     /// Méthode de référence pour Dhuhr / Asr / Maghrib (indépendants de l'angle).
     static let referenceMethod = "Ligue Islamique (18°)"
@@ -51,6 +50,19 @@ enum SmartSetupMath {
         return delta
     }
 
+    // MARK: - Isha
+
+    /// Mode Isha déduit de l'observation.
+    nonisolated enum IshaMode: Equatable {
+        /// Lissage mosquée : Isha = Maghrib + `duration` minutes.
+        case fixed(duration: Int)
+        /// Isha astronomique de la méthode choisie, avec décalage en minutes.
+        case astronomical(offset: Int)
+    }
+
+    /// Un écart Isha astronomique à ±3 min est considéré comme « la mosquée suit l'angle ».
+    static let ishaAngleMatchTolerance = 3
+
     /// Vrai si l'écart Maghrib → Isha correspond à un intervalle fixe plausible
     /// (lissage mosquée) : entre 60 et 120 minutes inclus.
     static func isFixedIsha(_ maghribToIshaMinutes: Int) -> Bool {
@@ -64,6 +76,31 @@ enum SmartSetupMath {
         let step = ishaDurationStep
         let rounded = Int((Double(minutes) / Double(step)).rounded()) * step
         return clamped(rounded, to: ishaDurationRange).value
+    }
+
+    /// Décide entre Isha fixe et astronomique pour la méthode retenue.
+    ///
+    /// En hiver, l'Isha astronomique tombe naturellement 75 à 110 min après
+    /// Maghrib : un simple test « entre 60 et 120 » la prendrait pour un lissage.
+    /// On préfère donc l'astronomique dès que l'angle de la méthode colle à
+    /// ±`ishaAngleMatchTolerance`. Sinon, un écart « rond » (multiple de 5) est
+    /// un lissage ; un écart quelconque est un lissage incertain (arrondi).
+    ///
+    /// - Parameters:
+    ///   - maghribToIsha: écart saisi Maghrib → Isha (min).
+    ///   - astronomicalOffset: écart `Isha saisie − Isha astronomique` de la méthode.
+    /// - Returns: le mode et un drapeau « incertain » à signaler à l'utilisateur.
+    static func ishaMode(maghribToIsha: Int, astronomicalOffset: Int) -> (mode: IshaMode, isUncertain: Bool) {
+        guard isFixedIsha(maghribToIsha) else {
+            return (.astronomical(offset: clamped(astronomicalOffset, to: ishaOffsetRange).value), false)
+        }
+        if abs(astronomicalOffset) <= ishaAngleMatchTolerance {
+            return (.astronomical(offset: astronomicalOffset), false)
+        }
+        if maghribToIsha % ishaDurationStep == 0 {
+            return (.fixed(duration: maghribToIsha), false)
+        }
+        return (.fixed(duration: roundedIshaDuration(maghribToIsha)), true)
     }
 
     // MARK: - Plausibilité
@@ -101,16 +138,64 @@ enum SmartSetupMath {
         return angle + twilightSafetyMargin < depressionAtMidnight
     }
 
-    // MARK: - Scoring d'angle
+    // MARK: - Préférence régionale
 
-    /// Score d'un offset Fajr candidat : plus petit = meilleur.
+    /// Boîte englobante (approximative) de la France métropolitaine.
+    static let franceLatitudeRange = 41.3...51.1
+    static let franceLongitudeRange = -5.2...9.6
+
+    static func isInMetropolitanFrance(latitude: Double, longitude: Double) -> Bool {
+        franceLatitudeRange.contains(latitude) && franceLongitudeRange.contains(longitude)
+    }
+
+    /// Ordre de préférence pour départager des méthodes ex æquo.
+    /// En France, les mosquées (Mawaqit) sont majoritairement en 12° puis 15° ;
+    /// ailleurs, l'ordre neutre favorise la Ligue Islamique (18°).
+    static func preferenceOrder(latitude: Double, longitude: Double) -> [String] {
+        isInMetropolitanFrance(latitude: latitude, longitude: longitude)
+            ? ["UOIF (12°)", "ISNA (15°)", "Ligue Islamique (18°)"]
+            : ["Ligue Islamique (18°)", "ISNA (15°)", "UOIF (12°)"]
+    }
+
+    // MARK: - Scoring
+
+    /// Score d'un offset candidat : plus petit = meilleur.
     ///
     /// Les mosquées ajoutent presque toujours des minutes (offsets positifs) ;
     /// −1/−2 sont tolérés comme arrondis, en deçà on pénalise lourdement (+100)
     /// pour écarter les angles qui placent le calcul APRÈS l'heure de la mosquée.
-    static func score(_ fajrOffset: Int) -> Int {
-        fajrOffset >= -2 ? fajrOffset : abs(fajrOffset) + 100
+    static func score(_ offset: Int) -> Int {
+        offset >= -2 ? offset : abs(offset) + 100
     }
+
+    /// Score conjoint d'une méthode : Fajr, plus Isha quand elle est astronomique
+    /// (`ishaOffset == nil` quand l'Isha est fixe : elle ne dit rien sur l'angle).
+    /// Deux signaux séparent bien mieux 12° / 15° / 18° qu'un seul.
+    static func jointScore(fajrOffset: Int, ishaOffset: Int?) -> Int {
+        score(fajrOffset) + (ishaOffset.map(score) ?? 0)
+    }
+
+    /// Deux scores à moins de `tieTolerance` points sont ex æquo : la préférence
+    /// régionale départage (un écart de 1 à 2 min est du bruit d'arrondi).
+    static let tieTolerance = 3
+
+    /// Choisit la méthode : meilleur score parmi les candidats fiables (angle
+    /// atteint), ex æquo départagés par `preferenceOrder`. Si aucun candidat n'est
+    /// fiable, on les garde tous plutôt que de ne rien proposer.
+    static func bestMethod(
+        _ scored: [(name: String, score: Int, isReliable: Bool)],
+        preferenceOrder: [String]
+    ) -> String {
+        precondition(!scored.isEmpty, "bestMethod requiert au moins un candidat")
+        let reliable = scored.filter(\.isReliable)
+        let pool = reliable.isEmpty ? scored : reliable
+        let bestScore = pool.map(\.score).min() ?? 0
+        let tied = pool.filter { $0.score <= bestScore + tieTolerance }
+        func rank(_ name: String) -> Int { preferenceOrder.firstIndex(of: name) ?? preferenceOrder.count }
+        return tied.min { rank($0.name) < rank($1.name) }?.name ?? pool[0].name
+    }
+
+    // MARK: - API historique (phase 1, conservée pour les tests existants)
 
     /// Ne garde que les candidats dont l'angle est atteint ce jour-là. Si aucun
     /// ne l'est (cas théorique), on garde tout plutôt que de ne rien proposer.

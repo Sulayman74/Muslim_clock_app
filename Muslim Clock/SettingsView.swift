@@ -44,7 +44,8 @@ struct SettingsView: View {
     @State private var showWhatsNew = false
     @State private var showDonationSheet = false
     
-    let calculationMethods = ["UOIF (12°)", "Ligue Islamique (18°)", "ISNA (15°)", "Mosquée de Paris"]
+    /// Les trois méthodes classiques (source unique : PrayerCalculationEngine).
+    let calculationMethods = PrayerCalculationEngine.classicMethodNames
 
     private var hasActiveAdjustments: Bool {
         fajrOffset != 0 || dhuhrOffset != 0 || asrOffset != 0 || maghribOffset != 0 || ishaOffset != 0 || isIshaFixed || selectedCalculationMethod != "UOIF (12°)"
@@ -348,6 +349,10 @@ struct SettingsView: View {
                 }
                 .scrollContentBackground(.hidden)
                 .listRowBackground(Color.white.opacity(0.05))
+                // Migration : « Mosquée de Paris » (retiré des pickers) → Ligue Islamique.
+                .onAppear {
+                    selectedCalculationMethod = PrayerCalculationEngine.normalizedMethod(selectedCalculationMethod)
+                }
                 // 2. 🚀 ON FORCE LE RECALCUL DÈS QU'UN RÉGLAGE CHANGE
                 .onChange(of: selectedCalculationMethod) { prayerVM.forceRecalculation() }
                 .onChange(of: maghribOffset) { prayerVM.forceRecalculation() }
@@ -538,7 +543,12 @@ struct ManualAdjustmentsView: View {
     @AppStorage(StorageKeys.isIshaFixed) private var isIshaFixed = true
     @AppStorage(StorageKeys.ishaFixedDuration) private var ishaFixedDuration = 90
 
-    let calculationMethods = ["UOIF (12°)", "Ligue Islamique (18°)", "ISNA (15°)", "Mosquée de Paris"]
+    /// Une observation mosquée (Configuration Magique) existe : changer la méthode
+    /// re-dérive automatiquement Fajr/Isha — on le dit à l'utilisateur.
+    @State private var hasObservation = false
+
+    /// Les trois méthodes classiques (source unique : PrayerCalculationEngine).
+    let calculationMethods = PrayerCalculationEngine.classicMethodNames
 
     var body: some View {
         ZStack {
@@ -562,6 +572,11 @@ struct ManualAdjustmentsView: View {
                 } header: {
                     Text("Méthode de calcul")
                         .foregroundColor(.white.opacity(0.6))
+                } footer: {
+                    if hasObservation {
+                        Text("Une analyse de votre mosquée existe : changer la méthode recalcule automatiquement les décalages Fajr et Isha à partir de ses horaires.")
+                            .foregroundColor(.white.opacity(0.4))
+                    }
                 }
                 .listRowBackground(Color.white.opacity(0.1))
 
@@ -612,6 +627,34 @@ struct ManualAdjustmentsView: View {
         .navigationTitle("Ajustements")
         .navigationBarTitleDisplayMode(.inline)
         .preferredColorScheme(.dark)
+        .onAppear {
+            // Migration : « Mosquée de Paris » (retiré des pickers) → Ligue Islamique.
+            selectedCalculationMethod = PrayerCalculationEngine.normalizedMethod(selectedCalculationMethod)
+            hasObservation = MosqueObservation.load() != nil
+        }
+        // Changer d'angle après une analyse mosquée : les décalages Fajr/Isha sont
+        // calés sur l'angle précédent — on les re-dérive de l'observation pour la
+        // nouvelle méthode, sinon Fajr se décalerait d'une quinzaine de minutes.
+        .onChange(of: selectedCalculationMethod) { _, newMethod in
+            rederiveFromObservation(for: newMethod)
+        }
+    }
+
+    /// Re-dérive Fajr et Isha depuis l'observation mosquée persistée, si elle existe.
+    /// Dhuhr/Asr/Maghrib ne dépendent pas de l'angle : inchangés.
+    private func rederiveFromObservation(for method: String) {
+        guard let observation = MosqueObservation.load(),
+              let proposal = SmartSetupAnalyzer.analyze(observation) else { return }
+        let settings = proposal.settings(for: method)
+        fajrOffset = settings.fajrOffset
+        switch settings.ishaMode {
+        case .fixed(let duration):
+            isIshaFixed = true
+            ishaFixedDuration = duration
+        case .astronomical(let offset):
+            isIshaFixed = false
+            ishaOffset = offset
+        }
     }
 }
 

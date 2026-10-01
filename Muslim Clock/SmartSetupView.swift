@@ -1,22 +1,26 @@
 import SwiftUI
-import Adhan
 import CoreLocation
 
 struct SmartSetupView: View {
     @EnvironmentObject var prayerVM: PrayerTimesViewModel
     
-    // Adhan inputs
+    // Horaires saisis (adhan de la mosquée)
     @State private var inputFajr: Date = .now
     @State private var inputDhuhr: Date = .now
     @State private var inputAsr: Date = .now
     @State private var inputMaghrib: Date = .now
     @State private var inputIsha: Date = .now
+    /// Observation persistée (dernière analyse), source des pré-remplissages.
+    @State private var storedObservation: MosqueObservation? = nil
     
     @State private var isAnalyzing = false
-    @State private var analysisResult: String? = nil
+    @State private var errorMessage: String? = nil
+    /// Résultat de la dernière analyse de la session + méthode choisie/affichée.
+    @State private var proposal: SmartSetupProposal? = nil
+    @State private var selectedMethod: String = PrayerCalculationEngine.defaultMethod
     
     // Accès aux AppStorage – Calcul
-    @AppStorage(StorageKeys.calculationMethod) private var savedMethod = "UOIF (12°)"
+    @AppStorage(StorageKeys.calculationMethod) private var savedMethod = PrayerCalculationEngine.defaultMethod
     @AppStorage(StorageKeys.fajrOffset) private var savedFajrOffset = 0
     @AppStorage(StorageKeys.maghribOffset) private var savedMaghribOffset = 0
     @AppStorage(StorageKeys.isIshaFixed) private var isIshaFixed = true
@@ -75,12 +79,19 @@ struct SmartSetupView: View {
                 .listRowBackground(Color.white.opacity(0.05))
                 
                 // ── HORAIRES ADHAN ──
-                Section("Horaires Adhan") {
+                Section {
                     DatePicker("Fajr", selection: $inputFajr, displayedComponents: .hourAndMinute).colorScheme(.dark)
                     DatePicker("Dhuhr", selection: $inputDhuhr, displayedComponents: .hourAndMinute).colorScheme(.dark)
                     DatePicker("Asr", selection: $inputAsr, displayedComponents: .hourAndMinute).colorScheme(.dark)
                     DatePicker("Maghrib", selection: $inputMaghrib, displayedComponents: .hourAndMinute).colorScheme(.dark)
                     DatePicker("Isha", selection: $inputIsha, displayedComponents: .hourAndMinute).colorScheme(.dark)
+                } header: {
+                    Text("Horaires Adhan")
+                } footer: {
+                    if let stored = storedObservation {
+                        Text("Pré-rempli avec votre dernière analyse du \(stored.date.formatted(date: .abbreviated, time: .omitted)). Mettez à jour avec les horaires du jour avant de relancer.")
+                            .foregroundColor(.white.opacity(0.4))
+                    }
                 }
                 .listRowBackground(Color.white.opacity(0.05))
                 
@@ -138,14 +149,19 @@ struct SmartSetupView: View {
                     .foregroundColor(.orange)
                     .listRowBackground(Color.white.opacity(0.1))
                 }
-                
-                if let result = analysisResult {
-                    Section("Résultat de l'analyse") {
-                        Text(verbatim: result)
+
+                if let errorMessage {
+                    Section {
+                        Text(verbatim: errorMessage)
                             .font(.subheadline)
                             .foregroundColor(.white)
-                            .listRowBackground(Color.green.opacity(0.2))
+                            .listRowBackground(Color.red.opacity(0.25))
                     }
+                }
+                
+                if let proposal {
+                    methodSection(proposal)
+                    appliedSection(proposal)
                 }
             }
             .scrollContentBackground(.hidden)
@@ -169,7 +185,140 @@ struct SmartSetupView: View {
         // Feedback haptique : medium au tap (analyse lancée) + success quand le
         // résultat arrive (analyse terminée).
         .sensoryFeedback(.impact(weight: .medium), trigger: isAnalyzing)
-        .sensoryFeedback(.success, trigger: analysisResult)
+        .sensoryFeedback(.success, trigger: proposal?.observation.date)
+        .sensoryFeedback(.selection, trigger: selectedMethod)
+    }
+
+    // MARK: - Résultat : choix de la méthode
+
+    /// Les trois méthodes classiques, scorées. La recommandée est présélectionnée ;
+    /// l'utilisateur peut en choisir une autre, les décalages Fajr/Isha suivent.
+    private func methodSection(_ proposal: SmartSetupProposal) -> some View {
+        Section {
+            ForEach(proposal.candidates) { candidate in
+                Button {
+                    select(candidate.name, in: proposal)
+                } label: {
+                    methodRow(candidate, isRecommended: candidate.name == proposal.recommendedMethod)
+                }
+                .buttonStyle(.plain)
+            }
+        } header: {
+            Text("Méthode (angles) — touchez pour changer")
+        } footer: {
+            Text("La méthode recommandée est présélectionnée. En cas de doute, choisissez-en une autre : les décalages Fajr et Isha sont recalculés automatiquement à partir de vos horaires.")
+                .foregroundColor(.white.opacity(0.4))
+        }
+        .listRowBackground(Color.white.opacity(0.08))
+    }
+
+    private func methodRow(_ candidate: MethodCandidate, isRecommended: Bool) -> some View {
+        let isSelected = candidate.name == selectedMethod
+        return HStack(spacing: 12) {
+            Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
+                .foregroundColor(isSelected ? .orange : .white.opacity(0.35))
+                .font(.title3)
+
+            VStack(alignment: .leading, spacing: 3) {
+                Text(verbatim: candidate.name)
+                    .font(.body.weight(isSelected ? .bold : .regular))
+                    .foregroundColor(.white)
+                Text(verbatim: "Fajr \(SmartSetupAnalyzer.signed(candidate.fajrOffset)) min · Isha \(SmartSetupAnalyzer.signed(candidate.ishaOffset)) min")
+                    .font(.caption)
+                    .monospacedDigit()
+                    .foregroundColor(.white.opacity(0.6))
+            }
+
+            Spacer()
+
+            if isRecommended {
+                badge(String(localized: "Recommandé"), color: .orange)
+            }
+            if !candidate.isReachable {
+                badge(String(localized: "Non atteint"), color: .gray)
+            }
+        }
+        .padding(.vertical, 4)
+        .contentShape(Rectangle())
+    }
+
+    private func badge(_ text: String, color: Color) -> some View {
+        Text(verbatim: text)
+            .font(.system(size: 10, weight: .bold, design: .rounded))
+            .padding(.horizontal, 7)
+            .padding(.vertical, 3)
+            .background(color.opacity(0.2))
+            .foregroundColor(color)
+            .clipShape(Capsule())
+    }
+
+    // MARK: - Résultat : réglages appliqués
+
+    private func appliedSection(_ proposal: SmartSetupProposal) -> some View {
+        let settings = proposal.settings(for: selectedMethod)
+        let warnings = proposal.warnings + settings.warnings
+            + (travelModeActive ? [String(localized: "⚠️ Mode voyage actif : l'analyse utilise votre position actuelle, pas celle de votre mosquée.")] : [])
+
+        return Section {
+            offsetRow("Fajr", settings.fajrOffset)
+            offsetRow("Dhuhr", settings.dhuhrOffset)
+            offsetRow("Asr", settings.asrOffset)
+            offsetRow("Maghrib", settings.maghribOffset)
+            HStack {
+                Text("Isha")
+                Spacer()
+                switch settings.ishaMode {
+                case .fixed(let duration):
+                    Text("Fixe · Maghrib + \(duration) min").foregroundColor(.indigo)
+                case .astronomical(let offset):
+                    Text("Astronomique · \(SmartSetupAnalyzer.signed(offset)) min").foregroundColor(.teal)
+                }
+            }
+            .font(.subheadline)
+            .monospacedDigit()
+
+            if jumuahEnabled {
+                HStack {
+                    Text("Jumu'ah")
+                    Spacer()
+                    Text(verbatim: String(format: "%02d:%02d", jumuahHour, jumuahMinute))
+                        .foregroundColor(.green)
+                }
+                .font(.subheadline)
+            }
+
+            HStack {
+                Text("Iqamah")
+                Spacer()
+                Text(verbatim: "+\(savedIqamahFajr) · +\(savedIqamahDhuhr) · +\(savedIqamahAsr) · +\(savedIqamahMaghrib) · +\(savedIqamahIsha) min")
+                    .foregroundColor(.white.opacity(0.7))
+            }
+            .font(.subheadline)
+            .monospacedDigit()
+
+            ForEach(warnings, id: \.self) { warning in
+                Text(verbatim: warning)
+                    .font(.caption)
+                    .foregroundColor(.yellow.opacity(0.9))
+            }
+        } header: {
+            Text("Réglages appliqués")
+        } footer: {
+            Text("Analyse du \(proposal.observation.date.formatted(date: .abbreviated, time: .shortened)). Ces réglages sont appliqués à l'application ; vous pouvez aussi changer la méthode dans Réglages › Ajustements.")
+                .foregroundColor(.white.opacity(0.4))
+        }
+        .listRowBackground(Color.green.opacity(0.15))
+    }
+
+    private func offsetRow(_ label: String, _ offset: Int) -> some View {
+        HStack {
+            Text(verbatim: label)
+            Spacer()
+            Text(verbatim: "\(SmartSetupAnalyzer.signed(offset)) min")
+                .foregroundColor(offset == 0 ? .white.opacity(0.7) : .orange)
+        }
+        .font(.subheadline)
+        .monospacedDigit()
     }
     
     /// Persiste l'heure Jumu'ah choisie et déclenche le recalcul des horaires.
@@ -185,208 +334,112 @@ struct SmartSetupView: View {
         prayerVM.forceRecalculation()
     }
 
-    // MARK: - 🧠 LE CERVEAU MATHÉMATIQUE
+    // MARK: - 🧠 Analyse
 
     private func runAnalysis() {
         guard let location = prayerVM.lastLocation else {
-            analysisResult = "⚠️ Erreur : Position GPS introuvable. Veuillez activer la localisation."
+            errorMessage = String(localized: "⚠️ Erreur : Position GPS introuvable. Veuillez activer la localisation.")
             return
         }
         
         isAnalyzing = true
-        analysisResult = nil
+        errorMessage = nil
+        proposal = nil
+
+        let observation = MosqueObservation(
+            date: Date(),
+            latitude: location.coordinate.latitude,
+            longitude: location.coordinate.longitude,
+            fajr: inputFajr, dhuhr: inputDhuhr, asr: inputAsr, maghrib: inputMaghrib, isha: inputIsha
+        )
 
         Task { @MainActor in
             try? await Task.sleep(for: Self.analysisDelay)
-            analysisResult = performAnalysis(at: location)
-            isAnalyzing = false
+            defer { isAnalyzing = false }
+
+            guard let result = SmartSetupAnalyzer.analyze(observation) else {
+                errorMessage = String(localized: "Erreur de calcul astronomique.")
+                return
+            }
+
+            // L'observation est la donnée de référence : persistée telle quelle,
+            // tout le reste en est dérivé (y compris plus tard dans Ajustements).
+            observation.save()
+            storedObservation = observation
+
+            if jumuahEnabled {
+                let jComps = Calendar.current.dateComponents([.hour, .minute], from: inputJumuah)
+                jumuahHour = jComps.hour ?? 13
+                jumuahMinute = jComps.minute ?? 0
+            }
+
+            proposal = result
+            select(result.recommendedMethod, in: result)
+            lastSmartSetupDate = observation.date.timeIntervalSince1970
         }
     }
 
-    /// Paramètres Adhan d'une méthode SANS offsets : exactement ceux que le moteur
-    /// appliquera ensuite (`PrayerCalculationEngine.parameters`), pour que l'écart
-    /// mesuré ici soit l'offset réellement nécessaire — aucune construction parallèle.
-    private func zeroOffsetParameters(method: String) -> CalculationParameters {
-        PrayerCalculationEngine.parameters(
-            method: method,
-            fajrOffset: 0, dhuhrOffset: 0, asrOffset: 0, maghribOffset: 0, ishaOffset: 0,
-            isIshaFixed: false, ishaFixedDuration: 0
-        )
+    /// Choisit une méthode (recommandée ou forcée par l'utilisateur) et applique
+    /// les réglages dérivés pour cette méthode.
+    private func select(_ method: String, in proposal: SmartSetupProposal) {
+        selectedMethod = method
+        apply(proposal.settings(for: method))
     }
 
-    /// Analyse les horaires saisis et applique les réglages déduits.
-    /// - Returns: le compte-rendu affiché à l'utilisateur.
-    private func performAnalysis(at location: CLLocation) -> String {
-        let coords = Coordinates(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
-        let today = Date()
-        let dateComps = Calendar.current.dateComponents([.year, .month, .day], from: today)
-        let dayOfYear = Calendar.current.ordinality(of: .day, in: .year, for: today) ?? 1
-        var warnings: [String] = []
-
-        // 1️⃣ Dhuhr / Asr / Maghrib : indépendants de l'angle → méthode de référence.
-        guard let baseTimes = PrayerTimes(
-            coordinates: coords, date: dateComps,
-            calculationParameters: zeroOffsetParameters(method: SmartSetupMath.referenceMethod)
-        ) else {
-            return "Erreur de calcul astronomique."
+    private func apply(_ settings: AppliedSettings) {
+        savedMethod = settings.method
+        savedFajrOffset = settings.fajrOffset
+        savedDhuhrOffset = settings.dhuhrOffset
+        savedAsrOffset = settings.asrOffset
+        savedMaghribOffset = settings.maghribOffset
+        switch settings.ishaMode {
+        case .fixed(let duration):
+            isIshaFixed = true
+            savedIshaFixedDuration = duration
+        case .astronomical(let offset):
+            isIshaFixed = false
+            savedIshaOffset = offset
         }
-
-        let dhuhr = SmartSetupMath.clamped(minutesBetween(calculated: baseTimes.dhuhr, user: inputDhuhr), to: SmartSetupMath.minorOffsetRange)
-        let asr = SmartSetupMath.clamped(minutesBetween(calculated: baseTimes.asr, user: inputAsr), to: SmartSetupMath.minorOffsetRange)
-        let maghrib = SmartSetupMath.clamped(minutesBetween(calculated: baseTimes.maghrib, user: inputMaghrib), to: SmartSetupMath.minorOffsetRange)
-        if dhuhr.wasClamped { warnings.append(clampWarning("Dhuhr", raw: minutesBetween(calculated: baseTimes.dhuhr, user: inputDhuhr), kept: dhuhr.value)) }
-        if asr.wasClamped {
-            warnings.append(clampWarning("Asr", raw: minutesBetween(calculated: baseTimes.asr, user: inputAsr), kept: asr.value)
-                + " Un grand écart sur Asr peut indiquer une mosquée de rite Hanafi.")
-        }
-        if maghrib.wasClamped { warnings.append(clampWarning("Maghrib", raw: minutesBetween(calculated: baseTimes.maghrib, user: inputMaghrib), kept: maghrib.value)) }
-
-        // 2️⃣ Isha fixe : écart Maghrib → Isha saisi, arrondi au pas du stepper.
-        let ishaDifference = minutesBetween(calculated: inputMaghrib, user: inputIsha)
-        let detectedIshaFixed = SmartSetupMath.isFixedIsha(ishaDifference)
-        let detectedIshaDuration = detectedIshaFixed ? SmartSetupMath.roundedIshaDuration(ishaDifference) : savedIshaFixedDuration
-
-        // 3️⃣ Fajr : rétro-ingénierie de l'angle parmi les trois méthodes classiques.
-        // Un angle non atteint ce jour-là (été, latitude élevée) est écarté : Adhan
-        // lui substitue une règle de haute latitude, pas une vraie heure astronomique.
-        var candidates: [(name: String, offset: Int, isReliable: Bool)] = []
-        var ishaOffsetByMethod: [String: Int] = [:]
-        var excludedMethods: [String] = []
-
-        for (methodName, angle) in SmartSetupMath.candidateMethods {
-            guard let testTimes = PrayerTimes(
-                coordinates: coords, date: dateComps,
-                calculationParameters: zeroOffsetParameters(method: methodName)
-            ) else { continue }
-
-            let reachable = SmartSetupMath.isTwilightAngleReachable(
-                angle: angle, latitude: location.coordinate.latitude, dayOfYear: dayOfYear
-            )
-            if !reachable { excludedMethods.append(methodName) }
-
-            candidates.append((
-                name: methodName,
-                offset: minutesBetween(calculated: testTimes.fajr, user: inputFajr),
-                isReliable: reachable
-            ))
-            ishaOffsetByMethod[methodName] = minutesBetween(calculated: testTimes.isha, user: inputIsha)
-        }
-
-        guard !candidates.isEmpty else {
-            return "Erreur de calcul astronomique."
-        }
-
-        let best = SmartSetupMath.bestAngle(SmartSetupMath.reliableCandidates(candidates))
-        let fajr = SmartSetupMath.clamped(best.offset, to: SmartSetupMath.fajrOffsetRange)
-        if fajr.wasClamped { warnings.append(clampWarning("Fajr", raw: best.offset, kept: fajr.value)) }
-
-        var detectedIshaOffset = 0
-        if !detectedIshaFixed {
-            let raw = ishaOffsetByMethod[best.name] ?? 0
-            let isha = SmartSetupMath.clamped(raw, to: SmartSetupMath.ishaOffsetRange)
-            detectedIshaOffset = isha.value
-            if isha.wasClamped { warnings.append(clampWarning("Isha", raw: raw, kept: isha.value)) }
-        }
-
-        if !excludedMethods.isEmpty {
-            let list = excludedMethods.joined(separator: ", ")
-            warnings.append("ℹ️ \(list) : angle non atteint à cette date et cette latitude, candidat écarté.")
-        }
-        if travelModeActive {
-            warnings.append("⚠️ Mode voyage actif : l'analyse utilise votre position actuelle, pas celle de votre mosquée.")
-        }
-
-        // 4️⃣ Application des résultats.
-        savedMethod = best.name
-        savedFajrOffset = fajr.value
-        savedDhuhrOffset = dhuhr.value
-        savedAsrOffset = asr.value
-        savedMaghribOffset = maghrib.value
-        isIshaFixed = detectedIshaFixed
-        savedIshaFixedDuration = detectedIshaDuration
-        savedIshaOffset = detectedIshaOffset
-
-        if jumuahEnabled {
-            let jComps = Calendar.current.dateComponents([.hour, .minute], from: inputJumuah)
-            jumuahHour = jComps.hour ?? 13
-            jumuahMinute = jComps.minute ?? 0
-        }
-
-        lastSmartSetupDate = today.timeIntervalSince1970
         prayerVM.forceRecalculation()
-
-        // 5️⃣ Compte-rendu.
-        let ishaText = detectedIshaFixed
-            ? "Fixe (\(detectedIshaDuration) min après Maghrib)"
-            : "Astronomique (Décalage: \(signed(detectedIshaOffset)) min)"
-        let jumuahText = jumuahEnabled
-            ? "\n🕌 Jumu'ah : \(String(format: "%02d:%02d", jumuahHour, jumuahMinute)) (remplace Dhuhr le vendredi)"
-            : ""
-        let warningsText = warnings.isEmpty ? "" : "\n\n" + warnings.joined(separator: "\n")
-
-        return """
-        ✅ Analyse réussie !
-
-        D'après les mathématiques, votre mosquée utilise :
-        • Angle : \(best.name)
-        • Fajr : \(signed(fajr.value)) min
-        • Dhuhr : \(signed(dhuhr.value)) min
-        • Asr : \(signed(asr.value)) min
-        • Maghrib : \(signed(maghrib.value)) min
-        • Isha : \(ishaText)\(jumuahText)
-
-        🕌 Délais Iqamah configurés :
-        • Fajr +\(savedIqamahFajr) min  •  Dhuhr +\(savedIqamahDhuhr) min  •  Asr +\(savedIqamahAsr) min
-        • Maghrib +\(savedIqamahMaghrib) min  •  Isha +\(savedIqamahIsha) min
-
-        Ces réglages sont appliqués à l'application. Vous pouvez changer la méthode (angles) à tout moment dans Réglages › Ajustements.\(warningsText)
-        """
-    }
-
-    private func signed(_ value: Int) -> String {
-        value > 0 ? "+\(value)" : "\(value)"
-    }
-
-    private func clampWarning(_ prayer: String, raw: Int, kept: Int) -> String {
-        "⚠️ \(prayer) : écart de \(signed(raw)) min peu plausible, ramené à \(signed(kept)). Vérifiez l'heure saisie et votre position."
     }
     
-    // MARK: - 🎯 PRÉ-REMPLISSAGE
-    // On utilise directement les horaires déjà calculés par le ViewModel
-    // (méthode + offsets de l'utilisateur déjà appliqués) — pas de recalcul nécessaire.
+    // MARK: - 🎯 Pré-remplissage
+
+    /// Priorité à la dernière observation (les vrais horaires de la mosquée) ;
+    /// sinon les horaires calculés par le ViewModel (méthode + offsets actuels).
     private func prefillForm() {
-        guard !prayerVM.dailyPrayers.isEmpty else { return }
-        for prayer in prayerVM.dailyPrayers {
-            switch prayer.name {
-            case "Fajr":    inputFajr    = prayer.date
-            case "Dhuhr":   inputDhuhr   = prayer.date
-            case "Jumu'ah":
-                // Vendredi : la ligne Dhuhr du ViewModel porte l'heure de la Jumu'ah.
-                // L'analyse compare des horaires d'adhan Dhuhr : pré-remplir avec la
-                // Jumu'ah appliquerait +45…+90 min à Dhuhr toute la semaine.
-                inputDhuhr = prayerVM.dhuhrDate ?? prayer.date
-            case "Asr":     inputAsr     = prayer.date
-            case "Maghrib": inputMaghrib = prayer.date
-            case "Isha":    inputIsha    = prayer.date
-            default: break
+        selectedMethod = PrayerCalculationEngine.normalizedMethod(savedMethod)
+
+        if let stored = MosqueObservation.load() {
+            storedObservation = stored
+            inputFajr = stored.fajr
+            inputDhuhr = stored.dhuhr
+            inputAsr = stored.asr
+            inputMaghrib = stored.maghrib
+            inputIsha = stored.isha
+        } else if !prayerVM.dailyPrayers.isEmpty {
+            for prayer in prayerVM.dailyPrayers {
+                switch prayer.name {
+                case "Fajr":    inputFajr    = prayer.date
+                case "Dhuhr":   inputDhuhr   = prayer.date
+                case "Jumu'ah":
+                    // Vendredi : la ligne Dhuhr du ViewModel porte l'heure de la Jumu'ah.
+                    // L'analyse compare des horaires d'adhan Dhuhr : pré-remplir avec la
+                    // Jumu'ah appliquerait +45…+90 min à Dhuhr toute la semaine.
+                    inputDhuhr = prayerVM.dhuhrDate ?? prayer.date
+                case "Asr":     inputAsr     = prayer.date
+                case "Maghrib": inputMaghrib = prayer.date
+                case "Isha":    inputIsha    = prayer.date
+                default: break
+                }
             }
         }
-        // Pre-remplir l'heure Jumu'ah depuis les preferences
+
+        // Pré-remplir l'heure Jumu'ah depuis les préférences
         if jumuahEnabled {
             var comps = Calendar.current.dateComponents([.year, .month, .day], from: Date())
             comps.hour = jumuahHour; comps.minute = jumuahMinute
             inputJumuah = Calendar.current.date(from: comps) ?? inputJumuah
         }
-    }
-    
-    /// Adaptateur Date → (heure, minute) vers `SmartSetupMath.minutesBetween`
-    /// (comparaison pure sur (h, m) avec repli minuit — testée unitairement).
-    private func minutesBetween(calculated: Date, user: Date) -> Int {
-        let calComps = Calendar.current.dateComponents([.hour, .minute], from: calculated)
-        let userComps = Calendar.current.dateComponents([.hour, .minute], from: user)
-        return SmartSetupMath.minutesBetween(
-            calc: (calComps.hour ?? 0, calComps.minute ?? 0),
-            user: (userComps.hour ?? 0, userComps.minute ?? 0)
-        )
     }
 }

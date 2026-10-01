@@ -29,6 +29,12 @@ nonisolated enum StorageKeys {
     static let jumuahHour = "jumuahHour"
     static let jumuahMinute = "jumuahMinute"
 
+    // MARK: - Configuration Magique (app)
+
+    /// `MosqueObservation` encodée en JSON : horaires relevés dans la mosquée,
+    /// date et position. Donnée de référence dont méthode et offsets sont dérivés.
+    static let smartSetupObservation = "smartSetupObservation"
+
     // MARK: - Horaires partagés (App Group) — lus par widgets/watch/complication
 
     static let prayerFajr = "prayer_fajr"

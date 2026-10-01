@@ -1438,6 +1438,22 @@
         }
       }
     },
+    "Analyse du %@. Ces réglages sont appliqués à l'application ; vous pouvez aussi changer la méthode dans Réglages › Ajustements.": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تحليل بتاريخ %@. تم تطبيق هذه الإعدادات؛ يمكنك أيضًا تغيير الطريقة من الإعدادات › التعديلات."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Analysis from %@. These settings are now applied; you can also change the method in Settings › Adjustments."
+          }
+        }
+      }
+    },
     "Annuler": {
       "localizations": {
         "ar": {
@@ -1584,6 +1600,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Asr"
+          }
+        }
+      }
+    },
+    "Astronomique · %@ min": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "فلكي · %@ دقيقة"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Astronomical · %@ min"
           }
         }
       }
@@ -3000,6 +3032,22 @@
         }
       }
     },
+    "Erreur de calcul astronomique.": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "خطأ في الحساب الفلكي."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Astronomical calculation error."
+          }
+        }
+      }
+    },
     "Espace utilise": {
       "localizations": {
         "ar": {
@@ -3163,6 +3211,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "No more little interface jumps: the verse of the day, counters, and cards now appear and update smoothly, everywhere in the app."
+          }
+        }
+      }
+    },
+    "Fixe · Maghrib + %lld min": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ثابت · المغرب + %lld دقيقة"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fixed · Maghrib + %lld min"
           }
         }
       }
@@ -3693,6 +3757,22 @@
         }
       }
     },
+    "Iqamah": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الإقامة"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Iqamah"
+          }
+        }
+      }
+    },
     "Iqamah & informations": {
       "localizations": {
         "ar": {
@@ -4060,6 +4140,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "The Prayer"
+          }
+        }
+      }
+    },
+    "La méthode recommandée est présélectionnée. En cas de doute, choisissez-en une autre : les décalages Fajr et Isha sont recalculés automatiquement à partir de vos horaires.": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الطريقة الموصى بها محددة مسبقًا. عند الشك اختر طريقة أخرى: يُعاد حساب فروق الفجر والعشاء تلقائيًا من مواقيتك."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The recommended method is preselected. If in doubt, pick another one: the Fajr and Isha offsets are recalculated automatically from your times."
           }
         }
       }
@@ -5354,6 +5450,22 @@
         }
       }
     },
+    "Méthode (angles) — touchez pour changer": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الطريقة (الزوايا) — اضغط للتغيير"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Method (angles) — tap to change"
+          }
+        }
+      }
+    },
     "Méthode de calcul": {
       "localizations": {
         "ar": {
@@ -5398,6 +5510,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Mosque name"
+          }
+        }
+      }
+    },
+    "Non atteint": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "غير مبلوغ"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not reached"
           }
         }
       }
@@ -6318,6 +6446,22 @@
         }
       }
     },
+    "Pré-rempli avec votre dernière analyse du %@. Mettez à jour avec les horaires du jour avant de relancer.": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "مُعبّأ مسبقًا من تحليلك الأخير بتاريخ %@. حدّث مواقيت اليوم قبل إعادة التشغيل."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prefilled with your last analysis from %@. Update with today's times before running it again."
+          }
+        }
+      }
+    },
     "Préparez le **Suhur** (béni, ne le manquez pas), rompez vite après Maghrib avec une **datte** et de l'**eau**, et prolongez la nuit en **Tarawih**. Les 10 dernières nuits : cherchez **Laylat al-Qadr**.": {
       "localizations": {
         "ar": {
@@ -6741,6 +6885,22 @@
         }
       }
     },
+    "Recommandé": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "موصى به"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recommended"
+          }
+        }
+      }
+    },
     "Reconnecté · Actualisation…": {
       "localizations": {
         "ar": {
@@ -7137,6 +7297,22 @@
         }
       }
     },
+    "Réglages appliqués": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الإعدادات المطبّقة"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Applied settings"
+          }
+        }
+      }
+    },
     "Régularité — 5 dernières semaines": {
       "localizations": {
         "ar": {
@@ -7170,6 +7346,7 @@
       }
     },
     "Résultat de l'analyse": {
+      "extractionState": "stale",
       "localizations": {
         "ar": {
           "stringUnit": {
@@ -8265,6 +8442,22 @@
         }
       }
     },
+    "Un grand écart sur Asr peut indiquer une mosquée de rite Hanafi.": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "قد يدل الفارق الكبير في العصر على مسجد يتبع المذهب الحنفي."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A large Asr offset may indicate a Hanafi mosque."
+          }
+        }
+      }
+    },
     "Un lancement plus soigné, et des widgets et une montre qui restent à l'heure : la prochaine prière se met à jour toute seule, même sans ouvrir l'app.": {
       "localizations": {
         "ar": {
@@ -8293,6 +8486,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "A bit of knowledge today — a few minutes is enough."
+          }
+        }
+      }
+    },
+    "Une analyse de votre mosquée existe : changer la méthode recalcule automatiquement les décalages Fajr et Isha à partir de ses horaires.": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "يوجد تحليل لمسجدك: تغيير الطريقة يعيد حساب فروق الفجر والعشاء تلقائيًا من مواقيته."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "An analysis of your mosque exists: changing the method automatically recalculates the Fajr and Isha offsets from its times."
           }
         }
       }
@@ -9263,6 +9472,28 @@
         }
       }
     },
+    "ℹ️ Isha : écart Maghrib → Isha de %lld min, arrondi à un intervalle fixe de %lld min. Vérifiez sur quelques jours.": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ℹ️ العشاء: الفارق بين المغرب والعشاء %lld دقيقة، تم تقريبه إلى فاصل ثابت قدره %lld دقيقة. تحقق خلال بضعة أيام."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ℹ️ Isha: Maghrib → Isha gap of %lld min, rounded to a fixed interval of %lld min. Double-check over a few days."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "new",
+            "value": "ℹ️ Isha : écart Maghrib → Isha de %1$lld min, arrondi à un intervalle fixe de %2$lld min. Vérifiez sur quelques jours."
+          }
+        }
+      }
+    },
     "≈ %lld pages/jour": {
       "localizations": {
         "ar": {
@@ -9297,6 +9528,76 @@
           "stringUnit": {
             "state": "new",
             "value": "≈ %1$lld semaine(s) pour les %2$lld leçons restantes."
+          }
+        }
+      }
+    },
+    "⚠️ %@ : angle non atteint à cette date et cette latitude, les écarts Fajr/Isha ne sont pas fiables.": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "⚠️ %@: الزاوية غير مبلوغة في هذا التاريخ وهذا العرض الجغرافي، فروق الفجر/العشاء غير موثوقة."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "⚠️ %@: angle not reached on this date at this latitude, the Fajr/Isha offsets are unreliable."
+          }
+        }
+      }
+    },
+    "⚠️ %@ : écart de %@ min peu plausible, ramené à %@. Vérifiez l'heure saisie et votre position.": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "⚠️ %@: فرق %@ دقيقة غير معقول، تم تقليصه إلى %@. تحقق من الوقت المُدخل ومن موقعك."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "⚠️ %@: a %@ min offset is implausible, limited to %@. Check the time you entered and your location."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "new",
+            "value": "⚠️ %1$@ : écart de %2$@ min peu plausible, ramené à %3$@. Vérifiez l'heure saisie et votre position."
+          }
+        }
+      }
+    },
+    "⚠️ Erreur : Position GPS introuvable. Veuillez activer la localisation.": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "⚠️ خطأ: تعذّر العثور على موقع GPS. يرجى تفعيل خدمات الموقع."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "⚠️ Error: GPS location unavailable. Please enable location services."
+          }
+        }
+      }
+    },
+    "⚠️ Mode voyage actif : l'analyse utilise votre position actuelle, pas celle de votre mosquée.": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "⚠️ وضع السفر مفعّل: يستخدم التحليل موقعك الحالي وليس موقع مسجدك."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "⚠️ Travel mode is on: the analysis uses your current location, not your mosque's."
           }
         }
       }
