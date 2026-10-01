@@ -129,6 +129,10 @@ struct Muslim_ClockApp: App {
     @AppStorage("appLanguage") private var appLanguage = "system"
     @Environment(\.scenePhase) private var scenePhase
 
+    /// Faux splash animé affiché par-dessus `MainView` au cold start, puis retiré
+    /// de la hiérarchie une fois son animation de sortie terminée.
+    @State private var showSplash = true
+
     /// Conteneur SwiftData du journal de lecture du Quran.
     ///
     /// `groupContainer: .none` force le store dans le conteneur de l'app. Sans ça,
@@ -165,17 +169,26 @@ struct Muslim_ClockApp: App {
 
     var body: some Scene {
         WindowGroup {
-            MainView()
-                .environment(\.locale, currentLocale)
-                .preferredColorScheme(.dark)   // App 100% dark — textes blancs toujours lisibles
-                .onChange(of: scenePhase) { _, phase in
-                    if phase == .active {
-                        // Rattrape les transitions Live Activity ratées pendant la suspension
-                        // (bascule isPrayerTime=true et close après linger 5 min).
-                        // Le démarrage de nouvelles activities reste piloté par PrayerTimesViewModel.
-                        SalatLiveActivityManager.shared.syncActiveActivitiesState()
+            ZStack {
+                MainView()
+                    .environment(\.locale, currentLocale)
+                    .preferredColorScheme(.dark)   // App 100% dark — textes blancs toujours lisibles
+                    .onChange(of: scenePhase) { _, phase in
+                        if phase == .active {
+                            // Rattrape les transitions Live Activity ratées pendant la suspension
+                            // (bascule isPrayerTime=true et close après linger 5 min).
+                            // Le démarrage de nouvelles activities reste piloté par PrayerTimesViewModel.
+                            SalatLiveActivityManager.shared.syncActiveActivitiesState()
+                        }
                     }
+
+                // Splash animé : prolonge le launch screen natif (mêmes assets), puis
+                // s'estompe pour révéler MainView qui a chargé dessous pendant ce temps.
+                if showSplash {
+                    SplashScreenView { showSplash = false }
+                        .zIndex(1)
                 }
+            }
         }
         // SwiftData : conteneur du journal de lecture du Quran (cf. sharedModelContainer).
         .modelContainer(sharedModelContainer)

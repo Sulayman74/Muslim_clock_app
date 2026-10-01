@@ -10,8 +10,10 @@
 	</array>
 	<key>UILaunchScreen</key>
 	<dict>
+		<key>UIColorName</key>
+		<string>LaunchBackground</string>
 		<key>UIImageName</key>
-		<string>Splashscreen</string>
+		<string>SplashLogo</string>
 	</dict>
 	<key>UIAppFonts</key>
 	<array>
