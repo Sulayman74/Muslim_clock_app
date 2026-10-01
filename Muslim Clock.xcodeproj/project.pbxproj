@@ -160,6 +160,9 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Localizable.xcstrings,
+				PrayerCalculationEngine.swift,
+				SharedPrayerSchedule.swift,
+				StorageKeys.swift,
 			);
 			target = 2384F4B82F7BEE910045A1C4 /* SalatWidgetExtension */;
 		};
@@ -167,6 +170,9 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Localizable.xcstrings,
+				PrayerCalculationEngine.swift,
+				SharedPrayerSchedule.swift,
+				StorageKeys.swift,
 			);
 			target = 23E7B1AD2F8962DD00007F2B /* WatchExtension Watch App */;
 		};
@@ -174,6 +180,9 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Localizable.xcstrings,
+				PrayerCalculationEngine.swift,
+				SharedPrayerSchedule.swift,
+				StorageKeys.swift,
 			);
 			target = 23E7B1E72F8E9BFE00007F2B /* PrayerComplicationExtension */;
 		};

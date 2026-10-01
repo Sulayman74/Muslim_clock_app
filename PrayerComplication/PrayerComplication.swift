@@ -37,77 +37,43 @@ private enum PrayerData {
     struct Def {
         let arabic: String
         let init_: String
-        let key: String
     }
 
+    /// Libellés des 5 prières, dans l'ordre de `PrayerName.allCases`.
     static let defs: [Def] = [
-        Def(arabic: "الفجر",  init_: "F", key: "prayer_fajr"),
-        Def(arabic: "الظهر",  init_: "D", key: "prayer_dhuhr"),
-        Def(arabic: "العصر",  init_: "A", key: "prayer_asr"),
-        Def(arabic: "المغرب", init_: "M", key: "prayer_maghrib"),
-        Def(arabic: "العشاء", init_: "I", key: "prayer_isha"),
+        Def(arabic: "الفجر",  init_: "F"),
+        Def(arabic: "الظهر",  init_: "D"),
+        Def(arabic: "العصر",  init_: "A"),
+        Def(arabic: "المغرب", init_: "M"),
+        Def(arabic: "العشاء", init_: "I"),
     ]
 
-    static func buildEntry() -> PrayerEntry {
+    /// Rafraîchissement pendant une fenêtre en cours (anneau de progression).
+    static let inWindowRefreshInterval: TimeInterval = 5 * 60
+    /// Sans données (iPhone jamais synchronisé) : on retente régulièrement.
+    static let noDataRetryInterval: TimeInterval = 15 * 60
+
+    /// Entrée pour l'instant `now`, calculée pour la JOURNÉE de `now` via
+    /// `SharedPrayerSchedule` (position + réglages reçus de l'iPhone). La
+    /// complication bascule donc de jour toute seule, sans nouvel envoi iPhone.
+    static func buildEntry(at now: Date = Date()) -> PrayerEntry {
         let defaults = UserDefaults(suiteName: AppGroup.identifier)
-        let now = Date()
 
-        // Jumu'ah : le vendredi, remplacer le label Dhuhr
-        let isFriday = Calendar.current.component(.weekday, from: now) == 6
-        let jumuahEnabled = defaults?.bool(forKey: "w_jumuahEnabled") ?? false
-        let isFridayJumuah = isFriday && jumuahEnabled
+        guard let resolved = SharedPrayerSchedule.resolve(at: now, defaults: defaults) else {
+            return noDataEntry(at: now)
+        }
 
-        // Construire les definitions avec le bon label pour Dhuhr/Jumu'ah
+        // Jumu'ah : le vendredi, remplacer le label Dhuhr (l'heure est déjà celle
+        // de la Jumu'ah dans le schedule).
         let effectiveDefs: [Def] = defs.enumerated().map { i, def in
-            if i == 1 && isFridayJumuah {
-                return Def(arabic: "الجمعة", init_: "J", key: def.key)
-            }
-            return def
+            (i == 1 && resolved.today.isFridayJumuah) ? Def(arabic: "الجمعة", init_: "J") : def
         }
 
-        let times: [Date?] = effectiveDefs.map { def in
-            let v = defaults?.double(forKey: def.key) ?? 0
-            return v > 0 ? Date(timeIntervalSince1970: v) : nil
-        }
-        let tomorrowFajrV = defaults?.double(forKey: "prayer_fajr_tomorrow") ?? 0
-        let storedTomorrowFajr = tomorrowFajrV > 0 ? Date(timeIntervalSince1970: tomorrowFajrV) : nil
-        // Garde anti-stale : si l'app iOS n'a pas tourné depuis plusieurs jours, la
-        // clé "prayer_fajr_tomorrow" pointe vers une date passée. On ne la retient
-        // que si elle est dans le futur ; sinon on retombe sur une approximation
-        // (now + 8h) plutôt que de fausser les fenêtres nocturnes (Isha/middleOfNight).
-        let tomorrowFajr: Date = {
-            if let stored = storedTomorrowFajr, stored > now { return stored }
-            return now.addingTimeInterval(8 * 3600)
-        }()
-
-        // Sunrise : fin de la fenêtre Fajr
-        let sunriseV = defaults?.double(forKey: "prayer_sunrise") ?? 0
-        let sunrise: Date? = sunriseV > 0 ? Date(timeIntervalSince1970: sunriseV) : nil
-
-        // Moitié de la nuit : fin de la fenêtre Isha
-        // middleOfNight = maghrib + (fajr_demain - maghrib) / 2
-        let middleOfNight: Date? = {
-            guard let maghrib = times[3] else { return nil } // index 3 = Maghrib
-            let nightDuration = tomorrowFajr.timeIntervalSince(maghrib)
-            guard nightDuration > 0 else { return nil }
-            return maghrib.addingTimeInterval(nightDuration / 2)
-        }()
-
-        let prayers: [PrayerProgressData] = effectiveDefs.indices.map { i in
-            let nextTime = nextWindowEnd(
-                for: i,
-                in: effectiveDefs,
-                times: times,
-                sunrise: sunrise,
-                middleOfNight: middleOfNight,
-                tomorrowFajr: tomorrowFajr
-            )
-            guard let prayerTime = times[i] else {
-                return PrayerProgressData(arabicName: effectiveDefs[i].arabic, latinInit: effectiveDefs[i].init_,
-                                          time: now, nextTime: nextTime, progress: 0, isCurrent: false, isPast: false)
-            }
-            let isPast    = nextTime <= now
-            let isCurrent = prayerTime <= now && nextTime > now
+        let prayers: [PrayerProgressData] = zip(PrayerName.allCases, effectiveDefs).map { prayer, def in
+            let prayerTime = resolved.today.time(for: prayer)
+            let nextTime   = resolved.windowEnd(of: prayer)
+            let isPast     = nextTime <= now
+            let isCurrent  = prayerTime <= now && nextTime > now
             let progress: Double = {
                 if isPast    { return 1.0 }
                 if isCurrent {
@@ -117,14 +83,14 @@ private enum PrayerData {
                 }
                 return 0.0
             }()
-            return PrayerProgressData(arabicName: effectiveDefs[i].arabic, latinInit: effectiveDefs[i].init_,
+            return PrayerProgressData(arabicName: def.arabic, latinInit: def.init_,
                                       time: prayerTime, nextTime: nextTime, progress: progress,
                                       isCurrent: isCurrent, isPast: isPast)
         }
 
         let nextRefresh: Date = prayers.contains(where: { $0.isCurrent })
-            ? now.addingTimeInterval(5 * 60)
-            : (prayers.first(where: { !$0.isPast && !$0.isCurrent })?.time ?? tomorrowFajr)
+            ? now.addingTimeInterval(inWindowRefreshInterval)
+            : (prayers.first(where: { !$0.isPast && !$0.isCurrent })?.time ?? resolved.tomorrowFajr)
 
         return PrayerEntry(
             date: now,
@@ -133,33 +99,25 @@ private enum PrayerData {
             hijriFrench: formatHijriFrench(now),
             moonToday: moonToday(for: now),
             nextRefresh: nextRefresh,
-            tomorrowFajr: tomorrowFajrV > 0 ? tomorrowFajr : nil
+            tomorrowFajr: resolved.tomorrowFajr
         )
     }
 
-    /// Calcule la fin de la fenêtre d'une prière donnée (= début de la prière suivante).
-    /// - Fajr : se termine au lever du soleil (`sunrise`) si disponible.
-    /// - Isha : se termine à la moitié de la nuit (`middleOfNight`) si disponible.
-    /// - Autres : début de la prochaine prière non-nulle, sinon Fajr de demain.
-    private static func nextWindowEnd(
-        for i: Int,
-        in defs: [Def],
-        times: [Date?],
-        sunrise: Date?,
-        middleOfNight: Date?,
-        tomorrowFajr: Date
-    ) -> Date {
-        switch i {
-        case 0:
-            if let sr = sunrise { return sr }
-            return times[1] ?? tomorrowFajr
-        case 4:
-            if let mid = middleOfNight { return mid }
-            return tomorrowFajr
-        default:
-            for j in (i + 1)..<defs.count { if let t = times[j] { return t } }
-            return tomorrowFajr
+    /// Aucune donnée reçue de l'iPhone : sphères neutres, pas de countdown.
+    private static func noDataEntry(at now: Date) -> PrayerEntry {
+        let prayers = defs.map { def in
+            PrayerProgressData(arabicName: def.arabic, latinInit: def.init_,
+                               time: now, nextTime: now, progress: 0, isCurrent: false, isPast: false)
         }
+        return PrayerEntry(
+            date: now,
+            prayers: prayers,
+            hijriArabic: formatHijriArabic(now),
+            hijriFrench: formatHijriFrench(now),
+            moonToday: moonToday(for: now),
+            nextRefresh: now.addingTimeInterval(noDataRetryInterval),
+            tomorrowFajr: nil
+        )
     }
 
     // MARK: Hijri formatting

@@ -68,77 +68,49 @@ class WatchPrayerViewModel: ObservableObject {
 
     private let defaults = UserDefaults(suiteName: AppGroup.identifier)
 
-    private let prayerDefs: [(name: String, arabic: String, key: String)] = [
-        ("Fajr",    "الفجر",  "prayer_fajr"),
-        ("Dhuhr",   "الظهر",  "prayer_dhuhr"),
-        ("Asr",     "العصر",  "prayer_asr"),
-        ("Maghrib", "المغرب", "prayer_maghrib"),
-        ("Isha",    "العشاء", "prayer_isha"),
-    ]
-
-    func refresh() {
-        guard let def = defaults else {
-            isDataAvailable = false
-            return
+    private static func arabicName(_ prayer: PrayerName) -> String {
+        switch prayer {
+        case .fajr: return "الفجر"
+        case .dhuhr: return "الظهر"
+        case .asr: return "العصر"
+        case .maghrib: return "المغرب"
+        case .isha: return "العشاء"
         }
+    }
 
+    /// Recalcule la journée courante avec `SharedPrayerSchedule` (position + réglages
+    /// reçus de l'iPhone), repli sur les horaires reçus si la position manque.
+    /// La journée bascule donc toute seule à minuit, sans nouvel envoi iPhone.
+    func refresh() {
         let now = Date()
         season = WatchIslamicSeason.current(for: now)
 
-        // Jumu'ah : remplacer Dhuhr le vendredi si activé
-        let isFriday = Calendar.current.component(.weekday, from: now) == 6
-        let jumuahEnabled = def.bool(forKey: "w_jumuahEnabled")
-        let isFridayJumuah = isFriday && jumuahEnabled
-
-        var loaded: [WatchPrayer] = []
-
-        for pd in prayerDefs {
-            let interval = def.double(forKey: pd.key)
-            guard interval > 0 else {
-                isDataAvailable = false
-                prayers = []
-                nextPrayer = nil
-                return
-            }
-
-            // Vendredi + Jumu'ah : label spécial pour Dhuhr
-            let name: String
-            let arabic: String
-            if pd.key == "prayer_dhuhr" && isFridayJumuah {
-                name = "Jumu'ah"
-                arabic = "الجمعة"
-            } else {
-                name = pd.name
-                arabic = pd.arabic
-            }
-
-            loaded.append(WatchPrayer(
-                name: name,
-                arabicName: arabic,
-                time: Date(timeIntervalSince1970: interval),
-                isNext: false
-            ))
+        guard let resolved = SharedPrayerSchedule.resolve(at: now, defaults: defaults) else {
+            isDataAvailable = false
+            prayers = []
+            nextPrayer = nil
+            return
         }
 
-        // Find next upcoming prayer
-        if let idx = loaded.firstIndex(where: { $0.time > now }) {
-            loaded[idx].isNext = true
-            nextPrayer = loaded[idx]
-        } else {
-            // All today's prayers have passed — use tomorrow's Fajr
-            let tomorrowInterval = def.double(forKey: "prayer_fajr_tomorrow")
-            if tomorrowInterval > 0 {
-                nextPrayer = WatchPrayer(
-                    name: "Fajr",
-                    arabicName: "الفجر",
-                    time: Date(timeIntervalSince1970: tomorrowInterval),
-                    isNext: true
-                )
-            } else {
-                nextPrayer = nil
-            }
+        let next = resolved.nextPrayer(at: now)
+        let loaded: [WatchPrayer] = resolved.today.ordered.map { prayer, time in
+            // Vendredi + Jumu'ah : label spécial pour Dhuhr (l'heure est déjà celle de la Jumu'ah).
+            let isJumuah = prayer == .dhuhr && resolved.today.isFridayJumuah
+            return WatchPrayer(
+                name: isJumuah ? "Jumu'ah" : prayer.rawValue,
+                arabicName: isJumuah ? "الجمعة" : Self.arabicName(prayer),
+                time: time,
+                isNext: prayer == next.prayer && time == next.time
+            )
         }
 
+        // Toutes les prières du jour passées → Fajr de demain (toujours futur ici).
+        nextPrayer = loaded.first(where: { $0.isNext }) ?? WatchPrayer(
+            name: PrayerName.fajr.rawValue,
+            arabicName: Self.arabicName(.fajr),
+            time: resolved.tomorrowFajr,
+            isNext: true
+        )
         prayers = loaded
         isDataAvailable = true
     }

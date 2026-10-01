@@ -24,34 +24,10 @@ struct WhatsNewView: View {
     /// — ne pas le reformuler sans raison, ça orphelinerait les traductions en/ar.
     private let items: [WhatsNewItem] = [
         WhatsNewItem(
-            icon: "waveform.and.magnifyingglass",
-            color: .cyan,
-            title: String(localized: "Spotlight du Coran"),
-            description: String(localized: "Tape ou récite un passage au micro : l'app retrouve la sourate, le verset et toutes ses occurrences dans le Coran. La reconnaissance vocale se fait entièrement sur ton appareil — rien ne quitte ton téléphone.")
-        ),
-        WhatsNewItem(
-            icon: "drop.fill",
-            color: wuduAccent,
-            title: String(localized: "Les ablutions, au bon moment"),
-            description: String(localized: "À l'approche de chaque prière, une carte te rappelle le wudû' pas à pas avec ses preuves. Le vendredi : le ghusl et les bienséances de la Jumu'ah. La fiche complète t'attend dans les Références de l'onglet Rappel.")
-        ),
-        WhatsNewItem(
-            icon: "book.pages",
-            color: .orange,
-            title: String(localized: "Une vraie page de révision"),
-            description: String(localized: "Le lecteur des cours de science fait peau neuve : mise en page sobre comme un matn imprimé, thème sépia ou sombre, traduction, navigation page par page et enregistrement pour te réécouter.")
-        ),
-        WhatsNewItem(
-            icon: "mic.fill",
-            color: .green,
-            title: String(localized: "Récitation plus confortable"),
-            description: String(localized: "Pendant l'enregistrement de ta lecture du Coran, le dernier verset n'est plus caché par le lecteur : la page laisse toujours la place à ce que tu récites.")
-        ),
-        WhatsNewItem(
             icon: "sparkles",
             color: .teal,
-            title: String(localized: "Affichage plus stable"),
-            description: String(localized: "Fini les petits sursauts d'interface : le verset du jour, les compteurs et les cartes s'affichent et se mettent à jour en douceur, partout dans l'app.")
+            title: String(localized: "Amélioration UX"),
+            description: String(localized: "Un lancement plus soigné, et des widgets et une montre qui restent à l'heure : la prochaine prière se met à jour toute seule, même sans ouvrir l'app.")
         ),
     ]
 

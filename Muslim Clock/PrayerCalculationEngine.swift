@@ -6,11 +6,43 @@
 //  sans état, sans SwiftUI, sans I/O. Le ViewModel les appelle pour construire
 //  les paramètres Adhan et dériver les fenêtres — comportement inchangé.
 //
+//  Fichier PARTAGÉ par les 4 cibles (app, widget, complication, Watch) via
+//  `SharedPrayerSchedule` : `nonisolated` pour être appelable depuis les
+//  TimelineProvider (hors MainActor) comme depuis les ViewModels.
+//
 
 import Foundation
 import Adhan
 
-enum PrayerCalculationEngine {
+/// Fenêtre de prière en cours (jurisprudence), ou `.none` hors fenêtre.
+nonisolated enum PrayerWindow: String, Sendable {
+    case fajr = "Fajr", dhuhr = "Dhuhr", asr = "Asr"
+    case maghrib = "Maghrib", isha = "Isha", none = "none"
+
+    var arabicName: String {
+        switch self {
+        case .fajr: return "الفجر"
+        case .dhuhr: return "الظهر"
+        case .asr: return "العصر"
+        case .maghrib: return "المغرب"
+        case .isha: return "العشاء"
+        case .none: return ""
+        }
+    }
+
+    var icon: String {
+        switch self {
+        case .fajr: return "sun.and.horizon.fill"
+        case .dhuhr: return "sun.max.fill"
+        case .asr: return "sun.dust.fill"
+        case .maghrib: return "sunset.fill"
+        case .isha: return "moon.stars.fill"
+        case .none: return "clock.fill"
+        }
+    }
+}
+
+nonisolated enum PrayerCalculationEngine {
 
     // MARK: - Paramètres Adhan
 

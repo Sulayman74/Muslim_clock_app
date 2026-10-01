@@ -5,10 +5,10 @@
 //
 //  Extrait de `PrayerTimesViewModel` (refactor SRP) : cette couche fait UNIQUEMENT
 //  l'I/O de partage (UserDefaults App Group + WatchConnectivity + WidgetCenter).
-//  Le calcul reste dans le ViewModel / `PrayerCalculationEngine`.
+//  Le calcul reste dans le ViewModel / `SharedPrayerSchedule`.
 //
-//  ⚠️ Non-régression : l'ordre et les valeurs des écritures sont identiques à
-//  l'implémentation d'origine (contrat lu par widgets/complication/watch).
+//  ⚠️ Non-régression : l'ordre et les valeurs des écritures App Group sont
+//  identiques à l'implémentation d'origine (contrat lu par widgets/complication/watch).
 //
 
 import Foundation
@@ -28,6 +28,29 @@ struct PrayerSyncSettings {
     let jumuahEnabled: Bool
     let jumuahHour: Int
     let jumuahMinute: Int
+}
+
+extension PrayerSettingsSnapshot {
+    /// Snapshot de calcul à partir des réglages de l'app et de la position courante.
+    /// C'est ce snapshot que l'app iOS donne à `SharedPrayerSchedule` pour publier —
+    /// exactement ce que les extensions reliront depuis l'App Group.
+    init(location: CLLocation, sync: PrayerSyncSettings) {
+        self.init(
+            latitude: location.coordinate.latitude,
+            longitude: location.coordinate.longitude,
+            calculationMethod: sync.calculationMethod,
+            fajrOffset: sync.fajrOffset,
+            dhuhrOffset: sync.dhuhrOffset,
+            asrOffset: sync.asrOffset,
+            maghribOffset: sync.maghribOffset,
+            ishaOffset: sync.ishaOffset,
+            isIshaFixed: sync.isIshaFixed,
+            ishaFixedDuration: sync.ishaFixedDuration,
+            jumuahEnabled: sync.jumuahEnabled,
+            jumuahHour: sync.jumuahHour,
+            jumuahMinute: sync.jumuahMinute
+        )
+    }
 }
 
 enum PrayerSynchronizer {
@@ -70,9 +93,9 @@ enum PrayerSynchronizer {
         WatchSessionManager.shared.sendPrayerTimes(payload)
     }
 
-    /// Publie la position + le miroir des réglages dans l'App Group, envoie les
-    /// réglages à la Watch, puis rafraîchit les widgets. Appelé même si le calcul
-    /// des horaires du jour a échoué (comme l'implémentation d'origine).
+    /// Publie la position + le miroir des réglages dans l'App Group, envoie le tout
+    /// à la Watch (file d'attente + contexte applicatif), puis rafraîchit les widgets.
+    /// Appelé même si le calcul des horaires du jour a échoué (comme l'implémentation d'origine).
     static func publishSettings(
         location: CLLocation,
         settings: PrayerSyncSettings,
@@ -94,12 +117,52 @@ enum PrayerSynchronizer {
         shared?.set(settings.jumuahHour, forKey: StorageKeys.wJumuahHour)
         shared?.set(settings.jumuahMinute, forKey: StorageKeys.wJumuahMinute)
 
-        WatchSessionManager.shared.sendSettings([
-            StorageKeys.wJumuahEnabled: settings.jumuahEnabled,
-            StorageKeys.wJumuahHour: settings.jumuahHour,
-            StorageKeys.wJumuahMinute: settings.jumuahMinute,
-        ])
+        // Watch : position + réglages complets (et plus seulement Jumu'ah) pour que
+        // la montre recalcule les horaires localement via SharedPrayerSchedule.
+        let watchSettings = watchSettingsPayload(location: location, settings: settings)
+        WatchSessionManager.shared.sendSettings(watchSettings)
+        WatchSessionManager.shared.updateContext(
+            watchContext(settingsPayload: watchSettings, defaults: shared)
+        )
 
         WidgetCenter.shared.reloadAllTimelines()
+    }
+
+    // MARK: - Payloads Watch
+
+    /// Position + réglages, sous les mêmes clés que l'App Group iOS : la montre les
+    /// stocke tels quels et `PrayerSettingsSnapshot.load` les relit à l'identique.
+    static func watchSettingsPayload(location: CLLocation, settings: PrayerSyncSettings) -> [String: Any] {
+        [
+            StorageKeys.savedLatitude:      location.coordinate.latitude,
+            StorageKeys.savedLongitude:     location.coordinate.longitude,
+            StorageKeys.wCalculationMethod: settings.calculationMethod,
+            StorageKeys.wFajrOffset:        settings.fajrOffset,
+            StorageKeys.wDhuhrOffset:       settings.dhuhrOffset,
+            StorageKeys.wAsrOffset:         settings.asrOffset,
+            StorageKeys.wMaghribOffset:     settings.maghribOffset,
+            StorageKeys.wIshaOffset:        settings.ishaOffset,
+            StorageKeys.wIsIshaFixed:       settings.isIshaFixed,
+            StorageKeys.wIshaFixedDuration: settings.ishaFixedDuration,
+            StorageKeys.wJumuahEnabled:     settings.jumuahEnabled,
+            StorageKeys.wJumuahHour:        settings.jumuahHour,
+            StorageKeys.wJumuahMinute:      settings.jumuahMinute,
+        ]
+    }
+
+    /// Contexte applicatif complet : réglages + horaires du jour déjà publiés dans
+    /// `defaults` (repli de la montre si elle ne peut pas calculer).
+    static func watchContext(settingsPayload: [String: Any], defaults: UserDefaults?) -> [String: Any] {
+        var context = settingsPayload
+        let scheduleKeys = [
+            StorageKeys.prayerFajr, StorageKeys.prayerSunrise, StorageKeys.prayerDhuhr,
+            StorageKeys.prayerAsr, StorageKeys.prayerMaghrib, StorageKeys.prayerIsha,
+            StorageKeys.prayerFajrTomorrow,
+        ]
+        for key in scheduleKeys {
+            let value = defaults?.double(forKey: key) ?? 0
+            if value > 0 { context[key] = value }
+        }
+        return context
     }
 }

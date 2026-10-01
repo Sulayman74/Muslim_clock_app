@@ -2,11 +2,10 @@
 //  StorageKeys.swift
 //  Muslim Clock — source unique des clés UserDefaults (anti-typo).
 //
-//  ⚠️ CONTRAT INTER-TARGETS : les clés du groupe « App Group » ci-dessous sont
-//  lues par les extensions (widget / complication / watch) qui, elles, utilisent
-//  encore des littéraux identiques. NE JAMAIS changer une *valeur* de clé sans
-//  mettre à jour la lecture correspondante côté extension — sinon les horaires
-//  partagés (widgets/watch) cassent silencieusement.
+//  Fichier PARTAGÉ par les 4 cibles (app, widget, complication, Watch) : les
+//  extensions lisent les clés « App Group » via ces constantes, plus aucun
+//  littéral dupliqué. Changer une *valeur* de clé reste une migration de données
+//  (les valeurs déjà écrites sur les appareils ne seraient plus retrouvées).
 //
 //  Ne renseigne PAS ici les clés déjà encapsulées localement (ex.
 //  NotificationDeepLink, AdhkarReminderScheduler) : elles ont leur propre namespace.
@@ -14,7 +13,7 @@
 
 import Foundation
 
-enum StorageKeys {
+nonisolated enum StorageKeys {
 
     // MARK: - Réglages de calcul (app, @AppStorage)
 

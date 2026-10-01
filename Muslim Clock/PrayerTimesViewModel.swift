@@ -5,32 +5,7 @@ import Adhan
 import WidgetKit
 import SwiftUI
 
-enum PrayerWindow: String {
-    case fajr = "Fajr", dhuhr = "Dhuhr", asr = "Asr"
-    case maghrib = "Maghrib", isha = "Isha", none = "none"
-    
-    var arabicName: String {
-        switch self {
-        case .fajr: return "الفجر"
-        case .dhuhr: return "الظهر"
-        case .asr: return "العصر"
-        case .maghrib: return "المغرب"
-        case .isha: return "العشاء"
-        case .none: return ""
-        }
-    }
-    
-    var icon: String {
-        switch self {
-        case .fajr: return "sun.and.horizon.fill"
-        case .dhuhr: return "sun.max.fill"
-        case .asr: return "sun.dust.fill"
-        case .maghrib: return "sunset.fill"
-        case .isha: return "moon.stars.fill"
-        case .none: return "clock.fill"
-        }
-    }
-}
+// `PrayerWindow` vit dans PrayerCalculationEngine.swift (fichier partagé avec les extensions).
 
 // MARK: - Model de DailyPrayer
 struct DailyPrayer: Identifiable {
@@ -65,6 +40,9 @@ class PrayerTimesViewModel: ObservableObject {
     /// Heures réelles du Fajr et du Asr, utilisées par AdhkarService pour délimiter les périodes
     @Published var fajrDate: Date? = nil
     @Published var asrDate: Date? = nil
+    /// Dhuhr astronomique du jour (jamais l'heure Jumu'ah) — le vendredi,
+    /// `dailyPrayers` porte la Jumu'ah ; le Smart Setup a besoin du vrai Dhuhr.
+    @Published var dhuhrDate: Date? = nil
     
     /// Store du mode voyage, alimenté par le sink de localisation ci-dessous.
     /// `weak` : c'est MainView qui le possède (@State). Optionnel → le VM fonctionne sans.
@@ -206,7 +184,23 @@ class PrayerTimesViewModel: ObservableObject {
         self.lastPrayerUpdate = now   // horaires réellement recalculés → fraîcheur à jour
         
         let coordinates = Coordinates(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
-        
+
+        // Réglages courants, sous la forme publiée aux extensions.
+        let syncSettings = PrayerSyncSettings(
+            calculationMethod: calculationMethod,
+            fajrOffset: fajrOffset,
+            dhuhrOffset: dhuhrOffset,
+            asrOffset: asrOffset,
+            maghribOffset: maghribOffset,
+            ishaOffset: ishaOffset,
+            isIshaFixed: isIshaFixed,
+            ishaFixedDuration: ishaFixedDuration,
+            jumuahEnabled: jumuahEnabled,
+            jumuahHour: jumuahHour,
+            jumuahMinute: jumuahMinute
+        )
+        let snapshot = PrayerSettingsSnapshot(location: location, sync: syncSettings)
+
         // ⚙️ Paramètres Adhan (méthode + temkine) — moteur pur testable.
         let params = PrayerCalculationEngine.parameters(
             method: calculationMethod,
@@ -220,36 +214,31 @@ class PrayerTimesViewModel: ObservableObject {
         )
 
         let todayComponents = Calendar.current.dateComponents([.year, .month, .day], from: Date())
-        
+
         if let prayerTimesToday = PrayerTimes(coordinates: coordinates, date: todayComponents, calculationParameters: params) {
             updateNextPrayer(prayerTimesToday: prayerTimesToday, coordinates: coordinates, params: params)
             self.isLoading = false
 
-            // Heure de Dhuhr effective : Jumu'ah le vendredi si activé.
-            let dhuhrEffective: Date = {
-                guard isFridayJumuah else { return prayerTimesToday.dhuhr }
-                var comps = Calendar.current.dateComponents([.year, .month, .day], from: Date())
-                comps.hour = jumuahHour; comps.minute = jumuahMinute; comps.second = 0
-                return Calendar.current.date(from: comps) ?? prayerTimesToday.dhuhr
-            }()
+            // Publication des horaires du jour : calculés par le code PARTAGÉ
+            // (`SharedPrayerSchedule`, même fichier que widget / complication / Watch).
+            // Ce que l'app publie et ce que les extensions recalculent sortent donc de la
+            // même implémentation — aucune dérive possible (Jumu'ah, offsets, méthode).
+            if let today = SharedPrayerSchedule.schedule(for: now, settings: snapshot) {
+                // Fajr de demain — fin de la fenêtre Isha (middleOfNight) et prochaine
+                // prière après Isha pour les extensions.
+                let tomorrowFajr = Calendar.current.date(byAdding: .day, value: 1, to: now)
+                    .flatMap { SharedPrayerSchedule.schedule(for: $0, settings: snapshot)?.fajr }
 
-            // Fajr de demain — permet à la complication de calculer la fin de la
-            // fenêtre Isha (middleOfNight) à n'importe quelle heure du jour.
-            let tomorrowFajr: Date? = {
-                guard let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: Date()) else { return nil }
-                let comps = Calendar.current.dateComponents([.year, .month, .day], from: tomorrow)
-                return PrayerTimes(coordinates: coordinates, date: comps, calculationParameters: params)?.fajr
-            }()
-
-            PrayerSynchronizer.publishSchedule(
-                fajr: prayerTimesToday.fajr,
-                sunrise: prayerTimesToday.sunrise,
-                dhuhr: dhuhrEffective,
-                asr: prayerTimesToday.asr,
-                maghrib: prayerTimesToday.maghrib,
-                isha: prayerTimesToday.isha,
-                fajrTomorrow: tomorrowFajr
-            )
+                PrayerSynchronizer.publishSchedule(
+                    fajr: today.fajr,
+                    sunrise: today.sunrise,
+                    dhuhr: today.dhuhr,
+                    asr: today.asr,
+                    maghrib: today.maghrib,
+                    isha: today.isha,
+                    fajrTomorrow: tomorrowFajr
+                )
+            }
         }
 
         // 📅 Planification des notifications d'adhan.
@@ -257,22 +246,7 @@ class PrayerTimesViewModel: ObservableObject {
 
         // Publication de la position + du miroir des réglages (App Group + Watch +
         // widgets). Effectuée même si le calcul du jour a échoué (comportement d'origine).
-        PrayerSynchronizer.publishSettings(
-            location: location,
-            settings: PrayerSyncSettings(
-                calculationMethod: calculationMethod,
-                fajrOffset: fajrOffset,
-                dhuhrOffset: dhuhrOffset,
-                asrOffset: asrOffset,
-                maghribOffset: maghribOffset,
-                ishaOffset: ishaOffset,
-                isIshaFixed: isIshaFixed,
-                ishaFixedDuration: ishaFixedDuration,
-                jumuahEnabled: jumuahEnabled,
-                jumuahHour: jumuahHour,
-                jumuahMinute: jumuahMinute
-            )
-        )
+        PrayerSynchronizer.publishSettings(location: location, settings: syncSettings)
     }
     
     private func updateNextPrayer(prayerTimesToday: PrayerTimes, coordinates: Coordinates, params: CalculationParameters) {
@@ -282,22 +256,19 @@ class PrayerTimesViewModel: ObservableObject {
         let currentNext = prayerTimesToday.nextPrayer()
         determineCurrentPrayerWindow(prayerTimesToday: prayerTimesToday, coordinates: coordinates, params: params)
 
-        self.fajrDate = prayerTimesToday.fajr
-        self.asrDate  = prayerTimesToday.asr
+        self.fajrDate  = prayerTimesToday.fajr
+        self.asrDate   = prayerTimesToday.asr
+        self.dhuhrDate = prayerTimesToday.dhuhr
 
-        // Jumu'ah : remplace Dhuhr le vendredi si active
-        let isFriday = Calendar.current.component(.weekday, from: Date()) == 6
-        self.isFridayJumuah = isFriday && jumuahEnabled
+        // Jumu'ah : remplace Dhuhr le vendredi si active (helper partagé — même
+        // règle que les horaires publiés aux extensions).
+        self.isFridayJumuah = SharedPrayerSchedule.isFriday(Date()) && jumuahEnabled
 
         let dhuhrDate: Date
         let dhuhrLabel: String
         if isFridayJumuah {
-            // Construire la date Jumu'ah pour aujourd'hui
-            var comps = Calendar.current.dateComponents([.year, .month, .day], from: Date())
-            comps.hour = jumuahHour
-            comps.minute = jumuahMinute
-            comps.second = 0
-            dhuhrDate = Calendar.current.date(from: comps) ?? prayerTimesToday.dhuhr
+            dhuhrDate = SharedPrayerSchedule.jumuahTime(on: Date(), hour: jumuahHour, minute: jumuahMinute)
+                ?? prayerTimesToday.dhuhr
             dhuhrLabel = "Jumu'ah"
         } else {
             dhuhrDate = prayerTimesToday.dhuhr
@@ -358,13 +329,12 @@ class PrayerTimesViewModel: ObservableObject {
 
                     if let p = PrayerTimes(coordinates: coordinates, date: comps, calculationParameters: params) {
                         // Vendredi + Jumu'ah active : remplacer Dhuhr par l'heure Jumu'ah
-                        let dayIsFriday = calendar.component(.weekday, from: date) == 6
+                        // (helper partagé — même règle que les horaires publiés).
                         let dhuhrTime: Date
                         let dhuhrName: String
-                        if dayIsFriday && jumuahEnabled {
-                            var jComps = comps
-                            jComps.hour = jumuahHour; jComps.minute = jumuahMinute; jComps.second = 0
-                            dhuhrTime = calendar.date(from: jComps) ?? p.dhuhr
+                        if SharedPrayerSchedule.isFriday(date, calendar: calendar) && jumuahEnabled {
+                            dhuhrTime = SharedPrayerSchedule.jumuahTime(on: date, hour: jumuahHour, minute: jumuahMinute, calendar: calendar)
+                                ?? p.dhuhr
                             dhuhrName = "Jumu'ah"
                         } else {
                             dhuhrTime = p.dhuhr

@@ -119,102 +119,68 @@ enum WidgetUtils {
 }
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// PROVIDER PARTAGÉ — LIT LES TIMESTAMPS DE L'APP iOS
+// PROVIDER PARTAGÉ — RECALCULE LA JOURNÉE DEMANDÉE
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 struct SalatProvider: TimelineProvider {
 
-    /// Timestamps écrits dans l'App Group par `PrayerTimesViewModel`.
-    /// Source unique de vérité — le widget ne recalcule pas, il lit.
-    private struct PrayerTimestamps {
-        let fajr: Date?
-        let dhuhr: Date?
-        let asr: Date?
-        let maghrib: Date?
-        let isha: Date?
-        let tomorrowFajr: Date?
-    }
+    /// Seuil « imminent » (sphère rouge) avant une prière.
+    private static let imminentThreshold: TimeInterval = 15 * 60
+    /// Sans position publiée (app jamais ouverte) : on retente régulièrement.
+    private static let noDataRetryInterval: TimeInterval = 30 * 60
 
     private var shared: UserDefaults? {
         UserDefaults(suiteName: AppGroup.identifier)
-    }
-
-    private func readTimestamps() -> PrayerTimestamps {
-        let sd = shared
-        func date(_ key: String) -> Date? {
-            let v = sd?.double(forKey: key) ?? 0
-            return v > 0 ? Date(timeIntervalSince1970: v) : nil
-        }
-        return PrayerTimestamps(
-            fajr: date("prayer_fajr"),
-            dhuhr: date("prayer_dhuhr"),
-            asr: date("prayer_asr"),
-            maghrib: date("prayer_maghrib"),
-            isha: date("prayer_isha"),
-            tomorrowFajr: date("prayer_fajr_tomorrow")
-        )
     }
 
     private func hijriArabic(for date: Date) -> String {
         WidgetUtils.hijriArabicFormatter.string(from: date)
     }
 
+    /// Entrée pour l'instant `date`, calculée pour la JOURNÉE de `date` via
+    /// `SharedPrayerSchedule` (position + réglages publiés par l'app iOS). Le passage
+    /// de minuit est donc géré par le widget lui-même — plus besoin que l'app tourne.
     func buildEntry(for date: Date) -> SimpleEntry {
-        let t = readTimestamps()
-
-        // Jumu'ah : le vendredi, le label affiché pour Dhuhr devient « Jumu'ah »
-        // (même logique que la watch app et la complication ; l'heure publiée
-        // dans prayer_dhuhr est déjà l'heure Jumu'ah côté app iOS).
-        let isFriday = Calendar.current.component(.weekday, from: date) == 6
-        let jumuahEnabled = shared?.bool(forKey: "w_jumuahEnabled") ?? false
-        let isFridayJumuah = isFriday && jumuahEnabled
-
         var statuses: [String: PrayerStatus] = [
             "Fajr": .future, "Dhuhr": .future, "Asr": .future,
             "Maghrib": .future, "Isha": .future
         ]
+
+        guard let resolved = SharedPrayerSchedule.resolve(at: date, defaults: shared) else {
+            return SimpleEntry(
+                date: date,
+                prayerStatuses: statuses,
+                prayerTimes: [:],
+                nextPrayerName: PrayerName.fajr.rawValue,
+                nextPrayerDate: nil,
+                hijriDateAr: hijriArabic(for: date)
+            )
+        }
+
+        let next = resolved.nextPrayer(at: date)
         var times: [String: Date] = [:]
-        var nextName = "Fajr"
-        var nextDate: Date? = nil
 
-        let prayers: [(String, Date?)] = [
-            ("Fajr", t.fajr),
-            ("Dhuhr", t.dhuhr),
-            ("Asr", t.asr),
-            ("Maghrib", t.maghrib),
-            ("Isha", t.isha)
-        ]
-
-        var found = false
-        for (name, timeOpt) in prayers {
-            guard let time = timeOpt else { continue }
-            times[name] = time
+        for (prayer, time) in resolved.today.ordered {
+            times[prayer.rawValue] = time
             if date >= time {
-                statuses[name] = .passed
-            } else if !found {
-                found = true
-                nextName = name
-                nextDate = time
-                statuses[name] = time.timeIntervalSince(date) <= 15 * 60 ? .nextImminent : .nextNormal
+                statuses[prayer.rawValue] = .passed
+            } else if prayer == next.prayer && time == next.time {
+                statuses[prayer.rawValue] = time.timeIntervalSince(date) <= Self.imminentThreshold
+                    ? .nextImminent
+                    : .nextNormal
             }
         }
 
-        // Après Isha → prochaine prière = Fajr de demain
-        if !found {
-            nextName = "Fajr"
-            nextDate = t.tomorrowFajr
-        }
-
-        // Nom affiché : « Jumu'ah » remplace « Dhuhr » le vendredi.
-        if nextName == "Dhuhr" && isFridayJumuah {
-            nextName = "Jumu'ah"
-        }
+        // Nom affiché : « Jumu'ah » remplace « Dhuhr » le vendredi (l'heure est
+        // déjà celle de la Jumu'ah dans le schedule).
+        let isFridayJumuah = resolved.today.isFridayJumuah
+        let nextName = (next.prayer == .dhuhr && isFridayJumuah) ? "Jumu'ah" : next.prayer.rawValue
 
         return SimpleEntry(
             date: date,
             prayerStatuses: statuses,
             prayerTimes: times,
             nextPrayerName: nextName,
-            nextPrayerDate: nextDate,
+            nextPrayerDate: next.time,
             hijriDateAr: hijriArabic(for: date),
             isFridayJumuah: isFridayJumuah
         )
@@ -237,26 +203,36 @@ struct SalatProvider: TimelineProvider {
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<SimpleEntry>) -> Void) {
         let now = Date()
-        var entries: [SimpleEntry] = [buildEntry(for: now)]
+        let calendar = Calendar.current
 
-        let t = readTimestamps()
-        let allTimes = [t.fajr, t.dhuhr, t.asr, t.maghrib, t.isha].compactMap { $0 }
+        guard let resolved = SharedPrayerSchedule.resolve(at: now, defaults: shared) else {
+            completion(Timeline(
+                entries: [buildEntry(for: now)],
+                policy: .after(now.addingTimeInterval(Self.noDataRetryInterval))
+            ))
+            return
+        }
+
+        // Jalons : 30/15/5 min avant chaque prière + l'heure elle-même, pour les
+        // prières du jour ET le Fajr du lendemain. La timeline couvre ainsi toute
+        // la nuit ; `.atEnd` recharge au Fajr suivant avec la nouvelle journée.
+        var dates: Set<Date> = [now]
         let checkpoints: [TimeInterval] = [-30 * 60, -15 * 60, -5 * 60, 0]
-
-        for time in allTimes {
+        let times = resolved.today.ordered.map(\.time) + [resolved.tomorrowFajr]
+        for time in times {
             for offset in checkpoints {
                 let trigger = time.addingTimeInterval(offset)
-                if trigger > now {
-                    entries.append(buildEntry(for: trigger))
-                }
+                if trigger > now { dates.insert(trigger) }
             }
         }
 
-        // Anti doublons + tri
-        let uniqueDates = Array(Set(entries.map { $0.date })).sorted()
-        let finalEntries = uniqueDates.map { buildEntry(for: $0) }
+        // Minuit : bascule des dates affichées (grégorienne / hijri) et de la journée.
+        if let midnight = calendar.date(byAdding: .day, value: 1, to: calendar.startOfDay(for: now)) {
+            dates.insert(midnight)
+        }
 
-        completion(Timeline(entries: finalEntries, policy: .atEnd))
+        let entries = dates.sorted().map { buildEntry(for: $0) }
+        completion(Timeline(entries: entries, policy: .atEnd))
     }
 
     
