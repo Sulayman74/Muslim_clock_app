@@ -180,4 +180,76 @@ struct SmartSetupDecisionMathTests {
         ])
         #expect(best.name == "Ligue Islamique (18°)")
     }
+
+    // MARK: Phase 1 — plausibilité, Isha arrondie, faisabilité d'angle
+
+    @Test func clampedKeepsInRangeValuesUntouched() {
+        let r = SmartSetupMath.clamped(7, to: SmartSetupMath.minorOffsetRange)
+        #expect(r.value == 7 && r.wasClamped == false)
+        let edge = SmartSetupMath.clamped(-15, to: SmartSetupMath.minorOffsetRange)
+        #expect(edge.value == -15 && edge.wasClamped == false)
+    }
+
+    @Test func clampedBoundsAndFlagsOutOfRangeValues() {
+        // Asr à +52 min (mosquée Hanafi ou mauvaise position) → borné à +15 et signalé.
+        let r = SmartSetupMath.clamped(52, to: SmartSetupMath.minorOffsetRange)
+        #expect(r.value == 15 && r.wasClamped)
+        let neg = SmartSetupMath.clamped(-40, to: SmartSetupMath.fajrOffsetRange)
+        #expect(neg.value == -30 && neg.wasClamped)
+    }
+
+    @Test func ishaDurationRoundsToStepperGrid() {
+        #expect(SmartSetupMath.roundedIshaDuration(93) == 95)
+        #expect(SmartSetupMath.roundedIshaDuration(92) == 90)
+        #expect(SmartSetupMath.roundedIshaDuration(90) == 90)
+        // Bornes : jamais hors 60…120 même avec un écart limite.
+        #expect(SmartSetupMath.roundedIshaDuration(58) == 60)
+        #expect(SmartSetupMath.roundedIshaDuration(123) == 120)
+    }
+
+    @Test func solarDeclinationHasTheRightSeasonalSign() {
+        // Solstice d'été (≈ 21 juin, jour 172) : ~ +23,4° ; d'hiver (jour 355) : ~ −23,4°.
+        #expect(abs(SmartSetupMath.solarDeclination(dayOfYear: 172) - 23.44) < 0.3)
+        #expect(abs(SmartSetupMath.solarDeclination(dayOfYear: 355) + 23.44) < 0.3)
+        // Équinoxe de printemps (≈ 20 mars, jour 80) : proche de 0.
+        #expect(abs(SmartSetupMath.solarDeclination(dayOfYear: 80)) < 1.5)
+    }
+
+    @Test func twilightAngleReachabilityParisSummer() {
+        // Paris (48,86°) au solstice d'été : le soleil ne descend qu'à ~17,7° sous
+        // l'horizon → 18° inatteignable, 15° et 12° atteints.
+        let paris = 48.8566
+        #expect(SmartSetupMath.isTwilightAngleReachable(angle: 18, latitude: paris, dayOfYear: 172) == false)
+        #expect(SmartSetupMath.isTwilightAngleReachable(angle: 15, latitude: paris, dayOfYear: 172) == true)
+        #expect(SmartSetupMath.isTwilightAngleReachable(angle: 12, latitude: paris, dayOfYear: 172) == true)
+    }
+
+    @Test func twilightAngleReachabilityWinterAndNorth() {
+        // Paris en hiver : tout est atteint.
+        #expect(SmartSetupMath.isTwilightAngleReachable(angle: 18, latitude: 48.8566, dayOfYear: 355) == true)
+        // Lille (50,6°) au solstice d'été : 15° devient limite → écarté par la marge.
+        #expect(SmartSetupMath.isTwilightAngleReachable(angle: 15, latitude: 50.63, dayOfYear: 172) == true)
+        #expect(SmartSetupMath.isTwilightAngleReachable(angle: 18, latitude: 50.63, dayOfYear: 172) == false)
+        // Stockholm (59,3°) en été : même 12° n'est pas atteint.
+        #expect(SmartSetupMath.isTwilightAngleReachable(angle: 12, latitude: 59.33, dayOfYear: 172) == false)
+    }
+
+    @Test func reliableCandidatesDropUnreachableAngles() {
+        let kept = SmartSetupMath.reliableCandidates([
+            (name: "UOIF (12°)", offset: 14, isReliable: true),
+            (name: "ISNA (15°)", offset: 2, isReliable: true),
+            (name: "Ligue Islamique (18°)", offset: 0, isReliable: false)   // été : valeur artificielle
+        ])
+        #expect(kept.map(\.name) == ["UOIF (12°)", "ISNA (15°)"])
+        // Sans ce filtre, 18° aurait gagné avec un offset 0 trompeur.
+        #expect(SmartSetupMath.bestAngle(kept).name == "ISNA (15°)")
+    }
+
+    @Test func reliableCandidatesKeepEverythingWhenNoneIsReliable() {
+        let all = SmartSetupMath.reliableCandidates([
+            (name: "UOIF (12°)", offset: 5, isReliable: false),
+            (name: "ISNA (15°)", offset: 9, isReliable: false)
+        ])
+        #expect(all.count == 2)
+    }
 }
