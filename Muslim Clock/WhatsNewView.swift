@@ -24,6 +24,18 @@ struct WhatsNewView: View {
     /// — ne pas le reformuler sans raison, ça orphelinerait les traductions en/ar.
     private let items: [WhatsNewItem] = [
         WhatsNewItem(
+            icon: "graduationcap.fill",
+            color: .purple,
+            title: String(localized: "Nouvel onglet Apprendre"),
+            description: String(localized: "Une révision de la semaine en quelques questions, avec la preuve de chaque réponse : aqîda, fiqh de la purification et de la prière, 40 Nawawî. Deux nouveaux textes : les Annulatifs de l'Islam et Manhaj as-Sâlikîn.")
+        ),
+        WhatsNewItem(
+            icon: "waveform.and.mic",
+            color: .teal,
+            title: String(localized: "Corrige ta récitation"),
+            description: String(localized: "Récite un passage en Hafs, Warsh ou Qâlûn : l'app repère les mots oubliés ou différents, directement sur ton iPhone. Ta voix n'est jamais envoyée.")
+        ),
+        WhatsNewItem(
             icon: "sparkles",
             color: .teal,
             title: String(localized: "Amélioration UX"),

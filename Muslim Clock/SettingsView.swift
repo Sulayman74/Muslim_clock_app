@@ -1287,6 +1287,17 @@ Muslim Clock est une application complète conçue pour accompagner le musulman 
 • Météo locale intégrée
 """)
 
+                    // ── TEXTES CORANIQUES (correcteur de récitation) ──
+                    sourceCard(icon: "waveform.and.mic", title: "Textes coraniques et récitation", color: .teal, content: """
+Texte Hafs : Tanzil Project (tanzil.net), texte vocalisé.
+
+Textes Warsh et Qâlûn : Complexe du Roi Fahd pour l'impression du Noble Coran (KFGQPC), Médine — reproduits sans altération.
+
+Récitateur de référence : Mishary Rashid Alafasy (cdn.islamic.network).
+
+Le correcteur de récitation analyse ta voix uniquement sur ton appareil : aucun enregistrement n'est envoyé. Il compare les mots ; il ne juge pas le tajwid.
+""")
+
                     // ── SOURCES RELIGIEUSES ──
                     sourceCard(icon: "text.book.closed.fill", title: "Sources des contenus religieux", color: .orange, content: """
 Tous les contenus spirituels (Hadiths, Invocations, Adhkar) sont rigoureusement sélectionnés à partir de sources authentiques :

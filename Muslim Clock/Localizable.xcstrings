@@ -351,6 +351,82 @@
         }
       }
     },
+    "%lld questions": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld من الأسئلة"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld questions"
+          }
+        }
+      }
+    },
+    "%lld questions · environ %lld min": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld من الأسئلة · نحو %lld دقيقة"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld questions · about %lld min"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "new",
+            "value": "%1$lld questions · environ %2$lld min"
+          }
+        }
+      }
+    },
+    "%lld questions, environ %lld min — la science s'entretient.": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld من الأسئلة، نحو %lld دقيقة — والعلم يُحفَظ بالمذاكرة."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld questions, about %lld min — knowledge needs regular care."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "new",
+            "value": "%1$lld questions, environ %2$lld min — la science s'entretient."
+          }
+        }
+      }
+    },
+    "%lld sem.": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld أ"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld wk"
+          }
+        }
+      }
+    },
     "%lld semaine(s)": {
       "localizations": {
         "ar": {
@@ -367,6 +443,22 @@
         }
       }
     },
+    "%lld semaines validées d'affilée": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "أسابيع مُنجَزة على التوالي: %lld"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld weeks completed in a row"
+          }
+        }
+      }
+    },
     "%lld versets": {
       "localizations": {
         "ar": {
@@ -379,6 +471,28 @@
           "stringUnit": {
             "state": "translated",
             "value": "%lld verses"
+          }
+        }
+      }
+    },
+    "%lld versets demandés : %lld au maximum par séance.": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "عدد الآيات المطلوبة %lld: والحد الأقصى %lld في الجلسة الواحدة."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld verses requested: %lld max per session."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "new",
+            "value": "%1$lld versets demandés : %2$lld au maximum par séance."
           }
         }
       }
@@ -417,6 +531,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "%lld to catch up"
+          }
+        }
+      }
+    },
+    "%lld à retravailler": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld للتدرّب عليها"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld to work on"
           }
         }
       }
@@ -473,6 +603,28 @@
           "stringUnit": {
             "state": "new",
             "value": "%1$lld/%2$lld"
+          }
+        }
+      }
+    },
+    "%lld/%lld maîtrisées": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld/%lld مُتقَنة"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld/%lld mastered"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "new",
+            "value": "%1$lld/%2$lld maîtrisées"
           }
         }
       }
@@ -745,6 +897,22 @@
         }
       }
     },
+    "1 · Probe du device": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 · فحص الجهاز"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 · Device probe"
+          }
+        }
+      }
+    },
     "1. Maintenez votre doigt enfoncé sur un espace vide de votre écran d'accueil iPhone.": {
       "localizations": {
         "ar": {
@@ -873,6 +1041,22 @@
         }
       }
     },
+    "2 · Mesure sur récitation": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "2 · القياس على التلاوة"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "2 · Recitation measurement"
+          }
+        }
+      }
+    },
     "2. Touchez le bouton '+' en haut à gauche.": {
       "localizations": {
         "ar": {
@@ -917,6 +1101,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "3 lessons / week"
+          }
+        }
+      }
+    },
+    "3 · Résultat matcher": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "3 · نتيجة المطابقة"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "3 · Matcher result"
           }
         }
       }
@@ -1049,6 +1249,22 @@
         }
       }
     },
+    "Accès au micro refusé.": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تم رفض الوصول إلى الميكروفون."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Microphone access denied."
+          }
+        }
+      }
+    },
     "Acquises": {
       "localizations": {
         "ar": {
@@ -1143,6 +1359,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Enable reminders"
+          }
+        }
+      }
+    },
+    "Adhan planifié dans 5s ✅": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "جُدوِل الأذان بعد 5 ث ✅"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adhan scheduled in 5s ✅"
           }
         }
       }
@@ -1342,6 +1574,70 @@
         }
       }
     },
+    "Affiche la bannière (croix pour fermer)": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "يعرض الشريط (× للإغلاق)"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shows the banner (cross to close)"
+          }
+        }
+      }
+    },
+    "Affiche la carte « Se préparer à la prière » comme si la prochaine était dans 45 min (wudû', ou ghusl si Vendredi forcé).": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "يعرض بطاقة « الاستعداد للصلاة » كأن الصلاة القادمة بعد 45 دقيقة (الوضوء، أو الغسل إذا فُرض يوم الجمعة)."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shows the “Get ready for prayer” card as if the next one were in 45 min (wudu', or ghusl if Friday is forced)."
+          }
+        }
+      }
+    },
+    "Afficher la traduction": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إظهار الترجمة"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Show translation"
+          }
+        }
+      }
+    },
+    "Afficher le texte arabe": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إظهار النص العربي"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Show Arabic text"
+          }
+        }
+      }
+    },
     "Ajustement %@": {
       "localizations": {
         "ar": {
@@ -1470,6 +1766,54 @@
         }
       }
     },
+    "Aperçu de la bannière de màj": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "معاينة شريط التحديث"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Update banner preview"
+          }
+        }
+      }
+    },
+    "Apprendre": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "التعلّم"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Learn"
+          }
+        }
+      }
+    },
+    "Apprendre — révision de la semaine": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "التعلّم — مراجعة الأسبوع"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Learn — weekly review"
+          }
+        }
+      }
+    },
     "Apprends les fondements": {
       "localizations": {
         "ar": {
@@ -1482,6 +1826,38 @@
           "stringUnit": {
             "state": "translated",
             "value": "Learn the fundamentals"
+          }
+        }
+      }
+    },
+    "Approximatif": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تقريبي"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Approximate"
+          }
+        }
+      }
+    },
+    "Appuie sur Réciter puis commence après la basmala.": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "اضغط على « تلاوة » ثم ابدأ بعد البسملة."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tap Recite, then start after the basmala."
           }
         }
       }
@@ -1500,6 +1876,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "After wudu'"
+          }
+        }
+      }
+    },
+    "Aqîda · Fiqh · Hadith": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "العقيدة · الفقه · الحديث"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aqîda · Fiqh · Hadith"
           }
         }
       }
@@ -1554,6 +1946,22 @@
         }
       }
     },
+    "Arrêter et matcher": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إيقاف ومطابقة"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stop and match"
+          }
+        }
+      }
+    },
     "Arrêter l'écoute": {
       "comment": "A label for a button that stops listening to the user.",
       "isCommentAutoGenerated": true,
@@ -1604,6 +2012,22 @@
         }
       }
     },
+    "Asr réel": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "العصر الفعلي"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Actual Asr"
+          }
+        }
+      }
+    },
     "Astronomique · %@ min": {
       "localizations": {
         "ar": {
@@ -1616,6 +2040,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Astronomical · %@ min"
+          }
+        }
+      }
+    },
+    "Au verset": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إلى الآية"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "To verse"
           }
         }
       }
@@ -1638,6 +2078,22 @@
         }
       }
     },
+    "Aucun verset trouvé": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "لم يُعثَر على أي آية"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No verse found"
+          }
+        }
+      }
+    },
     "Aucune carte à réviser aujourd'hui": {
       "comment": "A message displayed when the user has reviewed all their cards.",
       "isCommentAutoGenerated": true,
@@ -1652,6 +2108,38 @@
           "stringUnit": {
             "state": "translated",
             "value": "No cards to review today"
+          }
+        }
+      }
+    },
+    "Aucune erreur de mot détectée. Continue ainsi !": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "لم يُكتشَف أي خطأ في الكلمات. واصل على هذا النحو!"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No word errors detected. Keep it up!"
+          }
+        }
+      }
+    },
+    "Aucune erreur nette détectée, mais certains mots ont été reconnus de façon approximative. Réécoute-les pour t'en assurer.": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "لم يُكتشَف خطأ واضح، لكن بعض الكلمات تم التعرّف عليها بشكل تقريبي. استمع إليها مجددًا لتتأكد."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No clear errors detected, but some words were only approximately recognized. Listen to them again to be sure."
           }
         }
       }
@@ -1704,6 +2192,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Authenticity: %@"
+          }
+        }
+      }
+    },
+    "Auto (selon heure réelle)": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تلقائي (حسب الوقت الفعلي)"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auto (based on actual time)"
           }
         }
       }
@@ -1794,6 +2298,54 @@
         }
       }
     },
+    "Autre mot": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "كلمة أخرى"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Different word"
+          }
+        }
+      }
+    },
+    "Avec 20pt corner radius": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "بنصف قطر زوايا 20pt"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "With 20pt corner radius"
+          }
+        }
+      }
+    },
+    "Avec bordure lumineuse": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "بحدّ مضيء"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "With glowing border"
+          }
+        }
+      }
+    },
     "Azimut": {
       "localizations": {
         "ar": {
@@ -1822,6 +2374,102 @@
           "stringUnit": {
             "state": "translated",
             "value": "Eid al-Adha & Tashreeq"
+          }
+        }
+      }
+    },
+    "Badge 45%": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "شارة 45%"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Badge 45%"
+          }
+        }
+      }
+    },
+    "Bascule l'UI sur Jumu'ah / lecture Al-Kahf / Salawat ++ comme si on était un vendredi.": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "يحوّل الواجهة إلى الجمعة / قراءة الكهف / الإكثار من الصلاة على النبي ﷺ كأن اليوم يوم الجمعة."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Switches the UI to Jumu'ah / Al-Kahf reading / Salawat ++ as if it were Friday."
+          }
+        }
+      }
+    },
+    "Bonne réponse": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إجابة صحيحة"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Correct answer"
+          }
+        }
+      }
+    },
+    "Bouton Petit": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "زر صغير"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Small Button"
+          }
+        }
+      }
+    },
+    "Bouton Principal": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "زر رئيسي"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Primary Button"
+          }
+        }
+      }
+    },
+    "Bouton Secondaire": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "زر ثانوي"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Secondary Button"
           }
         }
       }
@@ -1958,6 +2606,54 @@
         }
       }
     },
+    "Carte Premium": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "بطاقة مميّزة"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Premium Card"
+          }
+        }
+      }
+    },
+    "Carte Standard": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "بطاقة عادية"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Standard Card"
+          }
+        }
+      }
+    },
+    "Cas pratique": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "حالة تطبيقية"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Practical case"
+          }
+        }
+      }
+    },
     "Ce que le Prophète ﷺ aimait": {
       "localizations": {
         "ar": {
@@ -2036,6 +2732,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Season Change"
+          }
+        }
+      }
+    },
+    "Chaque erreur est une leçon : revois-la, elle reviendra en révision.": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "كل خطأ درس: راجعه، وسيعود إليك في المراجعة."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Every mistake is a lesson: go over it again, it will come back in your reviews."
           }
         }
       }
@@ -2284,6 +2996,22 @@
         }
       }
     },
+    "Confiant (auto-sélection)": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "واثق (اختيار تلقائي)"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Confident (auto-select)"
+          }
+        }
+      }
+    },
     "Configuration Magique": {
       "localizations": {
         "ar": {
@@ -2312,6 +3040,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Recommended: leave at least a 5 min gap from the Quran reminder (default 10 min) to avoid two notifications at once."
+          }
+        }
+      }
+    },
+    "Conseils": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "نصائح"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tips"
           }
         }
       }
@@ -2396,6 +3140,54 @@
         }
       }
     },
+    "Coran %@": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "القرآن %@"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quran %@"
+          }
+        }
+      }
+    },
+    "Corrige ta récitation": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Check your recitation"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "صحّح تلاوتك"
+          }
+        }
+      }
+    },
+    "Corriger ma récitation": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تصحيح تلاوتي"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Correct my recitation"
+          }
+        }
+      }
+    },
     "Croissant ↑": {
       "localizations": {
         "ar": {
@@ -2424,6 +3216,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Waning crescent ↓"
+          }
+        }
+      }
+    },
+    "Croyance (ʿaqîda)": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "العقيدة"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Creed (ʿaqîda)"
           }
         }
       }
@@ -2504,6 +3312,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "From page %lld"
+          }
+        }
+      }
+    },
+    "Debug": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تصحيح الأخطاء"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Debug"
           }
         }
       }
@@ -2616,6 +3440,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Give feedback"
+          }
+        }
+      }
+    },
+    "Du verset": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "من الآية"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "From verse"
           }
         }
       }
@@ -3032,6 +3872,22 @@
         }
       }
     },
+    "Entraînement terminé.": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "انتهى التدريب."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Practice complete."
+          }
+        }
+      }
+    },
     "Erreur de calcul astronomique.": {
       "localizations": {
         "ar": {
@@ -3082,6 +3938,22 @@
         }
       }
     },
+    "Explication": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الشرح"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Explanation"
+          }
+        }
+      }
+    },
     "FR": {
       "localizations": {
         "ar": {
@@ -3116,6 +3988,28 @@
         }
       }
     },
+    "Fait : %lld/%lld": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "أُنجِز: %lld/%lld"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Done: %lld/%lld"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Fait : %1$lld/%2$lld"
+          }
+        }
+      }
+    },
     "Fajr": {
       "localizations": {
         "ar": {
@@ -3128,6 +4022,38 @@
           "stringUnit": {
             "state": "translated",
             "value": "Fajr"
+          }
+        }
+      }
+    },
+    "Fajr réel": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الفجر الفعلي"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Actual Fajr"
+          }
+        }
+      }
+    },
+    "Fenêtre Ramadan (carte du'a)": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "فترة رمضان (بطاقة الدعاء)"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ramadan window (du'a card)"
           }
         }
       }
@@ -3283,6 +4209,102 @@
         }
       }
     },
+    "Fondements · Annulatifs · Fiqh · 40 Nawawi": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الأصول · النواقض · الفقه · الأربعون النووية"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fundamentals · Nullifiers · Fiqh · 40 Nawawi"
+          }
+        }
+      }
+    },
+    "Forcer Vendredi": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "فرض يوم الجمعة"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Force Friday"
+          }
+        }
+      }
+    },
+    "Forcer fenêtre ablutions": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "فرض فترة الوضوء"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Force ablution window"
+          }
+        }
+      }
+    },
+    "Forcer on-device (règle privacy)": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "فرض المعالجة على الجهاز (قاعدة الخصوصية)"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Force on-device (privacy rule)"
+          }
+        }
+      }
+    },
+    "Forcer recalcul prières": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "فرض إعادة حساب الصلوات"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Force prayer recalculation"
+          }
+        }
+      }
+    },
+    "Format audio du micro non pris en charge.": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "صيغة صوت الميكروفون غير مدعومة."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Microphone audio format not supported."
+          }
+        }
+      }
+    },
     "Français": {
       "localizations": {
         "ar": {
@@ -3380,6 +4402,22 @@
         }
       }
     },
+    "Hadith": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الحديث"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hadith"
+          }
+        }
+      }
+    },
     "Hadith du moment": {
       "localizations": {
         "ar": {
@@ -3392,6 +4430,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Hadith of the day"
+          }
+        }
+      }
+    },
+    "Hafs ʿan ʿÂsim": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "حفص عن عاصم"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hafs ʿan ʿÂsim"
           }
         }
       }
@@ -3887,6 +4941,22 @@
         }
       }
     },
+    "J'écoute… %lld mots": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "أُصغي إليك… %lld كلمة"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Listening… %lld words"
+          }
+        }
+      }
+    },
     "Je connais cette leçon": {
       "localizations": {
         "ar": {
@@ -3899,6 +4969,38 @@
           "stringUnit": {
             "state": "translated",
             "value": "I know this lesson"
+          }
+        }
+      }
+    },
+    "Je n'ai pas bien entendu": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "لم أسمع جيدًا"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I didn't hear clearly"
+          }
+        }
+      }
+    },
+    "Je n'ai pas bien entendu ta récitation. Rapproche-toi du micro, dans un endroit calme, puis réessaie.": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "لم أسمع تلاوتك جيدًا. اقترب من الميكروفون في مكان هادئ، ثم أعد المحاولة."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I couldn't hear your recitation clearly. Move closer to the mic, in a quiet place, then try again."
           }
         }
       }
@@ -3931,6 +5033,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Friday"
+          }
+        }
+      }
+    },
+    "Jour hégirien": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "اليوم الهجري"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hijri day"
           }
         }
       }
@@ -3999,6 +5117,22 @@
         }
       }
     },
+    "Jurisprudence (fiqh)": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الفقه"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jurisprudence (fiqh)"
+          }
+        }
+      }
+    },
     "Jusqu'à la page %lld": {
       "localizations": {
         "ar": {
@@ -4011,6 +5145,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Up to page %lld"
+          }
+        }
+      }
+    },
+    "Juste": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "صحيح"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Correct"
           }
         }
       }
@@ -4144,6 +5294,22 @@
         }
       }
     },
+    "La maîtrise compte les questions dont ta dernière réponse est juste.": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "يُحتسَب الإتقان بالأسئلة التي كانت إجابتك الأخيرة عنها صحيحة."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mastery counts the questions where your last answer was correct."
+          }
+        }
+      }
+    },
     "La méthode recommandée est présélectionnée. En cas de doute, choisissez-en une autre : les décalages Fajr et Isha sont recalculés automatiquement à partir de vos horaires.": {
       "localizations": {
         "ar": {
@@ -4228,6 +5394,38 @@
         }
       }
     },
+    "La reconnaissance vocale arabe n'est pas disponible pour le moment.": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "التعرّف على الصوت بالعربية غير متاح حاليًا."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Arabic speech recognition isn't available right now."
+          }
+        }
+      }
+    },
+    "La reconnaissance vocale arabe n'est pas disponible sur cet appareil. Le correcteur fonctionne uniquement sur l'appareil, sans serveur.": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "التعرّف على الصوت بالعربية غير متاح على هذا الجهاز. يعمل المصحِّح على الجهاز فقط، دون أي خادم."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Arabic speech recognition isn't available on this device. The checker works only on your device, with no server."
+          }
+        }
+      }
+    },
     "La régularité, même petite, est la clé de la rétention.": {
       "comment": "A motivational text that encourages regular practice.",
       "isCommentAutoGenerated": true,
@@ -4294,6 +5492,22 @@
         }
       }
     },
+    "Lance un entraînement sur ce thème": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "يبدأ تدريبًا على هذا الموضوع"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Starts a practice session on this topic"
+          }
+        }
+      }
+    },
     "Lancer l'analyse magique ✨": {
       "localizations": {
         "ar": {
@@ -4338,6 +5552,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "App Language"
+          }
+        }
+      }
+    },
+    "Latence stop → résultat": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "زمن الاستجابة: الإيقاف → النتيجة"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Latency stop → result"
           }
         }
       }
@@ -4556,6 +5786,38 @@
         }
       }
     },
+    "Le texte de la riwaya %@ n'est pas disponible.": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "نص رواية %@ غير متوفر."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The text of the %@ riwaya isn't available."
+          }
+        }
+      }
+    },
+    "Le texte et la numérotation des versets suivent la riwaya choisie.": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "يتبع النص وترقيم الآيات الروايةَ المختارة."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The text and verse numbering follow the chosen riwaya."
+          }
+        }
+      }
+    },
     "Le vendredi — ghusl et bienséances": {
       "comment": "A label for the section of the view that describes Friday's ghusl and daily prayers.",
       "isCommentAutoGenerated": true,
@@ -4690,6 +5952,22 @@
         }
       }
     },
+    "Les 3 Fondements, les 4 Règles, les Annulatifs de l'Islam, les 40 Hadiths de Nawawi et le fiqh de la purification et de la prière — en arabe, avec leur traduction, à ton rythme.": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الأصول الثلاثة، والقواعد الأربع، ونواقض الإسلام، والأربعون النووية، وفقه الطهارة والصلاة — بالعربية مع ترجمتها، على وتيرتك."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The 3 Fundamental Principles, the 4 Rules, the Nullifiers of Islam, Nawawi's 40 Hadiths and the fiqh of purification and prayer — in Arabic, with translation, at your own pace."
+          }
+        }
+      }
+    },
     "Les ablutions — wudû'": {
       "comment": "A title for the section of the app that describes the ablutions",
       "isCommentAutoGenerated": true,
@@ -4803,6 +6081,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Notifications are only scheduled for **upcoming** prayers: if Fajr and Asr have already passed today, they'll arrive tomorrow morning."
+          }
+        }
+      }
+    },
+    "Les textes": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "المتون"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The texts"
           }
         }
       }
@@ -4935,6 +6229,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Read the Quran on screen"
+          }
+        }
+      }
+    },
+    "Live Activity lancée (5 min) ✅": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "بدأ النشاط المباشر (5 د) ✅"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Live Activity started (5 min) ✅"
           }
         }
       }
@@ -5117,6 +6427,38 @@
           "stringUnit": {
             "state": "translated",
             "value": "Mark here"
+          }
+        }
+      }
+    },
+    "Masquer le texte (de mémoire)": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إخفاء النص (من الحفظ)"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hide text (from memory)"
+          }
+        }
+      }
+    },
+    "Me réécouter": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الاستماع إلى تلاوتي"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Play my recording"
           }
         }
       }
@@ -5530,6 +6872,38 @@
         }
       }
     },
+    "Notif Hilal dans 10s ✅": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إشعار الهلال بعد 10 ث ✅"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hilal notification in 10s ✅"
+          }
+        }
+      }
+    },
+    "Notif Quran dans 10s ✅": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إشعار القرآن بعد 10 ث ✅"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quran notification in 10s ✅"
+          }
+        }
+      }
+    },
     "Notif après Asr + iqamah + %lld min": {
       "localizations": {
         "ar": {
@@ -5562,6 +6936,22 @@
         }
       }
     },
+    "Notion": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "مسألة"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Concept"
+          }
+        }
+      }
+    },
     "Nous avons fait le choix délibéré de NE PAS diffuser l'Adhan via le téléphone. Voici pourquoi :\n\n1. Respect de l'Adhan — L'Adhan est un acte d'adoration sacré. Le diffuser sur un haut-parleur de téléphone dans des lieux inappropriés (toilettes, transports, réunions) est une forme de manque de respect envers ces paroles sacrées.\n\n2. Avis des savants — Plusieurs savants ont rappelé qu'il n'est pas convenable que l'Adhan retentisse dans des endroits impurs ou inadaptés. Le téléphone nous accompagne partout, y compris dans ces lieux.\n\n3. L'objectif est le rappel — Une notification silencieuse ou avec un son neutre remplit parfaitement le rôle de RAPPEL de la prière, sans risquer de profaner les paroles de l'Adhan.\n\n4. Votre responsabilité — L'Adhan est proclamé dans les mosquées par le Muezzin. L'application vous rappelle l'heure, à vous de répondre à l'appel.\n\nC'est un choix de conscience, pas une limitation technique.": {
       "localizations": {
         "ar": {
@@ -5574,6 +6964,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "We made a deliberate choice NOT to play the Adhan through the phone. Here's why:\n\n1. Respect for the Adhan — The Adhan is a sacred act of worship. Playing it on a phone speaker in inappropriate places (bathrooms, public transport, meetings) is a form of disrespect toward these sacred words.\n\n2. The scholars' view — Several scholars have pointed out that it is not fitting for the Adhan to ring out in impure or unsuitable places. Our phones go everywhere with us, including such places.\n\n3. The goal is the reminder — A silent notification, or one with a neutral sound, perfectly fulfills the role of a prayer REMINDER, without risking degrading the words of the Adhan.\n\n4. Your responsibility — The Adhan is proclaimed in the mosques by the Muezzin. The app reminds you of the time; it's up to you to answer the call.\n\nThis is a choice of conscience, not a technical limitation."
+          }
+        }
+      }
+    },
+    "Nouvel onglet Apprendre": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New Learn tab"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تبويب «تعلّم» الجديد"
           }
         }
       }
@@ -5658,6 +7064,22 @@
         }
       }
     },
+    "Omis": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "محذوف"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Missed"
+          }
+        }
+      }
+    },
     "Oui, donner mon avis": {
       "localizations": {
         "ar": {
@@ -5670,6 +7092,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Yes, share my feedback"
+          }
+        }
+      }
+    },
+    "Ouvre la leçon correspondante": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "يفتح الدرس المرتبط"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens the related lesson"
           }
         }
       }
@@ -5766,6 +7204,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Open Adhkar (morning or evening depending on the time)."
+          }
+        }
+      }
+    },
+    "Override actif": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "التجاوز النشط"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Active override"
           }
         }
       }
@@ -5942,6 +7396,22 @@
         }
       }
     },
+    "Par thème": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "حسب الموضوع"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "By topic"
+          }
+        }
+      }
+    },
     "Parcourir les sourates": {
       "localizations": {
         "ar": {
@@ -6034,6 +7504,38 @@
           "stringUnit": {
             "state": "translated",
             "value": "No Rawatib, but the supplication between Adhan and Iqama is answered."
+          }
+        }
+      }
+    },
+    "Passage": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "المقطع"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Passage"
+          }
+        }
+      }
+    },
+    "Passage indisponible": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "المقطع غير متوفر"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Passage unavailable"
           }
         }
       }
@@ -6268,6 +7770,22 @@
         }
       }
     },
+    "Preuve": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الدليل"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Evidence"
+          }
+        }
+      }
+    },
     "Prière de la Nuit": {
       "localizations": {
         "ar": {
@@ -6430,6 +7948,22 @@
         }
       }
     },
+    "Programmes": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "البرامج"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Programs"
+          }
+        }
+      }
+    },
     "Progression": {
       "localizations": {
         "ar": {
@@ -6446,6 +7980,22 @@
         }
       }
     },
+    "Protocole : ~30 versets récités réellement (courts/moyens/longs, tajwid naturel ET posé). GO si top-3 ≥ 70 % en naturel, latence ≤ 5 s. Cf. PLAN_FEATURE_QURAN_SPOTLIGHT.md.": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "البروتوكول: نحو 30 آية تُتلى فعليًا (قصيرة/متوسطة/طويلة، بتجويد طبيعي ومرتَّل). النجاح إذا كانت أفضل 3 نتائج ≥ 70 % في الأداء الطبيعي، وزمن الاستجابة ≤ 5 ث. انظر PLAN_FEATURE_QURAN_SPOTLIGHT.md."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Protocol: ~30 verses actually recited (short/medium/long, natural AND slow tajwid). GO if top-3 ≥ 70% in natural mode, latency ≤ 5 s. See PLAN_FEATURE_QURAN_SPOTLIGHT.md."
+          }
+        }
+      }
+    },
     "Pré-rempli avec votre dernière analyse du %@. Mettez à jour avec les horaires du jour avant de relancer.": {
       "localizations": {
         "ar": {
@@ -6458,6 +8008,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Prefilled with your last analysis from %@. Update with today's times before running it again."
+          }
+        }
+      }
+    },
+    "Préparation de la reconnaissance arabe (une seule fois)…": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "جارٍ تجهيز التعرّف على العربية (مرة واحدة فقط)…"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Setting up Arabic recognition (one time only)…"
           }
         }
       }
@@ -6490,6 +8056,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ready to record"
+          }
+        }
+      }
+    },
+    "Période adhkar": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "فترة الأذكار"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adhkar period"
           }
         }
       }
@@ -6641,6 +8223,44 @@
         }
       }
     },
+    "Question %lld sur %lld": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "السؤال %lld من %lld"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Question %lld of %lld"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Question %1$lld sur %2$lld"
+          }
+        }
+      }
+    },
+    "Question suivante": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "السؤال التالي"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Next question"
+          }
+        }
+      }
+    },
     "Quoi de neuf": {
       "localizations": {
         "ar": {
@@ -6653,6 +8273,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "What's New"
+          }
+        }
+      }
+    },
+    "Qâlûn ʿan Nâfiʿ": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "قالون عن نافع"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Qâlûn ʿan Nâfiʿ"
           }
         }
       }
@@ -6701,6 +8337,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Reminder after prayer"
+          }
+        }
+      }
+    },
+    "Rappel de la révision hebdo": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تذكير المراجعة الأسبوعية"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Weekly review reminder"
           }
         }
       }
@@ -6901,6 +8553,38 @@
         }
       }
     },
+    "Reconnaissance arabe indisponible sur cet appareil.": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "التعرّف على العربية غير متاح على هذا الجهاز."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Arabic recognition unavailable on this device."
+          }
+        }
+      }
+    },
+    "Reconnaissance vocale refusée.": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تم رفض التعرّف على الصوت."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Speech recognition denied."
+          }
+        }
+      }
+    },
     "Reconnecté · Actualisation…": {
       "localizations": {
         "ar": {
@@ -6913,6 +8597,54 @@
           "stringUnit": {
             "state": "translated",
             "value": "Reconnected · Refreshing…"
+          }
+        }
+      }
+    },
+    "Refaire": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إعادة"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Redo"
+          }
+        }
+      }
+    },
+    "Refais-la quand tu veux : la semaine est validée à partir de 70 %.": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "أعِدها متى شئت: يُحتسَب الأسبوع مُنجَزًا ابتداءً من 70 %."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Redo it whenever you like: the week counts as completed from 70%."
+          }
+        }
+      }
+    },
+    "Reformulé sur ton appareil par Apple Intelligence.": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "أُعيدت صياغته على جهازك بواسطة Apple Intelligence."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rephrased on your device by Apple Intelligence."
           }
         }
       }
@@ -7013,6 +8745,22 @@
         }
       }
     },
+    "Reset compteurs adhkar": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إعادة ضبط عدّادات الأذكار"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reset adhkar counters"
+          }
+        }
+      }
+    },
     "Restantes": {
       "localizations": {
         "ar": {
@@ -7025,6 +8773,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Remaining"
+          }
+        }
+      }
+    },
+    "Riwaya": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الرواية"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Riwaya"
           }
         }
       }
@@ -7058,6 +8822,38 @@
           "stringUnit": {
             "state": "translated",
             "value": "Pace"
+          }
+        }
+      }
+    },
+    "Récitateur de référence disponible en Hafs uniquement pour le moment.": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "القارئ المرجعي متاح برواية حفص فقط حاليًا."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reference reciter available in Hafs only for now."
+          }
+        }
+      }
+    },
+    "Récitation": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "التلاوة"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recitation"
           }
         }
       }
@@ -7129,6 +8925,22 @@
         }
       }
     },
+    "Récite de mémoire": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "اتلُ من حفظك"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recite from memory"
+          }
+        }
+      }
+    },
     "Récite de mémoire, puis réécoute-toi en lisant le texte pour te corriger.": {
       "comment": "A description of the recording process.",
       "isCommentAutoGenerated": true,
@@ -7181,6 +8993,22 @@
         }
       }
     },
+    "Récite un passage en Hafs, Warsh ou Qâlûn : l'app repère les mots oubliés ou différents, directement sur ton iPhone. Ta voix n'est jamais envoyée.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recite a passage in Hafs, Warsh or Qâlûn: the app spots missed or different words, right on your iPhone. Your voice is never sent anywhere."
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "اتلُ مقطعًا برواية حفص أو ورش أو قالون: يكتشف التطبيق الكلمات المنسية أو المختلفة على جهازك مباشرة، ولا يُرسَل صوتك أبدًا."
+          }
+        }
+      }
+    },
     "Récite, je t'écoute…": {
       "comment": "A label displayed in the voice-listening HUD.",
       "isCommentAutoGenerated": true,
@@ -7199,6 +9027,22 @@
         }
       }
     },
+    "Réciter": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تلاوة"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recite"
+          }
+        }
+      }
+    },
     "Réciter puis s'écouter": {
       "localizations": {
         "ar": {
@@ -7211,6 +9055,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Recite, then listen back"
+          }
+        }
+      }
+    },
+    "Réciter un verset": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تلاوة آية"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recite a verse"
           }
         }
       }
@@ -7362,6 +9222,22 @@
         }
       }
     },
+    "Résultat enregistré dans ta progression.": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "حُفظت النتيجة في سجل تقدّمك."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Result saved to your progress."
+          }
+        }
+      }
+    },
     "Réviser mes acquis": {
       "comment": "A label for the review button.",
       "isCommentAutoGenerated": true,
@@ -7394,6 +9270,38 @@
           "stringUnit": {
             "state": "translated",
             "value": "Review"
+          }
+        }
+      }
+    },
+    "Révision de la semaine": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "مراجعة الأسبوع"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Weekly review"
+          }
+        }
+      }
+    },
+    "Révision par thème": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "المراجعة حسب الموضوع"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Review by topic"
           }
         }
       }
@@ -7506,6 +9414,22 @@
         }
       }
     },
+    "Saison islamique": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الموسم الإسلامي"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Islamic season"
+          }
+        }
+      }
+    },
     "Salat": {
       "localizations": {
         "ar": {
@@ -7534,6 +9458,28 @@
           "stringUnit": {
             "state": "translated",
             "value": "Salat · 5 Circles"
+          }
+        }
+      }
+    },
+    "Score : %lld sur %lld": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "النتيجة: %lld من %lld"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Score: %lld out of %lld"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Score : %1$lld sur %2$lld"
           }
         }
       }
@@ -7574,6 +9520,22 @@
         }
       }
     },
+    "Section visible uniquement en Debug. Disparaît en Release.": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "قسم يظهر في وضع Debug فقط، ويختفي في Release."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Section visible in Debug only. Hidden in Release."
+          }
+        }
+      }
+    },
     "Selon la situation — sources authentifiées": {
       "comment": "A description of the source of the prayer times.",
       "isCommentAutoGenerated": true,
@@ -7608,6 +9570,38 @@
         }
       }
     },
+    "Semaine validée. La régularité fait la science.": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "اكتمل الأسبوع. بالمداومة يُنال العلم."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Week completed. Consistency is what builds knowledge."
+          }
+        }
+      }
+    },
+    "Semaine validée. Prochaine révision la semaine prochaine.": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "اكتمل الأسبوع. المراجعة القادمة في الأسبوع المقبل."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Week completed. Next review next week."
+          }
+        }
+      }
+    },
     "Si l'app t'aide au quotidien, tu peux participer à son développement avec une contribution symbolique.": {
       "localizations": {
         "ar": {
@@ -7638,6 +9632,98 @@
           "stringUnit": {
             "state": "translated",
             "value": "Dark"
+          }
+        }
+      }
+    },
+    "Sonder SFSpeechRecognizer (ar)": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "فحص SFSpeechRecognizer (ar)"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Probe SFSpeechRecognizer (ar)"
+          }
+        }
+      }
+    },
+    "Sourate": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "السورة"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Surah"
+          }
+        }
+      }
+    },
+    "Sourate %lld introuvable.": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "لم يُعثَر على السورة %lld."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Surah %lld not found."
+          }
+        }
+      }
+    },
+    "Sourate %lld · verset %lld": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "السورة %lld · الآية %lld"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Surah %lld · verse %lld"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Sourate %1$lld · verset %2$lld"
+          }
+        }
+      }
+    },
+    "Sourate %lld · versets %lld–%lld": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "السورة %lld · الآيات %lld–%lld"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Surah %lld · verses %lld–%lld"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Sourate %1$lld · versets %2$lld–%3$lld"
           }
         }
       }
@@ -7770,6 +9856,54 @@
           "stringUnit": {
             "state": "translated",
             "value": "Religious Content Sources"
+          }
+        }
+      }
+    },
+    "Soutenir le développement de l'app": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ادعم تطوير التطبيق"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Support the app's development"
+          }
+        }
+      }
+    },
+    "Spike ASR Coran": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تجربة التعرّف الصوتي على القرآن"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quran ASR spike"
+          }
+        }
+      }
+    },
+    "Spike ASR Coran (reconnaissance vocale)": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تجربة التعرّف الصوتي على القرآن (ASR)"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quran ASR spike (speech recognition)"
           }
         }
       }
@@ -8072,6 +10206,38 @@
         }
       }
     },
+    "Ta réponse, incorrecte": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إجابتك، غير صحيحة"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your answer, incorrect"
+          }
+        }
+      }
+    },
+    "Taille de la session": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "حجم الجلسة"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Session size"
+          }
+        }
+      }
+    },
     "Takbir d'Arafah à dire à voix haute du Fajr du 9 au Asr du 13 Dhul-Hijjah.": {
       "localizations": {
         "ar": {
@@ -8205,6 +10371,22 @@
         }
       }
     },
+    "Terminer": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إنهاء"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Finish"
+          }
+        }
+      }
+    },
     "Tes %lld pages après %@ — petit pas, grande constance.": {
       "localizations": {
         "ar": {
@@ -8245,6 +10427,102 @@
         }
       }
     },
+    "Tester Live Activity (5 min)": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "اختبار النشاط المباشر (5 د)"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Test Live Activity (5 min)"
+          }
+        }
+      }
+    },
+    "Tester notif nouvelle lune (10s)": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "اختبار إشعار الهلال الجديد (10 ث)"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Test new moon notification (10s)"
+          }
+        }
+      }
+    },
+    "Tester notif rappel Quran (10s)": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "اختبار إشعار تذكير القرآن (10 ث)"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Test Quran reminder notification (10s)"
+          }
+        }
+      }
+    },
+    "Tester overlay Adhan (5s)": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "اختبار شاشة الأذان (5 ث)"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Test Adhan overlay (5s)"
+          }
+        }
+      }
+    },
+    "Texte Hafs : Tanzil Project (tanzil.net), texte vocalisé.\n\nTextes Warsh et Qâlûn : Complexe du Roi Fahd pour l'impression du Noble Coran (KFGQPC), Médine — reproduits sans altération.\n\nRécitateur de référence : Mishary Rashid Alafasy (cdn.islamic.network).\n\nLe correcteur de récitation analyse ta voix uniquement sur ton appareil : aucun enregistrement n'est envoyé. Il compare les mots ; il ne juge pas le tajwid.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hafs text: Tanzil Project (tanzil.net), vocalized text.\n\nWarsh and Qâlûn texts: King Fahd Glorious Quran Printing Complex (KFGQPC), Madinah — reproduced without alteration.\n\nReference reciter: Mishary Rashid Alafasy (cdn.islamic.network).\n\nThe recitation checker analyzes your voice only on your device: no recording is sent. It compares words; it does not assess tajwid."
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "نص رواية حفص: مشروع تنزيل (tanzil.net)، نص مشكول.\n\nنصّا روايتي ورش وقالون: مجمع الملك فهد لطباعة المصحف الشريف بالمدينة المنورة — منقولان دون أي تغيير.\n\nالقارئ المرجعي: مشاري راشد العفاسي (cdn.islamic.network).\n\nيحلّل مصحّح التلاوة صوتك على جهازك فقط، ولا يُرسَل أي تسجيل. وهو يقارن الكلمات ولا يحكم على التجويد."
+          }
+        }
+      }
+    },
+    "Texte masqué pour la mémorisation": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "النص مخفي للحفظ"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Text hidden for memorization"
+          }
+        }
+      }
+    },
     "Texte à étudier": {
       "localizations": {
         "ar": {
@@ -8257,6 +10535,38 @@
           "stringUnit": {
             "state": "translated",
             "value": "Text to study"
+          }
+        }
+      }
+    },
+    "Textes coraniques et récitation": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quranic texts and recitation"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "النصوص القرآنية والتلاوة"
+          }
+        }
+      }
+    },
+    "Thèmes": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "المواضيع"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Topics"
           }
         }
       }
@@ -8357,6 +10667,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "French translation"
+          }
+        }
+      }
+    },
+    "Transcript": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "النص المُستخرَج"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Transcript"
           }
         }
       }
@@ -8474,6 +10800,38 @@
         }
       }
     },
+    "Un mot non signalé n'est pas forcément juste. Fais valider ta récitation par un enseignant.": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الكلمة التي لم يُشَر إليها ليست بالضرورة صحيحة. اعرض تلاوتك على معلّم ليصحّحها."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A word that isn't flagged isn't necessarily correct. Have a teacher check your recitation."
+          }
+        }
+      }
+    },
+    "Un mot non signalé n'est pas forcément juste. Fais valider ta récitation par un enseignant. Le tajwid n'est pas évalué.": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الكلمة التي لم يُشَر إليها ليست بالضرورة صحيحة. اعرض تلاوتك على معلّم ليصحّحها. لا يُقيَّم التجويد."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A word that isn't flagged isn't necessarily correct. Have a teacher check your recitation. Tajwid is not assessed."
+          }
+        }
+      }
+    },
     "Un peu de science aujourd'hui — quelques minutes suffisent.": {
       "localizations": {
         "ar": {
@@ -8539,6 +10897,22 @@
         }
       }
     },
+    "Une notification par semaine, seulement si la révision n'est pas encore faite.": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إشعار واحد في الأسبوع، فقط إذا لم تُنجَز المراجعة بعد."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "One notification per week, only if the review isn't done yet."
+          }
+        }
+      }
+    },
     "Une page « Pourquoi pas de tracker de prière ? » explique le choix de ne pas gamifier la salât, conforme à la fatwa du Cheikh Ibn 'Uthaymîn (Majmû' al-Fatâwâ 16/111).": {
       "extractionState": "stale",
       "localizations": {
@@ -8552,6 +10926,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "A “Why no prayer tracker?” page explains the choice not to gamify salah, in line with the fatwa of Sheikh Ibn 'Uthaymin (Majmu' al-Fatawa 16/111)."
+          }
+        }
+      }
+    },
+    "Une révision de la semaine en quelques questions, avec la preuve de chaque réponse : aqîda, fiqh de la purification et de la prière, 40 Nawawî. Deux nouveaux textes : les Annulatifs de l'Islam et Manhaj as-Sâlikîn.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A weekly review in a few questions, with the proof for every answer: aqîda, the fiqh of purification and prayer, the 40 Nawawî. Two new texts: the Nullifiers of Islam and Manhaj as-Sâlikîn."
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "مراجعة أسبوعية في أسئلة قليلة، مع دليل كل جواب: العقيدة، وفقه الطهارة والصلاة، والأربعون النووية. ونصّان جديدان: نواقض الإسلام ومنهج السالكين."
           }
         }
       }
@@ -8655,6 +11045,154 @@
         }
       }
     },
+    "Verset %lld : le mot « %@ » n'a pas été entendu. Réécoute le récitateur puis réessaie.": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الآية %lld: لم تُسمَع كلمة « %@ ». استمع إلى القارئ مجددًا ثم أعد المحاولة."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verse %lld: the word “%@” wasn't heard. Listen to the reciter again, then try again."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Verset %1$lld : le mot « %2$@ » n'a pas été entendu. Réécoute le récitateur puis réessaie."
+          }
+        }
+      }
+    },
+    "Verset %lld : le passage « %@ » n'a pas été entendu. Réécoute le récitateur puis réessaie.": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الآية %lld: لم يُسمَع المقطع « %@ ». استمع إلى القارئ مجددًا ثم أعد المحاولة."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verse %lld: the passage “%@” wasn't heard. Listen to the reciter again, then try again."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Verset %1$lld : le passage « %2$@ » n'a pas été entendu. Réécoute le récitateur puis réessaie."
+          }
+        }
+      }
+    },
+    "Verset %lld : pause de %lld s après « %@ ». Revois l'enchaînement de ce passage.": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الآية %lld: توقّف %lld ث بعد « %@ ». راجع وصل هذا المقطع."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verse %lld: %lld s pause after “%@”. Go over the flow of this passage again."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Verset %1$lld : pause de %2$lld s après « %3$@ ». Revois l'enchaînement de ce passage."
+          }
+        }
+      }
+    },
+    "Verset %lld : « %@ » a été entendu en trop. Vérifie que ce mot fait bien partie du passage.": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الآية %lld: سُمِعت « %@ » زيادةً. تحقّق من أن هذه الكلمة من المقطع فعلًا."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verse %lld: “%@” was heard as an extra word. Check that this word is really part of the passage."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Verset %1$lld : « %2$@ » a été entendu en trop. Vérifie que ce mot fait bien partie du passage."
+          }
+        }
+      }
+    },
+    "Verset %lld : « %@ » a été entendu à la place de « %@ ». Vérifie ce mot dans le texte.": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الآية %lld: سُمِعت « %@ » بدلًا من « %@ ». تحقّق من هذه الكلمة في النص."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verse %lld: “%@” was heard instead of “%@”. Check this word in the text."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Verset %1$lld : « %2$@ » a été entendu à la place de « %3$@ ». Vérifie ce mot dans le texte."
+          }
+        }
+      }
+    },
+    "Verset %lld : « %@ » a été répété. Essaie d'enchaîner sans revenir en arrière.": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الآية %lld: تكرّرت « %@ ». حاول أن تواصل دون الرجوع إلى الوراء."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verse %lld: “%@” was repeated. Try to keep going without going back."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Verset %1$lld : « %2$@ » a été répété. Essaie d'enchaîner sans revenir en arrière."
+          }
+        }
+      }
+    },
+    "Verset %lld seul": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الآية %lld فقط"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verse %lld only"
+          }
+        }
+      }
+    },
     "Verset du Coran": {
       "localizations": {
         "ar": {
@@ -8701,6 +11239,28 @@
           "stringUnit": {
             "state": "translated",
             "value": "Verses"
+          }
+        }
+      }
+    },
+    "Versets %lld–%lld hors de la sourate (%lld versets).": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الآيات %lld–%lld خارج نطاق السورة (عدد آياتها %lld)."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verses %lld–%lld are outside the surah (%lld verses)."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Versets %1$lld–%2$lld hors de la sourate (%3$lld versets)."
           }
         }
       }
@@ -8765,6 +11325,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Privacy"
+          }
+        }
+      }
+    },
+    "Voir le résultat": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "عرض النتيجة"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "See result"
           }
         }
       }
@@ -8851,6 +11427,22 @@
         }
       }
     },
+    "Warsh ʿan Nâfiʿ": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ورش عن نافع"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Warsh ʿan Nâfiʿ"
+          }
+        }
+      }
+    },
     "Widgets": {
       "localizations": {
         "ar": {
@@ -8913,6 +11505,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "of prayer"
+          }
+        }
+      }
+    },
+    "des mots reconnus": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "من الكلمات تم التعرّف عليها"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "of words recognized"
           }
         }
       }
@@ -9179,6 +11787,22 @@
         }
       }
     },
+    "À faire cette semaine": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "للإنجاز هذا الأسبوع"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "To do this week"
+          }
+        }
+      }
+    },
     "À l'approche de chaque prière, une carte te rappelle le wudû' pas à pas avec ses preuves. Le vendredi : le ghusl et les bienséances de la Jumu'ah. La fiche complète t'attend dans les Références de l'onglet Rappel.": {
       "comment": "Texte de l'information sur les ablutions.",
       "extractionState": "stale",
@@ -9194,6 +11818,38 @@
           "stringUnit": {
             "state": "translated",
             "value": "As each prayer approaches, a card walks you through wudu' step by step with its evidences. On Friday: ghusl and the etiquettes of Jumu'ah. The full guide awaits you in the References of the Reminder tab."
+          }
+        }
+      }
+    },
+    "À retravailler": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "للتدرّب عليها"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "To work on"
+          }
+        }
+      }
+    },
+    "À revoir": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "للمراجعة"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "To review"
           }
         }
       }
@@ -9232,6 +11888,38 @@
         }
       }
     },
+    "Écouter le conseil": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الاستماع إلى النصيحة"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Listen to the tip"
+          }
+        }
+      }
+    },
+    "Écouter le récitateur": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الاستماع إلى القارئ"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Listen to the reciter"
+          }
+        }
+      }
+    },
     "Épisodes": {
       "localizations": {
         "ar": {
@@ -9244,6 +11932,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Episodes"
+          }
+        }
+      }
+    },
+    "État": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الحالة"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Status"
           }
         }
       }
@@ -9652,6 +12356,22 @@
         }
       }
     },
+    "🌅 Iftar": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "🌅 الإفطار"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "🌅 Iftar"
+          }
+        }
+      }
+    },
     "🌙 Adhkar du soir": {
       "localizations": {
         "ar": {
@@ -9668,6 +12388,38 @@
         }
       }
     },
+    "🌙 Général": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "🌙 عام"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "🌙 General"
+          }
+        }
+      }
+    },
+    "🌙 Suhoor": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "🌙 السحور"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "🌙 Suhoor"
+          }
+        }
+      }
+    },
     "🎉 Série terminée !": {
       "localizations": {
         "ar": {
@@ -9680,6 +12432,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "🎉 Series completed!"
+          }
+        }
+      }
+    },
+    "🎓 Révision de la semaine": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "🎓 مراجعة الأسبوع"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "🎓 Weekly review"
           }
         }
       }
@@ -9712,6 +12480,54 @@
           "stringUnit": {
             "state": "translated",
             "value": "📚 Today's lesson"
+          }
+        }
+      }
+    },
+    "🛠 DEBUG": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "🛠 DEBUG"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "🛠 DEBUG"
+          }
+        }
+      }
+    },
+    "🧪 Tester notif matin (dans 10s)": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "🧪 اختبار إشعار الصباح (بعد 10 ث)"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "🧪 Test morning notification (in 10s)"
+          }
+        }
+      }
+    },
+    "🧪 Tester notif soir (dans 10s)": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "🧪 اختبار إشعار المساء (بعد 10 ث)"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "🧪 Test evening notification (in 10s)"
           }
         }
       }

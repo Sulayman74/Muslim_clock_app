@@ -20,8 +20,8 @@
 		<string>AmiriQuran-Regular.ttf</string>
 	</array>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>Pour enregistrer ta récitation du Coran et la partager (par exemple à ton imam pour relecture).</string>
+	<string>Pour enregistrer ta récitation du Coran, l'analyser sur ton appareil et, si tu le souhaites, la partager (par exemple à ton imam pour relecture).</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
-	<string>Pour reconnaître le verset que tu récites et l'ouvrir dans le Coran.</string>
+	<string>Pour reconnaître le verset que tu récites et vérifier ta récitation mot à mot. L'analyse se fait uniquement sur ton appareil : ta voix n'est jamais envoyée.</string>
 </dict>
 </plist>

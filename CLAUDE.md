@@ -132,6 +132,11 @@ Toute vue affichant du contenu dynamique respecte ces règles :
 ### Limiter le scope
 Si l'utilisateur demande X, ne pas refactorer Y au passage — même si Y est sale. Mentionner Y dans la réponse, mais ne pas le toucher sans accord explicite.
 
+## Invariant voix (récitation, recherche vocale)
+- Reconnaissance vocale **on-device uniquement** (`SpeechAnalyzer` / `SFSpeechRecognizer` avec `requiresOnDeviceRecognition`). L'audio ne quitte jamais l'appareil, sauf partage explicite par l'utilisateur. Pas de repli serveur, pas d'API audio cloud.
+- Aucun LLM cloud. Reformulation éventuelle : `SystemLanguageModel.default` (local) uniquement, jamais Private Cloud Compute, et jamais pour produire du contenu religieux.
+- Le correcteur ne juge pas le tajwid et n'écrit jamais dans le plan Coran / la khatma / `ReadingEntry`.
+
 ## Pièges connus (du memory audit)
 
 - `CompassManager` : son `CLLocationManager` privé sert uniquement au heading (boussole). La position vient de `SharedLocationManager`.
@@ -140,7 +145,7 @@ Si l'utilisateur demande X, ne pas refactorer Y au passage — même si Y est sa
 - `Muslim_ClockApp.swift` : `AdhanTriggered` posté à 2 endroits — attention si on touche aux notifications.
 
 ## Stack technique
-- iOS 17+ / watchOS 10+ (vérifier les `@available` avant API récente).
+- Cible réelle : iOS 26.2 / watchOS 26.4 (`IPHONEOS_DEPLOYMENT_TARGET`), isolation par défaut `MainActor` — les types de domaine purs sont `nonisolated`.
 - SwiftUI principal, UIKit absent.
 - SPM : `Adhan` (calcul horaires).
 - Widgets (`SalatWidget`), complication watchOS (`PrayerComplication`), watch app (`WatchExtension Watch App`).

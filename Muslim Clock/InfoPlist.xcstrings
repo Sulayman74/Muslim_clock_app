@@ -54,19 +54,19 @@
         "ar": {
           "stringUnit": {
             "state": "translated",
-            "value": "لتسجيل تلاوتك للقرآن ومشاركتها (مثلاً مع إمامك للمراجعة)."
+            "value": "لتسجيل تلاوتك للقرآن وتحليلها على جهازك، ومشاركتها إن شئت (مثلاً مع إمامك للمراجعة)."
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "To record your Quran recitation and share it (for example with your imam for review)."
+            "value": "To record your Quran recitation, analyze it on your device and, if you wish, share it (for example with your imam for review)."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Pour enregistrer ta récitation du Coran et la partager (par exemple à ton imam pour relecture)."
+            "value": "Pour enregistrer ta récitation du Coran, l'analyser sur ton appareil et, si tu le souhaites, la partager (par exemple à ton imam pour relecture)."
           }
         }
       }
@@ -78,19 +78,19 @@
         "ar": {
           "stringUnit": {
             "state": "translated",
-            "value": "للتعرّف على الآية التي تتلوها وفتحها في القرآن."
+            "value": "للتعرّف على الآية التي تتلوها والتحقق من تلاوتك كلمةً كلمة. يتم التحليل على جهازك فقط، ولا يُرسَل صوتك أبداً."
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "To recognize the verse you recite and open it in the Quran."
+            "value": "To recognize the verse you recite and check your recitation word by word. The analysis happens only on your device: your voice is never sent anywhere."
           }
         },
         "fr": {
           "stringUnit": {
-            "state": "new",
-            "value": "Pour reconnaître le verset que tu récites et l'ouvrir dans le Coran."
+            "state": "translated",
+            "value": "Pour reconnaître le verset que tu récites et vérifier ta récitation mot à mot. L'analyse se fait uniquement sur ton appareil : ta voix n'est jamais envoyée."
           }
         }
       }
