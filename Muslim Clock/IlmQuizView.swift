@@ -81,6 +81,8 @@ struct IlmQuizView: View {
         }
     }
 
+    private static let explanationAnchor = "quiz.explanation"
+
     private var title: LocalizedStringKey {
         switch session.mode {
         case .weekly: "Révision de la semaine"
@@ -93,6 +95,7 @@ struct IlmQuizView: View {
     private func questionPage(_ question: QuizQuestion) -> some View {
         VStack(spacing: 0) {
             progressBar
+            ScrollViewReader { proxy in
             ScrollView {
                 VStack(alignment: .leading, spacing: 16) {
                     questionHeader(question)
@@ -103,6 +106,7 @@ struct IlmQuizView: View {
                     Group {
                         if session.isAnswered {
                             QuizExplanationCard(question: question, showArabic: showArabic)
+                                .id(Self.explanationAnchor)
                                 .transition(.opacity.combined(with: .move(edge: .top)))
                         }
                     }
@@ -111,6 +115,14 @@ struct IlmQuizView: View {
                 .padding(.horizontal, 16)
                 .padding(.top, 12)
                 .padding(.bottom, 24)
+            }
+            // L'explication peut naître sous le pli : on l'amène à l'écran.
+            .onChange(of: session.isAnswered) { _, answered in
+                guard answered else { return }
+                withAnimation(.smooth(duration: 0.4).delay(0.15)) {
+                    proxy.scrollTo(Self.explanationAnchor, anchor: .bottom)
+                }
+            }
             }
             nextButton
         }
@@ -199,6 +211,7 @@ struct IlmQuizView: View {
                 ) {
                     select(index)
                 }
+                .accessibilityIdentifier("quiz.choice.\(index)")
             }
         }
     }
@@ -220,6 +233,7 @@ struct IlmQuizView: View {
                 .clipShape(RoundedRectangle(cornerRadius: CornerRadius.badge, style: .continuous))
         }
         .disabled(!session.isAnswered)
+        .accessibilityIdentifier("quiz.next")
         .padding(.horizontal, 16)
         .padding(.bottom, 16)
         .animation(.smooth(duration: 0.2), value: session.isAnswered)
@@ -266,7 +280,7 @@ struct QuizChoiceButton: View {
                         .fixedSize(horizontal: false, vertical: true)
                         .opacity(showArabic ? 0 : 1)
                     Text(verbatim: choice.ar)
-                        .font(ScriptureFont.arabic(19))
+                        .font(ScriptureFont.arabic(17))
                         .multilineTextAlignment(.trailing)
                         .frame(maxWidth: .infinity, alignment: .trailing)
                         .fixedSize(horizontal: false, vertical: true)
@@ -445,13 +459,14 @@ struct QuizResultView: View {
                 }
 
                 Button(action: onClose) {
-                    Text("Fermer")
+                    Text("Terminer")
                         .bold()
                         .frame(maxWidth: .infinity, minHeight: 50)
                         .background(ModuleAccent.ilm.gradient)
                         .foregroundStyle(.white)
                         .clipShape(RoundedRectangle(cornerRadius: CornerRadius.badge, style: .continuous))
                 }
+                .accessibilityIdentifier("quiz.result.close")
                 .padding(.top, 8)
             }
             .padding(.horizontal, 16)
