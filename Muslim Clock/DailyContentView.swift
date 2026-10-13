@@ -24,9 +24,9 @@ struct DailyContentView: View {
 
     // Écran Rappel en 2 zones (cf. PLAN_UX_RAPPEL_ZONES.md) : prioritaire
     // « le rappel du jour » (salawat vendredi, verset, hadith, reprendre le
-    // cours) puis secondaire « mes programmes » (Khatma, ʿIlm, podcast, fiche
-    // masbûq). VStack eager obligatoire : les deep links Khatma/ʿIlm reposent
-    // sur le onAppear des cartes.
+    // cours) puis secondaire « mes programmes » (Khatma, podcast, fiche
+    // masbûq). Le programme ʿIlm vit dans l'onglet Apprendre. VStack eager
+    // obligatoire : le deep link Khatma repose sur le onAppear de la carte.
     var body: some View {
         VStack(spacing: ZoneSpacing.interZone) {
             rappelPriorityZone
@@ -76,9 +76,6 @@ struct DailyContentView: View {
 
             // KHATMA — programme de lecture du Quran (module QuranPlan)
             QuranKhatmaCard()
-
-            // PROGRAMME ʿILM — apprentissage des mutūn (module Ilm)
-            IlmProgramCard()
 
             // CARTE AUDIO / PODCAST (exploration — la reprise vit en zone 1)
             PodcastCarouselView()

@@ -2,14 +2,15 @@
 //  IlmProgramCard.swift
 //  Muslim Clock — module Programme ʿIlm
 //
-//  Carte d'entrée dans le tab Rappel (pattern QuranKhatmaCard). Résumé compact
-//  (% + prochaine leçon) et ouverture de la sheet complète au tap.
+//  Carte d'entrée dans l'onglet Apprendre (pattern QuranKhatmaCard). Résumé
+//  compact (% + prochaine leçon) et ouverture de la sheet complète au tap.
 //
 
 import SwiftUI
 
 struct IlmProgramCard: View {
-    @State private var vm = IlmViewModel()
+    /// Partagé avec la révision hebdo (même progression Leitner) — fourni par `LearnHubView`.
+    @Bindable var vm: IlmViewModel
     @State private var showTracker = false
     /// Flag posé par AppDelegate quand l'utilisateur tape la notif de rappel ʿIlm.
     /// Permet l'ouverture auto de la sheet même quand la card vient juste de monter.
@@ -75,7 +76,7 @@ struct IlmProgramCard: View {
                 Text("Programme ʿIlm")
                     .font(.system(size: 15, weight: .bold))
                     .foregroundColor(.white)
-                Text("3 Fondements · 4 Règles · 40 Nawawi")
+                Text("Fondements · Annulatifs · Fiqh · 40 Nawawi")
                     .font(.system(size: 11, weight: .medium, design: .rounded))
                     .foregroundColor(.white.opacity(0.6))
             }
@@ -88,7 +89,7 @@ struct IlmProgramCard: View {
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 14)
-        .glassCardSecondary(cornerRadius: CornerRadius.card, tint: ModuleAccent.ilm, fallback: GlassFallback.warm)
+        .glassCardSecondary(cornerRadius: CornerRadius.card, tint: ModuleAccent.ilm, fallback: GlassFallback.cosmic)
     }
 
     private func activeState(summary: IlmProgressSummary) -> some View {
@@ -150,7 +151,7 @@ struct IlmProgramCard: View {
         .padding(.horizontal, 16)
         .padding(.vertical, 14)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .glassCardSecondary(cornerRadius: CornerRadius.card, tint: ModuleAccent.ilm, fallback: GlassFallback.warm)
+        .glassCardSecondary(cornerRadius: CornerRadius.card, tint: ModuleAccent.ilm, fallback: GlassFallback.cosmic)
     }
 
     // Ton bienveillant : pas de rouge, phrasé positif (même règle que la Khatma).

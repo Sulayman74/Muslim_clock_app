@@ -37,6 +37,10 @@ final class IlmQuizViewModel {
 
     static let sessionSizeKey = "ilm_quiz_session_size"
 
+    convenience init() {
+        self.init(ilm: IlmViewModel())
+    }
+
     init(ilm: IlmViewModel) {
         self.ilm = ilm
         self.progress = IlmQuizStorage.loadProgress()
@@ -105,6 +109,17 @@ final class IlmQuizViewModel {
             answered: records.count,
             correct: records.filter(\.correct).count
         )
+    }
+
+    /// Leçon liée à une question, pour « revoir la leçon » depuis l'écran de fin.
+    func lessonRoute(for question: QuizQuestion) -> IlmLessonRoute? {
+        guard let lessonID = question.lessonId else { return nil }
+        for track in ilm.tracks {
+            if let index = track.lessons.firstIndex(where: { $0.id == lessonID }) {
+                return IlmLessonRoute(track: track, index: index)
+            }
+        }
+        return nil
     }
 
     /// Titre du thème d'une question (écran de fin, liste des erreurs).

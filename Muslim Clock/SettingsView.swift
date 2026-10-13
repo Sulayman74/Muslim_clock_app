@@ -104,6 +104,9 @@ struct SettingsView: View {
                     // ── SECTION ADHKAR — RAPPELS POST-FAJR / POST-ASR ──
                     AdhkarReminderSettingsSection()
 
+                    // ── SECTION APPRENDRE — RAPPEL DE LA RÉVISION HEBDO ──
+                    IlmWeeklyReminderSettingsSection()
+
                     // ── SECTION MODE VOYAGE (SAFAR) ──
                     TravelModeSettingsSection()
 
@@ -806,6 +809,73 @@ struct QuranReminderSettingsSection: View {
                 .font(.caption2)
                 .foregroundStyle(.white.opacity(0.5))
         }
+    }
+}
+
+// MARK: - RÉVISION HEBDO (ONGLET APPRENDRE)
+
+/// Rappel de la révision de la semaine : activation, jour et heure.
+/// Le rappel n'est jamais envoyé pour une semaine déjà faite (cf. scheduler).
+private struct IlmWeeklyReminderSettingsSection: View {
+    @AppStorage(IlmWeeklyReminderScheduler.enabledKey) private var enabled = true
+    @AppStorage(IlmWeeklyReminderScheduler.weekdayKey) private var weekday = IlmWeeklyReminderScheduler.defaultWeekday
+    @AppStorage(IlmWeeklyReminderScheduler.hourKey) private var hour = IlmWeeklyReminderScheduler.defaultHour
+
+    var body: some View {
+        Section {
+            Toggle(isOn: $enabled) {
+                HStack {
+                    Image(systemName: "graduationcap.fill")
+                        .foregroundStyle(ModuleAccent.ilm)
+                    Text("Rappel de la révision hebdo")
+                        .foregroundColor(.white)
+                }
+            }
+            .listRowBackground(Color.white.opacity(0.08))
+
+            if enabled {
+                Picker(selection: $weekday) {
+                    ForEach(1...7, id: \.self) { day in
+                        Text(verbatim: Calendar.current.weekdaySymbols[day - 1].capitalized).tag(day)
+                    }
+                } label: {
+                    Text("Jour")
+                        .foregroundColor(.white)
+                }
+                .listRowBackground(Color.white.opacity(0.08))
+
+                Stepper(value: $hour, in: 5...23) {
+                    HStack {
+                        Text("Heure")
+                            .foregroundColor(.white)
+                        Spacer()
+                        Text(verbatim: String(format: "%02d:00", hour))
+                            .monospacedDigit()
+                            .foregroundStyle(.white.opacity(0.7))
+                    }
+                }
+                .listRowBackground(Color.white.opacity(0.08))
+            }
+        } header: {
+            Text("Apprendre — révision de la semaine")
+                .foregroundColor(.white.opacity(0.6))
+        } footer: {
+            Text("Une notification par semaine, seulement si la révision n'est pas encore faite.")
+                .font(.caption2)
+                .foregroundStyle(.white.opacity(0.5))
+        }
+        .onChange(of: enabled) { _, _ in reschedule() }
+        .onChange(of: weekday) { _, _ in reschedule() }
+        .onChange(of: hour) { _, _ in reschedule() }
+    }
+
+    private func reschedule() {
+        let progress = IlmQuizStorage.loadProgress()
+        let size = UserDefaults.standard.integer(forKey: IlmQuizViewModel.sessionSizeKey)
+        IlmWeeklyReminderScheduler.schedule(
+            currentWeekDone: progress.weeklySessions[QuizWeek.key(for: .now)] != nil,
+            questionCount: WeeklyReviewPlanner.sizePresets.contains(size) ? size : WeeklyReviewPlanner.defaultSize
+        )
     }
 }
 

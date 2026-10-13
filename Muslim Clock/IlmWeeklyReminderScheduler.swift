@@ -16,19 +16,19 @@ import UserNotifications
 
 enum IlmWeeklyReminderScheduler {
 
-    static let identifierPrefix = "ilm_weekly_"
+    nonisolated static let identifierPrefix = "ilm_weekly_"
     /// Valeur de `userInfo["module"]`, routée par `AppDelegate.didReceive`.
-    static let module = "ilm_weekly_quiz"
+    nonisolated static let module = "ilm_weekly_quiz"
 
     // MARK: Réglages (UserDefaults, lus aussi par la carte et les Réglages)
 
-    static let enabledKey = "ilm_weekly_reminder_enabled"
-    static let weekdayKey = "ilm_weekly_reminder_weekday"
-    static let hourKey = "ilm_weekly_reminder_hour"
+    nonisolated static let enabledKey = "ilm_weekly_reminder_enabled"
+    nonisolated static let weekdayKey = "ilm_weekly_reminder_weekday"
+    nonisolated static let hourKey = "ilm_weekly_reminder_hour"
 
     /// Vendredi (calendrier grégorien : dimanche = 1).
-    static let defaultWeekday = 6
-    static let defaultHour = 18
+    nonisolated static let defaultWeekday = 6
+    nonisolated static let defaultHour = 18
 
     /// (Re)programme les rappels. Idempotent : purge ciblée puis ajout.
     ///

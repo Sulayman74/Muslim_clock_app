@@ -279,6 +279,7 @@ struct MainView: View {
             case 1: return .orange   // Tab Rappel
             case 2: return .teal     // Tab Qibla
             case 3: return .blue     // Tab Réglages
+            case 4: return ModuleAccent.ilm   // Tab Apprendre
             default: return .white
             }
         }
@@ -510,6 +511,16 @@ struct MainView: View {
                     .tag(2)
                 
                 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+                // ONGLET APPRENDRE (tag 4) : récitation, révision hebdo, programmes ʿIlm.
+                // Placé avant les Réglages pour qu'ils restent en dernière position.
+                // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+                LearnHubView()
+                    .tabItem {
+                        Label("Apprendre", systemImage: "graduationcap.fill")
+                    }
+                    .tag(4)
+
+                // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
                 // ONGLET 4 : RÉGLAGES & INFOS
                 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
                 SettingsView()
@@ -717,16 +728,9 @@ struct MainView: View {
                 .sheet(isPresented: $showQuranFromControl) {
                     QuranLibraryView()
                 }
-                // Notif Quran tapée → switch automatique vers tab Rappel (où la card vit).
-                .onReceive(NotificationCenter.default.publisher(for: .quranReadingTapped)) { _ in
-                    NotificationDeepLink.clear()
-                    selectedTab = 1
-                }
-                // Notif ʿIlm tapée → switch automatique vers tab Rappel (où la card vit).
-                .onReceive(NotificationCenter.default.publisher(for: .ilmReminderTapped)) { _ in
-                    NotificationDeepLink.clear()
-                    selectedTab = 1
-                }
+                // Notifs Coran / ʿIlm / révision hebdo tapées → bascule d'onglet
+                // (modificateur séparé : le body dépasse sinon le type-checker).
+                .modifier(TabSwitchDeepLinks(selectedTab: $selectedTab))
                 // Notif Adhkar tapée → ouvre la sheet Adhkar avec le timing forcé.
                 .onReceive(NotificationCenter.default.publisher(for: .adhkarReminderTapped)) { notif in
                     NotificationDeepLink.clear()
@@ -814,9 +818,12 @@ struct MainView: View {
             // consomme `pendingOpenQuranTracker` à son onAppear et ouvre la sheet.
             selectedTab = 1
         case .ilmTracker:
-            // Même mécanique : IlmProgramCard consomme `pendingOpenIlmTracker`
-            // à son onAppear et ouvre la sheet.
-            selectedTab = 1
+            // Même mécanique : IlmProgramCard (onglet Apprendre) consomme
+            // `pendingOpenIlmTracker` à son onAppear et ouvre la sheet.
+            selectedTab = 4
+        case .weeklyQuiz:
+            // WeeklyReviewCard consomme `pendingOpenWeeklyQuiz` à son onAppear.
+            selectedTab = 4
         case .adhkarMorning:
             adhkarSheetForcedTiming = .morning
             showAdhkarFromControl = true
@@ -919,4 +926,29 @@ struct MainView: View {
                 }
             }
         }
+}
+
+// MARK: - Deep links de notification qui changent d'onglet
+
+/// Notif Coran → onglet Rappel (où vit la carte Khatma) ; notifs ʿIlm et
+/// révision hebdo → onglet Apprendre. Les cartes ouvrent ensuite leur sheet
+/// (handlers live ou flags `pending*` consommés à leur onAppear).
+private struct TabSwitchDeepLinks: ViewModifier {
+    @Binding var selectedTab: Int
+
+    func body(content: Content) -> some View {
+        content
+            .onReceive(NotificationCenter.default.publisher(for: .quranReadingTapped)) { _ in
+                NotificationDeepLink.clear()
+                selectedTab = 1
+            }
+            .onReceive(NotificationCenter.default.publisher(for: .ilmReminderTapped)) { _ in
+                NotificationDeepLink.clear()
+                selectedTab = 4
+            }
+            .onReceive(NotificationCenter.default.publisher(for: .weeklyQuizTapped)) { _ in
+                NotificationDeepLink.clear()
+                selectedTab = 4
+            }
+    }
 }
