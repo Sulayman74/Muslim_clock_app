@@ -66,7 +66,7 @@ final class LearnTabUITests: XCTestCase {
         XCTAssertTrue(learnTab.waitForExistence(timeout: 10))
         learnTab.tap()
 
-        let entry = app.buttons["Corriger ma récitation"]
+        let entry = app.buttons["recitation.entry"]
         XCTAssertTrue(entry.waitForExistence(timeout: 5))
         entry.tap()
         sleep(2)
@@ -82,7 +82,7 @@ final class LearnTabUITests: XCTestCase {
         XCTAssertTrue(mic.waitForExistence(timeout: 10))
         snapshot(app, "7-recitation-session")
         mic.tap()
-        dismissInterruptions(app)
+        allowSystemAlerts()
         sleep(4)
         snapshot(app, "8-recitation-ecoute")
 
@@ -104,12 +104,12 @@ final class LearnTabUITests: XCTestCase {
         add(attachment)
     }
 
-    /// Ferme les alertes système (localisation, notifications) et les feuilles
-    /// d'accueil (Quoi de neuf, popup saisonnier) qui masqueraient l'onglet.
+    /// Accepte les alertes système (localisation, notifications, micro, reconnaissance vocale).
     @MainActor
-    private func dismissInterruptions(_ app: XCUIApplication) {
+    private func allowSystemAlerts() {
         let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
-        let allowLabels = ["Autoriser", "Allow", "Autoriser lorsque l’app est active", "Allow While Using App", "Autoriser une fois", "Allow Once"]
+        let allowLabels = ["Autoriser", "Allow", "Autoriser lorsque l’app est active", "Allow While Using App",
+                           "Autoriser une fois", "Allow Once", "OK"]
         for _ in 0..<4 {
             var tapped = false
             for label in allowLabels where springboard.buttons[label].waitForExistence(timeout: 1) {
@@ -119,6 +119,14 @@ final class LearnTabUITests: XCTestCase {
             }
             if !tapped { break }
         }
+    }
+
+    /// Accepte les alertes système puis ferme les feuilles d'accueil (Quoi de neuf,
+    /// popup saisonnier) qui masqueraient la barre d'onglets. À n'appeler que depuis
+    /// l'écran principal : elle touche « Fermer » si la barre est masquée.
+    @MainActor
+    private func dismissInterruptions(_ app: XCUIApplication) {
+        allowSystemAlerts()
         for label in ["Continuer", "Continue", "C'est parti", "Plus tard", "Ignorer", "Fermer"] {
             let button = app.buttons[label]
             if button.waitForExistence(timeout: 1), !app.tabBars.buttons["Apprendre"].isHittable {

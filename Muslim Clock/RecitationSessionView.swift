@@ -210,7 +210,7 @@ struct RecitationSessionView: View {
         }
         .font(.footnote)
         .foregroundStyle(.white.opacity(0.7))
-        .lineLimit(2)
+        .lineLimit(3)
         .frame(maxWidth: .infinity, minHeight: 36, alignment: .leading)
     }
 

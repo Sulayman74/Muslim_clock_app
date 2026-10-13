@@ -90,10 +90,7 @@ final class RecitationTranscriber {
         if await DictationTranscriber.supportedLocale(equivalentTo: locale) != nil {
             return .analyzer
         }
-        if let recognizer = SFSpeechRecognizer(locale: locale), recognizer.supportsOnDeviceRecognition {
-            return .legacy
-        }
-        return nil
+        return legacyIsSupported ? .legacy : nil
     }
 
     // MARK: - Cycle de vie
@@ -122,8 +119,20 @@ final class RecitationTranscriber {
 
         do {
             switch engine {
-            case .analyzer: try await startAnalyzer()
-            case .legacy: try startLegacy()
+            case .analyzer:
+                do {
+                    try await startAnalyzer()
+                } catch {
+                    // Modèle arabe indisponible (téléchargement impossible, simulateur…) :
+                    // repli sur la reconnaissance SFSpeech, elle aussi on-device.
+                    logger.error("SpeechAnalyzer indisponible, repli SFSpeech : \(error.localizedDescription)")
+                    cancelAnalyzer()
+                    guard Self.legacyIsSupported else { throw error }
+                    self.engine = .legacy
+                    try startLegacy()
+                }
+            case .legacy:
+                try startLegacy()
             }
             startedAt = Date()
             state = .listening
@@ -131,8 +140,28 @@ final class RecitationTranscriber {
         } catch {
             logger.error("Démarrage de l'écoute impossible : \(error.localizedDescription)")
             teardownAudio()
-            state = .failed(error.localizedDescription)
+            // Message système brut (souvent en anglais) gardé dans les logs ;
+            // l'utilisateur voit un texte localisé.
+            state = .failed(String(localized: "La reconnaissance vocale n'a pas pu démarrer. Vérifie ta connexion pour le premier téléchargement du modèle arabe, puis réessaie."))
         }
+    }
+
+    private static var legacyIsSupported: Bool {
+        SFSpeechRecognizer(locale: locale)?.supportsOnDeviceRecognition ?? false
+    }
+
+    /// Libère les ressources SpeechAnalyzer d'un démarrage avorté (avant repli).
+    private func cancelAnalyzer() {
+        teardownAudio()
+        inputContinuation?.finish()
+        inputContinuation = nil
+        resultsTask?.cancel()
+        resultsTask = nil
+        analyzer = nil
+        finalizedSegments = []
+        if let recordingURL { try? FileManager.default.removeItem(at: recordingURL) }
+        recordingURL = nil
+        state = .idle
     }
 
     /// Arrête l'écoute et finalise la transcription. Idempotent.

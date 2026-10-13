@@ -55,6 +55,7 @@ struct RecitationEntryCard: View {
             .glassCardSecondary(cornerRadius: CornerRadius.card, tint: ModuleAccent.quran)
         }
         .buttonStyle(.plain)
+        .accessibilityIdentifier("recitation.entry")
         .sheet(isPresented: $showSetup, onDismiss: refresh) {
             RecitationSetupView()
         }
