@@ -26,6 +26,9 @@ struct LearnHubView: View {
                         // VStack eager (pas Lazy) : les deep links reposent sur
                         // le onAppear des cartes, comme dans l'onglet Rappel.
                         VStack(spacing: ZoneSpacing.interZone) {
+                            zone(titleFr: "Récitation", titleAr: "التِّلَاوَة", accent: ModuleAccent.quran) {
+                                RecitationEntryCard()
+                            }
                             zone(titleFr: "Révision de la semaine", titleAr: "مُرَاجَعَةُ الأُسْبُوع", accent: ModuleAccent.ilm) {
                                 WeeklyReviewCard(quiz: quiz)
                             }
