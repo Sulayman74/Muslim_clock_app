@@ -56,6 +56,44 @@ final class LearnTabUITests: XCTestCase {
         snapshot(app, "5-themes")
     }
 
+    @MainActor
+    func testRecitationFlow() throws {
+        let app = XCUIApplication()
+        app.launch()
+        dismissInterruptions(app)
+
+        let learnTab = app.tabBars.buttons["Apprendre"]
+        XCTAssertTrue(learnTab.waitForExistence(timeout: 10))
+        learnTab.tap()
+
+        let entry = app.buttons["Corriger ma récitation"]
+        XCTAssertTrue(entry.waitForExistence(timeout: 5))
+        entry.tap()
+        sleep(2)
+        snapshot(app, "6-recitation-setup")
+
+        // Le bouton est en bas du formulaire (lignes chargées à la demande).
+        let start = app.buttons["recitation.start"]
+        for _ in 0..<4 where !start.exists { app.swipeUp() }
+        XCTAssertTrue(start.waitForExistence(timeout: 5))
+        start.tap()
+
+        let mic = app.buttons["recitation.mic"]
+        XCTAssertTrue(mic.waitForExistence(timeout: 10))
+        snapshot(app, "7-recitation-session")
+        mic.tap()
+        dismissInterruptions(app)
+        sleep(4)
+        snapshot(app, "8-recitation-ecoute")
+
+        // Arrête l'écoute si elle a démarré (le simulateur n'a pas forcément de micro).
+        if mic.exists, mic.label.contains("Terminer") {
+            mic.tap()
+            sleep(3)
+        }
+        snapshot(app, "9-recitation-resultat")
+    }
+
     // MARK: - Helpers
 
     private func snapshot(_ app: XCUIApplication, _ name: String) {

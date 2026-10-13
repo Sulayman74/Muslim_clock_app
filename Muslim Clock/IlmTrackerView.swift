@@ -84,7 +84,7 @@ struct IlmTrackerView: View {
             Text("Apprends les fondements")
                 .font(.title2.bold())
                 .foregroundColor(.white)
-            Text("Les 3 Fondements, les 4 Règles et les 40 Hadiths de Nawawi — en arabe, avec leur traduction, à ton rythme.")
+            Text("Les 3 Fondements, les 4 Règles, les Annulatifs de l'Islam, les 40 Hadiths de Nawawi et le fiqh de la purification et de la prière — en arabe, avec leur traduction, à ton rythme.")
                 .font(.subheadline)
                 .foregroundColor(.white.opacity(0.7))
                 .multilineTextAlignment(.center)
@@ -284,7 +284,7 @@ struct IlmTrackerView: View {
 
     private var tracksSection: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("Les trois textes")
+            Text("Les textes")
                 .font(.caption.bold())
                 .foregroundColor(.white.opacity(0.6))
                 .padding(.leading, 4)

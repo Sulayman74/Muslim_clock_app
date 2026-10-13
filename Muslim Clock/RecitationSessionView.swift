@@ -168,6 +168,7 @@ struct RecitationSessionView: View {
                 .clipShape(RoundedRectangle(cornerRadius: CornerRadius.badge, style: .continuous))
         }
         .disabled(vm.transcriber.state == .preparing || vm.isLoadingReference)
+        .accessibilityIdentifier("recitation.mic")
         .animation(.smooth(duration: 0.2), value: listening)
     }
 

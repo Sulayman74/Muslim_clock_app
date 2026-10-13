@@ -148,6 +148,7 @@ struct RecitationSetupView: View {
                             .frame(maxWidth: .infinity)
                     }
                     .disabled(!engineAvailable || surahs.isEmpty)
+                    .accessibilityIdentifier("recitation.start")
                 } footer: {
                     Text("Un mot non signalé n'est pas forcément juste. Fais valider ta récitation par un enseignant.")
                 }
