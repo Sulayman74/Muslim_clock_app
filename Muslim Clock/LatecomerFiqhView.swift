@@ -115,7 +115,7 @@ struct LatecomerFiqhView: View {
     private func dalilView(_ dalil: LatecomerDalil) -> some View {
         VStack(alignment: .leading, spacing: 6) {
             Text(verbatim: dalil.arabic)
-                .font(.custom("AmiriQuran-Regular", size: 20))
+                .font(ScriptureFont.arabic(ScriptureFont.arabicCompact))
                 .foregroundColor(.white)
                 .multilineTextAlignment(.trailing)
                 .frame(maxWidth: .infinity, alignment: .trailing)
@@ -185,7 +185,7 @@ struct LatecomerFiqhView: View {
                         .foregroundStyle(.white.opacity(0.8))
                     if let arabic = step.arabic {
                         Text(verbatim: arabic)
-                            .font(.custom("AmiriQuran-Regular", size: 19))
+                            .font(ScriptureFont.arabic(ScriptureFont.arabicCompact))
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity, alignment: .trailing)
                             .environment(\.layoutDirection, .rightToLeft)

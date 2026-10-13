@@ -88,7 +88,7 @@ struct IlmProgramCard: View {
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 14)
-        .glassCardSecondary(cornerRadius: 18, tint: .purple, fallback: GlassFallback.warm)
+        .glassCardSecondary(cornerRadius: CornerRadius.card, tint: ModuleAccent.ilm, fallback: GlassFallback.warm)
     }
 
     private func activeState(summary: IlmProgressSummary) -> some View {
@@ -150,7 +150,7 @@ struct IlmProgramCard: View {
         .padding(.horizontal, 16)
         .padding(.vertical, 14)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .glassCardSecondary(cornerRadius: 18, tint: .purple, fallback: GlassFallback.warm)
+        .glassCardSecondary(cornerRadius: CornerRadius.card, tint: ModuleAccent.ilm, fallback: GlassFallback.warm)
     }
 
     // Ton bienveillant : pas de rouge, phrasé positif (même règle que la Khatma).

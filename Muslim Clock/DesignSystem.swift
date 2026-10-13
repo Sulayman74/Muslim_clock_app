@@ -347,6 +347,96 @@ enum ReadingTheme: String, CaseIterable, Identifiable {
 }
 
 /// ═══════════════════════════════════════════════════════════════
+/// TEXTE SACRÉ — un seul « langage scripturaire » (Rappel, ʿIlm, Coran)
+/// ═══════════════════════════════════════════════════════════════
+
+/// Accent par domaine : teal = Coran, purple = ʿIlm. Le hadith appartient au
+/// domaine ʿIlm. Remplace les `.indigo` / `.teal` / `.purple` dispersés.
+enum ModuleAccent {
+    static let quran: Color = .teal
+    static let hadith: Color = .purple
+    static let ilm: Color = .purple
+}
+
+/// Typographie du texte sacré (verset, hadith, matn). Source unique de vérité :
+/// plus aucun `.system(22)` pour de l'arabe scripturaire.
+enum ScriptureFont {
+    static let fontName = "AmiriQuran-Regular"
+    /// Verset, hadith, matn (lecteur, Rappel, leçon).
+    static let arabicBody: CGFloat = 24
+    /// Flash cards, cartes compactes, fiches.
+    static let arabicCompact: CGFloat = 22
+    static let arabicLineSpacing: CGFloat = 12
+    static let translationLineSpacing: CGFloat = 6
+
+    /// Amiri Quran, mise à l'échelle Dynamic Type (`relativeTo:`) — la taille
+    /// donnée est celle du réglage par défaut.
+    static func arabic(_ size: CGFloat = arabicBody) -> Font {
+        .custom(fontName, size: size, relativeTo: .title3)
+    }
+
+    /// Traduction : serif, droite (l'italique est réservé à la ligne de source).
+    static func translation(_ style: Font.TextStyle = .callout) -> Font {
+        .system(style, design: .serif)
+    }
+
+    /// Traduction à taille fixe — uniquement là où la taille est un réglage de
+    /// lecture choisi par l'utilisateur (lecteur Coran).
+    static func translation(size: CGFloat) -> Font {
+        .system(size: size, design: .serif)
+    }
+
+    /// Ligne de source / référence.
+    static func source() -> Font {
+        .system(.footnote, design: .serif).italic()
+    }
+}
+
+/// Fonds d'onglets qui ne sont pas le fond cosmique.
+enum TabBackground {
+    /// Dégradé chaud brun de l'onglet Rappel (cf. `GlassFallback.warm`).
+    static let rappel = LinearGradient(
+        colors: [Color(red: 0.1, green: 0.05, blue: 0.05), Color(red: 0.2, green: 0.1, blue: 0.05)],
+        startPoint: .topLeading,
+        endPoint: .bottomTrailing
+    )
+}
+
+extension View {
+    /// Carte de texte sacré : même surface pour verset, hadith, révision.
+    /// La carte redimensionne comme un bloc (anti-wiggle n°6).
+    func scriptureCard(accent: Color) -> some View {
+        self
+            .padding(16)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .glassCard(cornerRadius: CornerRadius.card, tint: accent)
+            .geometryGroup()
+    }
+}
+
+/// Bascule FR ↔ arabe d'une carte. Largeur minimale fixe (« FR » vs « عربي ») :
+/// aucun déplacement horizontal au toggle (anti-wiggle n°3).
+struct LanguageToggleChip: View {
+    /// `true` quand l'arabe est affiché : le bouton propose alors « FR ».
+    let isArabic: Bool
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            Text(verbatim: isArabic ? "FR" : "عربي")
+                .font(.system(size: 11, weight: .bold, design: .rounded))
+                .frame(minWidth: 42)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 4)
+                .background(.ultraThinMaterial)
+                .clipShape(Capsule())
+                .contentTransition(.opacity)
+        }
+        .accessibilityLabel(isArabic ? Text("Afficher la traduction") : Text("Afficher le texte arabe"))
+    }
+}
+
+/// ═══════════════════════════════════════════════════════════════
 /// CORNER RADIUS CONSTANTS
 /// ═══════════════════════════════════════════════════════════════
 

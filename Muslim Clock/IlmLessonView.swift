@@ -223,8 +223,8 @@ struct IlmLessonView: View {
             // Aligné à droite ; pas d'override layoutDirection : la direction
             // RTL vient du contenu, `.trailing` dans un contexte RTL inverserait.
             Text(verbatim: lesson.arabic)
-                .font(.custom("AmiriQuran-Regular", size: 25))
-                .lineSpacing(14)
+                .font(ScriptureFont.arabic())
+                .lineSpacing(ScriptureFont.arabicLineSpacing)
                 .foregroundColor(theme.textPrimary)
                 .multilineTextAlignment(.trailing)
                 .frame(maxWidth: .infinity, alignment: .trailing)
@@ -234,9 +234,8 @@ struct IlmLessonView: View {
 
             if let source = lesson.source, !source.isEmpty {
                 Text(verbatim: "— \(source)")
-                    .font(.system(size: 13, design: .serif))
-                    .italic()
-                    .foregroundColor(.purple.opacity(0.85))
+                    .font(ScriptureFont.source())
+                    .foregroundColor(ModuleAccent.ilm.opacity(0.85))
                     .padding(.top, 6)
             }
 
@@ -250,8 +249,8 @@ struct IlmLessonView: View {
                         shortOrnament
                             .padding(.vertical, 20)
                         Text(verbatim: lesson.text)
-                            .font(.system(size: 16, design: .serif))
-                            .lineSpacing(7)
+                            .font(ScriptureFont.translation())
+                            .lineSpacing(ScriptureFont.translationLineSpacing)
                             .foregroundColor(theme.textSecondary)
                             .fixedSize(horizontal: false, vertical: true)
                             .blur(radius: isMemorizing && !isRevealed ? 7 : 0)
@@ -465,10 +464,10 @@ struct IlmLessonView: View {
         // plancher pour que la capsule ne « pompe » pas (anti-wiggle).
         .frame(minHeight: 88)
         .background(.ultraThinMaterial)
-        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: CornerRadius.card, style: .continuous))
         .overlay(
-            RoundedRectangle(cornerRadius: 18, style: .continuous)
-                .stroke(Color.purple.opacity(0.25), lineWidth: 1)
+            RoundedRectangle(cornerRadius: CornerRadius.card, style: .continuous)
+                .stroke(ModuleAccent.ilm.opacity(0.25), lineWidth: 1)
         )
         // La capsule respire comme un bloc (verre + enfants synchrones).
         .geometryGroup()
@@ -504,9 +503,9 @@ struct IlmLessonView: View {
             }
             .frame(maxWidth: .infinity)
             .padding(.vertical, 14)
-            .background(isCompleted ? AnyShapeStyle(.green.opacity(0.55)) : AnyShapeStyle(.purple.gradient))
+            .background(isCompleted ? AnyShapeStyle(.green.opacity(0.55)) : AnyShapeStyle(ModuleAccent.ilm.gradient))
             .foregroundColor(.white)
-            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+            .clipShape(RoundedRectangle(cornerRadius: CornerRadius.badge, style: .continuous))
         }
     }
 

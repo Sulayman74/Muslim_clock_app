@@ -514,7 +514,7 @@ struct QuranChapterDetailView: View {
     private var bismillahCard: some View {
         VStack(spacing: 6) {
             Text(QuranConstants.bismillah)
-                .font(.custom("AmiriQuran-Regular", size: 26))
+                .font(ScriptureFont.arabic(26))
                 .foregroundColor(readingTheme.textPrimary)
                 .environment(\.layoutDirection, .rightToLeft)
                 .lineSpacing(8)
@@ -550,7 +550,7 @@ struct QuranChapterDetailView: View {
         VStack(alignment: .center, spacing: 8) {
             // Bloc arabe + marker ayah
             Text(arabicTextWithMarker(ayah: ayah))
-                .font(.custom("AmiriQuran-Regular", size: 24))
+                .font(ScriptureFont.arabic(ScriptureFont.arabicBody))
                 .multilineTextAlignment(.center)
                 .lineSpacing(12)
                 .environment(\.layoutDirection, .rightToLeft)
@@ -570,7 +570,7 @@ struct QuranChapterDetailView: View {
                 Divider()
                     .background(readingTheme.divider)
                 Text(translation)
-                    .font(.system(size: 13, weight: .regular, design: .serif))
+                    .font(ScriptureFont.translation(.footnote))
                     .foregroundStyle(readingTheme.textSecondary)
                     .multilineTextAlignment(.leading)
                     .fixedSize(horizontal: false, vertical: true)

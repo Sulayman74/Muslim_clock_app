@@ -122,9 +122,9 @@ struct IlmTrackerView: View {
                         }
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 14)
-                        .background(.purple.gradient)
+                        .background(ModuleAccent.ilm.gradient)
                         .foregroundColor(.white)
-                        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                        .clipShape(RoundedRectangle(cornerRadius: CornerRadius.badge, style: .continuous))
                     }
                     .sensoryFeedback(.impact(weight: .light), trigger: lessonRoute != nil)
                 } else {
@@ -201,8 +201,7 @@ struct IlmTrackerView: View {
         }
         .frame(maxWidth: .infinity, minHeight: 60)
         .padding(.vertical, 10)
-        .background(.ultraThinMaterial)
-        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+        .glassCardSecondary(cornerRadius: CornerRadius.badge, tint: ModuleAccent.ilm)
     }
 
     private func rhythmCard(track: IlmTrack, summary: IlmProgressSummary) -> some View {
@@ -225,8 +224,7 @@ struct IlmTrackerView: View {
         }
         .padding(14)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(.ultraThinMaterial)
-        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+        .glassCardSecondary(cornerRadius: CornerRadius.badge, tint: ModuleAccent.ilm)
     }
 
     // Ton bienveillant : pas de rouge, phrasé positif (même règle que la Khatma).
@@ -258,13 +256,8 @@ struct IlmTrackerView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.vertical, 12)
             .padding(.horizontal, 14)
-            .background(.ultraThinMaterial)
             .foregroundColor(.white)
-            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-            .overlay(
-                RoundedRectangle(cornerRadius: 16, style: .continuous)
-                    .stroke(Color.purple.opacity(0.3), lineWidth: 1)
-            )
+            .glassCardSecondary(cornerRadius: CornerRadius.card, tint: ModuleAccent.ilm)
         }
         .sensoryFeedback(.impact(weight: .light), trigger: showReview)
     }
@@ -284,12 +277,7 @@ struct IlmTrackerView: View {
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 18)
-        .background(.ultraThinMaterial)
-        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-        .overlay(
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .stroke(Color.green.opacity(0.3), lineWidth: 1)
-        )
+        .glassCardSecondary(cornerRadius: CornerRadius.card, tint: .green)
     }
 
     // MARK: - Liste des parcours
@@ -366,11 +354,10 @@ struct IlmTrackerView: View {
             }
             .padding(.vertical, 12)
             .padding(.horizontal, 14)
-            .background(.ultraThinMaterial)
-            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+            .glassCardSecondary(cornerRadius: CornerRadius.badge, tint: isActive ? ModuleAccent.ilm : nil)
             .overlay(
-                RoundedRectangle(cornerRadius: 14, style: .continuous)
-                    .stroke(isActive ? Color.purple.opacity(0.35) : Color.white.opacity(0.06), lineWidth: 1)
+                RoundedRectangle(cornerRadius: CornerRadius.badge, style: .continuous)
+                    .stroke(isActive ? ModuleAccent.ilm.opacity(0.35) : Color.white.opacity(0.06), lineWidth: 1)
             )
         }
         .buttonStyle(.plain)

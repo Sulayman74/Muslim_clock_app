@@ -470,7 +470,7 @@ struct MainView: View {
                 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
                 NavigationStack {
                     ZStack {
-                        LinearGradient(colors: [Color(red: 0.1, green: 0.05, blue: 0.05), Color(red: 0.2, green: 0.1, blue: 0.05)], startPoint: .topLeading, endPoint: .bottomTrailing)
+                        TabBackground.rappel
                             .ignoresSafeArea()
                         
                         ScrollView(.vertical, showsIndicators: false) {

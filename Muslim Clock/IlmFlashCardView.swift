@@ -21,10 +21,15 @@ struct IlmFlashCardView: View {
     @State private var knownCount = 0
     @State private var sessionDone = false
 
+    /// Préférence de lecture PARTAGÉE avec le lecteur Coran et la leçon : la
+    /// révision est une lecture du matn, elle suit le même papier.
+    @AppStorage("quranReadingTheme") private var readingTheme: ReadingTheme = .dark
+    private var theme: ReadingTheme { readingTheme }
+
     var body: some View {
         NavigationStack {
             ZStack {
-                CosmicBackground(season: IslamicSeasonInfo.current())
+                theme.background
                     .ignoresSafeArea()
 
                 if sessionDone || queue.isEmpty {
@@ -43,13 +48,13 @@ struct IlmFlashCardView: View {
                     if !sessionDone && !queue.isEmpty {
                         Text("\(index + 1)/\(queue.count)")
                             .font(.caption.bold())
-                            .foregroundColor(.white.opacity(0.6))
+                            .foregroundColor(theme.textTertiary)
                             .monospacedDigit()
                     }
                 }
             }
         }
-        .preferredColorScheme(.dark)
+        .preferredColorScheme(theme.colorScheme)
         .sensoryFeedback(.success, trigger: sessionDone)
         .onAppear {
             queue = vm.reviewQueue
@@ -66,11 +71,11 @@ struct IlmFlashCardView: View {
                     // En-tête : parcours d'origine + titre de la leçon
                     Text(verbatim: card.trackTitle)
                         .font(.system(size: 10, weight: .bold))
-                        .foregroundColor(.purple)
-                        .chipStyle(color: .purple)
+                        .foregroundColor(ModuleAccent.ilm)
+                        .chipStyle(color: ModuleAccent.ilm)
                     Text(verbatim: card.lesson.title)
                         .font(.headline)
-                        .foregroundColor(.white)
+                        .foregroundColor(theme.textPrimary)
                         .multilineTextAlignment(.center)
 
                     // Amorce (recto) ou matn complet (verso)
@@ -78,35 +83,37 @@ struct IlmFlashCardView: View {
                         // Aligné à droite — même règle que IlmLessonView (pas d'override
                         // layoutDirection, la direction RTL vient du contenu).
                         Text(verbatim: isRevealed ? card.lesson.arabic : Self.opening(of: card.lesson.arabic))
-                            .font(.system(size: 22, weight: .medium))
-                            .lineSpacing(11)
-                            .foregroundColor(.white)
+                            .font(ScriptureFont.arabic(ScriptureFont.arabicCompact))
+                            .lineSpacing(ScriptureFont.arabicLineSpacing)
+                            .foregroundColor(theme.textPrimary)
                             .multilineTextAlignment(.trailing)
                             .frame(maxWidth: .infinity, alignment: .trailing)
                             .fixedSize(horizontal: false, vertical: true)
 
                         if isRevealed {
-                            Divider().overlay(Color.white.opacity(0.15))
+                            Divider().overlay(theme.divider)
                             Text(verbatim: card.lesson.text)
-                                .font(.system(size: 13))
-                                .lineSpacing(4)
-                                .foregroundColor(.white.opacity(0.75))
+                                .font(ScriptureFont.translation(.subheadline))
+                                .lineSpacing(ScriptureFont.translationLineSpacing)
+                                .foregroundColor(theme.textSecondary)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                         }
                     }
                     .padding(18)
                     .frame(maxWidth: .infinity)
-                    .background(.ultraThinMaterial)
+                    .background(theme.cardBackground)
                     .clipShape(RoundedRectangle(cornerRadius: CornerRadius.card, style: .continuous))
                     .overlay(
                         RoundedRectangle(cornerRadius: CornerRadius.card, style: .continuous)
-                            .stroke(Color.purple.opacity(0.25), lineWidth: 1)
+                            .stroke(ModuleAccent.ilm.opacity(0.3), lineWidth: 1)
                     )
+                    // Révélation : la carte grandit comme un bloc (anti-wiggle n°6).
+                    .geometryGroup()
 
                     if !isRevealed {
                         Text("Récite la suite de mémoire, puis révèle la réponse.")
                             .font(.caption)
-                            .foregroundColor(.white.opacity(0.55))
+                            .foregroundColor(theme.textTertiary)
                     }
                 }
                 .padding(.horizontal, 16)
@@ -129,9 +136,9 @@ struct IlmFlashCardView: View {
                             .bold()
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 14)
-                            .background(.purple.gradient)
+                            .background(ModuleAccent.ilm.gradient)
                             .foregroundColor(.white)
-                            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                            .clipShape(RoundedRectangle(cornerRadius: CornerRadius.badge, style: .continuous))
                     }
                 }
             }
@@ -153,10 +160,10 @@ struct IlmFlashCardView: View {
             .frame(maxWidth: .infinity)
             .padding(.vertical, 12)
             .background(color.opacity(0.22))
-            .foregroundColor(.white)
-            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+            .foregroundColor(theme.textPrimary)
+            .clipShape(RoundedRectangle(cornerRadius: CornerRadius.badge, style: .continuous))
             .overlay(
-                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                RoundedRectangle(cornerRadius: CornerRadius.badge, style: .continuous)
                     .stroke(color.opacity(0.4), lineWidth: 1)
             )
         }
@@ -186,24 +193,24 @@ struct IlmFlashCardView: View {
         VStack(spacing: 14) {
             Image(systemName: "checkmark.seal.fill")
                 .font(.system(size: 56))
-                .foregroundStyle(.purple)
+                .foregroundStyle(ModuleAccent.ilm)
             Text(verbatim: "ما شاء الله")
-                .font(.system(size: 26, weight: .bold))
-                .foregroundColor(.white)
+                .font(ScriptureFont.arabic(26))
+                .foregroundColor(theme.textPrimary)
             Text(queue.isEmpty
                  ? "Aucune carte à réviser aujourd'hui"
                  : "Révision terminée — \(knownCount)/\(queue.count) de mémoire")
                 .font(.system(size: 15, weight: .semibold, design: .rounded))
-                .foregroundColor(.white.opacity(0.85))
+                .foregroundColor(theme.textSecondary)
             Text("La régularité, même petite, est la clé de la rétention.")
                 .font(.caption)
-                .foregroundColor(.white.opacity(0.55))
+                .foregroundColor(theme.textTertiary)
             Button { dismiss() } label: {
                 Text("Fermer")
                     .bold()
                     .padding(.horizontal, 30)
                     .padding(.vertical, 12)
-                    .background(.purple)
+                    .background(ModuleAccent.ilm)
                     .clipShape(Capsule())
                     .foregroundColor(.white)
             }

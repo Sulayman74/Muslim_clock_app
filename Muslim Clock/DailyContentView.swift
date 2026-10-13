@@ -133,7 +133,7 @@ struct DailyContentView: View {
                             }
                         }
                         .frame(width: 44, height: 44) // HIG : cible tactile ≥ 44pt
-                        .background(ayahPlayer.isPlaying ? Color.orange.gradient : Color.indigo.gradient)
+                        .background(ayahPlayer.isPlaying ? Color.orange.gradient : ModuleAccent.quran.gradient)
                         .clipShape(Circle())
                         .foregroundColor(.white)
                         .contentShape(Rectangle())
@@ -169,43 +169,34 @@ struct DailyContentView: View {
                     // TOGGLE LANGUE
                     // Largeur minimale fixe pour éviter le wiggle X causé par la
                     // différence de longueur entre "FR" (2 chars) et "عربي" (4 chars).
-                    Button {
+                    LanguageToggleChip(isArabic: showAyahArabic) {
                         showAyahArabic.toggle()
-                    } label: {
-                        Text(verbatim: showAyahArabic ? "FR" : "عربي")
-                            .font(.system(size: 11, weight: .bold, design: .rounded))
-                            .frame(minWidth: 38)
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 4)
-                            .background(.ultraThinMaterial)
-                            .clipShape(Capsule())
-                            .contentTransition(.opacity)
                     }
 
                     // PARTAGE
                     ShareLink(item: "\(service.dailyAyah)\n\n\(service.dailyAyahArabic)\n\n— \(service.dailyAyahSource)") {
                         Image(systemName: "square.and.arrow.up")
-                            .font(.system(size: 14, weight: .semibold))
+                            .font(.system(size: 16, weight: .semibold))
                     }
                 }
-                .foregroundColor(.indigo)
+                .foregroundColor(ModuleAccent.quran)
                 
                 // Anti-wiggle au toggle FR ↔ AR : ZStack des 2 langues superposées,
                 // animation seulement sur l'opacité. La hauteur du ZStack = max des 2
                 // textes intrinsèques → aucun saut vertical.
                 ZStack(alignment: .topLeading) {
                     Text(service.dailyAyahArabic)
-                        .font(.system(size: 22, weight: .regular))
+                        .font(ScriptureFont.arabic())
                         .multilineTextAlignment(.center)
                         .frame(maxWidth: .infinity)
-                        .lineSpacing(10)
+                        .lineSpacing(ScriptureFont.arabicLineSpacing)
                         .fixedSize(horizontal: false, vertical: true)
                         .contentTransition(.opacity)
                         .opacity(showAyahArabic ? 1 : 0)
 
                     Text(verbatim: service.dailyAyah)
-                        .font(.system(.body, design: .serif))
-                        .italic()
+                        .font(ScriptureFont.translation())
+                        .lineSpacing(ScriptureFont.translationLineSpacing)
                         .multilineTextAlignment(.leading)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .fixedSize(horizontal: false, vertical: true)
@@ -218,15 +209,13 @@ struct DailyContentView: View {
                 .animation(.smooth(duration: 0.3), value: showAyahArabic)
 
                 Text(verbatim: "— \(service.dailyAyahSource)")
-                    .font(.footnote)
-                    .foregroundColor(.secondary)
+                    .font(ScriptureFont.source())
+                    .foregroundStyle(ModuleAccent.quran.opacity(0.85))
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
-        .padding()
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .glassCard(tint: .indigo)
-        // La carte resize comme un bloc rigide (enfants + verre synchrones).
-        .geometryGroup()
+        // Surface scripturaire partagée (Rappel / ʿIlm / Coran) — la carte
+        // resize comme un bloc rigide (enfants + verre synchrones).
+        .scriptureCard(accent: ModuleAccent.quran)
         // LE fix du wiggle : au changement de VERSET (contenu async), la carte
         // changeait de hauteur sans aucune animation — snap sec dont l'amplitude
         // dépendait du verset (longueur, Basmala, harakât hautes). Le toggle
@@ -249,17 +238,8 @@ struct DailyContentView: View {
                     Spacer()
                     
                     // Largeur minimale fixe — cf. carte Verset (anti-wiggle X).
-                    Button {
+                    LanguageToggleChip(isArabic: showHadithArabic) {
                         showHadithArabic.toggle()
-                    } label: {
-                        Text(verbatim: showHadithArabic ? "FR" : "عربي")
-                            .font(.system(size: 12, weight: .bold, design: .rounded))
-                            .frame(minWidth: 42)
-                            .padding(.horizontal, 10)
-                            .padding(.vertical, 4)
-                            .background(.ultraThinMaterial)
-                            .clipShape(Capsule())
-                            .contentTransition(.opacity)
                     }
                     
                     ShareLink(item: "\(service.dailyHadith)\n\n\(service.dailyHadithArabic)\n\n— \(service.dailyHadithSource)") {
@@ -267,22 +247,22 @@ struct DailyContentView: View {
                             .font(.system(size: 16, weight: .semibold))
                     }
                 }
-                .foregroundColor(.teal)
+                .foregroundColor(ModuleAccent.hadith)
                 
                 // Anti-wiggle au toggle FR ↔ AR (cf. carte Verset ci-dessus)
                 ZStack(alignment: .topLeading) {
                     Text(service.dailyHadithArabic)
-                        .font(.system(size: 22, weight: .regular))
+                        .font(ScriptureFont.arabic())
                         .multilineTextAlignment(.center)
                         .frame(maxWidth: .infinity)
-                        .lineSpacing(10)
+                        .lineSpacing(ScriptureFont.arabicLineSpacing)
                         .fixedSize(horizontal: false, vertical: true)
                         .contentTransition(.opacity)
                         .opacity(showHadithArabic ? 1 : 0)
 
                     Text(verbatim: service.dailyHadith)
-                        .font(.system(.body, design: .serif))
-                        .italic()
+                        .font(ScriptureFont.translation())
+                        .lineSpacing(ScriptureFont.translationLineSpacing)
                         .multilineTextAlignment(.leading)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .fixedSize(horizontal: false, vertical: true)
@@ -295,8 +275,8 @@ struct DailyContentView: View {
 
                 HStack(spacing: 6) {
                     Text(verbatim: "— \(service.dailyHadithSource)")
-                        .font(.footnote)
-                        .foregroundColor(.secondary)
+                        .font(ScriptureFont.source())
+                        .foregroundStyle(ModuleAccent.hadith.opacity(0.85))
                         .lineLimit(2)
                         .minimumScaleFactor(0.85)
 
@@ -309,10 +289,7 @@ struct DailyContentView: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
-        .padding()
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .glassCard(tint: .teal)
-        .geometryGroup()
+        .scriptureCard(accent: ModuleAccent.hadith)
         // Anime le swap skeleton → hadith réel (chargement initial et
         // pull-to-refresh) — même fix que la carte Verset.
         .animation(.smooth(duration: 0.35), value: service.dailyHadithArabic)

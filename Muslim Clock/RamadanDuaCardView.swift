@@ -145,7 +145,7 @@ struct RamadanDuaCardView: View {
 
             // Arabe — toujours affiché, centré
             Text(verbatim: dua.arabic)
-                .font(.custom("AmiriQuran-Regular", size: 22))
+                .font(ScriptureFont.arabic(ScriptureFont.arabicCompact))
                 .lineSpacing(8)
                 .multilineTextAlignment(.center)
                 .frame(maxWidth: .infinity)
