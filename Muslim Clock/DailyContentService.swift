@@ -1,6 +1,7 @@
 import Foundation
 import SwiftUI
 import Combine
+import WidgetKit
 
 // MARK: - Modèles API Coran
 struct QuranAPIResponse: Codable {
@@ -107,18 +108,21 @@ class DailyContentService: ObservableObject {
     /// et les envoie à la Watch via WatchConnectivity.
     private func syncToWatch() {
         let payload: [String: String] = [
-            "daily_ayah_fr":     dailyAyah,
-            "daily_ayah_ar":     dailyAyahArabic,
-            "daily_ayah_source": dailyAyahSource,
-            "daily_hadith_fr":     dailyHadith,
-            "daily_hadith_ar":     dailyHadithArabic,
-            "daily_hadith_source": dailyHadithSource,
+            StorageKeys.dailyAyahFr:     dailyAyah,
+            StorageKeys.dailyAyahAr:     dailyAyahArabic,
+            StorageKeys.dailyAyahSource: dailyAyahSource,
+            StorageKeys.dailyHadithFr:     dailyHadith,
+            StorageKeys.dailyHadithAr:     dailyHadithArabic,
+            StorageKeys.dailyHadithSource: dailyHadithSource,
         ]
 
         let shared = UserDefaults(suiteName: AppGroup.identifier)
         for (k, v) in payload { shared?.set(v, forKey: k) }
 
         WatchSessionManager.shared.sendSettings(payload)
+
+        // Le widget « Verset du jour » lit ces clés : le prévenir du nouveau contenu.
+        WidgetCenter.shared.reloadTimelines(ofKind: StorageKeys.dailyVerseWidgetKind)
     }
     
     // MARK: - Coran aléatoire avec audio

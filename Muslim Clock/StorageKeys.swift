@@ -55,6 +55,19 @@ nonisolated enum StorageKeys {
     static let savedLatitude = "saved_latitude"
     static let savedLongitude = "saved_longitude"
 
+    // MARK: - Contenu quotidien (App Group) — verset & hadith du jour
+
+    static let dailyAyahFr = "daily_ayah_fr"
+    static let dailyAyahAr = "daily_ayah_ar"
+    static let dailyAyahSource = "daily_ayah_source"
+    static let dailyHadithFr = "daily_hadith_fr"
+    static let dailyHadithAr = "daily_hadith_ar"
+    static let dailyHadithSource = "daily_hadith_source"
+
+    /// `kind` du widget « Verset du jour » — partagé pour que l'app puisse
+    /// cibler son rechargement (`WidgetCenter.reloadTimelines(ofKind:)`).
+    static let dailyVerseWidgetKind = "DailyVerseWidget"
+
     // MARK: - Miroir des réglages pour Watch/Widget (préfixe « w_ »)
 
     static let wCalculationMethod = "w_calculationMethod"

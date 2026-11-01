@@ -148,12 +148,12 @@ class WatchDailyContentViewModel: ObservableObject {
     }
 
     func refresh() {
-        ayahFR     = defaults?.string(forKey: "daily_ayah_fr") ?? ""
-        ayahAR     = defaults?.string(forKey: "daily_ayah_ar") ?? ""
-        ayahSource = defaults?.string(forKey: "daily_ayah_source") ?? ""
+        ayahFR     = defaults?.string(forKey: StorageKeys.dailyAyahFr) ?? ""
+        ayahAR     = defaults?.string(forKey: StorageKeys.dailyAyahAr) ?? ""
+        ayahSource = defaults?.string(forKey: StorageKeys.dailyAyahSource) ?? ""
 
-        hadithFR     = defaults?.string(forKey: "daily_hadith_fr") ?? ""
-        hadithAR     = defaults?.string(forKey: "daily_hadith_ar") ?? ""
-        hadithSource = defaults?.string(forKey: "daily_hadith_source") ?? ""
+        hadithFR     = defaults?.string(forKey: StorageKeys.dailyHadithFr) ?? ""
+        hadithAR     = defaults?.string(forKey: StorageKeys.dailyHadithAr) ?? ""
+        hadithSource = defaults?.string(forKey: StorageKeys.dailyHadithSource) ?? ""
     }
 }
