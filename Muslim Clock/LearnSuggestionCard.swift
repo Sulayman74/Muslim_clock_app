@@ -137,7 +137,8 @@ struct LearnSuggestionCard: View {
         case .reviewCards:
             showFlashCards = true
         case .weeklyQuiz:
-            quizRoute = QuizSessionRoute(session: QuizSession(mode: .weekly, questions: quiz.weeklyQuestions()))
+            // Ordre mélangé à chaque révision (plan de la semaine figé, cf. WeeklyReviewCard).
+            quizRoute = QuizSessionRoute(session: QuizSession(mode: .weekly, questions: quiz.weeklyQuestions().shuffled()))
         case .khatmaReading:
             showKhatma = true
         case .lessonOfDay:

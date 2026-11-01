@@ -45,7 +45,9 @@ struct WeeklyReviewCard: View {
 
     private func startWeekly() {
         guard quiz.isAvailable else { return }
-        activeSession = QuizSessionRoute(session: QuizSession(mode: .weekly, questions: quiz.weeklyQuestions()))
+        // Ordre mélangé à chaque révision : la semaine garde les mêmes questions
+        // (plan figé dans weeklyQuestions()), seul l'ordre d'affichage change.
+        activeSession = QuizSessionRoute(session: QuizSession(mode: .weekly, questions: quiz.weeklyQuestions().shuffled()))
     }
 
     // MARK: - Contenu
