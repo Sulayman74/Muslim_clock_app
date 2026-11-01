@@ -14,6 +14,8 @@ struct RecitationSessionView: View {
     @Environment(\.openURL) private var openURL
     @State private var vm: RecitationSessionViewModel
     let hideText: Bool
+    /// Couleurs tajwid sur le texte de référence (affichage ; jamais évalué).
+    @AppStorage("recitationTajweedColors") private var tajweedColors = true
 
     init(reference: RecitationReference, hideText: Bool) {
         _vm = State(initialValue: RecitationSessionViewModel(reference: reference))
@@ -21,6 +23,12 @@ struct RecitationSessionView: View {
     }
 
     private var languageCode: String { locale.language.languageCode?.identifier ?? "fr" }
+
+    /// Pas de changement de sourate pendant l'écoute, l'analyse ou un chargement.
+    private var isNavigationLocked: Bool {
+        vm.transcriber.state == .listening || vm.transcriber.state == .preparing
+            || vm.isCalibrating || vm.isLoadingReference
+    }
 
     var body: some View {
         ZStack {
@@ -49,13 +57,38 @@ struct RecitationSessionView: View {
         }
         .navigationTitle(Text(verbatim: vm.reference.riwaya.label))
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            // Sourate précédente / suivante — uniquement s'il en existe une.
+            ToolbarItemGroup(placement: .topBarTrailing) {
+                if vm.hasPreviousSurah {
+                    Button {
+                        Task { await vm.moveToSurah(vm.reference.surah - 1) }
+                    } label: {
+                        Label("Sourate précédente", systemImage: "chevron.backward")
+                    }
+                    .disabled(isNavigationLocked)
+                }
+                if vm.hasNextSurah {
+                    Button {
+                        Task { await vm.moveToSurah(vm.reference.surah + 1) }
+                    } label: {
+                        Label("Sourate suivante", systemImage: "chevron.forward")
+                    }
+                    .disabled(isNavigationLocked)
+                }
+            }
+        }
         .onChange(of: vm.transcriber.state) { _, state in
             if state == .finished {
-                vm.analyzeIfFinished()
-                Task { await vm.rephraseAdvice(languageCode: languageCode) }
+                Task {
+                    await vm.analyzeIfFinished()
+                    await vm.rephraseAdvice(languageCode: languageCode)
+                }
             }
         }
         .onDisappear { vm.cancel() }
+        // Couleurs tajwid du passage (rechargées si la sourate ou la plage change).
+        .task(id: "\(vm.reference.surah):\(vm.reference.ayahRange)") { await vm.loadTajweed() }
         .sensoryFeedback(.start, trigger: vm.transcriber.state == .listening)
         .sensoryFeedback(.success, trigger: vm.hasResult)
     }
@@ -63,12 +96,26 @@ struct RecitationSessionView: View {
     // MARK: - En-tête
 
     private var header: some View {
-        HStack {
+        HStack(spacing: 10) {
             Text(verbatim: rangeLabel)
                 .font(.caption.bold())
                 .foregroundStyle(ModuleAccent.quran)
                 .chipStyle(color: ModuleAccent.quran)
             Spacer()
+            if !vm.tajweed.isEmpty {
+                Button {
+                    withAnimation(.smooth(duration: 0.25)) { tajweedColors.toggle() }
+                } label: {
+                    Image(systemName: tajweedColors ? "paintpalette.fill" : "paintpalette")
+                        .font(.system(size: 15, weight: .semibold))
+                        .foregroundStyle(tajweedColors ? ModuleAccent.quran : .white.opacity(0.5))
+                        .frame(width: 32, height: 32)
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel(Text("Couleurs tajwid"))
+                .accessibilityValue(Text(tajweedColors ? "Activées" : "Désactivées"))
+            }
             Text(verbatim: vm.reference.riwaya.labelArabic)
                 .font(ScriptureFont.arabic(16))
                 .foregroundStyle(.white.opacity(0.55))
@@ -86,30 +133,81 @@ struct RecitationSessionView: View {
 
     private var referenceText: some View {
         VStack(alignment: .trailing, spacing: 14) {
-            ForEach(vm.reference.ayahRange.map { $0 }, id: \.self) { ayah in
-                Text(verbatim: "\(vm.reference.ayahTexts[ayah] ?? "") ﴿\(ayah)﴾")
-                    .font(ScriptureFont.arabic())
-                    .lineSpacing(ScriptureFont.arabicLineSpacing)
-                    .foregroundStyle(.white)
-                    .multilineTextAlignment(.trailing)
-                    .frame(maxWidth: .infinity, alignment: .trailing)
-                    .fixedSize(horizontal: false, vertical: true)
+            VStack(alignment: .trailing, spacing: 14) {
+                ForEach(vm.reference.ayahRange.map { $0 }, id: \.self) { ayah in
+                    Text(referenceAyah(ayah))
+                        .font(ScriptureFont.arabic())
+                        .lineSpacing(ScriptureFont.arabicLineSpacing)
+                        .multilineTextAlignment(.trailing)
+                        .frame(maxWidth: .infinity, alignment: .trailing)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+            // Voile de mémorisation : flou à hauteur constante (aucun saut au dévoilement).
+            .blur(radius: hideText && vm.transcriber.state != .finished ? 8 : 0)
+            .overlay {
+                if hideText {
+                    Label("Récite de mémoire", systemImage: "eye.slash")
+                        .font(.caption.bold())
+                        .foregroundStyle(.white.opacity(0.8))
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 6)
+                        .background(.ultraThinMaterial, in: Capsule())
+                }
+            }
+
+            if showsTajweed {
+                tajweedLegend
             }
         }
-        // Voile de mémorisation : flou à hauteur constante (aucun saut au dévoilement).
-        .blur(radius: hideText && vm.transcriber.state != .finished ? 8 : 0)
         .scriptureCard(accent: ModuleAccent.quran)
-        .overlay {
-            if hideText {
-                Label("Récite de mémoire", systemImage: "eye.slash")
-                    .font(.caption.bold())
-                    .foregroundStyle(.white.opacity(0.8))
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 6)
-                    .background(.ultraThinMaterial, in: Capsule())
-            }
-        }
+        .animation(.smooth(duration: 0.25), value: showsTajweed)
         .accessibilityLabel(hideText ? Text("Texte masqué pour la mémorisation") : Text(verbatim: vm.reference.ayahTexts.values.joined(separator: " ")))
+    }
+
+    private var showsTajweed: Bool { tajweedColors && !vm.tajweed.isEmpty }
+
+    /// Texte du verset : coloré par règle tajwid quand l'édition annotée est
+    /// disponible et activée, sinon le texte de référence en blanc.
+    private func referenceAyah(_ ayah: Int) -> AttributedString {
+        var result = AttributedString()
+        if showsTajweed, let runs = vm.tajweed[ayah] {
+            for run in runs {
+                var piece = AttributedString(run.text)
+                piece.foregroundColor = run.rule?.family.color ?? .white
+                result += piece
+            }
+        } else {
+            var piece = AttributedString(vm.reference.ayahTexts[ayah] ?? "")
+            piece.foregroundColor = .white
+            result = piece
+        }
+        var marker = AttributedString(" ﴿\(ayah)﴾")
+        marker.foregroundColor = .white.opacity(0.5)
+        result += marker
+        return result
+    }
+
+    /// Légende limitée aux règles présentes dans le passage — informatif,
+    /// le tajwid n'est pas évalué (cf. disclaimer).
+    private var tajweedLegend: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack(alignment: .firstTextBaseline, spacing: 10) {
+                ForEach(vm.tajweedFamilies, id: \.self) { family in
+                    HStack(spacing: 4) {
+                        Circle().fill(family.color).frame(width: 7, height: 7)
+                        Text(verbatim: family.label)
+                    }
+                }
+            }
+            .font(.caption2)
+            .foregroundStyle(.white.opacity(0.65))
+            .frame(maxWidth: .infinity, alignment: .leading)
+            Text("Couleurs du mushaf tajwid, à titre indicatif.")
+                .font(.caption2)
+                .foregroundStyle(.white.opacity(0.45))
+        }
+        .accessibilityElement(children: .combine)
     }
 
     // MARK: - Barre de contrôle
@@ -204,6 +302,8 @@ struct RecitationSessionView: View {
                 Text("Reconnaissance arabe indisponible sur cet appareil.")
             case .failed(let message):
                 Text(verbatim: message)
+            case .finished where vm.isCalibrating:
+                Label("Analyse de ta récitation…", systemImage: "waveform.badge.magnifyingglass")
             case .idle, .finished:
                 Text(vm.hasResult ? "Résultat enregistré dans ta progression." : "Appuie sur Réciter puis commence après la basmala.")
             }
@@ -215,10 +315,18 @@ struct RecitationSessionView: View {
     }
 
     private var disclaimer: some View {
-        Label("Un mot non signalé n'est pas forcément juste. Fais valider ta récitation par un enseignant. Le tajwid n'est pas évalué.", systemImage: "info.circle")
-            .font(.caption)
-            .foregroundStyle(.white.opacity(0.55))
-            .fixedSize(horizontal: false, vertical: true)
+        VStack(alignment: .leading, spacing: 6) {
+            // La reconnaissance décroche sur le tartil chanté (madd tenus,
+            // mélodie) : une voix de lecture posée donne de meilleurs résultats.
+            Label("Astuce : récite en voix de lecture posée, sans psalmodie — la reconnaissance comprend mieux.", systemImage: "lightbulb")
+                .font(.caption)
+                .foregroundStyle(.white.opacity(0.55))
+                .fixedSize(horizontal: false, vertical: true)
+            Label("Un mot non signalé n'est pas forcément juste. Fais valider ta récitation par un enseignant. Le tajwid n'est pas évalué.", systemImage: "info.circle")
+                .font(.caption)
+                .foregroundStyle(.white.opacity(0.55))
+                .fixedSize(horizontal: false, vertical: true)
+        }
     }
 
     static func clock(_ seconds: TimeInterval) -> String {
@@ -239,9 +347,48 @@ struct RecitationResultView: View {
             scoreCard
             coloredText
             if !alignment.isLowConfidence { legend }
+            heardTranscript
             adviceCard
             listenRow
         }
+    }
+
+    /// Ce que le moteur a réellement entendu, replié par défaut : permet de
+    /// distinguer une erreur de récitation d'une erreur de reconnaissance
+    /// (« je l'ai bien dit, c'est le téléphone qui a mal entendu »).
+    private var heardTranscript: some View {
+        DisclosureGroup {
+            Text(verbatim: heardText)
+                .font(ScriptureFont.arabic(ScriptureFont.arabicCompact))
+                .lineSpacing(ScriptureFont.arabicLineSpacing)
+                .foregroundStyle(.white.opacity(0.8))
+                .multilineTextAlignment(.trailing)
+                .frame(maxWidth: .infinity, alignment: .trailing)
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.top, 8)
+                .textSelection(.enabled)
+        } label: {
+            Label("Ce que j'ai entendu", systemImage: "ear")
+                .font(.caption.bold())
+                .foregroundStyle(.white.opacity(0.7))
+        }
+        .tint(.white.opacity(0.7))
+        .padding(.horizontal, 16)
+        .padding(.vertical, 10)
+        .glassCardSecondary(cornerRadius: CornerRadius.card, tint: ModuleAccent.quran)
+    }
+
+    /// Mots entendus dans l'ordre, sans doublon de fusion (un même mot entendu
+    /// rattaché à deux mots de référence n'apparaît qu'une fois).
+    private var heardText: String {
+        var words: [String] = []
+        var last: HeardToken?
+        for item in alignment.items {
+            guard let heard = item.heard, heard != last else { continue }
+            words.append(heard.text)
+            last = heard
+        }
+        return words.isEmpty ? String(localized: "Rien d'exploitable n'a été entendu.") : words.joined(separator: " ")
     }
 
     private var scoreCard: some View {
@@ -306,16 +453,36 @@ struct RecitationResultView: View {
         case .approximate: return .yellow
         case .substituted: return .orange
         case .omitted: return .red.opacity(0.85)
+        case .unverifiable: return .white.opacity(0.45)
         case .inserted, .repeated: return .white
         }
     }
 
     private var legend: some View {
-        HStack(spacing: 14) {
-            legendItem("Juste", .white)
-            legendItem("Approximatif", .yellow)
-            legendItem("Autre mot", .orange)
-            legendItem("Omis", .red.opacity(0.85))
+        VStack(alignment: .leading, spacing: 6) {
+            HStack(spacing: 14) {
+                legendItem("Juste", .white)
+                legendItem("Approximatif", .yellow)
+                legendItem("Autre mot", .orange)
+                legendItem("Omis", .red.opacity(0.85))
+                if alignment.hasUnverifiableWords {
+                    legendItem("Non vérifiable", .white.opacity(0.45))
+                }
+            }
+            if alignment.hasUnverifiableWords {
+                Text("Les mots grisés échappent à la reconnaissance, même sur le récitateur : ils ne comptent pas dans ton score.")
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            // Ce que la calibration a réellement fait — ou pourquoi elle n'a rien pu faire.
+            if let summary = vm.calibrationSummary {
+                Label {
+                    Text(verbatim: summary)
+                        .fixedSize(horizontal: false, vertical: true)
+                } icon: {
+                    Image(systemName: vm.calibration.status == .ready ? "checkmark.seal" : "exclamationmark.triangle")
+                }
+                .foregroundStyle(vm.calibration.status == .ready ? .white.opacity(0.65) : .orange.opacity(0.9))
+            }
         }
         .font(.caption2)
         .foregroundStyle(.white.opacity(0.65))
@@ -376,23 +543,13 @@ struct RecitationResultView: View {
 
     private var listenRow: some View {
         VStack(spacing: 10) {
-            HStack(spacing: 10) {
+            if vm.hasReferenceReciter {
                 listenButton(
-                    title: vm.audio.playing == .advice ? "Arrêter" : "Écouter le conseil",
-                    icon: vm.audio.playing == .advice ? "stop.fill" : "speaker.wave.2.fill"
+                    title: isReciterPlaying ? "Arrêter" : "Écouter le récitateur",
+                    icon: isReciterPlaying ? "stop.fill" : "play.circle.fill"
                 ) {
-                    if vm.audio.playing == .advice { vm.audio.stop() } else {
-                        vm.audio.speak(vm.adviceText, languageCode: languageCode)
-                    }
-                }
-                if vm.hasReferenceReciter {
-                    listenButton(
-                        title: isReciterPlaying ? "Arrêter" : "Écouter le récitateur",
-                        icon: isReciterPlaying ? "stop.fill" : "play.circle.fill"
-                    ) {
-                        if isReciterPlaying { vm.audio.stop() } else {
-                            Task { vm.audio.playReciter(await vm.reciterTracks(only: vm.weakestAyah)) }
-                        }
+                    if isReciterPlaying { vm.audio.stop() } else {
+                        Task { vm.audio.playReciter(await vm.reciterTracks(only: vm.weakestAyah)) }
                     }
                 }
             }

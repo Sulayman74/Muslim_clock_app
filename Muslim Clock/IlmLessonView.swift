@@ -33,6 +33,8 @@ struct IlmLessonView: View {
     /// UNE seule instance au niveau parent : AVAudioSession est un singleton et
     /// le TabView pré-monte les pages voisines.
     @State private var recorder = QuranRecorder()
+    /// Vérification de mémoire par reconnaissance vocale (correcteur de matn).
+    @State private var showMatnCheck = false
 
     /// Préférence de lecture PARTAGÉE avec le lecteur Coran (papier global —
     /// l'identité ʿIlm reste portée par l'accent purple).
@@ -113,6 +115,10 @@ struct IlmLessonView: View {
         .sensoryFeedback(.success, trigger: showCelebration)
         // Libère micro/session audio si on quitte la leçon en cours d'enregistrement.
         .onDisappear { recorder.discard() }
+        // Correcteur de matn — sur la leçon COURANTE (le swipe la fait varier).
+        .sheet(isPresented: $showMatnCheck) {
+            MatnRecitationView(lesson: lesson)
+        }
         // Reset au changement de page (swipe OU chevrons) : enregistrement et voile.
         .onChange(of: index) { _, _ in
             recorder.discard()
@@ -356,20 +362,36 @@ struct IlmLessonView: View {
 
             switch recorder.state {
             case .idle, .requestingPermission:
-                Button {
-                    Task {
-                        if await recorder.requestPermission() {
-                            recorder.start(suraSlug: "Ilm-\(lesson.id)")
+                HStack(spacing: 10) {
+                    Button {
+                        Task {
+                            if await recorder.requestPermission() {
+                                recorder.start(suraSlug: "Ilm-\(lesson.id)")
+                            }
                         }
+                    } label: {
+                        Label("S'enregistrer", systemImage: "record.circle")
+                            .font(.system(size: 14, weight: .semibold))
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 10)
+                            .background(Color.purple.opacity(0.25))
+                            .foregroundColor(theme.textPrimary)
+                            .clipShape(RoundedRectangle(cornerRadius: CornerRadius.badge, style: .continuous))
                     }
-                } label: {
-                    Label("S'enregistrer", systemImage: "record.circle")
-                        .font(.system(size: 14, weight: .semibold))
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 10)
-                        .background(Color.purple.opacity(0.25))
-                        .foregroundColor(theme.textPrimary)
-                        .clipShape(RoundedRectangle(cornerRadius: CornerRadius.badge, style: .continuous))
+                    // Correcteur de matn : même moteur que la récitation Coran,
+                    // en voix de lecture — là où la reconnaissance excelle.
+                    Button {
+                        recorder.discard()
+                        showMatnCheck = true
+                    } label: {
+                        Label("Me corriger", systemImage: "waveform.and.mic")
+                            .font(.system(size: 14, weight: .semibold))
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 10)
+                            .background(Color.purple.opacity(0.25))
+                            .foregroundColor(theme.textPrimary)
+                            .clipShape(RoundedRectangle(cornerRadius: CornerRadius.badge, style: .continuous))
+                    }
                 }
 
             case .permissionDenied:

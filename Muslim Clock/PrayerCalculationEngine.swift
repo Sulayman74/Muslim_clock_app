@@ -151,4 +151,41 @@ nonisolated enum PrayerCalculationEngine {
         if now >= isha && now < middleOfNight { return (.isha, isha, middleOfNight) }
         return (.none, nil, nil)
     }
+
+    /// Fenêtre Isha de la **veille** : entre minuit et le milieu de la nuit
+    /// (Maghrib d'hier → Fajr d'aujourd'hui), la prière d'Isha est encore valide
+    /// alors que `currentWindow` ne regarde que les horaires du jour. `.none`
+    /// si l'on n'est pas avant le Fajr du jour ou si le milieu de nuit est passé.
+    static func previousNightWindow(
+        now: Date,
+        fajrToday: Date,
+        maghribYesterday: Date,
+        ishaYesterday: Date
+    ) -> (window: PrayerWindow, start: Date?, end: Date?) {
+        guard now < fajrToday else { return (.none, nil, nil) }
+        let middle = nightMarkers(maghrib: maghribYesterday, fajrTomorrow: fajrToday).middleOfNight
+        if now >= ishaYesterday && now < middle { return (.isha, ishaYesterday, middle) }
+        return (.none, nil, nil)
+    }
+
+    // MARK: - Rafraîchissement de l'état
+
+    /// Prochain instant où l'état affiché change de lui-même : fin de la fenêtre
+    /// en cours, heure de la prochaine prière, ou minuit (nouvelle journée).
+    /// Sert de borne au minuteur du ViewModel — sans lui, la jauge restait figée
+    /// au lever du soleil ou quand les notifications d'adhan sont refusées.
+    ///
+    /// - Returns: le plus proche des candidats strictement postérieurs à `now`.
+    ///   Minuit est toujours candidat, donc le résultat n'est jamais `nil`.
+    static func nextRefreshDate(
+        now: Date,
+        windowEnd: Date?,
+        nextPrayer: Date?,
+        calendar: Calendar = .current
+    ) -> Date {
+        let startOfTomorrow = calendar.startOfDay(for: now).addingTimeInterval(86_400)
+        let midnight = calendar.startOfDay(for: startOfTomorrow)
+        let candidates = [windowEnd, nextPrayer, midnight].compactMap { $0 }.filter { $0 > now }
+        return candidates.min() ?? midnight
+    }
 }

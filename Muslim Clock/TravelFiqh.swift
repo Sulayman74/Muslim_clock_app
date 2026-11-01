@@ -129,39 +129,37 @@ enum TravelFiqhContent {
 
 // MARK: - Carte d'accueil (compacte, ouvre la fiche)
 
-/// Carte discrète sur l'accueil quand le mode voyage est actif : résume l'accès aux
-/// facilités du voyageur et ouvre la fiche détaillée. Auto-masquée hors mode voyage.
+/// Carte discrète sur l'accueil en mode voyage : résume l'accès aux facilités
+/// du voyageur et ouvre la fiche détaillée. Son affichage est décidé par
+/// `SalatSecondaryZone` (mode voyage actif + garde-fou de la zone).
 struct TravelFiqhCard: View {
-    @AppStorage(TravelKeys.active) private var travelModeActive = false
     @State private var showDetail = false
 
     var body: some View {
-        if travelModeActive {
-            Button { showDetail = true } label: {
-                HStack(spacing: 12) {
-                    Image(systemName: "book.closed.fill")
-                        .font(.title3)
-                        .foregroundStyle(travelModeAccent)
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("Facilités du voyageur")
-                            .font(.footnote.bold())
-                            .foregroundColor(.white)
-                        Text("Qasr · Jamʿ · Jeûne — avec les preuves")
-                            .font(.caption)
-                            .foregroundColor(.white.opacity(0.6))
-                    }
-                    Spacer()
-                    Image(systemName: "chevron.right")
-                        .font(.caption.bold())
-                        .foregroundColor(.white.opacity(0.4))
+        Button { showDetail = true } label: {
+            HStack(spacing: 12) {
+                Image(systemName: "book.closed.fill")
+                    .font(.title3)
+                    .foregroundStyle(travelModeAccent)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Facilités du voyageur")
+                        .font(.footnote.bold())
+                        .foregroundColor(.white)
+                    Text("Qasr · Jamʿ · Jeûne — avec les preuves")
+                        .font(.caption)
+                        .foregroundColor(.white.opacity(0.6))
                 }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 12)
-                .cardStyle()
+                Spacer()
+                Image(systemName: "chevron.right")
+                    .font(.caption.bold())
+                    .foregroundColor(.white.opacity(0.4))
             }
-            .buttonStyle(.plain)
-            .sheet(isPresented: $showDetail) { TravelFiqhView() }
+            .padding(16)
+            // Surface secondaire de la zone « pour aller plus loin » (plus de cardStyle opaque).
+            .glassCardSecondary(tint: travelModeAccent)
         }
+        .buttonStyle(.plain)
+        .sheet(isPresented: $showDetail) { TravelFiqhView() }
     }
 }
 

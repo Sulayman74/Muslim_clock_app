@@ -24,9 +24,9 @@ struct DailyContentView: View {
 
     // Écran Rappel en 2 zones (cf. PLAN_UX_RAPPEL_ZONES.md) : prioritaire
     // « le rappel du jour » (salawat vendredi, verset, hadith, reprendre le
-    // cours) puis secondaire « mes programmes » (Khatma, podcast, fiche
-    // masbûq). Le programme ʿIlm vit dans l'onglet Apprendre. VStack eager
-    // obligatoire : le deep link Khatma repose sur le onAppear de la carte.
+    // cours) puis secondaire « mes programmes » (podcast, fiche masbûq).
+    // Khatma et programme ʿIlm vivent dans l'onglet Apprendre (LearnHubView),
+    // avec leurs deep links.
     var body: some View {
         VStack(spacing: ZoneSpacing.interZone) {
             rappelPriorityZone
@@ -47,6 +47,10 @@ struct DailyContentView: View {
                 FridaySalawatBanner()
             }
 
+            // Suggestion du moment (miroir compact de la carte du hub Apprendre) :
+            // le tap bascule vers l'onglet Apprendre, le dismiss est partagé.
+            LearnSuggestionCard(style: .compact)
+
             // Le skeleton de chargement ne couvre QUE le contenu du jour
             // (verset + hadith) — jamais les cartes de programmes.
             Group {
@@ -62,27 +66,19 @@ struct DailyContentView: View {
         }
     }
 
-    // MARK: - Zone secondaire « mes programmes »
+    // MARK: - Zone secondaire (podcast + références)
 
     @ViewBuilder
     private var rappelSecondaryZone: some View {
         VStack(alignment: .leading, spacing: ZoneSpacing.intraZoneSecondary) {
-            ZoneSectionHeader(
-                titleFr: "Mes programmes",
-                titleAr: "بَرَامِجِي",
-                accent: .orange
-            )
-            .padding(.bottom, ZoneSpacing.sectionHeaderBottom)
-
-            // KHATMA — programme de lecture du Quran (module QuranPlan)
-            QuranKhatmaCard()
+            // (Khatma et Programme ʿIlm vivent dans l'onglet Apprendre ; le
+            // header « Mes programmes » est parti avec elles — le podcast
+            // enchaîne directement sous le rappel du jour.)
 
             // CARTE AUDIO / PODCAST (exploration — la reprise vit en zone 1)
             PodcastCarouselView()
 
-            // ── Sous-section « Références » : outils de consultation, distincts
-            // des programmes (assainit la taxonomie — la fiche masbûq était un
-            // intrus dans « Mes programmes »).
+            // ── Sous-section « Références » : outils de consultation.
             ZoneSectionHeader(
                 titleFr: "Références",
                 titleAr: "مَرَاجِع",

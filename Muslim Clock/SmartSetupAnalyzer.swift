@@ -15,7 +15,8 @@ import Adhan
 // MARK: - Observation
 
 /// Horaires d'adhan relevés dans la mosquée (Mawaqit, affichage…) un jour donné.
-struct MosqueObservation: Codable, Equatable {
+/// `nonisolated` : type de domaine pur (comparé/encodé hors MainActor, tests inclus).
+nonisolated struct MosqueObservation: Codable, Equatable {
     var date: Date
     var latitude: Double
     var longitude: Double

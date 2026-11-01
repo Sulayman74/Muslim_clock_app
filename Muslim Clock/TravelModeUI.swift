@@ -75,13 +75,14 @@ struct TravelSuggestionBanner: View {
     let onActivate: () -> Void
     /// Appelée pour ignorer la suggestion.
     let onDismiss: () -> Void
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         HStack(spacing: 12) {
             Image(systemName: "airplane.departure")
                 .font(.title2)
                 .foregroundStyle(travelModeAccent)
-                .symbolEffect(.pulse)
+                .symbolEffect(.pulse, isActive: !reduceMotion)
 
             VStack(alignment: .leading, spacing: 2) {
                 Text("Vous semblez en voyage")
@@ -95,12 +96,13 @@ struct TravelSuggestionBanner: View {
 
             Spacer()
 
+            // Cibles tactiles ≥ 44 pt (HIG) ; le visuel reste compact.
             Button(action: onActivate) {
                 Text("Activer")
                     .font(.caption.bold())
                     .foregroundColor(.white)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 6)
+                    .padding(.horizontal, 14)
+                    .frame(minHeight: 44)
                     .background(travelModeAccent.gradient)
                     .clipShape(RoundedRectangle(cornerRadius: CornerRadius.badge, style: .continuous))
             }
@@ -112,11 +114,15 @@ struct TravelSuggestionBanner: View {
                     .padding(6)
                     .background(.ultraThinMaterial)
                     .clipShape(Circle())
+                    .frame(width: 44, height: 44)
+                    .contentShape(Rectangle())
             }
+            .accessibilityLabel(Text("Ignorer la suggestion"))
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 10)
-        .cardStyle()
+        // Bannière du chapeau : surface principale teintée voyage (plus de cardStyle opaque).
+        .glassCard(tint: travelModeAccent)
     }
 }
 

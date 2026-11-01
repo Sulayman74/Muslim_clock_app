@@ -24,6 +24,15 @@ class SharedLocationManager: NSObject, ObservableObject, CLLocationManagerDelega
     /// ouverture d'app) → alimente l'état « Mise à jour de la position… ».
     @Published private(set) var isRefreshingLocation = false
 
+    /// Ville de la position courante (géocodage inverse), pour le chapeau Salat
+    /// et la Qibla. Vivait dans `CompassManager` : MainView devait alors observer
+    /// la boussole (60 Hz) pour afficher un nom de ville.
+    @Published private(set) var cityName: String = String(localized: "Recherche...")
+    /// Position du dernier géocodage réussi ; on ne re-géocode qu'au-delà de
+    /// `geocodeDistanceThreshold` (changement de ville, pas de rue).
+    private var geocodedLocation: CLLocation?
+    private static let geocodeDistanceThreshold: CLLocationDistance = 5_000
+
     /// True si l'accès à la localisation est refusé ou restreint : l'app ne peut
     /// pas calculer d'horaires tant que l'utilisateur n'ouvre pas les Réglages.
     var isAccessDenied: Bool {
@@ -89,10 +98,25 @@ class SharedLocationManager: NSObject, ObservableObject, CLLocationManagerDelega
         self.currentLocation = location
 
         // Débloque un éventuel pull-to-refresh en attente d'un point frais.
-        Task { @MainActor [weak self] in self?.resumeFreshFixWaiters() }
+        Task { @MainActor [weak self] in
+            self?.resumeFreshFixWaiters()
+            await self?.refreshCityNameIfNeeded(for: location)
+        }
 
         // Optionnel : on peut arrêter le GPS une fois qu'on a la ville pour sauver la batterie
         // manager.stopUpdatingLocation()
+    }
+
+    /// Géocode la ville si l'on a changé de ville (ou jamais géocodé).
+    @MainActor
+    private func refreshCityNameIfNeeded(for location: CLLocation) async {
+        if let geocodedLocation,
+           geocodedLocation.distance(from: location) < Self.geocodeDistanceThreshold {
+            return
+        }
+        let name = await location.fetchCityName()
+        geocodedLocation = location
+        cityName = name
     }
 
     /// Un échec GPS ne doit pas laisser le pull-to-refresh tourner 6 s dans le vide.

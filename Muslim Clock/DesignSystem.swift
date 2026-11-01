@@ -208,6 +208,8 @@ enum PrayerStateTint {
     static let now: Color = .orange
     static let upcoming: Color = .green
     static let night: Color = .indigo
+    /// Jumu'ah — or doux, distinct de la nuit (indigo) et de l'état « en cours » (orange).
+    static let jumuah = Color(red: 0.93, green: 0.72, blue: 0.28)
 }
 
 /// ═══════════════════════════════════════════════════════════════
@@ -412,6 +414,38 @@ extension View {
             .glassCard(cornerRadius: CornerRadius.card, tint: accent)
             .geometryGroup()
     }
+
+    /// Carte repliable de la zone secondaire : verre secondaire, contenu
+    /// **clippé** à la forme (pendant l'animation de dépli, le contenu inséré
+    /// débordait sous la carte suivante), et redimensionnement en bloc.
+    /// Le contenu déplié doit porter `.transition(.opacity)`.
+    func collapsibleCard(tint: Color?) -> some View {
+        self
+            .glassCardSecondary(tint: tint)
+            .clipShape(RoundedRectangle(cornerRadius: CornerRadius.card, style: .continuous))
+            .geometryGroup()
+    }
+}
+
+/// Emplacement d'une carte conditionnelle dans une zone en `spacing: 0` :
+/// le conteneur survit à l'absence de carte (il anime l'entrée/sortie —
+/// anti-wiggle n°4) et porte l'espacement bas DANS la condition, donc aucun
+/// trou quand la carte est absente.
+struct ZoneCardSlot<Content: View>: View {
+    let isVisible: Bool
+    var spacing: CGFloat = ZoneSpacing.intraZoneSecondary
+    @ViewBuilder let content: () -> Content
+
+    var body: some View {
+        ZStack {
+            if isVisible {
+                content()
+                    .padding(.bottom, spacing)
+                    .transition(.opacity.combined(with: .move(edge: .top)))
+            }
+        }
+        .animation(.smooth(duration: 0.35), value: isVisible)
+    }
 }
 
 /// Bascule FR ↔ arabe d'une carte. Largeur minimale fixe (« FR » vs « عربي ») :
@@ -431,6 +465,9 @@ struct LanguageToggleChip: View {
                 .background(.ultraThinMaterial)
                 .clipShape(Capsule())
                 .contentTransition(.opacity)
+                // Cible tactile ≥ 44 pt (HIG) ; la capsule visible reste compacte.
+                .frame(minHeight: 44)
+                .contentShape(Rectangle())
         }
         .accessibilityLabel(isArabic ? Text("Afficher la traduction") : Text("Afficher le texte arabe"))
     }

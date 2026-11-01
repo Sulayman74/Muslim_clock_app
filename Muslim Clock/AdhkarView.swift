@@ -75,6 +75,28 @@ enum AdhkarTiming: String, CaseIterable {
         case .evening: return Color(red: 0.4, green: 0.5, blue: 0.85)   // Bleu soir
         }
     }
+
+    /// Fond de la sheet Adhkar (matin doré / soir bleu nuit) — une seule définition
+    /// pour le bouton d'accès rapide et les deep-links (Control Widget, notification).
+    var sheetGradient: LinearGradient {
+        LinearGradient(
+            colors: self == .morning
+                ? [Color(red: 0.15, green: 0.1, blue: 0.05), Color(red: 0.25, green: 0.18, blue: 0.08)]
+                : [Color(red: 0.05, green: 0.08, blue: 0.18), Color(red: 0.08, green: 0.1, blue: 0.25)],
+            startPoint: .top,
+            endPoint: .bottom
+        )
+    }
+
+    /// Période du moment : matin de Fajr à Asr d'après les heures réelles ;
+    /// repli horaire 4 h–15 h tant que les horaires sont inconnus.
+    static func current(now: Date = Date(), fajr: Date?, asr: Date?, calendar: Calendar = .current) -> AdhkarTiming {
+        if let fajr, let asr {
+            return now >= fajr && now < asr ? .morning : .evening
+        }
+        let hour = calendar.component(.hour, from: now)
+        return (hour >= 4 && hour < 15) ? .morning : .evening
+    }
 }
 
 // MARK: - ═══════════════════════════════════════════════════
@@ -100,39 +122,62 @@ class AdhkarService: ObservableObject {
         storedAsr  = asr
     }
 
-    // MARK: - Clés UserDefaults
+    // MARK: - Clés UserDefaults (partagées avec le bouton d'accès rapide, qui
+    // lit la progression du jour sans instancier le service)
 
-    private func countsKey(for timing: AdhkarTiming) -> String {
+    static func countsKey(for timing: AdhkarTiming) -> String {
         "adhkar_counts_\(timing.rawValue)"
     }
 
-    private func periodKey(for timing: AdhkarTiming) -> String {
+    static func periodKey(for timing: AdhkarTiming) -> String {
         "adhkar_period_\(timing.rawValue)"
     }
 
+    private static let periodFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        return formatter
+    }()
+
     /// Identifiant unique de la période active :
     /// - Matin  → "morning-YYYY-MM-DD"  (Fajr est toujours avant minuit)
-    /// - Soir   → "evening-YYYY-MM-DD"  (peut déborder après minuit jusqu'à ~4h)
-    private func currentPeriodID(for timing: AdhkarTiming) -> String {
-        let cal = Calendar.current
-        let fmt = DateFormatter()
-        fmt.dateFormat = "yyyy-MM-dd"
+    /// - Soir   → "evening-YYYY-MM-DD"  (peut déborder après minuit jusqu'au Fajr ;
+    ///   repli 4 h si l'heure du Fajr est inconnue)
+    static func periodID(for timing: AdhkarTiming, now: Date, fajr: Date?, calendar: Calendar = .current) -> String {
         switch timing {
         case .morning:
-            return "morning-\(fmt.string(from: Date()))"
+            return "morning-\(periodFormatter.string(from: now))"
         case .evening:
-            // On est encore dans le soir si maintenant < Fajr d'aujourd'hui
-            // Fallback : hour < 4 si storedFajr n'est pas encore disponible
-            let now = Date()
             let isBeforeFajr: Bool
-            if let fajr = storedFajr {
+            if let fajr {
                 isBeforeFajr = now < fajr
             } else {
-                isBeforeFajr = cal.component(.hour, from: now) < 4
+                isBeforeFajr = calendar.component(.hour, from: now) < 4
             }
-            let ref = isBeforeFajr ? cal.date(byAdding: .day, value: -1, to: now)! : now
-            return "evening-\(fmt.string(from: ref))"
+            let reference = isBeforeFajr ? (calendar.date(byAdding: .day, value: -1, to: now) ?? now) : now
+            return "evening-\(periodFormatter.string(from: reference))"
         }
+    }
+
+    private func countsKey(for timing: AdhkarTiming) -> String { Self.countsKey(for: timing) }
+    private func periodKey(for timing: AdhkarTiming) -> String { Self.periodKey(for: timing) }
+    private func currentPeriodID(for timing: AdhkarTiming) -> String {
+        Self.periodID(for: timing, now: Date(), fajr: storedFajr)
+    }
+
+    /// Progression persistée pour `timing` : nombre d'adhkar complétés sur le
+    /// total, ou `nil` si la période enregistrée n'est plus celle du moment
+    /// (compteurs périmés ⇒ 0 implicite côté appelant).
+    static func savedProgress(for timing: AdhkarTiming, adhkar: [Dhikr], now: Date, fajr: Date?) -> (done: Int, total: Int)? {
+        let list = adhkar.filter { $0.timing == "both" || $0.timing == timing.rawValue }
+        guard !list.isEmpty else { return nil }
+        let defaults = UserDefaults.standard
+        guard defaults.string(forKey: periodKey(for: timing)) == periodID(for: timing, now: now, fajr: fajr),
+              let saved = defaults.dictionary(forKey: countsKey(for: timing)) as? [String: Int] else {
+            return (0, list.count)
+        }
+        let done = list.filter { (saved["\($0.id)"] ?? 0) >= $0.repeat }.count
+        return (done, list.count)
     }
 
     // MARK: - Persistence
@@ -596,48 +641,113 @@ struct AdhkarQuickAccessButton: View {
     @State private var showAdhkarSheet = false
     @EnvironmentObject var prayerVM: PrayerTimesViewModel
 
-    /// Détecte matin/soir avec les heures réelles de Fajr/Asr si disponibles
-    private var timing: AdhkarTiming {
-        let now = Date()
-        if let fajr = prayerVM.fajrDate, let asr = prayerVM.asrDate {
-            return now >= fajr && now < asr ? .morning : .evening
+    /// Ce que le bouton propose selon le moment. Il remplace les boutons qui
+    /// vivaient dans la jauge de prière (quatre portes d'entrée Adhkar à l'écran).
+    private enum Mode {
+        /// Fenêtre de prière en cours → adhkar après la prière nommée.
+        case postPrayer(String)
+        /// Nuit (après le milieu de la nuit, avant Fajr) → invocations de la nuit.
+        case night
+        /// Sinon : adhkar du matin ou du soir.
+        case daily(AdhkarTiming)
+
+        var icon: String {
+            switch self {
+            case .postPrayer: "hands.sparkles.fill"
+            case .night: "moon.haze.fill"
+            case .daily(let timing): timing.icon
+            }
         }
-        let hour = Calendar.current.component(.hour, from: now)
-        return (hour >= 4 && hour < 15) ? .morning : .evening
+
+        var accent: Color {
+            switch self {
+            case .postPrayer: PrayerStateTint.now
+            case .night: PrayerStateTint.night
+            case .daily(let timing): timing.accentColor
+            }
+        }
+
+        var labelFr: String {
+            switch self {
+            case .postPrayer: String(localized: "Invocations après la prière")
+            case .night: String(localized: "Invocations de la nuit")
+            case .daily(let timing): timing.labelFr
+            }
+        }
+
+        var labelAr: String {
+            switch self {
+            case .postPrayer: "أذكار بعد الصلاة"
+            case .night: "أذكار قيام الليل"
+            case .daily(let timing): timing.label
+            }
+        }
+    }
+
+    private var mode: Mode {
+        if prayerVM.currentPrayerWindow != .none {
+            return .postPrayer(prayerVM.currentPrayerWindow.rawValue)
+        }
+        if prayerVM.nextPrayerName == "Fajr", prayerVM.lastThirdOfNight != nil {
+            return .night
+        }
+        return .daily(AdhkarTiming.current(fajr: prayerVM.fajrDate, asr: prayerVM.asrDate))
+    }
+
+    /// Liste des adhkar matin/soir (cache local), pour la progression du jour.
+    @State private var adhkar: [Dhikr] = []
+    /// Relit la progression persistée à la fermeture de la sheet.
+    @State private var progressTick = 0
+
+    /// « Ai-je fait mes adhkar ? » — fait / total pour la période courante
+    /// (mode matin/soir uniquement). `nil` tant que la liste n'est pas chargée.
+    private func progress(for mode: Mode) -> (done: Int, total: Int)? {
+        guard case .daily(let timing) = mode else { return nil }
+        _ = progressTick
+        return AdhkarService.savedProgress(for: timing, adhkar: adhkar, now: Date(), fajr: prayerVM.fajrDate)
     }
 
     var body: some View {
+        let mode = mode
+        let progress = progress(for: mode)
+
         Button {
             showAdhkarSheet = true
         } label: {
             if compact {
                 HStack(spacing: 8) {
-                    Image(systemName: timing.icon)
-                        .font(.system(size: 18))
-                        .symbolRenderingMode(.palette)
-                        .foregroundStyle(timing.accentColor, .white.opacity(0.6))
-                    Text(timing.labelFr)
+                    if let progress {
+                        progressRing(progress, accent: mode.accent)
+                    } else {
+                        Image(systemName: mode.icon)
+                            .font(.system(size: 18))
+                            .symbolRenderingMode(.palette)
+                            .foregroundStyle(mode.accent, .white.opacity(0.6))
+                    }
+                    Text(verbatim: mode.labelFr)
                         .font(.system(size: 12, weight: .bold, design: .rounded))
                         .foregroundColor(.white)
                         .lineLimit(1)
                         .minimumScaleFactor(0.75)
                 }
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 14)
-                .glassCardSecondary(cornerRadius: 18, tint: timing.accentColor)
+                .frame(maxWidth: .infinity, minHeight: 44)
+                .padding(.vertical, 4)
+                .glassCardSecondary(cornerRadius: CornerRadius.card, tint: mode.accent)
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel(progress.map { Text("\(mode.labelFr), \($0.done) sur \($0.total) complétés") } ?? Text(verbatim: mode.labelFr))
             } else {
                 HStack(spacing: 12) {
-                    Image(systemName: timing.icon)
+                    Image(systemName: mode.icon)
                         .font(.system(size: 22))
                         .symbolRenderingMode(.palette)
-                        .foregroundStyle(timing.accentColor, .white.opacity(0.6))
+                        .foregroundStyle(mode.accent, .white.opacity(0.6))
 
                     VStack(alignment: .leading, spacing: 2) {
-                        Text(timing.label)
+                        Text(verbatim: mode.labelAr)
                             .font(.system(size: 15, weight: .bold))
                             .foregroundColor(.white)
                             .environment(\.layoutDirection, .rightToLeft)
-                        Text(timing.labelFr)
+                        Text(verbatim: mode.labelFr)
                             .font(.system(size: 11, weight: .medium, design: .rounded))
                             .foregroundColor(.white.opacity(0.6))
                     }
@@ -650,25 +760,65 @@ struct AdhkarQuickAccessButton: View {
                 }
                 .padding(.horizontal, 20)
                 .padding(.vertical, 14)
-                .glassEffect(.regular.tint(timing.accentColor.opacity(0.10)), in: RoundedRectangle(cornerRadius: 18))
+                .glassCard(tint: mode.accent)
             }
         }
-        .sensoryFeedback(.impact(weight: .light), trigger: showAdhkarSheet)
+        // Haptique à l'ouverture seulement (pas à la fermeture de la sheet).
+        .sensoryFeedback(.impact(weight: .light), trigger: showAdhkarSheet) { _, opened in opened }
+        .task {
+            if adhkar.isEmpty {
+                adhkar = await RemoteJSONLoader.load(
+                    filename: "adhkar.json",
+                    remoteURL: "https://sulayman74.github.io/Muslim_clock_app/adhkar.json",
+                    type: [Dhikr].self
+                ) ?? []
+            }
+        }
+        .onChange(of: showAdhkarSheet) { _, open in
+            if !open { progressTick &+= 1 }
+        }
         .sheet(isPresented: $showAdhkarSheet) {
-            ZStack {
-                LinearGradient(
-                    colors: timing == .morning
-                    ? [Color(red: 0.15, green: 0.1, blue: 0.05), Color(red: 0.25, green: 0.18, blue: 0.08)]
-                    : [Color(red: 0.05, green: 0.08, blue: 0.18), Color(red: 0.08, green: 0.1, blue: 0.25)],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-                .ignoresSafeArea()
-
-                AdhkarView()
+            switch mode {
+            case .postPrayer(let prayerName):
+                PostPrayerAdhkarView(prayerName: prayerName)
+                    .presentationDetents([.large])
+            case .night:
+                PostPrayerAdhkarView(prayerName: "qiyam")
+                    .presentationDetents([.large])
+            case .daily(let timing):
+                ZStack {
+                    timing.sheetGradient
+                        .ignoresSafeArea()
+                    AdhkarView()
+                }
+                .environmentObject(prayerVM)  // Transmission des heures de prière à la sheet
+                .presentationDragIndicator(.visible)
             }
-            .environmentObject(prayerVM)  // Transmission des heures de prière à la sheet
-            .presentationDragIndicator(.visible)
         }
+    }
+
+    /// Anneau fait / total (coche quand tout est complété).
+    private func progressRing(_ progress: (done: Int, total: Int), accent: Color) -> some View {
+        let fraction = progress.total > 0 ? Double(progress.done) / Double(progress.total) : 0
+        return ZStack {
+            Circle()
+                .stroke(Color.white.opacity(0.15), lineWidth: 3)
+            Circle()
+                .trim(from: 0, to: fraction)
+                .stroke(accent, style: StrokeStyle(lineWidth: 3, lineCap: .round))
+                .rotationEffect(.degrees(-90))
+                .animation(.smooth(duration: 0.35), value: fraction)
+            if progress.done >= progress.total {
+                Image(systemName: "checkmark")
+                    .font(.system(size: 9, weight: .bold))
+                    .foregroundStyle(accent)
+            } else {
+                Text(verbatim: "\(progress.done)")
+                    .font(.system(size: 9, weight: .bold, design: .rounded))
+                    .monospacedDigit()
+                    .foregroundStyle(.white.opacity(0.85))
+            }
+        }
+        .frame(width: 24, height: 24)
     }
 }

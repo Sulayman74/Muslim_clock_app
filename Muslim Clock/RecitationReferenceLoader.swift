@@ -60,6 +60,15 @@ enum RecitationReferenceLoader {
         await corpus(for: riwaya)?.surahs[surah]?.verses.count
     }
 
+    /// Numéro global du verset (1…totalAyahs de la riwaya) — adressage des
+    /// audios par verset (cdn.islamic.network pour Hafs).
+    static func globalAyahNumber(riwaya: Riwaya, surah: Int, ayah: Int) async -> Int? {
+        guard let corpus = await corpus(for: riwaya), corpus.surahs[surah] != nil else { return nil }
+        var offset = 0
+        for s in 1..<surah { offset += corpus.surahs[s]?.verses.count ?? 0 }
+        return offset + ayah
+    }
+
     static func surahNames(riwaya: Riwaya) async -> [(id: Int, nameArabic: String, nameLatin: String)] {
         guard let corpus = await corpus(for: riwaya) else { return [] }
         return corpus.surahs.keys.sorted().compactMap { id in

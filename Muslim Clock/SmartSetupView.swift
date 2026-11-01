@@ -35,11 +35,11 @@ struct SmartSetupView: View {
     
     // Mosquée & Iqamah
     @AppStorage("mosqueName") private var savedMosqueName = ""
-    @AppStorage("iqamahFajrDelay") private var savedIqamahFajr = 20
-    @AppStorage("iqamahDhuhrDelay") private var savedIqamahDhuhr = 15
-    @AppStorage("iqamahAsrDelay") private var savedIqamahAsr = 15
-    @AppStorage("iqamahMaghribDelay") private var savedIqamahMaghrib = 5
-    @AppStorage("iqamahIshaDelay") private var savedIqamahIsha = 15
+    @AppStorage(StorageKeys.iqamahFajrDelay) private var savedIqamahFajr = IqamahDefaults.fajr
+    @AppStorage(StorageKeys.iqamahDhuhrDelay) private var savedIqamahDhuhr = IqamahDefaults.dhuhr
+    @AppStorage(StorageKeys.iqamahAsrDelay) private var savedIqamahAsr = IqamahDefaults.asr
+    @AppStorage(StorageKeys.iqamahMaghribDelay) private var savedIqamahMaghrib = IqamahDefaults.maghrib
+    @AppStorage(StorageKeys.iqamahIshaDelay) private var savedIqamahIsha = IqamahDefaults.isha
 
     // Jumu'ah
     @AppStorage(StorageKeys.jumuahEnabled) private var jumuahEnabled = false

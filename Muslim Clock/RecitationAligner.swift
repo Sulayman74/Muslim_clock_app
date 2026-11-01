@@ -26,12 +26,46 @@ nonisolated enum RecitationAligner {
     /// toujours préférés à un couple omission + insertion.
     private static let gapCost = 1.0
 
+    /// Surcoût d'une fusion/scission (la dictée colle « يا أيها » en « ياأيها »
+    /// ou coupe « ولم » en « و لم »). Ces mouvements ne sont admis que si la
+    /// concaténation est clairement le même mot (≥ `matchThreshold`) : on ne
+    /// masque jamais une vraie erreur derrière un recollage hasardeux.
+    private static let fusionPenalty = 0.15
+
+    /// Score accordé quand seuls les squelettes consonantiques coïncident
+    /// (فاتقوا entendu فتق : le moteur avale les voyelles longues du tartil).
+    /// Dans la bande « approximatif » — jamais « juste » : une vraie différence
+    /// de voyelle longue (قاتلوا/قتلوا) reste signalée, en jaune.
+    private static let consonantSkeletonScore = 0.6
+    /// Longueur minimale (scalaires normalisés) du mot de référence pour la
+    /// deuxième chance au squelette — évite de rapprocher قل/قال.
+    private static let skeletonMinimumLength = 5
+
+    /// Troncature : le moteur avale un préfixe ou un suffixe (يحق → حق,
+    /// أنها → أن). Le mot entendu est un morceau CONTIGU du mot attendu qui en
+    /// couvre au moins la moitié → approximatif, pas « autre mot ». Jamais dans
+    /// l'autre sens (un mot entendu plus long que l'attendu reste jugé).
+    private static let truncationScore = 0.6
+    private static let truncationMinimumCoverage = 0.5
+    private static let truncationMinimumReferenceLength = 3
+
     private static let taawwudhTokens = ["اعوذ", "بالله", "من", "الشيطان", "الرجيم"]
 
     // MARK: - API
 
     static func align(reference: RecitationReference, transcript: RecitationTranscript) -> RecitationAlignment {
         align(reference: reference, transcript: transcript, equivalences: .bundled)
+    }
+
+    /// Alignement calibré par le récitateur : les formes que le moteur produit
+    /// sur la récitation parfaite sont acceptées comme justes à leur position,
+    /// puis les mots qu'il rate complètement deviennent non vérifiables.
+    static func align(reference: RecitationReference,
+                      transcript: RecitationTranscript,
+                      calibration: RecitationCalibration) -> RecitationAlignment {
+        align(reference: reference, transcript: transcript, equivalences: .bundled,
+              reciterForms: calibration.reciterForms)
+            .applying(calibration)
     }
 
     /// Aligne la transcription sur la référence (Needleman-Wunsch, O(n·m)).
@@ -41,10 +75,13 @@ nonisolated enum RecitationAligner {
     ///   ou s'il s'agit de la sourate 9 (où la réciter est une erreur à signaler).
     /// - Coût de substitution : `1 − similarité` (Dice sur trigrammes de caractères
     ///   des formes canoniques, cf. `RecitationEquivalences`).
+    /// - `reciterForms` : graphies supplémentaires acceptées comme justes, par
+    ///   position (ce que le moteur rend du récitateur pour ce mot précis).
     /// - Les hésitations ne sont détectées qu'avec des horodatages.
     static func align(reference: RecitationReference,
                       transcript: RecitationTranscript,
-                      equivalences: RecitationEquivalences) -> RecitationAlignment {
+                      equivalences: RecitationEquivalences,
+                      reciterForms: [AyahWordKey: String] = [:]) -> RecitationAlignment {
         let refs = reference.words
         let heard = strippingPreamble(transcript.tokens, reference: reference)
 
@@ -56,26 +93,60 @@ nonisolated enum RecitationAligner {
             return computed
         }
 
-        let refForms = refs.map { word in
-            equivalences.referenceForms(display: word.display, normalized: word.normalized)
-                .map { (form: $0, trigrams: trigrams($0)) }
+        let refForms = refs.map { word -> [(form: String, trigrams: [UInt32])] in
+            var forms = equivalences.referenceForms(display: word.display, normalized: word.normalized)
+            // Forme produite par le moteur sur le récitateur, à cette position :
+            // la reproduire, c'est réciter comme lui.
+            if let reciterForm = reciterForms[AyahWordKey(ayah: word.ayah, index: word.index)],
+               !reciterForm.isEmpty, !forms.contains(reciterForm) {
+                forms.append(reciterForm)
+            }
+            return forms.map { (form: $0, trigrams: trigrams($0)) }
         }
-        let heardForms = heard.map { token -> (form: String, trigrams: [UInt32]) in
-            let form = equivalences.canonical(token.normalized)
-            return (form, trigrams(form))
-        }
+        let heardForms = heard.map { equivalences.canonical($0.normalized) }
 
-        func similarity(_ i: Int, _ j: Int) -> Double {
-            let target = heardForms[j]
+        /// Similarité d'un mot de référence avec une forme entendue (meilleure
+        /// des graphies acceptables de la référence). Deuxième chance : si les
+        /// squelettes consonantiques coïncident (voyelles longues avalées par
+        /// le moteur), le score est relevé dans la bande « approximatif ».
+        func similarity(_ i: Int, form: String) -> Double {
+            let target = trigrams(form)
             var best = 0.0
             for candidate in refForms[i] {
-                if candidate.form == target.form { return 1 }
-                best = max(best, dice(candidate.trigrams, target.trigrams))
+                if candidate.form == form { return 1 }
+                best = max(best, dice(candidate.trigrams, target))
+            }
+            if best < matchThreshold {
+                let heardSkeleton = consonantSkeleton(form)
+                for candidate in refForms[i]
+                where candidate.form.unicodeScalars.count >= skeletonMinimumLength
+                    && !heardSkeleton.isEmpty
+                    && consonantSkeleton(candidate.form) == heardSkeleton {
+                    best = max(best, consonantSkeletonScore)
+                    break
+                }
+            }
+            if best < matchThreshold, isTruncation(of: refForms[i].map(\.form), heard: form) {
+                best = max(best, truncationScore)
             }
             return best
         }
+        func similarity(_ i: Int, _ j: Int) -> Double { similarity(i, form: heardForms[j]) }
 
-        let path = needlemanWunsch(rows: refs.count, columns: heard.count, similarity: similarity)
+        /// Fusion : refs[i] + refs[i+1] prononcés comme heard[j] (graphie canonique de chacun).
+        func mergeSimilarity(_ i: Int, _ j: Int) -> Double {
+            let glued = refForms[i][0].form + refForms[i + 1][0].form
+            return glued == heardForms[j] ? 1 : dice(trigrams(glued), trigrams(heardForms[j]))
+        }
+        /// Scission : refs[i] entendu en deux morceaux heard[j] + heard[j+1].
+        func splitSimilarity(_ i: Int, _ j: Int) -> Double {
+            similarity(i, form: equivalences.canonical(heard[j].normalized + heard[j + 1].normalized))
+        }
+
+        let path = needlemanWunsch(
+            rows: refs.count, heard: heard, heardForms: heardForms,
+            similarity: similarity, mergeSimilarity: mergeSimilarity, splitSimilarity: splitSimilarity
+        )
 
         // ── Classement ──
         var items: [AlignedWord] = []
@@ -83,8 +154,8 @@ nonisolated enum RecitationAligner {
         for step in path {
             let kind: AlignedWordKind
             switch (step.ref, step.heard) {
-            case let (i?, j?):
-                let score = similarity(i, j)
+            case (_?, _?):
+                let score = step.score ?? 0
                 kind = score >= matchThreshold ? .matched
                     : score >= approximateThreshold ? .approximate : .substituted
             case (_?, nil): kind = .omitted
@@ -92,9 +163,9 @@ nonisolated enum RecitationAligner {
             }
             items.append(AlignedWord(id: items.count, kind: kind,
                                      reference: step.ref.map { refs[$0] },
-                                     heard: step.heard.map { heard[$0] }))
+                                     heard: step.heard))
         }
-        items = markingRepetitions(items, path: path, similarity: similarity)
+        items = markingRepetitions(items, path: path) { refIndex, form in similarity(refIndex, form: form) }
 
         let matched = items.filter { $0.kind == .matched }.count
         let approximate = items.filter { $0.kind == .approximate }.count
@@ -132,21 +203,34 @@ nonisolated enum RecitationAligner {
 
     // MARK: - Needleman-Wunsch
 
+    /// Une case du chemin : mot de référence et/ou mot entendu, avec la
+    /// similarité retenue. Une scission produit un mot entendu **synthétique**
+    /// (les deux morceaux recollés, plage temporelle réunie) ; une fusion
+    /// rattache le même mot entendu à deux mots de référence consécutifs.
     private struct Step {
         let ref: Int?
-        let heard: Int?
+        let heard: HeardToken?
+        /// Forme canonique du mot entendu (pour la détection des répétitions).
+        let heardForm: String?
+        let score: Double?
     }
 
-    private enum Move: UInt8 { case diagonal, omit, insert }
+    private enum Move: UInt8 { case diagonal, omit, insert, merge, split }
 
     /// Chemin d'alignement de coût minimal, dans l'ordre de lecture.
-    /// Égalités : diagonale > omission > insertion (rend la sortie déterministe
-    /// et rattache un mot dupliqué à sa DERNIÈRE occurrence entendue).
-    private static func needlemanWunsch(rows n: Int, columns m: Int,
-                                        similarity: (Int, Int) -> Double) -> [Step] {
+    /// Égalités : diagonale > omission > insertion > fusion > scission (sortie
+    /// déterministe ; un mot dupliqué est rattaché à sa DERNIÈRE occurrence).
+    private static func needlemanWunsch(
+        rows n: Int, heard: [HeardToken], heardForms: [String],
+        similarity: (Int, Int) -> Double,
+        mergeSimilarity: (Int, Int) -> Double,
+        splitSimilarity: (Int, Int) -> Double
+    ) -> [Step] {
+        let m = heard.count
         let width = m + 1
         var cost = [Double](repeating: 0, count: (n + 1) * width)
         var moves = [Move](repeating: .diagonal, count: (n + 1) * width)
+        var scores = [Double](repeating: 0, count: (n + 1) * width)
         for i in stride(from: 1, through: n, by: 1) {
             cost[i * width] = Double(i) * gapCost
             moves[i * width] = .omit
@@ -157,33 +241,78 @@ nonisolated enum RecitationAligner {
         }
         for i in stride(from: 1, through: n, by: 1) {
             for j in stride(from: 1, through: m, by: 1) {
-                let diagonal = cost[(i - 1) * width + j - 1] + (1 - similarity(i - 1, j - 1))
-                let omit = cost[(i - 1) * width + j] + gapCost
-                let insert = cost[i * width + j - 1] + gapCost
                 let index = i * width + j
-                if diagonal <= omit, diagonal <= insert {
-                    cost[index] = diagonal; moves[index] = .diagonal
-                } else if omit <= insert {
-                    cost[index] = omit; moves[index] = .omit
-                } else {
-                    cost[index] = insert; moves[index] = .insert
+                let diagonalScore = similarity(i - 1, j - 1)
+                var best = cost[(i - 1) * width + j - 1] + (1 - diagonalScore)
+                var move = Move.diagonal
+                var score = diagonalScore
+
+                let omit = cost[(i - 1) * width + j] + gapCost
+                if omit < best { best = omit; move = .omit }
+                let insert = cost[i * width + j - 1] + gapCost
+                if insert < best { best = insert; move = .insert }
+
+                // Fusion/scission : seulement si le recollage est clairement le même mot.
+                if i >= 2 {
+                    let s = mergeSimilarity(i - 2, j - 1)
+                    if s >= matchThreshold {
+                        let merge = cost[(i - 2) * width + j - 1] + (1 - s) + fusionPenalty
+                        if merge < best { best = merge; move = .merge; score = s }
+                    }
                 }
+                if j >= 2 {
+                    let s = splitSimilarity(i - 1, j - 2)
+                    if s >= matchThreshold {
+                        let split = cost[(i - 1) * width + j - 2] + (1 - s) + fusionPenalty
+                        if split < best { best = split; move = .split; score = s }
+                    }
+                }
+                cost[index] = best
+                moves[index] = move
+                scores[index] = score
             }
         }
 
+        return backtrace(moves: moves, scores: scores, width: width, rows: n, heard: heard, heardForms: heardForms)
+    }
+
+    /// Reconstruit le chemin à partir de la matrice des mouvements : `Step`
+    /// produits à rebours puis inversés.
+    private static func backtrace(moves: [Move], scores: [Double], width: Int, rows n: Int,
+                                  heard: [HeardToken], heardForms: [String]) -> [Step] {
+        func heardToken(_ j: Int) -> HeardToken { heard[j] }
+        func heardForm(_ j: Int) -> String { heardForms[j] }
         var steps: [Step] = []
-        var i = n, j = m
+        var i = n, j = heard.count
         while i > 0 || j > 0 {
-            switch moves[i * width + j] {
+            let index = i * width + j
+            switch moves[index] {
             case .diagonal:
                 i -= 1; j -= 1
-                steps.append(Step(ref: i, heard: j))
+                steps.append(Step(ref: i, heard: heardToken(j), heardForm: heardForm(j), score: scores[index]))
             case .omit:
                 i -= 1
-                steps.append(Step(ref: i, heard: nil))
+                steps.append(Step(ref: i, heard: nil, heardForm: nil, score: nil))
             case .insert:
                 j -= 1
-                steps.append(Step(ref: nil, heard: j))
+                steps.append(Step(ref: nil, heard: heardToken(j), heardForm: heardForm(j), score: nil))
+            case .merge:
+                i -= 2; j -= 1
+                // Ordre de lecture après inversion : (i, j) puis (i+1, j).
+                steps.append(Step(ref: i + 1, heard: heardToken(j), heardForm: heardForm(j), score: scores[index]))
+                steps.append(Step(ref: i, heard: heardToken(j), heardForm: heardForm(j), score: scores[index]))
+            case .split:
+                i -= 1; j -= 2
+                let first = heardToken(j), second = heardToken(j + 1)
+                let range: ClosedRange<TimeInterval>? = {
+                    guard let a = first.timeRange, let b = second.timeRange else { return first.timeRange ?? second.timeRange }
+                    return min(a.lowerBound, b.lowerBound)...max(a.upperBound, b.upperBound)
+                }()
+                let glued = HeardToken(text: first.text + " " + second.text,
+                                       normalized: first.normalized + second.normalized,
+                                       timeRange: range,
+                                       confidence: nil)
+                steps.append(Step(ref: i, heard: glued, heardForm: heardForm(j) + heardForm(j + 1), score: scores[index]))
             }
         }
         return steps.reversed()
@@ -199,7 +328,7 @@ nonisolated enum RecitationAligner {
     /// quelconque du voisinage » — évite qu'une basmala récitée avant at-Tawba
     /// passe pour une répétition parce que « الله » apparaît plus loin.
     private static func markingRepetitions(_ items: [AlignedWord], path: [Step],
-                                           similarity: (Int, Int) -> Double) -> [AlignedWord] {
+                                           similarity: (Int, String) -> Double) -> [AlignedWord] {
         // Positions (dans `items`) des mots de référence effectivement prononcés.
         let spoken = items.indices.filter { items[$0].reference != nil && items[$0].heard != nil }
         var result = items
@@ -212,12 +341,12 @@ nonisolated enum RecitationAligner {
             let after = Array(spoken.filter { $0 > end }.prefix(length))
             let before = Array(spoken.filter { $0 < start }.suffix(length))
             for offset in 0..<length {
-                guard let heardIndex = path[start + offset].heard else { continue }
+                guard let form = path[start + offset].heardForm else { continue }
                 let candidates = [after.indices.contains(offset) ? after[offset] : nil,
                                   before.count == length ? before[offset] : nil]
                 let isRepetition = candidates.compactMap { $0 }.contains { position in
                     guard let refIndex = path[position].ref else { return false }
-                    return similarity(refIndex, heardIndex) >= matchThreshold
+                    return similarity(refIndex, form) >= matchThreshold
                 }
                 if isRepetition {
                     let item = items[start + offset]
@@ -250,6 +379,37 @@ nonisolated enum RecitationAligner {
             if let reference = item.reference { lastSpoken = reference }
         }
         return result
+    }
+
+    // MARK: - Troncature
+
+    /// `heard` est un morceau contigu d'une des formes de référence, couvrant
+    /// au moins `truncationMinimumCoverage` de ses lettres.
+    static func isTruncation(of referenceForms: [String], heard: String) -> Bool {
+        let heardCount = heard.unicodeScalars.count
+        guard heardCount >= 2 else { return false }
+        return referenceForms.contains { reference in
+            let referenceCount = reference.unicodeScalars.count
+            return referenceCount >= truncationMinimumReferenceLength
+                && heardCount < referenceCount
+                && Double(heardCount) / Double(referenceCount) >= truncationMinimumCoverage
+                && reference.contains(heard)
+        }
+    }
+
+    // MARK: - Squelette consonantique
+
+    /// Mot sans ses voyelles longues (ا, و, ي hors première lettre) : ce que
+    /// le moteur de dictée restitue d'un mot psalmodié avec des madd tenus.
+    static func consonantSkeleton(_ word: String) -> String {
+        var result = String.UnicodeScalarView()
+        for (index, scalar) in word.unicodeScalars.enumerated() {
+            if index > 0, scalar == "\u{0627}" || scalar == "\u{0648}" || scalar == "\u{064A}" {
+                continue
+            }
+            result.append(scalar)
+        }
+        return String(result)
     }
 
     // MARK: - Trigrammes

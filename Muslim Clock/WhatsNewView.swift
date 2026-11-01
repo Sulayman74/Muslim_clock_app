@@ -36,6 +36,24 @@ struct WhatsNewView: View {
             description: String(localized: "Récite un passage en Hafs, Warsh ou Qâlûn : l'app repère les mots oubliés ou différents, directement sur ton iPhone. Ta voix n'est jamais envoyée.")
         ),
         WhatsNewItem(
+            icon: "ear.badge.waveform",
+            color: .teal,
+            title: String(localized: "Calibré sur le récitateur"),
+            description: String(localized: "L'app écoute aussi la récitation d'Alafasy avec la même reconnaissance : ce qu'elle rate même chez lui ne compte plus contre toi, et ce qu'elle entend chez lui est accepté chez toi. Tu vois aussi ce qui a été entendu, mot à mot.")
+        ),
+        WhatsNewItem(
+            icon: "paintpalette.fill",
+            color: .teal,
+            title: String(localized: "Couleurs tajwid et matns"),
+            description: String(localized: "Pendant la séance, le passage s'affiche aux couleurs du mushaf tajwid : madd, ghunna, qalqala… à titre indicatif. Et dans tes leçons ʿIlm, « Me corriger » vérifie ta mémorisation du matn à la voix.")
+        ),
+        WhatsNewItem(
+            icon: "lightbulb.max.fill",
+            color: .orange,
+            title: String(localized: "Une suggestion au bon moment"),
+            description: String(localized: "Une carte « En ce moment » te propose l'action du moment : révision le matin, lecture après Maghrib, Al-Kahf le vendredi. Ta Khatma vit désormais dans l'onglet Apprendre, avec tous tes programmes.")
+        ),
+        WhatsNewItem(
             icon: "sparkles",
             color: .teal,
             title: String(localized: "Amélioration UX"),

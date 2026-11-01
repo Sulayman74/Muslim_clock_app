@@ -19,11 +19,11 @@ struct QuranKhatmaCard: View {
     @AppStorage("pendingOpenQuranTracker") private var pendingOpenQuranTracker: Bool = false
 
     /// Délais iqamah par prière (configurés dans SmartSetupView / SettingsView "Ma mosquée").
-    @AppStorage("iqamahFajrDelay")    private var iqamahFajrDelay: Int = 20
-    @AppStorage("iqamahDhuhrDelay")   private var iqamahDhuhrDelay: Int = 15
-    @AppStorage("iqamahAsrDelay")     private var iqamahAsrDelay: Int = 15
-    @AppStorage("iqamahMaghribDelay") private var iqamahMaghribDelay: Int = 5
-    @AppStorage("iqamahIshaDelay")    private var iqamahIshaDelay: Int = 15
+    @AppStorage(StorageKeys.iqamahFajrDelay)    private var iqamahFajrDelay: Int = IqamahDefaults.fajr
+    @AppStorage(StorageKeys.iqamahDhuhrDelay)   private var iqamahDhuhrDelay: Int = IqamahDefaults.dhuhr
+    @AppStorage(StorageKeys.iqamahAsrDelay)     private var iqamahAsrDelay: Int = IqamahDefaults.asr
+    @AppStorage(StorageKeys.iqamahMaghribDelay) private var iqamahMaghribDelay: Int = IqamahDefaults.maghrib
+    @AppStorage(StorageKeys.iqamahIshaDelay)    private var iqamahIshaDelay: Int = IqamahDefaults.isha
     /// Marge entre la fin de prière (iqamah ou adhan) et le rappel de lecture (minutes).
     @AppStorage("quranReminderOffsetMinutes") private var quranReminderOffsetMinutes: Int = 10
 
@@ -71,13 +71,13 @@ struct QuranKhatmaCard: View {
         let prayers = prayerVM.dailyPrayers.map {
             ScheduledPrayer(name: $0.name, date: $0.date)
         }
-        let iqamahDelays: [String: Int] = [
-            "Fajr":    iqamahFajrDelay,
-            "Dhuhr":   iqamahDhuhrDelay,
-            "Asr":     iqamahAsrDelay,
-            "Maghrib": iqamahMaghribDelay,
-            "Isha":    iqamahIshaDelay,
-        ]
+        let iqamahDelays = IqamahDefaults.delays(
+            fajr: iqamahFajrDelay,
+            dhuhr: iqamahDhuhrDelay,
+            asr: iqamahAsrDelay,
+            maghrib: iqamahMaghribDelay,
+            isha: iqamahIshaDelay
+        )
         QuranReminderScheduler.schedule(
             prayers: prayers,
             plan: plan,

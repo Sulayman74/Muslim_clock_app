@@ -26,6 +26,9 @@ struct LearnHubView: View {
                         // VStack eager (pas Lazy) : les deep links reposent sur
                         // le onAppear des cartes, comme dans l'onglet Rappel.
                         VStack(spacing: ZoneSpacing.interZone) {
+                            // Suggestion du moment — une seule carte, routage direct.
+                            LearnSuggestionCard(style: .full)
+
                             zone(titleFr: "Récitation", titleAr: "التِّلَاوَة", accent: ModuleAccent.quran) {
                                 RecitationEntryCard()
                             }
@@ -33,6 +36,11 @@ struct LearnHubView: View {
                                 WeeklyReviewCard(quiz: quiz)
                             }
                             zone(titleFr: "Programmes", titleAr: "البَرَامِج", accent: ModuleAccent.ilm) {
+                                // KHATMA — déplacée depuis l'onglet Rappel : la lecture
+                                // suivie du Quran est un programme d'apprentissage.
+                                // Son deep-link (pendingOpenQuranTracker) suit : le
+                                // handler quranTracker de MainView route vers ce tab.
+                                QuranKhatmaCard()
                                 IlmProgramCard(vm: quiz.ilm)
                             }
                         }

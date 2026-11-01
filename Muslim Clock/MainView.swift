@@ -13,28 +13,39 @@ struct WidgetDateHeader: View {
     /// Style compact pour la Qibla (juste Hégirien arabe + français, pas de grégorien)
     var compact: Bool = false
     
-    var gregorianFr: String {
+    var gregorianFr: String { Self.gregorian(date) }
+    var hijriFr: String { Self.hijriFr(date) }
+    var hijriAr: String { Self.hijriAr(date) }
+
+    // Formatters partagés avec le chapeau compact de l'onglet Salat. Créés une
+    // fois (plus un `DateFormatter` par rendu) ; locale de l'app, pas `fr_FR`.
+    private static let gregorianFormatter: DateFormatter = {
         let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "fr_FR")
+        formatter.locale = .current
         formatter.dateFormat = "d MMMM yyyy"
-        return formatter.string(from: date).capitalized
-    }
-    
-    var hijriFr: String {
+        return formatter
+    }()
+    private static let hijriFrFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.calendar = Calendar(identifier: .islamicUmmAlQura)
-        formatter.locale = Locale(identifier: "fr_FR")
+        formatter.locale = .current
         formatter.dateFormat = "d MMMM yyyy"
-        return formatter.string(from: date)
-    }
-    
-    var hijriAr: String {
+        return formatter
+    }()
+    private static let hijriArFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.calendar = Calendar(identifier: .islamicUmmAlQura)
         formatter.locale = Locale(identifier: "ar_SA")
         formatter.dateFormat = "d MMMM yyyy"
-        return formatter.string(from: date)
-    }
+        return formatter
+    }()
+
+    /// Date grégorienne dans la langue de l'app.
+    static func gregorian(_ date: Date) -> String { gregorianFormatter.string(from: date).capitalized }
+    /// Date hégirienne (Umm al-Qura) dans la langue de l'app.
+    static func hijriFr(_ date: Date) -> String { hijriFrFormatter.string(from: date) }
+    /// Date hégirienne en arabe.
+    static func hijriAr(_ date: Date) -> String { hijriArFormatter.string(from: date) }
     
     var body: some View {
         if compact {
@@ -141,55 +152,48 @@ private struct NetworkStatusBanner: View {
     }
 }
 
-// MARK: - Bannière localisation refusée
+// MARK: - Chapeau Salat : horloge compacte + dates
 
-/// Affichée quand l'accès à la localisation est refusé/restreint : sans position,
-/// aucun horaire ne peut être calculé. Propose un raccourci vers les Réglages.
-private struct LocationDeniedBanner: View {
-    @Environment(\.openURL) private var openURL
-
+/// Horloge 34 pt et dates sur une rangée. `.everyMinute` : un tick par
+/// seconde gaspillait 59 redraws/60 ; le schedule tire pile à la frontière de
+/// minute et rattrape au retour de background. Les dates suivent la même
+/// horloge : elles basculent à minuit sans attendre un autre rendu.
+private struct SalatClockHeader: View {
     var body: some View {
-        HStack(spacing: 10) {
-            Image(systemName: "location.slash.fill")
-                .font(.system(size: 14, weight: .bold))
+        TimelineView(.everyMinute) { context in
+            HStack(alignment: .firstTextBaseline) {
+                Text(context.date.formatted(.dateTime.hour().minute()))
+                    .font(.system(size: 34, weight: .semibold, design: .rounded))
+                    .monospacedDigit()
+                    .foregroundStyle(.white)
+                    .accessibilityLabel(Text("Il est \(context.date.formatted(date: .omitted, time: .shortened))"))
 
-            VStack(alignment: .leading, spacing: 2) {
-                Text("Localisation désactivée")
-                    .font(.system(size: 13, weight: .semibold, design: .rounded))
-                Text("Impossible de calculer les horaires sans votre position.")
-                    .font(.system(size: 11, design: .rounded))
-                    .foregroundStyle(.white.opacity(0.8))
-                    .fixedSize(horizontal: false, vertical: true)
-            }
+                Spacer()
 
-            Spacer()
-
-            Button {
-                if let url = URL(string: UIApplication.openSettingsURLString) {
-                    openURL(url)
+                VStack(alignment: .trailing, spacing: 2) {
+                    Text(verbatim: WidgetDateHeader.gregorian(context.date))
+                        .font(.footnote.weight(.semibold))
+                        .foregroundStyle(.white.opacity(0.9))
+                    Text(verbatim: WidgetDateHeader.hijriAr(context.date))
+                        .font(.footnote.weight(.bold))
+                        .foregroundStyle(.orange.opacity(0.9))
+                        .environment(\.layoutDirection, .rightToLeft)
+                    Text(verbatim: WidgetDateHeader.hijriFr(context.date))
+                        .font(.caption2.weight(.medium))
+                        .foregroundStyle(.white.opacity(0.5))
                 }
-            } label: {
-                Text("Réglages")
-                    .font(.system(size: 12, weight: .bold, design: .rounded))
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 6)
-                    .glassEffect(.clear, in: Capsule())
+                .accessibilityElement(children: .combine)
             }
         }
-        .foregroundStyle(.white)
-        .padding(.horizontal, 14)
-        .padding(.vertical, 10)
-        .background(
-            RoundedRectangle(cornerRadius: CornerRadius.card, style: .continuous)
-                .fill(Color.red.opacity(0.85))
-        )
+        .padding(.top, 12)
     }
 }
 
 // MARK: - Main View
 
 struct MainView: View {
-    @StateObject var manager = CompassManager()
+    // La boussole (`CompassManager`, 60 Hz) vit dans `QiblaView` : observée ici,
+    // chaque tick de cap réévaluait tout le body de MainView, cinq onglets compris.
     @StateObject var prayerVM = PrayerTimesViewModel()
     @StateObject var podcastManager = PodcastManager()
     @StateObject var weatherVM = WeatherViewModel()
@@ -239,8 +243,8 @@ struct MainView: View {
     @AppStorage("adhkarReminderOffsetMinutes") private var adhkarReminderOffsetMinutes = 5
 
     // Iqamah delays — lus depuis Settings pour calculer le trigger des rappels.
-    @AppStorage("iqamahFajrDelay") private var iqamahFajrDelay = 20
-    @AppStorage("iqamahAsrDelay") private var iqamahAsrDelay = 15
+    @AppStorage(StorageKeys.iqamahFajrDelay) private var iqamahFajrDelay = IqamahDefaults.fajr
+    @AppStorage(StorageKeys.iqamahAsrDelay) private var iqamahAsrDelay = IqamahDefaults.asr
 
     /// Toggle DEBUG : force le jour de la semaine à vendredi pour tester l'UI
     /// Jumu'ah + bienséances vendredi sans attendre le jour réel.
@@ -275,7 +279,7 @@ struct MainView: View {
         }
     private var tabColor: Color {
             switch selectedTab {
-            case 0: return .red      // Tab Salat
+            case 0: return salatStateTint   // Tab Salat — suit l'état de prière (le rouge était la couleur d'alerte)
             case 1: return .orange   // Tab Rappel
             case 2: return .teal     // Tab Qibla
             case 3: return .blue     // Tab Réglages
@@ -295,64 +299,36 @@ struct MainView: View {
     /// Chapeau : horloge, dates, et bannières BLOQUANTES uniquement (GPS,
     /// relocalisation, pastille voyage, saison). Les éléments de consultation
     /// posée (fiche fiqh voyage, salawat vendredi) vivent en zone secondaire.
-    @ViewBuilder
     private var salatHeaderBlock: some View {
-        // L'horloge — .everyMinute : elle n'affiche que HH:mm, un tick par
-        // seconde gaspillait 59 redraws/60. Le schedule tire pile à la frontière
-        // de minute et rattrape immédiatement au retour de background.
-        TimelineView(.everyMinute) { context in
-            Text(context.date.formatted(.dateTime.hour().minute()))
-                .font(.system(size: 65, weight: .semibold, design: .monospaced))
-                .monospacedDigit()
-                .minimumScaleFactor(0.5)
-                .lineLimit(1)
-                .padding(.top, 20)
-                .foregroundColor(.white)
-                .accessibilityLabel(Text("Il est \(context.date.formatted(date: .omitted, time: .shortened))"))
+        VStack(spacing: 12) {
+            // Horloge compacte + dates : l'heure n'est plus l'élément dominant,
+            // c'est le héros « Prochaine prière » qui porte l'information n°1.
+            SalatClockHeader()
+
+            // Ville · météo · fraîcheur (+ bouton Recalculer si on a bougé).
+            SalatStatusChips(cityName: locationManager.cityName)
+
+            // Mode voyage : pastille si actif, sinon suggestion GPS non-intrusive.
+            TravelModeHeader()
+
+            SeasonBannerView(season: currentSeason)
         }
-
-        // ✅ DATE HEADER — juste sous l'horloge
-        WidgetDateHeader(date: .now)
-            .padding(.top, -8)
-
-        // Fraîcheur des horaires (mise à jour à HH:mm / en cours).
-        PrayerFreshnessLine()
-
-        GPSRelocationIndicator()
-            .padding(.top, -4)
-
-        // Mode voyage : pastille si actif, sinon suggestion GPS non-intrusive.
-        TravelModeHeader()
-
-        if locationManager.isAccessDenied {
-            LocationDeniedBanner()
-                .padding(.top, 4)
-        }
-
-        SeasonBannerView(season: currentSeason)
-            .padding(.top, -6)
     }
 
     /// Zone prioritaire — « le glance 3 secondes » : météo + prochaine prière,
     /// décomptes contextuels, et LES 5 PRIÈRES (remontées au-dessus du fold).
     @ViewBuilder
     private var salatPriorityZone: some View {
-        VStack(spacing: ZoneSpacing.intraZonePrimary) {
-            VStack(spacing: 10) {
-                HStack {
-                    WeatherMiniWidget(location: manager.userLocation)
-                    NextPrayerWidget()
-                }
-                // Ville + attribution Apple Weather (App Review 5.2.5)
-                // Capsule adaptable : gère les noms de ville longs.
-                WeatherCityAttributionRow(
-                    cityName: manager.cityName,
-                    attribution: weatherVM.attribution
-                )
-            }
-            CurrentPrayerGaugeView()
-            // Rappel dédié dans la dernière heure avant Dhuhr/Jumu'ah.
-            DhuhrCountdownCard()
+        // `spacing: 0` : chaque carte porte son propre espacement bas, posé
+        // DANS sa condition d'affichage. Une carte conditionnelle absente
+        // (jauge, Dhuhr, iqamah, état vide) ne laisse donc plus de trou — avec
+        // un VStack espacé, un enfant de hauteur nulle gardait son spacing.
+        VStack(spacing: 0) {
+            // État vide nommé + action (localisation refusée / non demandée /
+            // introuvable, calcul impossible). Vide quand tout va bien.
+            PrayerEmptyStateCard()
+            // Le héros : quelle prière, combien de temps (en cours / prochaine / nuit).
+            PrayerHeroCard()
             // Décompte Adhan → Iqamah : visible uniquement pendant
             // la fenêtre (délais réglés dans « Ma mosquée »).
             IqamahCountdownCard()
@@ -362,59 +338,21 @@ struct MainView: View {
             // urgence temporelle, reste en zone 1 mais après la liste.
             if IslamicSeasonInfo.isRamadan() {
                 RamadanDuaCardView()
+                    .padding(.top, ZoneSpacing.intraZonePrimary)
             }
         }
     }
 
-    /// Zone secondaire — « pour aller plus loin » : adhkar, sunnah de la prière
-    /// en cours, rappel coranique, fiche voyage, salawat vendredi, lune.
-    @ViewBuilder
+    /// Zone secondaire — « pour aller plus loin » : la décision d'affichage des
+    /// cartes contextuelles (plafond + priorité) vit dans `SalatSecondaryZone`.
     private var salatSecondaryZone: some View {
-        VStack(alignment: .leading, spacing: ZoneSpacing.intraZoneSecondary) {
-            ZoneSectionHeader(
-                titleFr: "Pour aller plus loin",
-                titleAr: "لِلاسْتِزَادَة",
-                accent: salatStateTint
-            )
-            .padding(.bottom, ZoneSpacing.sectionHeaderBottom)
-
-            // Se préparer à la prière (wudû'/ghusl) — fenêtre pré-prière.
-            // La préparation précède la récitation (AdhkarMomentCard).
-            WuduMomentCard()
-
-            AdhkarMomentCard()
-
-            // Deux portes d'entrée Adhkar côte à côte (même famille).
-            HStack(spacing: 12) {
-                AdhkarQuickAccessButton(compact: true)
-                AdhkarBookletButton(compact: true)
-            }
-
-            // RawatibCardView retirée : ProphetSunnahCardView couvre déjà
-            // les Rawatib via son champ `sunnahRecommendation` (doublon).
-            ProphetSunnahCardView(
-                sunnah: ProphetSunnahProvider.current(
-                    prayerName: prayerContextForCards,
-                    season: currentSeason,
-                    isFriday: isCurrentlyFriday
-                ),
-                contextPrayerName: prayerContextForCards,
-                isPrayerInWindow: prayerVM.currentPrayerWindow != .none
-            )
-
-            // Rappel coranique rotatif (extrait du hero — enrichissement).
-            SpiritualReminderCard()
-
-            // Facilités du voyageur (qasr / jamʿ / jeûne) — visible en mode voyage.
-            TravelFiqhCard()
-
-            // Rappel Salawat le vendredi (compact) — respecte debugForceFriday.
-            if isCurrentlyFriday {
-                FridaySalawatMiniReminder()
-            }
-
-            MoonWidgetView(date: .now)
-        }
+        SalatSecondaryZone(
+            accent: salatStateTint,
+            season: currentSeason,
+            isFriday: isCurrentlyFriday,
+            prayerContext: prayerContextForCards,
+            hasPrayers: !prayerVM.dailyPrayers.isEmpty
+        )
     }
 
     var body: some View {
@@ -454,8 +392,7 @@ struct MainView: View {
                             // ville) → le VM recalcule les horaires automatiquement,
                             // puis on rafraîchit la météo sur la position fraîche.
                             await locationManager.refreshLocation()
-                            let loc = locationManager.currentLocation ?? manager.userLocation
-                            if let loc {
+                            if let loc = locationManager.currentLocation {
                                 await weatherVM.forceRefresh(for: loc)
                             }
                         }
@@ -503,7 +440,7 @@ struct MainView: View {
                 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
                 ZStack{
                     CosmicBackground(season: currentSeason)
-                    QiblaView(manager: manager)
+                    QiblaView()
                 }
                     .tabItem {
                         Label("Qiblah", systemImage: "safari.fill")
@@ -623,7 +560,7 @@ struct MainView: View {
         .task {
             // Relie l'unique sink de localisation du VM au store voyage (une fois).
             prayerVM.travelStore = travel
-            if let loc = manager.userLocation {
+            if let loc = locationManager.currentLocation {
                 await weatherVM.fetchWeather(for: loc)
             }
             await updateChecker.checkForUpdate()
@@ -641,7 +578,7 @@ struct MainView: View {
         // ── Auto-retry sur retour de connexion ──────────────────────────
         .onReceive(networkMonitor.onReconnect) {
             Task {
-                if let loc = manager.userLocation {
+                if let loc = locationManager.currentLocation {
                     await weatherVM.forceRefresh(for: loc)
                 }
                 if dailyContentService.hasNetworkError {
@@ -651,7 +588,7 @@ struct MainView: View {
                 podcastManager.resumeBufferingIfStalled()
             }
         }
-        .onChange(of: manager.userLocation) { oldLocation, newLocation in
+        .onChange(of: locationManager.currentLocation) { _, newLocation in
                     if let loc = newLocation {
                         Task {
                             await weatherVM.fetchWeather(for: loc)
@@ -710,15 +647,14 @@ struct MainView: View {
                 //  - le Control Widget "Adhkar du moment" (timing auto-détecté ⇒ nil)
                 //  - une notif Adhkar matin/soir (timing forcé)
                 .sheet(isPresented: $showAdhkarFromControl, onDismiss: { adhkarSheetForcedTiming = nil }) {
+                    // Timing forcé (notification) ou détecté (Control Widget) : le
+                    // dégradé suit le même choix que la vue — le matin n'héritait
+                    // plus du fond du soir.
+                    let timing = adhkarSheetForcedTiming
+                        ?? AdhkarTiming.current(fajr: prayerVM.fajrDate, asr: prayerVM.asrDate)
                     ZStack {
-                        LinearGradient(
-                            colors: adhkarSheetForcedTiming == .morning
-                                ? [Color(red: 0.15, green: 0.1, blue: 0.05), Color(red: 0.25, green: 0.18, blue: 0.08)]
-                                : [Color(red: 0.05, green: 0.08, blue: 0.18), Color(red: 0.08, green: 0.1, blue: 0.25)],
-                            startPoint: .top,
-                            endPoint: .bottom
-                        )
-                        .ignoresSafeArea()
+                        timing.sheetGradient
+                            .ignoresSafeArea()
                         AdhkarView(initialTiming: adhkarSheetForcedTiming)
                     }
                     .environmentObject(prayerVM)
@@ -814,9 +750,9 @@ struct MainView: View {
                 showAdhanOverlay = true
             }
         case .quranTracker:
-            // Le switch de tab monte DailyContentView → QuranKhatmaCard, qui
+            // Le switch de tab monte LearnHubView → QuranKhatmaCard, qui
             // consomme `pendingOpenQuranTracker` à son onAppear et ouvre la sheet.
-            selectedTab = 1
+            selectedTab = 4
         case .ilmTracker:
             // Même mécanique : IlmProgramCard (onglet Apprendre) consomme
             // `pendingOpenIlmTracker` à son onAppear et ouvre la sheet.
@@ -940,7 +876,7 @@ private struct TabSwitchDeepLinks: ViewModifier {
         content
             .onReceive(NotificationCenter.default.publisher(for: .quranReadingTapped)) { _ in
                 NotificationDeepLink.clear()
-                selectedTab = 1
+                selectedTab = 4
             }
             .onReceive(NotificationCenter.default.publisher(for: .ilmReminderTapped)) { _ in
                 NotificationDeepLink.clear()
@@ -948,6 +884,11 @@ private struct TabSwitchDeepLinks: ViewModifier {
             }
             .onReceive(NotificationCenter.default.publisher(for: .weeklyQuizTapped)) { _ in
                 NotificationDeepLink.clear()
+                selectedTab = 4
+            }
+            // Tap sur la carte « En ce moment » compacte (onglet Rappel) :
+            // la suggestion complète et son routage vivent dans le hub Apprendre.
+            .onReceive(NotificationCenter.default.publisher(for: .learnSuggestionTapped)) { _ in
                 selectedTab = 4
             }
     }

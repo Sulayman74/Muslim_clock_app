@@ -61,15 +61,26 @@ nonisolated struct RecitationEquivalences: Sendable {
 
     /// Formes canoniques acceptables pour un mot de référence.
     ///
-    /// En graphie uthmani, l'alef suscrit (U+0670) se lit « a » mais s'écrit
-    /// selon trois logiques que la dictée (imla'i) rend différemment :
-    /// - ignoré : عَلَىٰ → على ;
-    /// - alef ajouté : ءَايَٰت → ايات, العٰلمين → العالمين ;
-    /// - alef remplaçant son support و/ي/ى : الصلوٰة → الصلاه, ءاتيٰهم → اتاهم.
-    /// On garde les trois ; l'aligneur retient la plus proche de ce qui est entendu.
+    /// Deux familles de variantes de GRAPHIE (jamais de lecture) :
+    /// 1. Alef suscrit (U+0670) — se lit « a » mais s'écrit selon trois
+    ///    logiques que la dictée (imla'i) rend différemment :
+    ///    ignoré (عَلَىٰ → على), alef ajouté (ءَايَٰت → ايات), alef remplaçant
+    ///    son support و/ي/ى (الصلوٰة → الصلاه).
+    /// 2. Siège de hamza médiane/finale (ؤ ئ أ إ) — la dictée choisit le
+    ///    support d'après la voyelle brève qu'elle croit entendre, que le
+    ///    correcteur ne juge pas : وَيُؤْتُونَ est souvent transcrit ويأتون.
+    ///    Chaque siège accepte donc ا/و/ي. La hamza INITIALE est exclue
+    ///    (أ/إ → ا est déjà l'unification du normaliseur).
+    /// L'aligneur retient la forme la plus proche de ce qui est entendu.
     func referenceForms(display: String, normalized: String) -> [String] {
         var forms = [canonical(normalized)]
-        guard display.unicodeScalars.contains(Self.superscriptAlef) else { return forms }
+        appendSuperscriptAlefForms(display: display, to: &forms)
+        appendHamzaSeatForms(display: display, to: &forms)
+        return forms
+    }
+
+    private func appendSuperscriptAlefForms(display: String, to forms: inout [String]) {
+        guard display.unicodeScalars.contains(Self.superscriptAlef) else { return }
 
         var inserted = String.UnicodeScalarView()
         var replaced: [Unicode.Scalar] = []
@@ -90,10 +101,42 @@ nonisolated struct RecitationEquivalences: Sendable {
         var replacedView = String.UnicodeScalarView()
         replacedView.append(contentsOf: replaced)
         for variant in [String(inserted), String(replacedView)] {
-            let form = canonical(QuranSearchNormalizer.tokens(variant).joined())
-            if !form.isEmpty, !forms.contains(form) { forms.append(form) }
+            append(variant: variant, to: &forms)
         }
-        return forms
+    }
+
+    /// Variantes de siège de hamza : chaque siège non initial (ؤ ئ أ إ) est
+    /// remplacé par chacun des supports ا/و/ي (produit cartésien, borné à
+    /// 2 sièges — au-delà le mot est assez long pour que les trigrammes
+    /// absorbent l'écart).
+    private func appendHamzaSeatForms(display: String, to forms: inout [String]) {
+        let scalars = Array(display.unicodeScalars)
+        var seats: [Int] = []
+        var seenBaseLetter = false
+        for (position, scalar) in scalars.enumerated() {
+            if Self.hamzaSeats.contains(scalar), seenBaseLetter {
+                seats.append(position)
+            }
+            if Self.isBaseLetter(scalar) { seenBaseLetter = true }
+        }
+        guard !seats.isEmpty, seats.count <= 2 else { return }
+
+        var combos: [[Unicode.Scalar]] = [[]]
+        for _ in seats {
+            combos = combos.flatMap { combo in Self.seatSupports.map { combo + [$0] } }
+        }
+        for combo in combos {
+            var copy = scalars
+            for (offset, position) in seats.enumerated() { copy[position] = combo[offset] }
+            var view = String.UnicodeScalarView()
+            view.append(contentsOf: copy)
+            append(variant: String(view), to: &forms)
+        }
+    }
+
+    private func append(variant: String, to forms: inout [String]) {
+        let form = canonical(QuranSearchNormalizer.tokens(variant).joined())
+        if !form.isEmpty, !forms.contains(form) { forms.append(form) }
     }
 
     // MARK: - Privé
@@ -102,6 +145,10 @@ nonisolated struct RecitationEquivalences: Sendable {
     private static let alef: Unicode.Scalar = "\u{0627}"
     /// و, ي, ى — supports graphiques d'un alef suscrit.
     private static let alefCarriers: Set<Unicode.Scalar> = ["\u{0648}", "\u{064A}", "\u{0649}"]
+    /// أ إ ؤ ئ — hamza portée par un support (le siège varie selon la voyelle).
+    private static let hamzaSeats: Set<Unicode.Scalar> = ["\u{0623}", "\u{0625}", "\u{0624}", "\u{0626}"]
+    /// Supports que la dictée peut écrire à la place : ا, و, ي.
+    private static let seatSupports: [Unicode.Scalar] = ["\u{0627}", "\u{0648}", "\u{064A}"]
 
     private static func isBaseLetter(_ scalar: Unicode.Scalar) -> Bool {
         (0x0621...0x064A).contains(Int(scalar.value)) || scalar == "\u{0671}"

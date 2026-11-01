@@ -121,7 +121,7 @@ struct MoonWidgetView: View {
     private var hijriMonthYear: String {
         let fmt = DateFormatter()
         fmt.calendar = Calendar(identifier: .islamicUmmAlQura)
-        fmt.locale   = Locale(identifier: "fr_FR")
+        fmt.locale   = .current
         fmt.dateFormat = "MMMM yyyy"
         return fmt.string(from: date).capitalized
     }
@@ -150,6 +150,8 @@ struct MoonWidgetView: View {
                         .foregroundStyle(.white.opacity(0.5))
                         .rotationEffect(.degrees(isExpanded ? 180 : 0))
                 }
+                // Cible tactile ≥ 44 pt sur toute la largeur de l'en-tête.
+                .frame(minHeight: 44)
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
@@ -172,6 +174,7 @@ struct MoonWidgetView: View {
             }
 
             if isExpanded {
+              VStack(alignment: .leading, spacing: 12) {
                 // ── BANDE 5 JOURS ──
                 HStack(spacing: 0) {
                     ForEach(strip) { day in
@@ -214,12 +217,15 @@ struct MoonWidgetView: View {
                         .font(.system(size: 10, weight: .bold, design: .monospaced))
                         .foregroundStyle(.white.opacity(0.5))
                 }
+              }
+              .transition(.opacity)
             }
         }
         .padding(16)
         // Teinte ambre pendant les Jours Blancs (jeûne recommandé) — porte le
-        // signal auparavant véhiculé par la bordure orange.
-        .glassCardSecondary(tint: today.isWhiteDays ? .orange : nil)
+        // signal auparavant véhiculé par la bordure orange. Repli/dépli en bloc,
+        // contenu clippé pendant l'animation (anti-wiggle n°6).
+        .collapsibleCard(tint: today.isWhiteDays ? .orange : nil)
     }
 }
 
@@ -258,7 +264,11 @@ private struct NewMoonInvocationCard: View {
                     Image(systemName: expanded ? "chevron.up" : "chevron.down")
                         .font(.system(size: 10, weight: .semibold))
                         .foregroundStyle(.white.opacity(0.45))
+                        // Cible tactile ≥ 44 pt (chevron visuel inchangé).
+                        .frame(width: 44, height: 44)
+                        .contentShape(Rectangle())
                 }
+                .accessibilityLabel(expanded ? Text("Masquer les détails") : Text("Afficher les détails"))
             }
 
             // ── TEXTE ARABE (toujours visible) ──
@@ -324,9 +334,9 @@ private struct MoonDayCell: View {
     let info: MoonDayInfo
 
     private var dayLabel: String {
-        if info.isToday { return "Auj." }
+        if info.isToday { return String(localized: "Auj.") }
         let fmt = DateFormatter()
-        fmt.locale = Locale(identifier: "fr_FR")
+        fmt.locale = .current
         fmt.dateFormat = "EEE"
         return String(fmt.string(from: info.date).prefix(3)).capitalized
     }

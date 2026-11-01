@@ -360,3 +360,39 @@ Ordre conseillé : 0b → 0 → 1 → 2 → 3 (livrable « quiz hebdo » autonom
 - Whisper-Coran : https://huggingface.co/tarteel-ai/whisper-base-ar-quran
 - Conversions CoreML tierces : https://github.com/yalabdullmohsen/SSUNNAH/releases/tag/whisper-quran-coreml-v2-q6 , https://github.com/Azzam-Alrashed/Aqra/pull/2
 - Apple : `SpeechAnalyzer`, `SpeechTranscriber.supportedLocales`, `SystemLanguageModel.availability` (DocumentationSearch Xcode)
+
+---
+
+## 7. Couleurs tajwid dans le texte du Coran — faisabilité (2026-10-22)
+
+**Verdict : faisable, affichage uniquement (jamais de jugement), Hafs seulement en V1.**
+
+### Données
+- Source retenue : édition `quran-tajweed` de api.alquran.cloud (hôte déjà utilisé par `DailyContentService`).
+  Markup par segment `[x:id[texte]` où `x` ∈ h (hamzat wasl), s (muette), l (lam shamsiyya),
+  n/p/m/o (madd normal / permis / nécessaire / obligatoire), q (qalqala), c/f (ikhfa shafawi / ikhfa),
+  w (idgham shafawi), i (iqlab), a/u (idgham avec / sans ghunna), d/b (mutajanisayn / mutaqaribayn).
+  Texte + annotations livrés ensemble → aucun problème d'alignement avec un autre corpus.
+- Alternatives écartées : QUL « QPC Hafs Tajweed » (texte pensé pour la police QPC V4 Tajweed à
+  glyphes colorés, 604 polices par page — trop lourd) ; dépôt `quran-tajweed-embedded` (indices de
+  caractères sur le texte Tanzil, risque de décalage avec notre texte quran-json).
+- Chargement par sourate via `RemoteJSONLoader` (cache Documents, texte canonique donc pas d'expiration).
+
+### Rendu
+- `AttributedString` avec `foregroundColor` par segment, police AmiriQuran — le lecteur colore déjà le
+  marqueur de verset ainsi. Point à valider en spike : les frontières de couleur à l'intérieur d'une
+  ligature (lam-alef) peuvent casser la liaison sous Core Text. Si c'est le cas : colorer au niveau du mot
+  entier ou étendre la couleur à toute la ligature.
+- Palette : 6 familles lisibles plutôt que 16 règles : Madd (bleus), Ghunna/idgham (verts), Qalqala
+  (rouge), Ikhfa (violet), Iqlab (cyan), Lettres muettes (gris). Variante éclaircie pour le thème sombre.
+
+### Intégration
+1. Spike (0,5 j) : `TajweedParser` pur + tests, RenderPreview sur 24:35 et 2:2 (ligatures, harakât).
+2. `TajweedLoader` (0,5 j) : fetch/cache par sourate, affichage du texte de l'édition tajwid quand le
+   toggle est actif (le texte quran-json sinon).
+3. Lecteur Coran (1 j) : toggle « Couleurs tajwid » dans le menu `textformat` (`@AppStorage("quranTajweedColors")`),
+   légende repliable (règle → couleur → une ligne d'explication).
+4. Récitation (0,5 j) : texte de référence colorié avant l'écoute + puces « règles présentes dans ce passage »
+   (informatif, cf. invariant : le tajwid n'est pas évalué).
+
+Hors scope : jugement du tajwid, Warsh/Qaloun (édition Hafs uniquement), police QPC colorée.

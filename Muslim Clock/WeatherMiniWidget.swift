@@ -2,7 +2,7 @@ import SwiftUI
 import CoreLocation
 import WeatherKit
 
-/// Capsule sous le `WeatherMiniWidget` : affiche la ville (source GPS) + attribution
+/// Capsule du chapeau Salat : affiche la ville (source GPS) + attribution
 /// WeatherKit (Apple — requise par App Review 5.2.5).
 ///
 /// Pensée pour s'adapter à des noms de ville longs : la capsule s'élargit avec le
@@ -84,195 +84,257 @@ struct WeatherAttributionView: View {
     }
 }
 
-struct WeatherMiniWidget: View {
+// MARK: - Chapeau : rangée de chips
+
+/// Rangée d'état du chapeau Salat : ville + attribution, météo, fraîcheur des
+/// horaires, et le bouton « Recalculer » quand on a bougé. Remplace les deux
+/// cercles météo / prochaine prière (120 pt) : la prochaine prière vit dans le
+/// héros, la météo n'a pas besoin de 120 pt pour deux caractères.
+struct SalatStatusChips: View {
+    let cityName: String
     @EnvironmentObject var weatherVM: WeatherViewModel
-    var location: CLLocation?
+    @EnvironmentObject var prayerVM: PrayerTimesViewModel
+    @ObservedObject private var location = SharedLocationManager.shared
 
     var body: some View {
-        VStack(spacing: 6) {
+        VStack(spacing: 8) {
+            HStack(spacing: 6) {
+                WeatherCityAttributionRow(cityName: cityName, attribution: weatherVM.attribution)
+                weatherChip
+                freshnessChip
+            }
+            GPSRelocationIndicator()
+        }
+    }
+
+    private var weatherChip: some View {
+        HStack(spacing: 4) {
             Image(systemName: weatherVM.conditionIcon)
-                .font(.system(size: 34))
+                .font(.system(size: 12))
                 .symbolVariant(.fill)
                 .symbolRenderingMode(.multicolor)
             Text(verbatim: weatherVM.temperature)
-                .font(.system(.title2, design: .rounded).bold())
-                .foregroundColor(.white)
+                .font(.system(size: 12, weight: .semibold, design: .rounded))
                 .monospacedDigit()
+                .foregroundStyle(.white.opacity(0.85))
         }
-        .frame(width: 100, height: 100)
-        .padding(10)
-        .glassEffect(.regular, in: .circle)
-        .redacted(reason: weatherVM.isLoading ? .placeholder : [])
-        .animation(.easeInOut(duration: 0.3), value: weatherVM.isLoading)
-    }
-}
-
-struct NextPrayerWidget: View {
-    // 1. 🔌 On attrape le cerveau global injecté par MainView
-        @EnvironmentObject var prayerVM: PrayerTimesViewModel
-
-    /// Dans une fenêtre de prière active : le widget bascule sur la prière en
-    /// cours + heure de fin de fenêtre. Évite la redondance avec
-    /// `CurrentPrayerGaugeView` qui montre déjà le décompte détaillé.
-    private var isInWindow: Bool {
-        prayerVM.currentPrayerWindow != .none && prayerVM.currentWindowEnd != nil
+        .padding(.horizontal, 10)
+        .padding(.vertical, 6)
+        .glassEffect(.clear, in: Capsule())
+        // Squelette uniquement pendant un vrai chargement : sans position, « --° ».
+        .redacted(reason: weatherVM.isLoading && location.currentLocation != nil ? .placeholder : [])
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(Text("Météo : \(weatherVM.temperature)"))
     }
 
-    private var displayName: String {
-        guard isInWindow else { return prayerVM.nextPrayerName }
-        if prayerVM.currentPrayerWindow == .dhuhr && prayerVM.isFridayJumuah {
-            return "Jumu'ah"
-        }
-        return prayerVM.currentPrayerWindow.rawValue
-    }
+    /// Largeur plancher de la chip de fraîcheur : « 8:12 » et « Position… »
+    /// occupent la même place, la rangée ne se décale pas pendant un refresh.
+    private static let freshnessMinWidth: CGFloat = 64
 
-    private var displayTime: String {
-        if isInWindow, let end = prayerVM.currentWindowEnd {
-            return end.formatted(date: .omitted, time: .shortened)
-        }
-        return prayerVM.nextPrayerTime
-    }
-
-    /// Code couleur sémantique : orange = prière en cours (maintenant),
-    /// green = prochaine prière (à venir).
-    private var stateTint: Color {
-        isInWindow ? .orange : .green
-    }
-
-    var body: some View {
-        VStack(spacing: isInWindow ? 2 : 8) {
-            Text(verbatim: displayName)
-                .font(.system(size: 16, weight: .bold, design: .rounded))
-                .foregroundStyle(.white)
-                .lineLimit(1)
-                .minimumScaleFactor(0.7)
-
-            if isInWindow {
-                Text("jusqu'à")
-                    .font(.system(size: 10, weight: .medium, design: .rounded))
-                    .foregroundStyle(stateTint.opacity(0.9))
+    /// « Horaires mis à jour à HH:mm », ou spinner pendant un fix GPS. Rien avant le premier calcul.
+    @ViewBuilder
+    private var freshnessChip: some View {
+        if location.isRefreshingLocation {
+            HStack(spacing: 5) {
+                ProgressView().controlSize(.mini).tint(.white.opacity(0.6))
+                Text("Position…")
             }
-
-            Text(verbatim: displayTime)
-                .font(.system(size: isInWindow ? 22 : 24, weight: .light, design: .rounded))
-                .monospacedDigit()
-                .foregroundStyle(.white)
-                .lineLimit(1)
-                .minimumScaleFactor(0.6)
+            .font(.system(size: 11, weight: .medium, design: .rounded))
+            .foregroundStyle(.white.opacity(0.6))
+            .frame(minWidth: Self.freshnessMinWidth)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 6)
+            .glassEffect(.clear, in: Capsule())
+        } else if let updated = prayerVM.lastPrayerUpdate {
+            HStack(spacing: 4) {
+                Image(systemName: "clock.arrow.circlepath")
+                    .font(.system(size: 10))
+                Text(verbatim: updated.formatted(date: .omitted, time: .shortened))
+                    .monospacedDigit()
+            }
+            .font(.system(size: 11, weight: .medium, design: .rounded))
+            .foregroundStyle(.white.opacity(0.6))
+            .frame(minWidth: Self.freshnessMinWidth)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 6)
+            .glassEffect(.clear, in: Capsule())
+            .accessibilityLabel(Text("Horaires mis à jour à \(updated.formatted(date: .omitted, time: .shortened))"))
         }
-        .frame(width: 100, height: 100)
-        .padding(10)
-        .glassEffect(.regular.tint(stateTint.opacity(0.12)), in: .circle)
-        .redacted(reason: prayerVM.isLoading ? .placeholder : []) // SKELETON RESTAURÉ
-        .animation(.easeInOut(duration: 0.3), value: prayerVM.isLoading)
-        .animation(.easeInOut(duration: 0.3), value: isInWindow)
     }
 }
+
+// MARK: - Liste des prières
 
 struct PrayerListView: View {
     @EnvironmentObject var prayerVM: PrayerTimesViewModel
-    @AppStorage("iqamahFajrDelay")    private var iqamahFajr    = 10
-    @AppStorage("iqamahDhuhrDelay")   private var iqamahDhuhr   = 10
-    @AppStorage("iqamahAsrDelay")     private var iqamahAsr     = 10
-    @AppStorage("iqamahMaghribDelay") private var iqamahMaghrib = 5
-    @AppStorage("iqamahIshaDelay")    private var iqamahIsha    = 10
-    
+    @AppStorage(StorageKeys.iqamahFajrDelay)    private var iqamahFajr    = IqamahDefaults.fajr
+    @AppStorage(StorageKeys.iqamahDhuhrDelay)   private var iqamahDhuhr   = IqamahDefaults.dhuhr
+    @AppStorage(StorageKeys.iqamahAsrDelay)     private var iqamahAsr     = IqamahDefaults.asr
+    @AppStorage(StorageKeys.iqamahMaghribDelay) private var iqamahMaghrib = IqamahDefaults.maghrib
+    @AppStorage(StorageKeys.iqamahIshaDelay)    private var iqamahIsha    = IqamahDefaults.isha
+
+    /// Hauteur plancher d'une ligne, mise à l'échelle avec Dynamic Type : les
+    /// 5 prières (et Chourouq) tiennent au-dessus du fold sans hauteur fixe.
+    @ScaledMetric(relativeTo: .title3) private var rowMinHeight: CGFloat = 54
+    /// Espacement entre lignes (plus serré que la zone : la liste est un bloc).
+    private static let rowSpacing: CGFloat = 8
+
+    /// Noms affichés tant qu'aucun horaire n'est disponible : la liste garde sa
+    /// place (pas de trou, pas de saut à l'arrivée des horaires — anti-wiggle n°5).
+    private static let placeholderNames = ["Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"]
+
+    /// Même format que `DailyPrayer.time` (« 06:27 ») : un formatter partagé,
+    /// plus un par ligne et par rendu.
+    private static let timeFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.timeStyle = .short
+        return formatter
+    }()
+
     private func iqamahDelay(for name: String) -> Int {
         switch name {
-        case "Fajr":            return iqamahFajr
-        case "Dhuhr", "Jumu'ah": return iqamahDhuhr
-        case "Asr":             return iqamahAsr
-        case "Maghrib":         return iqamahMaghrib
-        case "Isha":            return iqamahIsha
-        default:                return 0
+        case "Fajr":    return iqamahFajr
+        case "Dhuhr":   return iqamahDhuhr
+        case "Asr":     return iqamahAsr
+        case "Maghrib": return iqamahMaghrib
+        case "Isha":    return iqamahIsha
+        default:        return 0
         }
     }
-    
+
     private func iqamahTime(for prayer: DailyPrayer) -> String? {
         // Pas d'iqamah pour Jumu'ah : l'utilisateur a déjà défini l'heure exacte
         if prayer.name == "Jumu'ah" { return nil }
         let delay = iqamahDelay(for: prayer.name)
         guard delay > 0 else { return nil }
-        let formatter = DateFormatter()
-        formatter.timeStyle = .short
-        return formatter.string(from: prayer.date.addingTimeInterval(Double(delay) * 60))
+        return Self.timeFormatter.string(from: prayer.date.addingTimeInterval(Double(delay) * 60))
     }
-    
+
     var body: some View {
-        VStack(spacing: 12) {
-            ForEach(prayerVM.dailyPrayers) { prayer in
-                HStack(spacing: 12) {
-                    // Nom de la prière — toujours canonique (« Maghrib », « Fajr »…).
-                    Text(verbatim: prayer.name)
-                        .font(.headline)
-                        .foregroundStyle(prayer.isNext ? .green : .primary)
-
-                    // Badge contextuel Ramadan (« Iftar » / « Fin du Sohoor »).
-                    if let badge = IslamicSeasonInfo.ramadanBadge(for: prayer.name) {
-                        RamadanPrayerBadge(label: badge, prayerName: prayer.name)
+        VStack(spacing: Self.rowSpacing) {
+            if prayerVM.dailyPrayers.isEmpty {
+                ForEach(Self.placeholderNames, id: \.self) { name in
+                    row(name: name, time: "--:--", iqamah: nil, ramadanBadge: nil, isCurrent: false, isNext: false)
+                        .opacity(0.45)
+                    if name == "Fajr" {
+                        sunriseRow(time: "--:--").opacity(0.45)
                     }
-
-                    // Badge "En cours" (Priorité sur prochaine)
-                    if prayer.isCurrent {
-                        Text("En cours")
-                            .font(.system(size: 10, weight: .bold, design: .rounded))
-                            .foregroundStyle(.white)
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 3)
-                            .background(.orange.gradient)
-                            .clipShape(Capsule())
-                    } else if prayer.isNext {
-                        Text("Prochaine")
-                            .font(.system(size: 10, weight: .bold, design: .rounded))
-                            .foregroundStyle(.white)
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 3)
-                            .background(.green.gradient)
-                            .clipShape(Capsule())
+                }
+            } else {
+                ForEach(prayerVM.dailyPrayers) { prayer in
+                    row(
+                        name: prayer.name,
+                        time: prayer.time,
+                        iqamah: iqamahTime(for: prayer),
+                        ramadanBadge: IslamicSeasonInfo.ramadanBadge(for: prayer.name),
+                        isCurrent: prayer.isCurrent,
+                        isNext: prayer.isNext
+                    )
+                    // Chourouq : fin du temps de Fajr — ligne fine, pas une prière.
+                    if prayer.name == "Fajr", let sunrise = prayerVM.sunriseTime {
+                        sunriseRow(time: Self.timeFormatter.string(from: sunrise))
                     }
-                    
-                    Spacer()
-                    
-                    // Horaire adhan + iqamah
-                    VStack(alignment: .trailing, spacing: 2) {
-                        Text(verbatim: prayer.time)
-                            .font(.system(.title3, design: .rounded).bold())
-                            .foregroundStyle(prayer.isNext ? .green : (prayer.isCurrent ? .orange : .primary))
-                        
-                        if let iqamah = iqamahTime(for: prayer) {
-                            HStack(spacing: 3) {
-                                Image(systemName: "clock.fill")
-                                    .font(.system(size: 8, weight: .semibold))
-                                    .foregroundStyle(.indigo.opacity(0.6))
-                                
-                                Text(verbatim: iqamah)
-                                    .font(.system(size: 12, design: .rounded))
-                                    .foregroundStyle(.primary)
-                            }
-                        }
-                    } // fin VStack horaires
-                } // fin HStack de la ligne
-                .padding(.horizontal, 20)
-                .frame(height: 70)
-                // Surface unique : teinte orange (en cours) / verte (prochaine),
-                // neutre pour les prières passées.
-                .glassCard(tint: prayer.isCurrent ? .orange : (prayer.isNext ? .green : nil))
-                            }
-                        }
+                }
+            }
+        }
         .redacted(reason: prayerVM.isLoading ? .placeholder : [])
         .animation(.easeInOut(duration: 0.3), value: prayerVM.isLoading)
+        .animation(.easeInOut(duration: 0.3), value: prayerVM.dailyPrayers.isEmpty)
     }
-}
- 
-// MARK: - Conditional View Modifier
-extension View {
-    @ViewBuilder
-    func `if`<Content: View>(_ condition: Bool, transform: (Self) -> Content) -> some View {
-        if condition {
-            transform(self)
-        } else {
-            self
+
+    // MARK: - Lignes
+
+    private func row(name: String, time: String, iqamah: String?, ramadanBadge: String?, isCurrent: Bool, isNext: Bool) -> some View {
+        let tint: Color? = isCurrent ? PrayerStateTint.now : (isNext ? PrayerStateTint.upcoming : nil)
+
+        return HStack(spacing: 10) {
+            // Nom de la prière — toujours canonique (« Maghrib », « Fajr »…).
+            Text(verbatim: name)
+                .font(.headline)
+                .foregroundStyle(isNext ? PrayerStateTint.upcoming : .white)
+
+            // Badge contextuel Ramadan (« Iftar » / « Fin du Sohoor »).
+            if let ramadanBadge {
+                RamadanPrayerBadge(label: ramadanBadge, prayerName: name)
+            }
+
+            // Badge "En cours" (Priorité sur prochaine)
+            if isCurrent {
+                stateBadge("En cours", tint: PrayerStateTint.now)
+            } else if isNext {
+                stateBadge("Prochaine", tint: PrayerStateTint.upcoming)
+            }
+
+            Spacer()
+
+            // Horaire adhan + iqamah
+            VStack(alignment: .trailing, spacing: 1) {
+                Text(verbatim: time)
+                    .font(.system(.title3, design: .rounded).bold())
+                    .monospacedDigit()
+                    .foregroundStyle(tint ?? .white)
+
+                if let iqamah {
+                    HStack(spacing: 3) {
+                        Image(systemName: "clock.fill")
+                            .font(.system(size: 8, weight: .semibold))
+                            .foregroundStyle(.white.opacity(0.5))
+
+                        Text(verbatim: iqamah)
+                            .font(.system(size: 12, design: .rounded))
+                            .monospacedDigit()
+                            .foregroundStyle(.white.opacity(0.85))
+                    }
+                }
+            }
         }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 6)
+        // Plancher scalé (pas de hauteur fixe) : le contenu peut pousser en Dynamic Type.
+        .frame(minHeight: rowMinHeight)
+        // Surface unique : teinte « now » (en cours) / « upcoming » (prochaine),
+        // neutre pour les prières passées.
+        .glassCard(tint: tint)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(accessibilityLabel(name: name, time: time, iqamah: iqamah, isCurrent: isCurrent, isNext: isNext))
+    }
+
+    /// Ligne discrète « Chourouq HH:mm » (lever du soleil), sans verre.
+    private func sunriseRow(time: String) -> some View {
+        HStack {
+            Image(systemName: "sunrise.fill")
+                .font(.system(size: 10))
+            Text("Chourouq")
+                .font(.caption.weight(.medium))
+            Spacer()
+            Text(verbatim: time)
+                .font(.caption.weight(.semibold))
+                .monospacedDigit()
+        }
+        .foregroundStyle(.white.opacity(0.55))
+        .padding(.horizontal, 20)
+        .frame(minHeight: 22)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(Text("Chourouq, lever du soleil, \(time)"))
+    }
+
+    private func stateBadge(_ label: LocalizedStringKey, tint: Color) -> some View {
+        Text(label)
+            .font(.system(size: 10, weight: .bold, design: .rounded))
+            .foregroundStyle(.white)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 3)
+            .background(tint.gradient)
+            .clipShape(Capsule())
+    }
+
+    private func accessibilityLabel(name: String, time: String, iqamah: String?, isCurrent: Bool, isNext: Bool) -> Text {
+        var parts: [String] = [name]
+        if isCurrent { parts.append(String(localized: "en cours")) }
+        else if isNext { parts.append(String(localized: "prochaine prière")) }
+        parts.append(time)
+        if let iqamah { parts.append(String(localized: "iqamah \(iqamah)")) }
+        return Text(verbatim: parts.joined(separator: ", "))
     }
 }
 

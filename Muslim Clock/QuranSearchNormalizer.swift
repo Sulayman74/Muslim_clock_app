@@ -84,6 +84,20 @@ nonisolated enum QuranSearchNormalizer {
         return words
     }
 
+    /// Forme « dictée » d'un mot : harakât et signes coraniques retirés, alef
+    /// wasla ramené à ا, mais hamzas, ta marbuta et alef maqsura **conservés**
+    /// tels qu'écrits. C'est la graphie que produit la reconnaissance vocale —
+    /// à fournir en indice de vocabulaire (`contextualStrings`), pas à comparer
+    /// (pour comparer, utiliser `tokens`).
+    static func dictationForm(_ word: String) -> String {
+        var result = String.UnicodeScalarView()
+        for scalar in word.unicodeScalars {
+            if removed.contains(scalar) { continue }
+            result.append(scalar == "\u{0671}" ? "\u{0627}" : scalar)
+        }
+        return String(result).trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
     /// Tokens normalisés de la Basmala — référence pour `strippingLeadingBasmala`.
     static let basmalaTokens = ["بسم", "الله", "الرحمن", "الرحيم"]
 

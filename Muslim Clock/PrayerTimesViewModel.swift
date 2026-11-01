@@ -9,7 +9,9 @@ import SwiftUI
 
 // MARK: - Model de DailyPrayer
 struct DailyPrayer: Identifiable {
-    let id = UUID()
+    /// Identité stable (le nom est unique dans la journée) : un `UUID()` par
+    /// recalcul détruisait et recréait chaque ligne du `ForEach`.
+    var id: String { name }
     let name: String
     let time: String
     let date: Date
@@ -23,8 +25,13 @@ class PrayerTimesViewModel: ObservableObject {
     @Published var nextPrayerName: String = "..."
     @Published var nextPrayerTime: String = "--:--"
     private var cancellables = Set<AnyCancellable>()
-    @Published var isLoading: Bool = true
-    
+    /// `true` pendant un calcul. Démarre à `false` : sans position, il n'y a rien
+    /// à attendre — un squelette perpétuel masquait l'état vide (cf. PrayerEmptyStateCard).
+    @Published var isLoading: Bool = false
+    /// `true` si le dernier calcul a échoué (coordonnées invalides) : l'état vide
+    /// peut alors proposer « Réessayer » sans confondre avec « pas encore calculé ».
+    @Published private(set) var calculationFailed: Bool = false
+
     @Published var nextPrayerDate: Date? = nil
     @Published var dailyPrayers: [DailyPrayer] = []
     @Published var currentPrayerWindow: PrayerWindow = .none
@@ -57,7 +64,16 @@ class PrayerTimesViewModel: ObservableObject {
     /// bloquerait le recalcul et les horaires resteraient décalés d'une heure.
     private var lastCalculationTZOffset: Int? = nil
     private var calculationLocation: CLLocation?
-    
+
+    /// Minuteur d'état : réveille un recalcul à la prochaine borne (fin de la
+    /// fenêtre en cours, prochaine prière, minuit). Sans lui, l'état n'évoluait
+    /// que sur notification d'adhan, retour au premier plan ou déplacement —
+    /// la jauge restait donc figée au lever du soleil, ou indéfiniment quand
+    /// les notifications sont refusées.
+    private var stateRefreshTask: Task<Void, Never>?
+    /// Marge après la borne, pour que le moteur voie bien l'instant franchi.
+    private static let stateRefreshMargin: TimeInterval = 1
+
     // 2. LECTURE DES RÉGLAGES UTILISATEUR (SMART SETUP)
     @AppStorage(StorageKeys.fajrOffset) private var fajrOffset = 0
     @AppStorage(StorageKeys.calculationMethod) private var calculationMethod = "UOIF (12°)"
@@ -103,8 +119,9 @@ class PrayerTimesViewModel: ObservableObject {
             }
             .store(in: &cancellables)
         
-        // 🔥 NOUVEAU : quand une prière tombe (déclenché par AppDelegate.willPresent
-        // ou didReceive), on rafraîchit immédiatement pour passer à la suivante.
+        // Quand une prière tombe (AppDelegate.willPresent ou didReceive), on
+        // rafraîchit immédiatement pour passer à la suivante. Le minuteur d'état
+        // couvre le même instant ; ce chemin reste pour la réactivité au tap.
         NotificationCenter.default.publisher(for: NSNotification.Name("AdhanTriggered"))
             .receive(on: DispatchQueue.main)
             .sink { [weak self] _ in
@@ -138,38 +155,41 @@ class PrayerTimesViewModel: ObservableObject {
                 self.forceRecalculation()
             }
         }
-    // NOUVEAU : Fonction pour forcer le recalcul si l'utilisateur change un réglage
+    /// Force un recalcul immédiat (changement de réglage, adhan, borne du
+    /// minuteur d'état) en court-circuitant le garde-fou anti-boucle.
     func forceRecalculation() {
-        // On efface la date pour forcer le passage du garde-fou
         self.lastCalculationDate = nil
-        
         if let loc = self.lastLocation {
-            // 💡 Petit délai de 0.5s pour être sûr que la bibliothèque Adhan
-            // voit bien que la prière est passée.
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
-                self?.calculatePrayers(for: loc)
-            }
+            calculatePrayers(for: loc)
         }
     }
-    
+
+    /// Programme le prochain recalcul à la borne la plus proche (fin de fenêtre,
+    /// prochaine prière, minuit). Relancé à chaque calcul ; l'ancien minuteur est annulé.
+    private func scheduleStateRefresh() {
+        stateRefreshTask?.cancel()
+        let fireAt = PrayerCalculationEngine.nextRefreshDate(
+            now: Date(),
+            windowEnd: currentWindowEnd,
+            nextPrayer: nextPrayerDate
+        )
+        let delay = max(Self.stateRefreshMargin, fireAt.timeIntervalSinceNow + Self.stateRefreshMargin)
+        stateRefreshTask = Task { [weak self] in
+            try? await Task.sleep(for: .seconds(delay))
+            guard !Task.isCancelled else { return }
+            self?.forceRecalculation()
+        }
+    }
+
     func calculatePrayers(for location: CLLocation) {
         let now = Date()
-        
+
         // Offset GMT courant : s'il diffère du dernier calcul, on a franchi un
         // changement DST → le garde-fou ne doit PAS court-circuiter le recalcul.
         let currentTZOffset = TimeZone.current.secondsFromGMT(for: now)
 
-        if let lastDate = lastCalculationDate {
-                let isSameDay = Calendar.current.isDate(now, inSameDayAs: lastDate)
-                let isSamePlace = LocationMath.isSamePlace(lastLocation, location)
-                let isSameTZ = lastCalculationTZOffset == currentTZOffset
-
-                if isSameDay && isSamePlace && isSameTZ && !self.dailyPrayers.isEmpty {
-                    return
-                }
-            }
-
-        // LE GARDE-FOU ANTI-BOUCLE
+        // Garde-fou anti-boucle : même jour, même lieu, même fuseau et horaires
+        // déjà calculés → rien à faire.
         let isSameDay = Calendar.current.isDate(now, inSameDayAs: lastCalculationDate ?? Date.distantPast)
         let isSamePlace = LocationMath.isSamePlace(lastLocation, location)
         let isSameTZ = lastCalculationTZOffset == currentTZOffset
@@ -181,8 +201,8 @@ class PrayerTimesViewModel: ObservableObject {
         self.lastLocation = location
         self.lastCalculationDate = now
         self.lastCalculationTZOffset = currentTZOffset
-        self.lastPrayerUpdate = now   // horaires réellement recalculés → fraîcheur à jour
-        
+        self.isLoading = true
+
         let coordinates = Coordinates(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
 
         // Réglages courants, sous la forme publiée aux extensions.
@@ -215,9 +235,12 @@ class PrayerTimesViewModel: ObservableObject {
 
         let todayComponents = Calendar.current.dateComponents([.year, .month, .day], from: Date())
 
-        if let prayerTimesToday = PrayerTimes(coordinates: coordinates, date: todayComponents, calculationParameters: params) {
+        let prayerTimesToday = PrayerTimes(coordinates: coordinates, date: todayComponents, calculationParameters: params)
+        self.calculationFailed = (prayerTimesToday == nil)
+
+        if let prayerTimesToday {
             updateNextPrayer(prayerTimesToday: prayerTimesToday, coordinates: coordinates, params: params)
-            self.isLoading = false
+            self.lastPrayerUpdate = now   // horaires réellement recalculés → fraîcheur à jour
 
             // Publication des horaires du jour : calculés par le code PARTAGÉ
             // (`SharedPrayerSchedule`, même fichier que widget / complication / Watch).
@@ -240,6 +263,11 @@ class PrayerTimesViewModel: ObservableObject {
                 )
             }
         }
+
+        // Le chargement est terminé, que le calcul ait abouti ou non : un échec
+        // (coordonnées invalides) laissait le squelette affiché indéfiniment.
+        self.isLoading = false
+        scheduleStateRefresh()
 
         // 📅 Planification des notifications d'adhan.
         schedule14DaysNotifications(coordinates: coordinates, params: params)
@@ -356,8 +384,6 @@ class PrayerTimesViewModel: ObservableObject {
                 }
             }
             
-            // 🚀 Envoi de tout le calendrier au gestionnaire de notifications
-            // Tu devras t'assurer que ton NotificationManager a une fonction "scheduleBatchNotifications" !
             NotificationManager.shared.scheduleBatchNotifications(names: allNames, dates: allDates)
         }
         
@@ -403,23 +429,40 @@ class PrayerTimesViewModel: ObservableObject {
     // MARK: - Logique des fenêtres de prière (Jurisprudence Islamique)
         private func determineCurrentPrayerWindow(prayerTimesToday: PrayerTimes, coordinates: Coordinates, params: CalculationParameters) {
             let now = Date()
+            let calendar = Calendar.current
             self.sunriseTime = prayerTimesToday.sunrise
-            
-            // Calcul du Fajr de demain pour le calcul du milieu de la nuit
-            guard let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: now) else { return }
-            let tomorrowComponents = Calendar.current.dateComponents([.year, .month, .day], from: tomorrow)
-            
+
+            // Fajr de demain (fin de la nuit à venir) et horaires d'hier (nuit en cours).
+            guard let tomorrow = calendar.date(byAdding: .day, value: 1, to: now),
+                  let yesterday = calendar.date(byAdding: .day, value: -1, to: now) else { return }
+            let tomorrowComponents = calendar.dateComponents([.year, .month, .day], from: tomorrow)
+            let yesterdayComponents = calendar.dateComponents([.year, .month, .day], from: yesterday)
+
             guard let prayerTimesTomorrow = PrayerTimes(coordinates: coordinates, date: tomorrowComponents, calculationParameters: params) else { return }
-            
-            // Marqueurs de nuit + fenêtre courante — moteur pur testable.
-            let markers = PrayerCalculationEngine.nightMarkers(
+            let prayerTimesYesterday = PrayerTimes(coordinates: coordinates, date: yesterdayComponents, calculationParameters: params)
+
+            // Nuit à venir (Maghrib du jour → Fajr de demain) : borne la fenêtre Isha du jour.
+            let tonight = PrayerCalculationEngine.nightMarkers(
                 maghrib: prayerTimesToday.maghrib,
                 fajrTomorrow: prayerTimesTomorrow.fajr
             )
-            self.middleOfNight = markers.middleOfNight
-            self.lastThirdOfNight = markers.lastThirdOfNight
 
-            let win = PrayerCalculationEngine.currentWindow(
+            // Marqueurs affichés (milieu, dernier tiers) : avant le Fajr du jour,
+            // c'est la nuit EN COURS (Maghrib d'hier → Fajr d'aujourd'hui) qui
+            // compte pour le qiyam — pas celle de ce soir.
+            if now < prayerTimesToday.fajr, let yesterdayTimes = prayerTimesYesterday {
+                let currentNight = PrayerCalculationEngine.nightMarkers(
+                    maghrib: yesterdayTimes.maghrib,
+                    fajrTomorrow: prayerTimesToday.fajr
+                )
+                self.middleOfNight = currentNight.middleOfNight
+                self.lastThirdOfNight = currentNight.lastThirdOfNight
+            } else {
+                self.middleOfNight = tonight.middleOfNight
+                self.lastThirdOfNight = tonight.lastThirdOfNight
+            }
+
+            var win = PrayerCalculationEngine.currentWindow(
                 now: now,
                 fajr: prayerTimesToday.fajr,
                 sunrise: prayerTimesToday.sunrise,
@@ -427,8 +470,17 @@ class PrayerTimesViewModel: ObservableObject {
                 asr: prayerTimesToday.asr,
                 maghrib: prayerTimesToday.maghrib,
                 isha: prayerTimesToday.isha,
-                middleOfNight: markers.middleOfNight
+                middleOfNight: tonight.middleOfNight
             )
+            // Entre minuit et le milieu de la nuit, l'Isha d'hier est encore en cours.
+            if win.window == .none, let yesterdayTimes = prayerTimesYesterday {
+                win = PrayerCalculationEngine.previousNightWindow(
+                    now: now,
+                    fajrToday: prayerTimesToday.fajr,
+                    maghribYesterday: yesterdayTimes.maghrib,
+                    ishaYesterday: yesterdayTimes.isha
+                )
+            }
             currentPrayerWindow = win.window
             currentWindowStart = win.start
             currentWindowEnd = win.end

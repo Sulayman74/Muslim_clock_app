@@ -277,9 +277,9 @@ struct AdhkarBookletButton: View {
                         .lineLimit(1)
                         .minimumScaleFactor(0.75)
                 }
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 14)
-                .glassCardSecondary(cornerRadius: 18, tint: accent)
+                .frame(maxWidth: .infinity, minHeight: 44)
+                .padding(.vertical, 4)
+                .glassCardSecondary(cornerRadius: CornerRadius.card, tint: accent)
             } else {
                 HStack(spacing: 12) {
                     Image(systemName: "book.closed.fill")
@@ -306,7 +306,7 @@ struct AdhkarBookletButton: View {
                 .glassCard(tint: accent)
             }
         }
-        .sensoryFeedback(.impact(weight: .light), trigger: show)
+        .sensoryFeedback(.impact(weight: .light), trigger: show) { _, opened in opened }
         .sheet(isPresented: $show) {
             AdhkarBookletView()
                 .environmentObject(prayerVM)
@@ -318,42 +318,17 @@ struct AdhkarBookletButton: View {
 // MARK: - Mini-suggestion contextuelle (tab Salat)
 
 /// Card « À réciter maintenant » : met en avant la catégorie pertinente au moment
-/// présent (via `AdhkarSuggestion`) avec un aperçu de sa première invocation.
-/// N'occupe aucun espace tant qu'aucune catégorie n'est pertinente. Au tap, ouvre
-/// le livret directement sur cette catégorie (lecture immédiate + accès au livret).
+/// présent avec un aperçu de sa première invocation. Au tap, ouvre le livret
+/// directement sur cette catégorie. La sélection de la catégorie (et le
+/// garde-fou de la zone) vit dans `SalatSecondaryZone`.
 struct AdhkarMomentCard: View {
+    let category: AdhkarCategory
     @EnvironmentObject private var prayerVM: PrayerTimesViewModel
-    @AppStorage(TravelKeys.active) private var travelModeActive = false
-    @State private var categories: [AdhkarCategory] = []
     @State private var showBooklet = false
     private let accent = adhkarBookletAccent
 
-    private var topCategory: AdhkarCategory? {
-        AdhkarSuggestion.suggested(
-            from: categories,
-            now: Date(),
-            prayerDates: prayerVM.dailyPrayers.map(\.date),
-            fajr: prayerVM.fajrDate,
-            lastThirdOfNight: prayerVM.lastThirdOfNight,
-            isTraveling: travelModeActive
-        ).first
-    }
-
     var body: some View {
-        Group {
-            if let category = topCategory {
-                card(for: category)
-            }
-        }
-        .task {
-            if categories.isEmpty {
-                categories = await RemoteJSONLoader.load(
-                    filename: "hisn_adhkar.json",
-                    remoteURL: "https://sulayman74.github.io/Muslim_clock_app/hisn_adhkar.json",
-                    type: [AdhkarCategory].self
-                ) ?? []
-            }
-        }
+        card(for: category)
     }
 
     private func card(for category: AdhkarCategory) -> some View {
@@ -392,7 +367,8 @@ struct AdhkarMomentCard: View {
             .glassCardSecondary(tint: accent)
         }
         .buttonStyle(.plain)
-        .sensoryFeedback(.impact(weight: .light), trigger: showBooklet)
+        // Haptique à l'ouverture seulement (pas à la fermeture de la sheet).
+        .sensoryFeedback(.impact(weight: .light), trigger: showBooklet) { _, opened in opened }
         .sheet(isPresented: $showBooklet) {
             AdhkarBookletView(initialCategoryID: category.id)
                 .environmentObject(prayerVM)

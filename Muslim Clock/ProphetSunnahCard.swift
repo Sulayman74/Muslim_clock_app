@@ -260,48 +260,52 @@ struct ProphetSunnahCardView: View {
                         .foregroundStyle(.white.opacity(0.5))
                         .rotationEffect(.degrees(isExpanded ? 180 : 0))
                 }
+                // Cible tactile ≥ 44 pt sur toute la largeur de l'en-tête.
+                .frame(minHeight: 44)
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
             .sensoryFeedback(.selection, trigger: isExpanded)
 
             if isExpanded {
-                // Toggle FR/AR si arabe disponible
+              VStack(alignment: .leading, spacing: 12) {
+                // Toggle FR/AR si arabe disponible (chip partagée, largeur fixe — anti-wiggle n°3)
                 if sunnah.arabicText != nil {
                     HStack {
                         Spacer()
-                        Button {
+                        LanguageToggleChip(isArabic: showArabic) {
                             withAnimation(.easeInOut(duration: 0.2)) { showArabic.toggle() }
-                        } label: {
-                            Text(verbatim: showArabic ? "FR" : "عربي")
-                                .font(.system(size: 10, weight: .bold, design: .rounded))
-                                .padding(.horizontal, 8)
-                                .padding(.vertical, 3)
-                                .glassEffect(.clear, in: Capsule())
-                                .foregroundStyle(.white.opacity(0.85))
                         }
                         .sensoryFeedback(.selection, trigger: showArabic)
                     }
                 }
 
-                // Corps : texte FR ou AR
-                Group {
-                    if showArabic, let arabic = sunnah.arabicText {
+                // Corps : FR et AR superposés, bascule par opacité — la hauteur
+                // est celle du plus grand des deux, aucun saut au toggle.
+                ZStack(alignment: .topLeading) {
+                    // mainText supporte le markdown **bold**
+                    Text(.init(sunnah.mainText))
+                        .font(.system(size: 14, design: .rounded))
+                        .foregroundStyle(.white.opacity(0.92))
+                        .multilineTextAlignment(.leading)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .lineSpacing(3)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .opacity(showArabic ? 0 : 1)
+                        .accessibilityHidden(showArabic)
+
+                    if let arabic = sunnah.arabicText {
+                        // RTL posé sur le texte seul : le `frame(alignment: .trailing)`
+                        // extérieur reste interprété en LTR → calé à droite.
                         Text(verbatim: arabic)
                             .font(.system(size: 17, weight: .medium))
                             .multilineTextAlignment(.trailing)
-                            .frame(maxWidth: .infinity, alignment: .trailing)
-                            .environment(\.layoutDirection, .rightToLeft)
                             .lineSpacing(6)
-                    } else {
-                        // mainText supporte le markdown **bold**
-                        Text(.init(sunnah.mainText))
-                            .font(.system(size: 14, design: .rounded))
-                            .foregroundStyle(.white.opacity(0.92))
-                            .multilineTextAlignment(.leading)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .lineSpacing(3)
+                            .environment(\.layoutDirection, .rightToLeft)
                             .fixedSize(horizontal: false, vertical: true)
+                            .frame(maxWidth: .infinity, alignment: .trailing)
+                            .opacity(showArabic ? 1 : 0)
+                            .accessibilityHidden(!showArabic)
                     }
                 }
                 .animation(.easeInOut(duration: 0.2), value: showArabic)
@@ -336,9 +340,12 @@ struct ProphetSunnahCardView: View {
                     }
                     .foregroundStyle(.white.opacity(0.45))
                 }
+              }
+              .transition(.opacity)
             }
         }
         .padding(16)
-        .glassCardSecondary(tint: sunnah.accentColor)
+        // Repli/dépli en bloc, contenu clippé pendant l'animation (anti-wiggle n°6).
+        .collapsibleCard(tint: sunnah.accentColor)
     }
 }

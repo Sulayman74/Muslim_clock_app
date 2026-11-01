@@ -27,11 +27,11 @@ struct SettingsView: View {
     // 🕌 Infos Mosquée & Iqamah
     @AppStorage("mosqueName") private var mosqueName = ""
     @AppStorage("mosqueAddress") private var mosqueAddress = ""
-    @AppStorage("iqamahFajrDelay") private var iqamahFajrDelay = 20
-    @AppStorage("iqamahDhuhrDelay") private var iqamahDhuhrDelay = 15
-    @AppStorage("iqamahAsrDelay") private var iqamahAsrDelay = 15
-    @AppStorage("iqamahMaghribDelay") private var iqamahMaghribDelay = 5
-    @AppStorage("iqamahIshaDelay") private var iqamahIshaDelay = 15
+    @AppStorage(StorageKeys.iqamahFajrDelay) private var iqamahFajrDelay = IqamahDefaults.fajr
+    @AppStorage(StorageKeys.iqamahDhuhrDelay) private var iqamahDhuhrDelay = IqamahDefaults.dhuhr
+    @AppStorage(StorageKeys.iqamahAsrDelay) private var iqamahAsrDelay = IqamahDefaults.asr
+    @AppStorage(StorageKeys.iqamahMaghribDelay) private var iqamahMaghribDelay = IqamahDefaults.maghrib
+    @AppStorage(StorageKeys.iqamahIshaDelay) private var iqamahIshaDelay = IqamahDefaults.isha
 
     // Jumu'ah (vendredi)
     @AppStorage(StorageKeys.jumuahEnabled) private var jumuahEnabled = false

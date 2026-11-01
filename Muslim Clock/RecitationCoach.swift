@@ -77,7 +77,9 @@ nonisolated enum RecitationCoach {
             let item = items[position]
             if let ayah = item.reference?.ayah { currentAyah = ayah }
             switch item.kind {
-            case .matched, .approximate:
+            case .matched, .approximate, .unverifiable:
+                // unverifiable : le moteur n'entend pas ce mot même chez le
+                // récitateur — aucun conseil ne serait fiable.
                 position += 1
             case .substituted:
                 if let expected = item.reference, let heard = item.heard {

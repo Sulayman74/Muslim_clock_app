@@ -54,7 +54,9 @@ nonisolated struct RecitationProgress: Codable, Equatable {
     mutating func record(alignment: RecitationAlignment, reference: RecitationReference, on date: Date = .now) {
         guard !alignment.isLowConfidence else { return }
         for ayah in reference.ayahRange {
-            let ayahItems = alignment.items.filter { $0.reference?.ayah == ayah }
+            // Les mots non vérifiables (calibration récitateur) sortent du
+            // dénominateur : on ne pénalise pas une surdité du moteur.
+            let ayahItems = alignment.items.filter { $0.reference?.ayah == ayah && $0.kind != .unverifiable }
             guard !ayahItems.isEmpty else { continue }
             let matched = ayahItems.filter { $0.kind == .matched }.count
             let approximate = ayahItems.filter { $0.kind == .approximate }.count

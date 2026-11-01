@@ -13,7 +13,12 @@ import CoreLocation
 // ═══════════════════════════════════════════════════════════
 
 struct QiblaView: View {
-    @ObservedObject var manager: CompassManager
+    /// La boussole appartient à cet écran : ses 60 updates/s ne réévaluent que
+    /// lui (plus MainView et ses cinq onglets). `startCompass`/`stopCompass`
+    /// suivent l'apparition de la vue.
+    @StateObject private var manager = CompassManager()
+    /// Ville : source unique de localisation (géocodage dans SharedLocationManager).
+    @ObservedObject private var location = SharedLocationManager.shared
 
     // MARK: - Couleurs
     private let vertSapin = Color(red: 0.09, green: 0.33, blue: 0.16)
@@ -122,7 +127,7 @@ struct QiblaView: View {
             HStack(spacing: 6) {
                 Image(systemName: "location.fill")
                     .font(.system(size: 11))
-                Text(manager.cityName)
+                Text(location.cityName)
                     .font(.system(size: 15, weight: .medium, design: .rounded))
             }
             .foregroundStyle(.secondary)
@@ -662,6 +667,6 @@ private struct CompassDebugOverlay: View {
 
 // MARK: - Preview
 #Preview {
-    QiblaView(manager: CompassManager())
+    QiblaView()
         .preferredColorScheme(.dark)
 }

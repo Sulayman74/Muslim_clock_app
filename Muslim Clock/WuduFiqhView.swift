@@ -303,51 +303,20 @@ struct WuduFiqhAccessCard: View {
 
 // MARK: - Carte contextuelle (tab Salat, approche d'une prière)
 
-/// « Se préparer à la prière » : apparaît dans la fenêtre pré-prière
-/// (45 min ; 3 h avant Jumu'ah pour le ghusl). Enseigne — pendant que
-/// l'AdhkarMomentCard, elle, fait réciter. Tap → fiche (ancrée vendredi
-/// si variante ghusl).
+/// « Se préparer à la prière » : fenêtre pré-prière (45 min ; 3 h avant
+/// Jumu'ah pour le ghusl). Enseigne — pendant que l'AdhkarMomentCard, elle,
+/// fait réciter. Tap → fiche (ancrée vendredi si variante ghusl).
+/// La décision d'affichage vit dans `SalatSecondaryZone` ; la carte reçoit sa variante.
 struct WuduMomentCard: View {
-    @EnvironmentObject private var prayerVM: PrayerTimesViewModel
+    let variant: WuduWindowMath.Variant
     @State private var showFiche = false
     @State private var ficheAnchorsJumuah = false
 
-    /// Toggles DEBUG — consommés au call site, la fonction de fenêtre reste pure.
-    @AppStorage("debugForceWuduWindow") private var debugForceWuduWindow = false
-    @AppStorage("debugForceFriday") private var debugForceFriday = false
-
-    private var isFriday: Bool {
-        #if DEBUG
-        if debugForceFriday { return true }
-        #endif
-        return Calendar.current.component(.weekday, from: Date()) == 6
-    }
-
     var body: some View {
-        // Le TimelineView survit quand la carte est absente : c'est le conteneur
-        // qui anime l'insertion/retrait (pattern DhuhrCountdownCard). Cadence
-        // 30 s — la fenêtre est à la minute près.
-        TimelineView(.periodic(from: .now, by: 30)) { context in
-            if let variant = variant(now: context.date) {
-                card(variant)
-                    .transition(.opacity.combined(with: .move(edge: .top)))
+        card(variant)
+            .sheet(isPresented: $showFiche) {
+                WuduFiqhView(scrollToJumuah: ficheAnchorsJumuah)
             }
-        }
-        .sheet(isPresented: $showFiche) {
-            WuduFiqhView(scrollToJumuah: ficheAnchorsJumuah)
-        }
-    }
-
-    private func variant(now: Date) -> WuduWindowMath.Variant? {
-        #if DEBUG
-        if debugForceWuduWindow {
-            let time = prayerVM.nextPrayerDate ?? now.addingTimeInterval(15 * 60)
-            return isFriday ? .fridayGhusl(time: time)
-                            : .wudu(prayer: prayerVM.nextPrayerName, time: time)
-        }
-        #endif
-        let prayers = prayerVM.dailyPrayers.map { (name: $0.name, time: $0.date) }
-        return WuduWindowMath.target(prayers: prayers, now: now, isFriday: isFriday)
     }
 
     private func card(_ variant: WuduWindowMath.Variant) -> some View {

@@ -16,9 +16,19 @@ import SwiftData
 // depuis qu'il est partagé avec le lecteur ʿIlm.
 
 struct QuranChapterDetailView: View {
-    let chapterIndex: QuranChapterIndex
+    /// Sourate affichée — `@State` : la navigation précédente/suivante la remplace
+    /// sans quitter l'écran.
+    @State private var chapterIndex: QuranChapterIndex
     /// Numéro d'ayah ciblé (auto-scroll au mount). `nil` = pas de scroll auto.
-    var scrollToAyah: Int? = nil
+    /// Remis à `nil` quand on change de sourate.
+    @State private var scrollToAyah: Int?
+    /// Sourates voisines dans l'index (`nil` aux bornes : Fâtiha / an-Nâs).
+    @State private var neighbors: (previous: QuranChapterIndex?, next: QuranChapterIndex?) = (nil, nil)
+
+    init(chapterIndex: QuranChapterIndex, scrollToAyah: Int? = nil) {
+        _chapterIndex = State(initialValue: chapterIndex)
+        _scrollToAyah = State(initialValue: scrollToAyah)
+    }
 
     @StateObject private var loader = QuranLibraryLoader.shared
     @State private var chapter: QuranChapter?
@@ -214,6 +224,10 @@ struct QuranChapterDetailView: View {
                             .font(.caption2)
                             .foregroundStyle(readingTheme.textTertiary)
                             .padding(.top, 12)
+
+                        // Enchaîner la lecture : sourate précédente / suivante, si elles existent.
+                        surahNavigation
+                            .padding(.horizontal, 12)
                             .padding(.bottom, 80) // espace pour le HUD auto-scroll en bas
                     }
                     .padding(.top, 12)
@@ -277,6 +291,72 @@ struct QuranChapterDetailView: View {
             }
             .onDisappear { stopAutoScroll() }
         }
+    }
+
+    // MARK: - Navigation entre sourates
+
+    @ViewBuilder
+    private var surahNavigation: some View {
+        if neighbors.previous != nil || neighbors.next != nil {
+            HStack(spacing: 10) {
+                if let previous = neighbors.previous {
+                    surahNavigationButton(previous, systemImage: "chevron.backward", labelKey: "Sourate précédente")
+                }
+                if let next = neighbors.next {
+                    surahNavigationButton(next, systemImage: "chevron.forward", labelKey: "Sourate suivante")
+                }
+            }
+        }
+    }
+
+    private func surahNavigationButton(_ target: QuranChapterIndex, systemImage: String, labelKey: LocalizedStringKey) -> some View {
+        Button {
+            Task { await navigate(to: target) }
+        } label: {
+            HStack(spacing: 8) {
+                if systemImage == "chevron.backward" { Image(systemName: systemImage) }
+                VStack(spacing: 2) {
+                    Text(labelKey)
+                        .font(.caption2)
+                        .foregroundStyle(readingTheme.textTertiary)
+                    Text(verbatim: "\(target.id). \(target.transliteration)")
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundStyle(readingTheme.textPrimary)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.8)
+                }
+                if systemImage == "chevron.forward" { Image(systemName: systemImage) }
+            }
+            .foregroundStyle(.teal)
+            .frame(maxWidth: .infinity, minHeight: 50)
+            .padding(.horizontal, 12)
+            .background(readingTheme.cardBackground)
+            .clipShape(RoundedRectangle(cornerRadius: CornerRadius.badge, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: CornerRadius.badge, style: .continuous)
+                    .stroke(readingTheme.cardStroke, lineWidth: 1)
+            )
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(Text(labelKey))
+        .accessibilityValue(Text(verbatim: target.transliteration))
+    }
+
+    /// Remplace la sourate affichée et remet l'écran à l'état initial (haut de
+    /// page, aucun verset ciblé, lecture auto et karaoké arrêtés).
+    private func navigate(to target: QuranChapterIndex) async {
+        stopAutoScroll()
+        recorder.discard()
+        highlightedAyah = nil
+        karaokeIndex = 1
+        autoScrollIndex = 0
+        justCreditedPage = nil
+        visibleAyahs.ids.removeAll()
+        scrollToAyah = nil
+        chapterIndex = target
+        // `chapter = nil` pendant le chargement démonte le ScrollView : la
+        // nouvelle sourate repart du haut sans ScrollViewProxy.
+        await load(force: true)
     }
 
     // MARK: - Auto-scroll HUD
@@ -694,8 +774,22 @@ struct QuranChapterDetailView: View {
             // Page initiale : celle du verset ciblé (reprise Khatma/bookmark), sinon celle
             // du 1er verset — couvre aussi les sourates qui commencent en milieu de page.
             currentPage = mapper.page(for: result.id, ayah: scrollToAyah ?? 1)
+            pageEnteredAt = .now
         } else {
             loadError = "Vérifie ta connexion réseau, puis réessaie."
         }
+        await loadNeighbors()
+    }
+
+    /// Sourates voisines depuis l'index (déjà en cache après la bibliothèque).
+    private func loadNeighbors() async {
+        guard let index = await loader.loadIndex() else {
+            neighbors = (nil, nil)
+            return
+        }
+        neighbors = (
+            index.first { $0.id == chapterIndex.id - 1 },
+            index.first { $0.id == chapterIndex.id + 1 }
+        )
     }
 }

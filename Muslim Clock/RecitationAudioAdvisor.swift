@@ -2,9 +2,9 @@
 //  RecitationAudioAdvisor.swift
 //  Muslim Clock — Correcteur de récitation (phase 6)
 //
-//  Sorties audio de l'écran de résultat : lecture du conseil (synthèse vocale
-//  système), récitateur de référence verset par verset, réécoute de sa propre
-//  récitation. Une seule source à la fois.
+//  Sorties audio de l'écran de résultat : récitateur de référence verset par
+//  verset, réécoute de sa propre récitation. Une seule source à la fois.
+//  (La lecture vocale du conseil a été retirée : le conseil reste écrit.)
 //
 
 import Foundation
@@ -17,45 +17,17 @@ final class RecitationAudioAdvisor: NSObject {
 
     enum Playing: Equatable {
         case none
-        case advice
         case reciter(ayah: Int)
         case ownRecording
     }
 
     private(set) var playing: Playing = .none
 
-    private let synthesizer = AVSpeechSynthesizer()
     private var player: AVPlayer?
     private var recordingPlayer: AVAudioPlayer?
     private var queue: [(ayah: Int, url: URL)] = []
     private var endObserver: NSObjectProtocol?
     private let logger = Logger(subsystem: "com.kappsi.muslimclock", category: "Recitation")
-
-    override init() {
-        super.init()
-        synthesizer.delegate = self
-    }
-
-    // MARK: - Conseil
-
-    /// Lit le conseil avec la voix système de la langue de l'app (français par défaut).
-    func speak(_ text: String, languageCode: String) {
-        stop()
-        activateSession()
-        let utterance = AVSpeechUtterance(string: text)
-        utterance.voice = AVSpeechSynthesisVoice(language: Self.voiceLanguage(for: languageCode))
-        utterance.rate = AVSpeechUtteranceDefaultSpeechRate * 0.95
-        playing = .advice
-        synthesizer.speak(utterance)
-    }
-
-    nonisolated static func voiceLanguage(for languageCode: String) -> String {
-        switch languageCode {
-        case "ar": "ar-SA"
-        case "en": "en-US"
-        default: "fr-FR"
-        }
-    }
 
     // MARK: - Récitateur de référence
 
@@ -116,7 +88,6 @@ final class RecitationAudioAdvisor: NSObject {
     // MARK: - Arrêt
 
     func stop() {
-        synthesizer.stopSpeaking(at: .immediate)
         player?.pause()
         player?.replaceCurrentItem(with: nil)
         queue = []
@@ -140,13 +111,7 @@ final class RecitationAudioAdvisor: NSObject {
     }
 }
 
-extension RecitationAudioAdvisor: AVSpeechSynthesizerDelegate, AVAudioPlayerDelegate {
-    nonisolated func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didFinish utterance: AVSpeechUtterance) {
-        Task { @MainActor in
-            if self.playing == .advice { self.playing = .none }
-        }
-    }
-
+extension RecitationAudioAdvisor: AVAudioPlayerDelegate {
     nonisolated func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
         Task { @MainActor in
             if self.playing == .ownRecording { self.playing = .none }

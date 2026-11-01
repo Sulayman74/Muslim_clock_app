@@ -71,6 +71,12 @@ final class RecitationTranscriber {
     private var watchdog: Task<Void, Never>?
     private var startedAt: Date?
     private var lastHeardAt: Date?
+    /// Mots attendus (graphie de dictée) donnés en indice au moteur — cf.
+    /// `RecitationReference.recognitionHints`.
+    private var hints: [String] = []
+    /// Les mêmes, normalisés : pour départager les hypothèses alternatives du
+    /// moteur (celle qui contient le plus de mots attendus l'emporte).
+    private var expectedForms: Set<String> = []
 
     // SpeechAnalyzer
     private var analyzer: SpeechAnalyzer?
@@ -93,12 +99,48 @@ final class RecitationTranscriber {
         return legacyIsSupported ? .legacy : nil
     }
 
+    /// Diagnostic console : le module général `SpeechTranscriber` (modèle plus
+    /// récent que la dictée) couvre-t-il l'arabe sur cet appareil ? Si oui un
+    /// jour, c'est le prochain moteur à évaluer pour le correcteur.
+    static func logEngineCapabilities() async {
+        let general = await SpeechTranscriber.supportedLocale(equivalentTo: locale) != nil
+        let dictation = await DictationTranscriber.supportedLocale(equivalentTo: locale) != nil
+        Logger(subsystem: "com.kappsi.muslimclock", category: "Recitation")
+            .info("Moteurs arabes disponibles — SpeechTranscriber : \(general), DictationTranscriber : \(dictation), SFSpeech on-device : \(legacyIsSupported)")
+    }
+
+    // MARK: - Choix entre hypothèses
+
+    /// Index de l'hypothèse à retenir parmi celles du moteur (la première est
+    /// sa préférée) : celle qui contient le plus de mots attendus. À égalité,
+    /// la préférence du moteur l'emporte. On ne choisit QUE parmi ce que le
+    /// moteur a jugé plausible pour cet audio — on n'invente rien.
+    nonisolated static func preferredCandidateIndex(texts: [String], expected: Set<String>) -> Int {
+        guard texts.count > 1, !expected.isEmpty else { return 0 }
+        var bestIndex = 0
+        var bestScore = -1
+        for (index, text) in texts.enumerated() {
+            let score = QuranSearchNormalizer.tokens(text).reduce(0) { $0 + (expected.contains($1) ? 1 : 0) }
+            if score > bestScore {
+                bestScore = score
+                bestIndex = index
+            }
+        }
+        return bestIndex
+    }
+
     // MARK: - Cycle de vie
 
     /// Demande les autorisations, prépare le moteur et commence l'écoute.
-    func start() async {
+    ///
+    /// - Parameter hints: vocabulaire attendu (`contextualStrings`) — biaise la
+    ///   reconnaissance vers les mots du passage au lieu du lexique courant.
+    ///   Les deux moteurs le supportent ; vide = comportement par défaut.
+    func start(hints: [String] = []) async {
         guard state != .listening, state != .preparing else { return }
         reset()
+        self.hints = Array(hints.prefix(RecitationReference.maxRecognitionHints))
+        self.expectedForms = Set(hints.flatMap { QuranSearchNormalizer.tokens($0) })
 
         guard await AVAudioApplication.requestRecordPermission() else {
             state = .denied(.microphone)
@@ -240,7 +282,9 @@ final class RecitationTranscriber {
             locale: Self.locale,
             contentHints: [],
             transcriptionOptions: [],
-            reportingOptions: [.volatileResults],
+            // Alternatives : pour repêcher un mot attendu que la 1ʳᵉ hypothèse
+            // a avalé (cf. `preferredCandidateIndex`).
+            reportingOptions: [.volatileResults, .alternativeTranscriptions],
             attributeOptions: [.audioTimeRange]
         )
         // Modèle arabe : fourni par le système, téléchargé une seule fois.
@@ -255,6 +299,18 @@ final class RecitationTranscriber {
 
         let analyzer = SpeechAnalyzer(modules: [transcriber])
         self.analyzer = analyzer
+        // Calibrage de l'écoute : le moteur sait quels mots attendre (≤ 100,
+        // limite Apple). Un échec ici dégrade la précision mais n'empêche pas
+        // l'écoute : on logge et on continue sans indice.
+        if !hints.isEmpty {
+            let context = AnalysisContext()
+            context.contextualStrings[.general] = hints
+            do {
+                try await analyzer.setContext(context)
+            } catch {
+                logger.error("Indices de vocabulaire refusés par SpeechAnalyzer : \(error.localizedDescription)")
+            }
+        }
         try await analyzer.prepareToAnalyze(in: analyzerFormat)
 
         resultsTask = Task { [weak self] in
@@ -282,6 +338,7 @@ final class RecitationTranscriber {
         }
         // Un segment par run horodaté : les pauses entre runs sont préservées.
         var segments: [(text: String, range: ClosedRange<TimeInterval>?)] = []
+        var overall: ClosedRange<TimeInterval>?
         for run in result.text.runs {
             let text = String(result.text[run.range].characters)
             guard !text.trimmingCharacters(in: .whitespaces).isEmpty else { continue }
@@ -290,11 +347,26 @@ final class RecitationTranscriber {
                 let end = r.end.seconds
                 return start...max(start, end)
             }
+            if let range {
+                overall = overall.map { min($0.lowerBound, range.lowerBound)...max($0.upperBound, range.upperBound) } ?? range
+            }
             segments.append((text, range))
         }
         if segments.isEmpty {
             segments = [(String(result.text.characters), nil)]
         }
+
+        // Hypothèses alternatives : si l'une contient plus de mots attendus que
+        // la préférée du moteur (ex. « وأطيعوا » avalé en liaison avec « الله »),
+        // on la retient. Elle ne porte pas d'horodatage par mot : on lui donne
+        // la plage globale du résultat, répartie ensuite au prorata des mots.
+        let candidates = [String(result.text.characters)] + result.alternatives.map { String($0.characters) }
+        let chosen = Self.preferredCandidateIndex(texts: candidates, expected: expectedForms)
+        if chosen != 0 {
+            logger.info("Alternative \(chosen) retenue : « \(candidates[chosen], privacy: .public) » plutôt que « \(candidates[0], privacy: .public) »")
+            segments = [(candidates[chosen], overall)]
+        }
+
         finalizedSegments += segments
         heardWordCount = finalizedWordCount
     }
@@ -318,6 +390,8 @@ final class RecitationTranscriber {
         // Règle privacy NON NÉGOCIABLE : jamais de reconnaissance serveur.
         request.requiresOnDeviceRecognition = true
         request.taskHint = .dictation
+        // Même calibrage que SpeechAnalyzer : vocabulaire attendu du passage.
+        request.contextualStrings = hints
         legacyRequest = request
 
         try startAudio(converterFormat: nil) { buffer in
@@ -332,13 +406,18 @@ final class RecitationTranscriber {
                 return
             }
             // Segments mot à mot horodatés (secondes depuis le début de la requête).
-            let tokens = result.bestTranscription.segments.map { segment in
-                (text: segment.substring,
-                 range: Optional(segment.timestamp...(segment.timestamp + segment.duration)))
-            }
-            let transcript = RecitationTranscript.fromSegments(tokens)
+            // Même repêchage d'hypothèse que SpeechAnalyzer (transcriptions triées
+            // par confiance ; la 1ʳᵉ est `bestTranscription`).
+            let transcriptions = result.transcriptions.isEmpty ? [result.bestTranscription] : result.transcriptions
             Task { @MainActor in
                 guard let self else { return }
+                let chosen = Self.preferredCandidateIndex(
+                    texts: transcriptions.map(\.formattedString), expected: self.expectedForms)
+                let tokens = transcriptions[chosen].segments.map { segment in
+                    (text: segment.substring,
+                     range: Optional(segment.timestamp...(segment.timestamp + segment.duration)))
+                }
+                let transcript = RecitationTranscript.fromSegments(tokens)
                 self.legacyTranscript = transcript
                 self.heardWordCount = transcript.tokens.count
                 self.lastHeardAt = Date()

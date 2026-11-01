@@ -43,216 +43,100 @@ class PostPrayerAdhkarService: ObservableObject {
     }
 }
 
-// MARK: - CurrentPrayerGaugeView
-struct CurrentPrayerGaugeView: View {
-    @EnvironmentObject var prayerVM: PrayerTimesViewModel
-    @State private var showAdhkarSheet = false
+// MARK: - NightPrayerCard
+
+/// Prière de la nuit (qiyam) — zone secondaire, visible après le milieu de la
+/// nuit jusqu'au Fajr. Repliée par défaut : l'en-tête donne le dernier tiers,
+/// le dépli ajoute le hadith et la moitié de la nuit. Le héros garde le
+/// décompte vers Fajr ; cette carte porte l'enrichissement.
+struct NightPrayerCard: View {
+    /// Moitié et dernier tiers de la nuit en cours — décidés par `SalatSecondaryZone`.
+    let times: (middle: Date, lastThird: Date)
+    @State private var isExpanded = false
 
     var body: some View {
-        VStack(spacing: 0) {
-            if prayerVM.currentPrayerWindow != .none,
-               let start = prayerVM.currentWindowStart,
-               let end = prayerVM.currentWindowEnd {
-                
-                // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-                // 1. CARTE : PRIÈRE EN COURS
-                // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-                VStack(spacing: 20) {
-                    // En-tête aéré
-                    HStack {
-                        Image(systemName: prayerVM.currentPrayerWindow.icon)
-                            .font(.title2)
-                        Text("Temps du \(prayerVM.currentPrayerWindow.rawValue)")
-                            .font(.headline)
-                        Spacer()
-                        Text(prayerVM.currentPrayerWindow.arabicName)
-                            .font(.title2.bold())
-                            .environment(\.layoutDirection, .rightToLeft)
-                    }
-                    .foregroundColor(.orange)
-                    
-                    // Jauge et Timer — cadence adaptative : ~1 pt de barre par
-                    // tick (durée/350, typ. 10-15 s pour une fenêtre de 60-90 min)
-                    // au lieu de 1 Hz. L'interpolation .linear(cadence) garde le
-                    // mouvement continu ; le seuil rouge (85 %) bascule avec au
-                    // pire ≤ 1 cadence de retard — imperceptible sur une phase
-                    // rouge de plusieurs minutes. Le décompte texte est piloté
-                    // par le système (Text(timerInterval:) — zéro redraw).
-                    let cadence = Self.barCadence(start: start, end: end)
-                    TimelineView(.periodic(from: .now, by: cadence)) { context in
-                        let now = context.date
-                        let totalDuration = end.timeIntervalSince(start)
-                        let elapsed = now.timeIntervalSince(start)
-                        let progress = max(0.0, min(1.0, elapsed / totalDuration))
-
-                        let gaugeColor = progress > 0.85 ? Color.red : Color.orange
-
-                        VStack(spacing: 12) {
-                            // La barre plus épaisse
-                            GeometryReader { geo in
-                                ZStack(alignment: .leading) {
-                                    Capsule()
-                                        .fill(Color.white.opacity(0.1))
-
-                                    Capsule()
-                                        .fill(LinearGradient(colors: [gaugeColor.opacity(0.6), gaugeColor], startPoint: .leading, endPoint: .trailing))
-                                        .frame(width: geo.size.width * CGFloat(progress))
-                                        .animation(.linear(duration: cadence), value: progress)
-                                }
-                            }
-                            .frame(height: 10)
-
-                            // Textes sous la barre
-                            HStack {
-                                Text("\(start.formatted(date: .omitted, time: .shortened)) → \(end.formatted(date: .omitted, time: .shortened))")
-                                    .font(.subheadline)
-                                    .foregroundColor(.white.opacity(0.7))
-
-                                Spacer()
-
-                                // min(now, end) : borne défensive — à l'échéance
-                                // exacte, un range inversé ferait planter.
-                                Text("-\(Text(timerInterval: min(now, end)...end, countsDown: true))")
-                                    .font(.system(.body, design: .monospaced).bold())
-                                    .monospacedDigit()
-                                    .foregroundColor(gaugeColor)
-                            }
-                        }
-                    }
-                    // Re-crée le schedule si les horaires changent EN COURS de
-                    // fenêtre (recalcul DST/GPS/réglages) — un schedule .periodic
-                    // déjà démarré ne relit pas ses paramètres.
-                    .id(end)
-                    
-                    // Bouton Adhkar plus grand
-                    Button(action: { showAdhkarSheet = true }) {
-                        HStack {
-                            Image(systemName: "hands.sparkles.fill")
-                            Text("Invocations après la prière")
-                                .fontWeight(.bold)
-                        }
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 16)
-                        .glassEffect()
-                        .foregroundColor(.orange)
-
-                    }
-                }
-                .padding(24)
-                .glassCard(tint: .orange)
-
-            } else if prayerVM.nextPrayerName == "Fajr",
-                      let middle = prayerVM.middleOfNight,
-                      let lastThird = prayerVM.lastThirdOfNight {
-                
-                // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-                // 2. CARTE : NUIT (QIYAM)
-                // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-                VStack(alignment: .leading, spacing: 20) {
-                    // En-tête
-                    HStack {
+        VStack(alignment: .leading, spacing: 12) {
+            Button {
+                withAnimation(.easeInOut(duration: 0.25)) { isExpanded.toggle() }
+            } label: {
+                HStack(spacing: 12) {
+                    ZStack {
+                        Circle()
+                            .fill(PrayerStateTint.night.opacity(0.18))
+                            .frame(width: 38, height: 38)
                         Image(systemName: "moon.stars.fill")
-                            .font(.title2)
-                        Text("Prière de la Nuit")
-                            .font(.headline)
-                        Spacer()
-                        Text("قيام الليل")
-                            .font(.title2.bold())
-                            .environment(\.layoutDirection, .rightToLeft)
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundStyle(PrayerStateTint.night)
                     }
-                    .foregroundColor(.indigo)
-                    
+                    VStack(alignment: .leading, spacing: 1) {
+                        Text("Prière de la Nuit")
+                            .font(.system(size: 13, weight: .bold, design: .rounded))
+                            .foregroundStyle(PrayerStateTint.night)
+                        Text("Dernier tiers dès \(times.lastThird.formatted(date: .omitted, time: .shortened))")
+                            .font(.system(size: 10, weight: .medium, design: .rounded))
+                            .monospacedDigit()
+                            .foregroundStyle(.white.opacity(0.5))
+                    }
+                    Spacer()
+                    Text(verbatim: "قيام الليل")
+                        .font(.system(size: 13, weight: .bold))
+                        .foregroundStyle(.white.opacity(0.6))
+                        .environment(\.layoutDirection, .rightToLeft)
+                    Image(systemName: "chevron.down")
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundStyle(.white.opacity(0.5))
+                        .rotationEffect(.degrees(isExpanded ? 180 : 0))
+                }
+                .frame(minHeight: 44)
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .sensoryFeedback(.selection, trigger: isExpanded)
+
+            if isExpanded {
+                VStack(alignment: .leading, spacing: 12) {
                     Text("« Notre Seigneur descend chaque nuit vers le ciel le plus bas lorsqu'il ne reste que le dernier tiers... » (Bukhari)")
                         .font(.subheadline)
                         .italic()
                         .foregroundColor(.white.opacity(0.8))
                         .lineSpacing(4)
                         .fixedSize(horizontal: false, vertical: true)
-                    
-                    // Horaires aérés
+
                     HStack {
-                        VStack(alignment: .leading, spacing: 6) {
+                        VStack(alignment: .leading, spacing: 4) {
                             Text("Moitié de la nuit")
                                 .font(.caption)
                                 .foregroundColor(.white.opacity(0.6))
-                            Text(middle.formatted(date: .omitted, time: .shortened))
-                                .font(.system(.body, design: .monospaced).bold())
+                            Text(times.middle.formatted(date: .omitted, time: .shortened))
+                                .font(.system(.body, design: .rounded).bold())
+                                .monospacedDigit()
                                 .foregroundColor(.white)
                         }
-                        
                         Spacer()
-                        
-                        VStack(alignment: .trailing, spacing: 6) {
+                        VStack(alignment: .trailing, spacing: 4) {
                             Text("Dernier tiers")
                                 .font(.caption)
-                                .foregroundColor(.indigo)
-                            Text(lastThird.formatted(date: .omitted, time: .shortened))
-                                .font(.system(.body, design: .monospaced).bold())
-                                .foregroundColor(.indigo)
+                                .foregroundColor(PrayerStateTint.night)
+                            Text(times.lastThird.formatted(date: .omitted, time: .shortened))
+                                .font(.system(.body, design: .rounded).bold())
+                                .monospacedDigit()
+                                .foregroundColor(PrayerStateTint.night)
                         }
                     }
-                    
-                    // Bouton Invocations DE RETOUR À SA PLACE !
-                    Button(action: { showAdhkarSheet = true }) {
-                        HStack {
-                            Image(systemName: "moon.haze.fill")
-                            Text("Invocations de la nuit")
-                                .fontWeight(.bold)
-                        }
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 16)
-                        .background(.indigo.opacity(0.2))
-                        .clipShape(RoundedRectangle(cornerRadius: 16))
-                        .foregroundColor(.indigo)
-                    }
                 }
-                .padding(24)
-                .glassCard(tint: .indigo)
-
-
-            } else {
-                // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-                // 3. CARTE : COMPTE À REBOURS
-                //    Période sans fenêtre de prière active (après le lever du
-                //    soleil, en attendant Dhuhr). Décompte vers la prochaine Salât.
-                //    Le rappel coranique a été extrait en `SpiritualReminderCard`
-                //    (zone secondaire de l'écran Salat) — il n'a plus rien à faire
-                //    dans le hero prioritaire.
-                // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-                if let target = prayerVM.nextPrayerDate {
-                    NextPrayerCountdownCard(
-                        target: target,
-                        prayerName: prayerVM.nextPrayerName,
-                        prayerTime: prayerVM.nextPrayerTime,
-                        start: prayerVM.sunriseTime
-                    )
-                }
+                .transition(.opacity)
             }
         }
-        // Force la reconstruction propre du VStack au changement de fenêtre de prière —
-        // évite les animations parasites lors du switch entre carte "en cours", "nuit"
-        // et "rappel coranique".
-        .id(prayerVM.currentPrayerWindow)
-        .sheet(isPresented: $showAdhkarSheet) {
-            // Logique dynamique pour charger le bon JSON
-            let sheetContext = prayerVM.currentPrayerWindow != .none ? prayerVM.currentPrayerWindow.rawValue : "qiyam"
-            PostPrayerAdhkarView(prayerName: sheetContext)
-                .presentationDetents([.large])
-        }
-    }
-    
-    /// Cadence adaptative de la barre : ~1 pt de progression par tick sur une
-    /// barre d'environ 350 pt. Plancher 1 s (fenêtres très courtes).
-    static func barCadence(start: Date, end: Date) -> TimeInterval {
-        max(1.0, end.timeIntervalSince(start) / 350.0)
+        .padding(16)
+        .collapsibleCard(tint: PrayerStateTint.night)
     }
 }
 
 // MARK: - SpiritualReminderCard
 
-/// Rappel coranique rotatif (rotation par heure). Extrait de `CurrentPrayerGaugeView`
-/// (branche « compte à rebours ») : c'est du contenu d'enrichissement, il vit
-/// désormais dans la zone secondaire de l'écran Salat — toujours visible.
+/// Rappel coranique rotatif (rotation par heure), zone secondaire. Replié par
+/// défaut : c'est la carte la moins contextuelle de l'écran, elle ne doit pas
+/// être la plus haute. L'en-tête donne la source ; le dépli ajoute le verset.
 struct SpiritualReminderCard: View {
 
     private struct SpiritualReminder: Identifiable {
@@ -260,9 +144,13 @@ struct SpiritualReminderCard: View {
         let arabic: String
         let french: String
         let source: String
-        let color: Color
         let icon: String
     }
+
+    /// Accent fixe du domaine Coran (la rotation teal/indigo/violet/vert
+    /// recouvrait les couleurs d'état de prière).
+    private let accent = ModuleAccent.quran
+    @State private var isExpanded = false
 
     private var currentReminder: SpiritualReminder {
         let reminders = [
@@ -270,28 +158,24 @@ struct SpiritualReminderCard: View {
                 arabic: "إِنَّ الصَّلَاةَ كَانَتْ عَلَى الْمُؤْمِنِينَ كِتَابًا مَّوْقُوتًا",
                 french: "La Salât demeure, pour les croyants, une prescription, à des temps déterminés.",
                 source: "Sourate An-Nisa (4:103)",
-                color: .teal,
                 icon: "book.closed.fill"
             ),
             SpiritualReminder(
                 arabic: "حَافِظُوا عَلَى الصَّلَوَاتِ وَالصَّلَاةِ الْوُسْطَىٰ",
                 french: "Soyez assidus aux Salâts, et surtout la Salât médiane.",
                 source: "Sourate Al-Baqara (2:238)",
-                color: .indigo,
                 icon: "moon.stars.fill"
             ),
             SpiritualReminder(
                 arabic: "قَدْ أَفْلَحَ الْمُؤْمِنُونَ ۝ الَّذِينَ هُمْ فِي صَلَاتِهِمْ خَاشِعُونَ",
                 french: "Bienheureux sont certes les croyants, ceux qui sont humbles dans leur Salât.",
                 source: "Sourate Al-Mu'minun (23:1-2)",
-                color: .purple,
                 icon: "hands.sparkles.fill"
             ),
             SpiritualReminder(
                 arabic: "وَاسْتَعِينُوا بِالصَّبْرِ وَالصَّلَاةِ",
                 french: "Cherchez secours dans l'endurance et la Salât.",
                 source: "Sourate Al-Baqara (2:45)",
-                color: .green,
                 icon: "heart.fill"
             )
         ]
@@ -305,159 +189,79 @@ struct SpiritualReminderCard: View {
     var body: some View {
         let reminder = currentReminder
 
-        VStack(alignment: .leading, spacing: 16) {
-            // En-tête avec icône et badge "Rappel"
-            HStack(spacing: 10) {
-                ZStack {
-                    Circle()
-                        .fill(reminder.color.opacity(0.2))
-                        .frame(width: 40, height: 40)
-
-                    Image(systemName: reminder.icon)
-                        .font(.title3)
-                        .foregroundColor(reminder.color)
-                        .symbolEffect(.pulse.byLayer, options: .repeating.speed(0.5))
-                }
-
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("Rappel")
-                        .font(.caption.weight(.semibold))
-                        .foregroundColor(reminder.color.opacity(0.8))
-
-                    Text("Méditation du moment")
-                        .font(.caption2)
-                        .foregroundColor(.white.opacity(0.5))
-                }
-
-                Spacer()
-
-                // Petit bouton pour partager
-                ShareLink(item: "\(reminder.arabic)\n\n\(reminder.french)\n\n— \(reminder.source)") {
-                    Image(systemName: "square.and.arrow.up")
-                        .font(.system(size: 14))
-                        .foregroundColor(reminder.color.opacity(0.7))
-                }
-            }
-
-            Divider()
-                .background(Color.white.opacity(0.1))
-
-            // Verset en arabe
-            Text(reminder.arabic)
-                .font(.system(size: 19, weight: .medium))
-                .multilineTextAlignment(.center)
-                .frame(maxWidth: .infinity)
-                .lineSpacing(8)
-                .foregroundColor(.white)
-                .environment(\.layoutDirection, .rightToLeft)
-
-            // Traduction
-            Text("« \(reminder.french) »")
-                .font(.system(size: 14, design: .serif))
-                .italic()
-                .foregroundColor(.white.opacity(0.8))
-                .lineSpacing(4)
-                .fixedSize(horizontal: false, vertical: true)
-
-            // Source avec design amélioré
-            HStack {
-                Spacer()
-
-                Text("— \(reminder.source)")
-                    .font(.system(size: 11, weight: .medium, design: .rounded))
-                    .foregroundColor(reminder.color)
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 4)
-                    .background(reminder.color.opacity(0.15))
-                    .clipShape(Capsule())
-            }
-        }
-        .padding(20)
-        .glassCardSecondary(tint: reminder.color)
-    }
-}
-
-// MARK: - NextPrayerCountdownCard
-
-/// Compte à rebours vers la prochaine prière pendant les périodes sans fenêtre
-/// active (typiquement après le lever du soleil, en attendant Dhuhr).
-///
-/// Affiche une jauge de progression `start → target` si `start` est fourni
-/// (le lever du soleil sert d'ancre visuelle), et le temps restant en direct.
-struct NextPrayerCountdownCard: View {
-    let target: Date
-    let prayerName: String
-    let prayerTime: String
-    /// Ancre de départ de la jauge (lever du soleil). `nil` ⇒ pas de jauge.
-    let start: Date?
-
-    /// Cadence adaptative : la période sunrise → Dhuhr dure ~6 h, 1 pt de barre
-    /// ≈ 60 s. Ticker à la seconde gaspillait ~59 redraws/60.
-    private var cadence: TimeInterval {
-        guard let start, target > start else { return 60 }
-        return CurrentPrayerGaugeView.barCadence(start: start, end: target)
-    }
-
-    var body: some View {
-        VStack(spacing: 20) {
-            // En-tête
-            HStack {
-                Image(systemName: "hourglass")
-                    .font(.title2)
-                Text("Prochaine : \(prayerName)")
-                    .font(.headline)
-                Spacer()
-                Text(verbatim: prayerTime)
-                    .font(.system(.title3, design: .monospaced).bold())
-            }
-            .foregroundColor(.green)
-
-            // Jauge (cadence adaptative) + décompte piloté par le système.
-            TimelineView(.periodic(from: .now, by: cadence)) { context in
-                let now = context.date
-
-                VStack(spacing: 12) {
-                    if let start, target > start {
-                        let totalDuration = target.timeIntervalSince(start)
-                        let elapsed = now.timeIntervalSince(start)
-                        let progress = max(0.0, min(1.0, elapsed / totalDuration))
-
-                        GeometryReader { geo in
-                            ZStack(alignment: .leading) {
-                                Capsule()
-                                    .fill(Color.white.opacity(0.1))
-                                Capsule()
-                                    .fill(LinearGradient(colors: [Color.green.opacity(0.6), Color.green], startPoint: .leading, endPoint: .trailing))
-                                    .frame(width: geo.size.width * CGFloat(progress))
-                                    // Interpolation sur toute la cadence → mouvement continu.
-                                    .animation(.linear(duration: cadence), value: progress)
-                            }
-                        }
-                        .frame(height: 10)
+        VStack(alignment: .leading, spacing: 14) {
+            // En-tête cliquable (repli / dépli)
+            Button {
+                withAnimation(.easeInOut(duration: 0.25)) { isExpanded.toggle() }
+            } label: {
+                HStack(spacing: 10) {
+                    ZStack {
+                        Circle()
+                            .fill(accent.opacity(0.2))
+                            .frame(width: 38, height: 38)
+                        Image(systemName: reminder.icon)
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundColor(accent)
                     }
 
+                    VStack(alignment: .leading, spacing: 1) {
+                        Text("Rappel")
+                            .font(.system(size: 13, weight: .bold, design: .rounded))
+                            .foregroundColor(accent)
+                        Text(verbatim: reminder.source)
+                            .font(.system(size: 10, weight: .medium, design: .rounded))
+                            .foregroundColor(.white.opacity(0.5))
+                    }
+
+                    Spacer()
+
+                    Image(systemName: "chevron.down")
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundStyle(.white.opacity(0.5))
+                        .rotationEffect(.degrees(isExpanded ? 180 : 0))
+                }
+                .frame(minHeight: 44)
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .sensoryFeedback(.selection, trigger: isExpanded)
+
+            if isExpanded {
+                VStack(alignment: .leading, spacing: 14) {
+                    // Verset en arabe — même langage scripturaire que les cartes Coran.
+                    Text(reminder.arabic)
+                        .font(ScriptureFont.arabic(ScriptureFont.arabicCompact))
+                        .multilineTextAlignment(.center)
+                        .frame(maxWidth: .infinity)
+                        .lineSpacing(ScriptureFont.arabicLineSpacing)
+                        .foregroundColor(.white)
+                        .environment(\.layoutDirection, .rightToLeft)
+
+                    // Traduction
+                    Text("« \(reminder.french) »")
+                        .font(ScriptureFont.translation())
+                        .foregroundColor(.white.opacity(0.8))
+                        .lineSpacing(ScriptureFont.translationLineSpacing)
+                        .fixedSize(horizontal: false, vertical: true)
+
+                    // La source est déjà dans l'en-tête ; ici seulement le partage.
                     HStack {
-                        if let start {
-                            Text("\(start.formatted(date: .omitted, time: .shortened)) → \(target.formatted(date: .omitted, time: .shortened))")
-                                .font(.subheadline)
-                                .foregroundColor(.white.opacity(0.7))
-                        }
                         Spacer()
-                        // Décompte système (zéro redraw). min(now, target) : borne
-                        // défensive contre un range inversé à l'échéance exacte.
-                        Text("-\(Text(timerInterval: min(now, target)...target, countsDown: true))")
-                            .font(.system(.body, design: .monospaced).bold())
-                            .monospacedDigit()
-                            .foregroundColor(.green)
+                        // Partager — cible tactile 44 pt.
+                        ShareLink(item: "\(reminder.arabic)\n\n\(reminder.french)\n\n— \(reminder.source)") {
+                            Image(systemName: "square.and.arrow.up")
+                                .font(.system(size: 14))
+                                .foregroundColor(accent.opacity(0.8))
+                                .frame(width: 44, height: 44)
+                                .contentShape(Rectangle())
+                        }
                     }
                 }
+                .transition(.opacity)
             }
-            // Re-crée le schedule si la cible change (recalcul GPS/DST/réglages)
-            // pendant que la carte est visible.
-            .id(target)
         }
-        .padding(24)
-        .glassCard(tint: .green)
+        .padding(16)
+        .collapsibleCard(tint: accent)
     }
 }
 
@@ -478,7 +282,7 @@ struct PostPrayerAdhkarView: View {
         }
         return "la prière (\(prayerName.capitalized))"
     }
-    
+
     var body: some View {
         VStack(spacing: 0) {
             // ── EN-TÊTE PREMIUM ──
@@ -487,14 +291,14 @@ struct PostPrayerAdhkarView: View {
                     .font(.system(size: 22, weight: .bold))
                     .foregroundColor(.white)
                     .environment(\.layoutDirection, .rightToLeft)
-                
+
                 Text("Adhkar après \(displayName)")
                     .font(.system(size: 13, weight: .semibold, design: .rounded))
                     .foregroundColor(.white.opacity(0.6))
             }
             .padding(.top, 24)
             .padding(.bottom, 20)
-            
+
             // ── LISTE DES ADHKAR ──
             ScrollView(.vertical, showsIndicators: false) {
                 LazyVStack(spacing: 14) {
@@ -534,33 +338,6 @@ struct PostPrayerAdhkarView: View {
     }
 }
 
-// MARK: - PrayerFreshnessLine
-/// Ligne discrète sous le header de date : « Horaires mis à jour à HH:mm », ou
-/// « Mise à jour de la position… » pendant un fix GPS. Lecture seule.
-struct PrayerFreshnessLine: View {
-    @EnvironmentObject var prayerVM: PrayerTimesViewModel
-    @ObservedObject var location = SharedLocationManager.shared
-
-    var body: some View {
-        Group {
-            if location.isRefreshingLocation {
-                HStack(spacing: 6) {
-                    ProgressView().controlSize(.mini).tint(.white.opacity(0.5))
-                    Text("Mise à jour de la position…")
-                }
-            } else if let updated = prayerVM.lastPrayerUpdate {
-                HStack(spacing: 5) {
-                    Image(systemName: "clock.arrow.circlepath")
-                        .font(.system(size: 10))
-                    Text("Horaires mis à jour à \(updated.formatted(date: .omitted, time: .shortened))")
-                }
-            }
-        }
-        .font(.caption2)
-        .foregroundStyle(.white.opacity(0.5))
-    }
-}
-
 // MARK: - GPSRelocationIndicator
 struct GPSRelocationIndicator: View {
     @EnvironmentObject var prayerVM: PrayerTimesViewModel
@@ -593,10 +370,11 @@ struct GPSRelocationIndicator: View {
                 }
                 .padding(.horizontal, 12)
                 .padding(.vertical, 8)
-                .background(Color.blue.opacity(0.2))
                 .foregroundColor(.blue)
-                .clipShape(Capsule())
-                .overlay(Capsule().stroke(Color.blue.opacity(0.5), lineWidth: 1))
+                .glassEffect(.regular.tint(.blue.opacity(0.2)), in: Capsule())
+                // Cible tactile ≥ 44 pt (la capsule visible reste compacte).
+                .frame(minHeight: 44)
+                .contentShape(Rectangle())
             }
             .disabled(isRefreshing)
             .transition(.scale.combined(with: .opacity))

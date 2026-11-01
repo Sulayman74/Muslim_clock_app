@@ -17,7 +17,6 @@ class CompassManager: NSObject, ObservableObject, CLLocationManagerDelegate {
 
     // MARK: - Propriétés Publiques (@Published)
     @Published var userLocation: CLLocation?
-    @Published var cityName: String = String(localized: "Recherche...")
     @Published var heading: Double = 0.0
     @Published var qiblaAngle: Double = 0.0
     @Published var isCorrectDirection = false
@@ -52,11 +51,6 @@ class CompassManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     private var lastHapticLevel: Int = 0
     private var cancellables = Set<AnyCancellable>()
 
-    /// `true` dès qu'un reverse geocoding a réussi (ou échoué et abandonné).
-    /// Évite la comparaison fragile à `String(localized: "Recherche...")`
-    /// qui casse au changement de langue de l'app.
-    private var cityFetched: Bool = false
-
     // MARK: - Feedback generators pré-instanciés (perf + latency)
     //
     // Les `UIImpactFeedbackGenerator` sont coûteux à allouer. Les garder en
@@ -76,7 +70,8 @@ class CompassManager: NSObject, ObservableObject, CLLocationManagerDelegate {
         // Filtre noise capteur magnétique : ne reçoit une update que si delta ≥ 1°.
         // Réduit le jitter visible (boussole qui « tremble ») sans perte UX significative.
         locationManager.headingFilter = 1
-        // On ne gère que le Heading ici (la position GPS vient de SharedLocationManager).
+        // On ne gère que le Heading ici (la position GPS et la ville viennent de
+        // SharedLocationManager).
 
         SharedLocationManager.shared.$currentLocation
             .compactMap { $0 }
@@ -88,10 +83,6 @@ class CompassManager: NSObject, ObservableObject, CLLocationManagerDelegate {
                         latitude: location.coordinate.latitude,
                         longitude: location.coordinate.longitude
                     )
-                    if !self.cityFetched {
-                        self.cityName = await location.fetchCityName()
-                        self.cityFetched = true
-                    }
                 }
             }
             .store(in: &cancellables)

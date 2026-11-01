@@ -15,7 +15,11 @@ import Foundation
 
 /// Attributs constants de la Live Activity pour une prière donnée.
 /// Le `ContentState` (heure cible) peut être mis à jour, mais les attributs (nom, clé) sont immuables.
-struct SalatLiveActivityAttributes: ActivityAttributes {
+///
+/// `nonisolated` : type de donnée pur, encodé/décodé par ActivityKit hors du
+/// MainActor (isolation par défaut du module) — sinon la conformance à
+/// `ActivityAttributes` est isolée et déclenche des warnings Swift 6.
+nonisolated struct SalatLiveActivityAttributes: ActivityAttributes {
     public struct ContentState: Codable, Hashable {
         /// Heure de début de la prochaine prière (utilisée pour `Text(date, style: .timer)`).
         var targetTime: Date

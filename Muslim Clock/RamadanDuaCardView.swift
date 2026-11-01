@@ -25,6 +25,9 @@ struct RamadanDuaCardView: View {
     @AppStorage("debugRamadanWindow") private var debugRamadanWindow: String = ""
     /// Langue de l'app — détermine si on affiche la traduction (masquée si arabe).
     @AppStorage("appLanguage") private var appLanguage: String = "system"
+    /// Hors Iftar / Suhoor (fenêtre « général », 10 dernières nuits), la carte
+    /// est repliée : l'en-tête suffit, le dépli montre la du'a.
+    @State private var isExpanded = false
 
     private var maghribDate: Date? {
         prayerVM.dailyPrayers.first { $0.name == "Maghrib" }?.date
@@ -131,18 +134,40 @@ struct RamadanDuaCardView: View {
         }
     }
 
+    /// Le corps est toujours visible aux moments d'urgence (Iftar, Suhoor) ;
+    /// repliable sinon.
+    private var isCollapsible: Bool { window == .general }
+    private var showsBody: Bool { !isCollapsible || isExpanded }
+
     @ViewBuilder
     private func content(dua: RamadanDua) -> some View {
         VStack(spacing: 14) {
-            // En-tête centré
-            HStack(spacing: 6) {
-                Image(systemName: icon)
-                    .font(.system(size: 14, weight: .semibold))
-                Text(verbatim: title)
-                    .font(.caption.bold())
+            // En-tête (cliquable quand la carte est repliable)
+            Button {
+                withAnimation(.easeInOut(duration: 0.25)) { isExpanded.toggle() }
+            } label: {
+                HStack(spacing: 6) {
+                    Image(systemName: icon)
+                        .font(.system(size: 14, weight: .semibold))
+                    Text(verbatim: title)
+                        .font(.caption.bold())
+                    if isCollapsible {
+                        Spacer()
+                        Image(systemName: "chevron.down")
+                            .font(.system(size: 12, weight: .semibold))
+                            .foregroundStyle(.white.opacity(0.5))
+                            .rotationEffect(.degrees(isExpanded ? 180 : 0))
+                    }
+                }
+                .foregroundStyle(accent)
+                .frame(maxWidth: .infinity, minHeight: isCollapsible ? 44 : 0)
+                .contentShape(Rectangle())
             }
-            .foregroundStyle(accent)
+            .buttonStyle(.plain)
+            .disabled(!isCollapsible)
 
+            if showsBody {
+            VStack(spacing: 14) {
             // Arabe — toujours affiché, centré
             Text(verbatim: dua.arabic)
                 .font(ScriptureFont.arabic(ScriptureFont.arabicCompact))
@@ -166,10 +191,16 @@ struct RamadanDuaCardView: View {
                 .font(.caption2)
                 .foregroundStyle(.white.opacity(0.55))
                 .multilineTextAlignment(.center)
+            }
+            .transition(.opacity)
+            }
         }
         .padding(16)
         .frame(maxWidth: .infinity)
         .glassCard(tint: accent)
+        // Contenu clippé pendant l'animation de dépli, redimensionnement en bloc.
+        .clipShape(RoundedRectangle(cornerRadius: CornerRadius.card, style: .continuous))
+        .geometryGroup()
     }
 
     private var placeholder: some View {

@@ -29,6 +29,14 @@ nonisolated enum StorageKeys {
     static let jumuahHour = "jumuahHour"
     static let jumuahMinute = "jumuahMinute"
 
+    // MARK: - Iqamah (app, @AppStorage) — délais adhan → iqamah par prière
+
+    static let iqamahFajrDelay = "iqamahFajrDelay"
+    static let iqamahDhuhrDelay = "iqamahDhuhrDelay"
+    static let iqamahAsrDelay = "iqamahAsrDelay"
+    static let iqamahMaghribDelay = "iqamahMaghribDelay"
+    static let iqamahIshaDelay = "iqamahIshaDelay"
+
     // MARK: - Configuration Magique (app)
 
     /// `MosqueObservation` encodée en JSON : horaires relevés dans la mosquée,
@@ -60,4 +68,21 @@ nonisolated enum StorageKeys {
     static let wJumuahEnabled = "w_jumuahEnabled"
     static let wJumuahHour = "w_jumuahHour"
     static let wJumuahMinute = "w_jumuahMinute"
+}
+
+/// Délais adhan → iqamah par défaut (minutes), tant que l'utilisateur n'a rien
+/// réglé dans « Ma mosquée ». Source unique : la liste des prières, la carte de
+/// décompte, les réglages, la Configuration Magique et les rappels lisaient
+/// chacun leur propre valeur — deux heures d'iqamah différentes à l'écran.
+nonisolated enum IqamahDefaults {
+    static let fajr = 20
+    static let dhuhr = 15
+    static let asr = 15
+    static let maghrib = 5
+    static let isha = 15
+
+    /// Dictionnaire « nom de prière → délai » attendu par `IqamahMath` et les schedulers.
+    static func delays(fajr: Int, dhuhr: Int, asr: Int, maghrib: Int, isha: Int) -> [String: Int] {
+        ["Fajr": fajr, "Dhuhr": dhuhr, "Asr": asr, "Maghrib": maghrib, "Isha": isha]
+    }
 }

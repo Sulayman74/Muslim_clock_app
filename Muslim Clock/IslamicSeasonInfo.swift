@@ -251,14 +251,9 @@ struct SeasonBannerView: View {
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 10)
-            .background(
-                LinearGradient(
-                    colors: season.bannerColors,
-                    startPoint: .leading,
-                    endPoint: .trailing
-                )
-            )
-            .clipShape(RoundedRectangle(cornerRadius: 14))
+            // Même grammaire de verre que le reste du chapeau : la couleur de
+            // saison devient une teinte, le dégradé opaque (rayon 14) disparaît.
+            .glassCard(tint: season.bannerColors.first)
         }
     }
 }

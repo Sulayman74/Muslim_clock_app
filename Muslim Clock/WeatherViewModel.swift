@@ -7,7 +7,9 @@ import os
 
 @MainActor
 class WeatherViewModel: ObservableObject {
-    @Published var temperature: String = "--°C"
+    /// Température formatée dans l'unité de la locale (°C / °F). `--°` tant que rien n'est chargé.
+    @Published var temperature: String = WeatherViewModel.temperaturePlaceholder
+    private static let temperaturePlaceholder = "--°"
     @Published var conditionIcon: String = "cloud.fill"
     @Published var moonSymbol: String = "moon"
 
@@ -98,8 +100,10 @@ class WeatherViewModel: ObservableObject {
             // Si l'appel a été cancelled entre-temps, ne touche pas l'UI.
             try Task.checkCancellation()
 
-            let tempValue = current.temperature.converted(to: .celsius).value
-            self.temperature = String(format: "%.0f°C", tempValue)
+            // Unité et séparateurs de la locale (°C en France, °F aux États-Unis).
+            self.temperature = current.temperature.formatted(
+                .measurement(width: .abbreviated, usage: .weather, numberFormatStyle: .number.precision(.fractionLength(0)))
+            )
             self.conditionIcon = current.symbolName
 
             if let todayForecast = daily.first {
@@ -120,7 +124,7 @@ class WeatherViewModel: ObservableObject {
             Self.logger.debug("Weather fetch cancelled (superseded)")
         } catch {
             Self.logger.error("WeatherKit failure: \(error.localizedDescription, privacy: .public)")
-            self.temperature = "--°C"
+            self.temperature = Self.temperaturePlaceholder
             self.conditionIcon = "exclamationmark.triangle"
             self.moonSymbol = "moon.fill"
             self.hasError = true
