@@ -16,6 +16,7 @@ struct SalatWidgetBundle: WidgetBundle {
         SalatProvider.SalatLockScreenWidget()   // Lock Screen — circular, rectangular, inline
         SalatProvider.SalatWatchCirclesWidget() // Apple Watch — 5 cercles (accessoryRectangular)
         DailyVerseWidget()                      // Home — verset du jour (small + medium)
+        KhatmaWidget()                          // Home small + Lock circular — progression Khatma
         SalatWidgetLiveActivity()               // Live Activity — Dynamic Island + Lock Screen countdown
         QiblaControlWidget()                    // Control Center — bouton Qibla (iOS 18+)
         AdhkarControlWidget()                   // Control Center — bouton Adhkar du moment (iOS 18+)

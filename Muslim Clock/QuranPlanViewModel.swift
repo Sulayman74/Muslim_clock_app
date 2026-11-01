@@ -51,6 +51,7 @@ final class QuranPlanViewModel {
         self.plan = nil
         self.progress = nil
         self.streak = 0
+        QuranPlanSynchronizer.clear()
     }
 
     // MARK: - Recalcul progression
@@ -70,6 +71,8 @@ final class QuranPlanViewModel {
             pagesPerDayGoal: snap.pagesPerDay,
             now: now
         )
+        // Widget « Khatma » : publie le snapshot dans l'App Group (no-op si inchangé).
+        QuranPlanSynchronizer.publish(progress: snap, streak: self.streak)
     }
 
     // MARK: - Mutations journal

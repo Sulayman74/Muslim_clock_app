@@ -68,6 +68,17 @@ nonisolated enum StorageKeys {
     /// cibler son rechargement (`WidgetCenter.reloadTimelines(ofKind:)`).
     static let dailyVerseWidgetKind = "DailyVerseWidget"
 
+    // MARK: - Khatma (App Group) — progression du plan Coran, publiée par
+    // `QuranPlanSynchronizer`, lue par le widget « Khatma ». Clés absentes = pas de plan.
+
+    static let khatmaPagesRead = "khatma_pages_read"
+    static let khatmaTotalPages = "khatma_total_pages"
+    static let khatmaPagesPerDay = "khatma_pages_per_day"
+    static let khatmaStreak = "khatma_streak"
+
+    /// `kind` du widget « Khatma » (cf. `dailyVerseWidgetKind`).
+    static let khatmaWidgetKind = "KhatmaWidget"
+
     // MARK: - Miroir des réglages pour Watch/Widget (préfixe « w_ »)
 
     static let wCalculationMethod = "w_calculationMethod"
