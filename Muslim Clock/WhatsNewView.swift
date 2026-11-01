@@ -54,6 +54,12 @@ struct WhatsNewView: View {
             description: String(localized: "Une carte « En ce moment » te propose l'action du moment : révision le matin, lecture après Maghrib, Al-Kahf le vendredi. Ta Khatma vit désormais dans l'onglet Apprendre, avec tous tes programmes.")
         ),
         WhatsNewItem(
+            icon: "square.grid.2x2.fill",
+            color: .orange,
+            title: String(localized: "Nouveaux widgets"),
+            description: String(localized: "Le verset du jour sur ton écran d'accueil, et ta progression de Khatma en un coup d'œil : anneau de progression sur l'accueil et l'écran verrouillé.")
+        ),
+        WhatsNewItem(
             icon: "sparkles",
             color: .teal,
             title: String(localized: "Amélioration UX"),
